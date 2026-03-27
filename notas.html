@@ -1524,28 +1524,106 @@ document.addEventListener('mousedown', e => {
 // ══════════════════════════════════════════════════════
 function openAddSt() {
   showModal(
-    '➕ Agregar Estudiante',
-    `<label>Nombre completo</label>
-     <input type="text" id="mInp" placeholder="Ej: APELLIDO NOMBRE" style="text-transform:uppercase"/>
-     <p class="tip">Se agrega a todas las materias automáticamente.</p>`,
+    '➕ Agregar Estudiantes',
+    `<!-- Tabs -->
+     <div style="display:flex;gap:0;margin-bottom:12px;border-bottom:2px solid #eef2f7">
+       <button id="tabOne" onclick="stTab('one')"
+         style="padding:6px 14px;border:none;background:#2e6da4;color:#fff;font-size:0.78rem;font-weight:700;cursor:pointer;border-radius:5px 5px 0 0">
+         👤 Uno por uno
+       </button>
+       <button id="tabBulk" onclick="stTab('bulk')"
+         style="padding:6px 14px;border:none;background:transparent;color:#888;font-size:0.78rem;font-weight:600;cursor:pointer;border-radius:5px 5px 0 0">
+         📋 Pegar desde Excel
+       </button>
+     </div>
+
+     <!-- Panel uno por uno -->
+     <div id="panelOne">
+       <label>Nombre completo</label>
+       <input type="text" id="mInp" placeholder="Ej: APELLIDO NOMBRE" style="text-transform:uppercase"/>
+       <p class="tip">Se agrega a todas las materias automáticamente.</p>
+     </div>
+
+     <!-- Panel pegar desde Excel -->
+     <div id="panelBulk" style="display:none">
+       <label>Pega la lista desde Excel (una columna con nombres)</label>
+       <textarea id="mBulk" rows="8" placeholder="Copia la columna de nombres desde Excel y pega aquí:
+
+ALCIVAR MENDOZA AMY SOFIA
+ALMEIDA ANZATUÑA EMILY ANAHI
+ANDINO ORTIZ ERICK JACOBO
+..."
+         style="text-transform:uppercase;font-size:0.82rem;resize:vertical"></textarea>
+       <div id="bulkPreview" style="font-size:0.72rem;color:#2e6da4;margin-top:4px"></div>
+       <p class="tip">Cada línea = un estudiante. Se ignoran líneas vacías y duplicados.</p>
+     </div>`,
     'Agregar',
     () => {
-      const nv = document.getElementById('mInp').value.trim().toUpperCase();
-      if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
-      if (S.students.includes(nv)) { toast('⚠ Ese estudiante ya existe', '#e67e22'); return; }
-      const si = S.students.length;
-      S.students.push(nv);
-      MATS.forEach(m => {
-        if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {};
-      });
-      closeModal(); render(); saveData();
-      toast('✔ Estudiante agregado', '#27ae60');
+      const tab = document.getElementById('tabOne').style.background === 'rgb(46, 109, 164)' ? 'one' : 'bulk';
+
+      if (tab === 'one') {
+        const nv = document.getElementById('mInp').value.trim().toUpperCase();
+        if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
+        if (S.students.includes(nv)) { toast('⚠ Ese estudiante ya existe', '#e67e22'); return; }
+        const si = S.students.length;
+        S.students.push(nv);
+        MATS.forEach(m => { if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {}; });
+        closeModal(); render(); saveData();
+        toast('✔ Estudiante agregado', '#27ae60');
+      } else {
+        const raw = document.getElementById('mBulk').value;
+        const names = raw.split('\n')
+          .map(l => l.trim().toUpperCase().replace(/\t/g,' ').replace(/\s+/g,' '))
+          .filter(l => l.length > 1);
+
+        if (!names.length) { toast('⚠ No hay nombres para agregar', '#e67e22'); return; }
+
+        let added = 0, skipped = 0;
+        names.forEach(nv => {
+          if (S.students.includes(nv)) { skipped++; return; }
+          const si = S.students.length;
+          S.students.push(nv);
+          MATS.forEach(m => { if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {}; });
+          added++;
+        });
+        closeModal(); render(); saveData();
+        toast(`✔ ${added} estudiantes agregados${skipped ? ` · ${skipped} duplicados omitidos` : ''}`, '#27ae60');
+      }
     }
   );
+
   setTimeout(() => {
     const i = document.getElementById('mInp');
-    if(i){ i.focus(); i.addEventListener('input', () => { i.value = i.value.toUpperCase(); }); }
+    if (i) { i.focus(); i.addEventListener('input', () => { i.value = i.value.toUpperCase(); }); }
+    const bulk = document.getElementById('mBulk');
+    if (bulk) {
+      bulk.addEventListener('input', () => {
+        bulk.value = bulk.value.toUpperCase();
+        const count = bulk.value.split('\n').map(l=>l.trim()).filter(l=>l.length>1).length;
+        const prev  = document.getElementById('bulkPreview');
+        if (prev) prev.textContent = count ? `${count} nombre(s) detectado(s)` : '';
+      });
+      bulk.addEventListener('paste', () => {
+        setTimeout(() => {
+          bulk.value = bulk.value.toUpperCase();
+          const count = bulk.value.split('\n').map(l=>l.trim()).filter(l=>l.length>1).length;
+          const prev  = document.getElementById('bulkPreview');
+          if (prev) prev.textContent = count ? `✔ ${count} nombre(s) detectado(s) — clic en Agregar para confirmar` : '';
+        }, 50);
+      });
+    }
   }, 50);
+}
+
+function stTab(t) {
+  document.getElementById('panelOne').style.display  = t === 'one'  ? '' : 'none';
+  document.getElementById('panelBulk').style.display = t === 'bulk' ? '' : 'none';
+  document.getElementById('tabOne').style.background  = t === 'one'  ? '#2e6da4' : 'transparent';
+  document.getElementById('tabOne').style.color       = t === 'one'  ? '#fff'    : '#888';
+  document.getElementById('tabBulk').style.background = t === 'bulk' ? '#2e6da4' : 'transparent';
+  document.getElementById('tabBulk').style.color      = t === 'bulk' ? '#fff'    : '#888';
+  if (t === 'bulk') setTimeout(() => document.getElementById('mBulk')?.focus(), 50);
+  if (t === 'one')  setTimeout(() => document.getElementById('mInp')?.focus(), 50);
 }
 
 function editStudentName(si) {
