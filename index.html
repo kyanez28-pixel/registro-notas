@@ -4282,8 +4282,8 @@ async function saveToFirestore() {
 // ── Sobreescribir saveData para sincronizar con Firebase ──
 const _origSaveData = saveData;
 function saveData() {
-  // Guardar en localStorage como respaldo
-  localStorage.setItem('notas_v6', JSON.stringify(S));
+  // NO guardar en localStorage — solo Firebase (evita QuotaExceededError)
+  try { localStorage.removeItem('notas_v6'); } catch(e) {}
   const el = document.getElementById('sv');
   if (el) { el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2000); }
   // Guardar en Firestore con debounce de 2s
