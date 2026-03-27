@@ -459,11 +459,14 @@ td.ic{position:relative}
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
       <div>
         <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Materia</label>
-        <select id="expMat" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:180px"></select>
+        <select id="expMat" onchange="expRefreshWeeks();expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:180px"></select>
       </div>
       <div>
         <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Semana / Columna</label>
-        <select id="expWeek" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:160px"></select>
+        <div style="display:flex;gap:4px;align-items:center">
+          <select id="expWeek" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:160px"></select>
+          <button onclick="expRefreshWeeks();expRefresh()" title="Actualizar semanas" style="background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:0.85rem">🔄</button>
+        </div>
       </div>
       <div>
         <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Valor a exportar</label>
@@ -3777,10 +3780,12 @@ function applySortOrder() {
 //  EXPORTAR AL SISTEMA EXTERNO
 // ══════════════════════════════════════════════════════
 function expInit() {
-  // Poblar selector de materias
   const matSel = document.getElementById('expMat');
   if (!matSel) return;
+  // Siempre reconstruir con datos actuales
+  const curMat = matSel.value || '0';
   matSel.innerHTML = MATS.map((m,i) => `<option value="${i}">${escHTML(m)}</option>`).join('');
+  matSel.value = curMat;
   expRefreshWeeks();
   expRefresh();
 }
@@ -3790,7 +3795,11 @@ function expRefreshWeeks() {
   const mat = S.mats[MATS[mi]];
   const sel = document.getElementById('expWeek');
   if (!mat || !sel) return;
+  const curWeek = sel.value;
+  // Leer semanas directamente del estado actual
   sel.innerHTML = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
+  // Restaurar selección si sigue existiendo
+  if (curWeek && mat.weeks.includes(curWeek)) sel.value = curWeek;
   expRefreshCols();
 }
 
