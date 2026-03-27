@@ -737,7 +737,11 @@ function ensureMats() {
 //  GUARDAR / TOAST
 // ══════════════════════════════════════════════════════
 function saveData() {
-  localStorage.setItem('notas_v6', JSON.stringify(S));
+  // Solo guardar en localStorage como respaldo mínimo (sin los grades para evitar QuotaExceeded)
+  try {
+    const mini = { grado: S.grado, anio: S.anio, am: S.am };
+    localStorage.setItem('notas_v6_meta', JSON.stringify(mini));
+  } catch(e) {}
   const el = document.getElementById('sv');
   el.classList.add('on');
   clearTimeout(el._t);
@@ -1491,26 +1495,19 @@ function nav(e, inp) {
       break;
 
     default: {
-      // Atajos de teclado para estados especiales
-      // Solo si el input está vacío o tiene exactamente el valor especial actual
+      // Atajos de teclado para estados especiales — solo si el input está vacío
+      if (inp.value.trim() !== '') break;
       const typed = e.key.toUpperCase();
-      const cur   = inp.value.trim().toUpperCase();
-      // Buscar coincidencia exacta de val (F, NP, EX, P, ST, SC)
-      const match = SPECIAL.find(s => s.val === typed || s.val === cur + e.key.toUpperCase());
-      if (match && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        // Si el val es de 1 letra → aplicar al instante
-        if (match.val.length === 1 && typed === match.val) {
-          e.preventDefault();
-          const oc = inp.getAttribute('onchange') || '';
-          const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
-          if (m) {
-            upd(parseInt(m[1]), m[2], m[3], match.val);
-            applySpecial(inp.parentElement, inp, match.val);
-            toast(`${match.icon} ${match.label}`, match.border);
-          }
+      const match = SPECIAL.find(s => s.val === typed);
+      if (match && match.val.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        const oc = inp.getAttribute('onchange') || '';
+        const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+        if (m) {
+          upd(parseInt(m[1]), m[2], m[3], match.val);
+          applySpecial(inp.parentElement, inp, match.val);
+          toast(`${match.icon} ${match.label}`, match.border);
         }
-        // Si es de 2 letras (NP, EX, ST, SC) → dejar que el usuario escriba,
-        // se detecta en oninput via clr()
       }
       break;
     }
@@ -4202,6 +4199,8 @@ function signOutUser() {
 
 // ── Observer de autenticación ──
 auth.onAuthStateChanged(user => {
+  // Limpiar localStorage viejo para liberar espacio
+  try { localStorage.removeItem('notas_v6'); localStorage.removeItem('notas_v5'); } catch(e) {}
   if (user) {
     _currentUser = user;
     showApp(user);
