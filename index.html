@@ -1839,7 +1839,8 @@ function colModalBody(selWeek, col) {
       <div style="display:flex;flex-wrap:wrap;gap:2px">${swatches}</div>
     </div>
     <label>Fecha <span style="font-size:0.7rem;color:#aaa">(opcional)</span></label>
-    <input type="date" id="mDate" value="${col&&col.date?escVal(col.date):''}"/>`;
+    <input type="date" id="mDate" value="${col&&col.date?escVal(col.date):''}}"
+      style="color-scheme:light;background:#fff;color:#333"/>`;
 }
 
 function syncColColor() {
@@ -2921,13 +2922,12 @@ document.addEventListener('click', e => {
   }
 }, true);
 
-// Ctrl+C para copiar selección · Ctrl+Z undo · Ctrl+Y redo
+// Ctrl+C para copiar selección · Ctrl+Z undo · Ctrl+Y redo · Delete borrar selección
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'c' && XL.mode) {
     xlCopy();
   }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-    // Solo si no hay un input enfocado con texto
     if (document.activeElement && document.activeElement.classList.contains('gi')) return;
     e.preventDefault();
     histUndo();
@@ -2937,11 +2937,61 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     histRedo();
   }
+  // Delete / Supr — borrar celdas seleccionadas
+  if ((e.key === 'Delete' || e.key === 'Backspace') && XL.mode &&
+      !(document.activeElement && document.activeElement.classList.contains('gi'))) {
+    e.preventDefault();
+    xlDeleteSelected();
+  }
   // Escape limpia selección
   if (e.key === 'Escape') {
     xlClear();
   }
 });
+
+// Borrar contenido de celdas/filas seleccionadas
+function xlDeleteSelected() {
+  if (!XL.mode) return;
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+
+  if (XL.mode === 'col') {
+    // Borrar todas las celdas de las columnas seleccionadas
+    Array.from(XL.cols).forEach(colNth => {
+      document.querySelectorAll(`#tb tr:not(.vis-hidden) td:nth-child(${colNth}) input.gi`).forEach(inp => {
+        const oc = inp.getAttribute('onchange') || '';
+        const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+        if (m) {
+          upd(parseInt(m[1]), m[2], m[3], '');
+          inp.value = '';
+          clr(inp);
+        }
+      });
+    });
+    const count = XL.cols.size;
+    xlClear();
+    toast(`🗑 ${count} columna(s) limpiadas`, '#455a64');
+
+  } else if (XL.mode === 'row') {
+    // Borrar todas las notas de las filas seleccionadas
+    Array.from(XL.rows).forEach(rowIdx => {
+      const tr = document.querySelectorAll('#tb tr')[rowIdx];
+      if (!tr) return;
+      tr.querySelectorAll('input.gi').forEach(inp => {
+        const oc = inp.getAttribute('onchange') || '';
+        const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+        if (m) {
+          upd(parseInt(m[1]), m[2], m[3], '');
+          inp.value = '';
+          clr(inp);
+        }
+      });
+    });
+    const count = XL.rows.size;
+    xlClear();
+    toast(`🗑 ${count} fila(s) limpiadas`, '#455a64');
+  }
+}
 
 // ══════════════════════════════════════════════════════
 //  VISIBILIDAD — OCULTAR / MOSTRAR COLUMNAS Y FILAS
