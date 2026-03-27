@@ -800,10 +800,7 @@ function confirm2(title, msg, fn, btnClass) {
 function studentAvg(si) {
   const mat = gm();
   const g = mat.grades[si] || {};
-  const vals = Object.values(g).map(v => {
-    if (SPECIAL_MAP[String(v).toUpperCase()]) return NaN;
-    return parseFloat(v);
-  }).filter(n => !isNaN(n));
+  const vals = Object.values(g).map(v => parseFloat(v)).filter(n => !isNaN(n));
   if (!vals.length) return null;
   return vals.reduce((a,b) => a+b, 0) / vals.length;
 }
@@ -918,9 +915,8 @@ function renderTable() {
       const weekVals = c.map(col => {
         const v = g[w+'||'+col.name];
         if (v === undefined || v === '') return NaN;
-        // Ignorar estados especiales (F, NP, etc.)
-        if (SPECIAL_MAP[String(v).toUpperCase()]) return NaN;
-        return parseFloat(v);
+        const n = parseFloat(v);
+        return n;
       }).filter(n => !isNaN(n));
       const weekAvg  = weekVals.length ? (weekVals.reduce((a,b)=>a+b,0)/weekVals.length) : null;
       const wAvgDisp = weekAvg !== null ? weekAvg.toFixed(2) : '—';
@@ -4200,7 +4196,11 @@ function signOutUser() {
 // ── Observer de autenticación ──
 auth.onAuthStateChanged(user => {
   // Limpiar localStorage viejo para liberar espacio
-  try { localStorage.removeItem('notas_v6'); localStorage.removeItem('notas_v5'); } catch(e) {}
+  try {
+    localStorage.removeItem('notas_v6');
+    localStorage.removeItem('notas_v5');
+    localStorage.removeItem('notas_v6_meta');
+  } catch(e) {}
   if (user) {
     _currentUser = user;
     showApp(user);
