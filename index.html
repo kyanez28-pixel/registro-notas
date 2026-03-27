@@ -796,7 +796,10 @@ function confirm2(title, msg, fn, btnClass) {
 function studentAvg(si) {
   const mat = gm();
   const g = mat.grades[si] || {};
-  const vals = Object.values(g).map(v => parseFloat(v)).filter(n => !isNaN(n));
+  const vals = Object.values(g).map(v => {
+    if (SPECIAL_MAP[String(v).toUpperCase()]) return NaN;
+    return parseFloat(v);
+  }).filter(n => !isNaN(n));
   if (!vals.length) return null;
   return vals.reduce((a,b) => a+b, 0) / vals.length;
 }
@@ -907,8 +910,14 @@ function renderTable() {
     const cells = mat.weeks.map((w, wi) => {
       const c = mat.cols[w] || [];
       const wc = weekColor(MATS[S.am], w, wi);
-      // Calcular promedio de esta semana para este estudiante
-      const weekVals = c.map(col => parseFloat(g[w+'||'+col.name])).filter(n => !isNaN(n));
+      // Calcular promedio de esta semana — solo columnas con nota numérica
+      const weekVals = c.map(col => {
+        const v = g[w+'||'+col.name];
+        if (v === undefined || v === '') return NaN;
+        // Ignorar estados especiales (F, NP, etc.)
+        if (SPECIAL_MAP[String(v).toUpperCase()]) return NaN;
+        return parseFloat(v);
+      }).filter(n => !isNaN(n));
       const weekAvg  = weekVals.length ? (weekVals.reduce((a,b)=>a+b,0)/weekVals.length) : null;
       const wAvgDisp = weekAvg !== null ? weekAvg.toFixed(2) : '—';
       const wAvgCls  = weekAvg !== null && weekAvg < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
