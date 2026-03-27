@@ -1,0 +1,4227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Notas — Tercer Trimestre</title>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:#333;font-size:var(--fs,13px);transition:background .3s,color .3s}
+table{font-size:var(--fs,13px)!important}
+input.gi{font-size:var(--fs,13px)!important}
+th{font-size:var(--fs,13px)!important}
+td{font-size:var(--fs,13px)!important}
+.tab{font-size:var(--fs-sm,0.8rem)!important}
+.btn{font-size:var(--fs-sm,0.8rem)!important}
+
+/* ══ MODO OSCURO ══ */
+body.dark{background:#0f1923;color:#e0e6f0}
+body.dark header{background:linear-gradient(135deg,#0d2137 0%,#1a3c6e 100%)}
+body.dark .toolbar{background:#1a2535;border-bottom-color:#2a3a4a}
+body.dark .btn.bl{background:#2a3a4a;color:#cdd6e0;border-color:#3a4a5a}
+body.dark .tabs{background:#1a2535;border-bottom-color:#2e6da4}
+body.dark .tab{color:#8899aa}
+body.dark .tab:hover{background:#243040;color:#7eb8f7}
+body.dark .tab.active{background:#2e6da4;color:#fff}
+body.dark .content{background:transparent}
+body.dark .stats{background:#1a2535;box-shadow:none}
+body.dark .sl{color:#667788}
+body.dark .sv{color:#7eb8f7}
+body.dark .search-bar input{background:#1a2535;border-color:#3a4a5a;color:#e0e6f0}
+body.dark .tw{box-shadow:0 2px 10px rgba(0,0,0,0.4)}
+body.dark table{background:#1a2535}
+body.dark th{background:#0d2137;border-color:#2a3a4a}
+body.dark th.wh{background:#1a3c6e}
+body.dark th.sh{background:#1e4976}
+body.dark th.fxl,body.dark th.fxn{background:#0d2137}
+body.dark th.prom-h{background:#0d4a3a}
+body.dark td{border-color:#2a3a4a;background:#1a2535}
+body.dark td.ic{background:#1a2535;color:#667788}
+body.dark td.nc{background:#1a2535;color:#cdd6e0}
+body.dark td.nc:hover{background:#243040!important}
+body.dark td.prom-c{background:#0d3a2a!important;color:#4caf7d}
+body.dark td.prom-wk{color:#4caf7d}
+body.dark tr:nth-child(even) td{background:#1e2d3d}
+body.dark tr:nth-child(even) td.ic,body.dark tr:nth-child(even) td.nc{background:#1e2d3d}
+body.dark tr:hover td{background:#243040!important}
+body.dark input.gi{color:#e0e6f0}
+body.dark input.gi:focus{background:rgba(255,255,200,0.1)}
+body.dark .md{background:#1a2535;color:#e0e6f0}
+body.dark .md h3{color:#7eb8f7;border-bottom-color:#2a3a4a}
+body.dark .md label{color:#aabbcc}
+body.dark .md input,.dark .md select{background:#0f1923;border-color:#3a4a5a;color:#e0e6f0}
+body.dark .mo{background:rgba(0,0,0,0.7)}
+body.dark #ctxMenu{background:#1a2535;border-color:#2a3a4a}
+body.dark .ctx-item{color:#cdd6e0}
+body.dark .ctx-item:hover{background:#243040}
+body.dark .ctx-sep{background:#2a3a4a}
+body.dark #bottom-scroll{background:#1a2535;border-top-color:#2a3a4a}
+body.dark #visPanel{background:#1a2535;color:#e0e6f0}
+body.dark .rp-card{background:#1a2535}
+body.dark .rp-stat{background:#243040}
+body.dark .rp-row:hover{background:#243040}
+body.dark .rp-row-name{color:#cdd6e0}
+body.dark #reportPanel .rp-search input{background:#1a2535;border-color:#3a4a5a;color:#e0e6f0}
+body.dark #viewNotas,body.dark #viewReporte{border-bottom-color:#2a3a4a}
+body.dark [style*="background:#fff"]{background:#1a2535!important}
+body.dark [style*="background: #fff"]{background:#1a2535!important}
+
+/* ── HEADER ── */
+header{background:linear-gradient(135deg,#1a3c6e 0%,#2e6da4 100%);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+header h1{font-size:1.15rem;font-weight:700;letter-spacing:.3px}
+.hdr-sub{font-size:0.72rem;opacity:.7;margin-top:2px}
+.hi{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hi input{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);color:#fff;padding:5px 10px;border-radius:5px;font-size:0.82rem;transition:background .2s}
+.hi input:focus{background:rgba(255,255,255,0.25);outline:none}
+.hi input::placeholder{color:rgba(255,255,255,0.5)}
+.badge{font-size:0.72rem;color:#b6ffca;display:none;padding:3px 8px;background:rgba(0,0,0,0.25);border-radius:4px;animation:fadeIn .3s}
+.badge.on{display:inline}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── TOOLBAR ── */
+.toolbar{background:#fff;padding:8px 18px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:2px solid #dde3ea;box-shadow:0 2px 5px rgba(0,0,0,0.06)}
+.btn{padding:6px 13px;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s,transform .1s}
+.btn:hover{opacity:.88}
+.btn:active{transform:scale(.97)}
+.bg{background:#27ae60;color:#fff}.bp{background:#2e6da4;color:#fff}.bw{background:#e67e22;color:#fff}
+.bi{background:#8e44ad;color:#fff}.bl{background:#ecf0f1;color:#444;border:1px solid #ccc}.bd{background:#e74c3c;color:#fff}
+.bc{background:#16a085;color:#fff}.bx{background:#f39c12;color:#fff}
+
+/* ── TABS ── */
+.tabs{background:#fff;padding:0 18px;display:flex;gap:3px;overflow-x:auto;border-bottom:3px solid #2e6da4;scrollbar-width:thin}
+.tab{padding:8px 15px;cursor:pointer;font-size:0.8rem;font-weight:600;border-radius:6px 6px 0 0;white-space:nowrap;color:#666;border:1px solid transparent;border-bottom:none;margin-bottom:-3px;transition:background .15s,color .15s}
+.tab:hover{background:#eaf2fb;color:#2e6da4}
+.tab.active{background:#2e6da4;color:#fff;border-color:#2e6da4}
+
+/* ── CONTENT ── */
+.content{padding:12px 18px}
+
+/* ── STATS ── */
+.stats{display:flex;gap:0;background:#fff;margin-bottom:10px;border-radius:8px;box-shadow:0 1px 5px rgba(0,0,0,0.09);overflow:hidden}
+.si{display:flex;flex-direction:column;align-items:center;padding:10px 18px;border-right:1px solid #eee;flex:1;min-width:80px}
+.si:last-child{border-right:none}
+.sv{font-size:1.05rem;font-weight:700;color:#2e6da4}
+.sl{color:#aaa;font-size:0.67rem;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.search-bar input{padding:5px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.8rem;width:220px;outline:none;transition:border .2s}
+.search-bar input:focus{border-color:#2e6da4}
+.search-bar label{font-size:0.78rem;color:#666}
+
+/* ── TABLE WRAPPER ── */
+.tw{overflow:auto;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);max-height:calc(100vh - 240px)}
+table{border-collapse:collapse;background:#fff;font-size:0.75rem;white-space:nowrap;width:100%}
+
+/* ── SELECCIÓN TIPO EXCEL ── */
+td.xl-sel{outline:2px solid #1565c0!important;outline-offset:-2px;background:#dbeafe!important;position:relative;z-index:1}
+td.xl-sel.cell-low{background:#fde8e8!important}
+td.xl-sel.cell-rec{background:#e8f8e8!important}
+th.xl-sel-hdr{background:#0d47a1!important;color:#fff!important}
+td.ic.xl-sel-row{background:#dbeafe!important;color:#1565c0!important;font-weight:700}
+td.nc.xl-sel-row{background:#dbeafe!important}
+/* indicador de selección activa en esquina */
+.xl-sel-info{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1565c0;color:#fff;padding:5px 14px;border-radius:20px;font-size:0.75rem;z-index:9999;pointer-events:none;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+
+/* ── THEAD ── */
+th{background:#1a3c6e;color:#fff;padding:5px 5px;text-align:center;position:sticky;top:0;z-index:3;border:1px solid #2e6da4;user-select:none}
+th.wh{background:#2e6da4;cursor:pointer}
+th.wh:hover{filter:brightness(0.88)}
+th.sh{background:#3a7fc1;font-size:0.68rem;cursor:pointer;position:sticky;top:28px}
+th.sh:hover{filter:brightness(0.88)}
+th.fxl{position:sticky;left:0;z-index:5;background:#1a3c6e}
+th.fxn{position:sticky;left:32px;z-index:5;background:#1a3c6e}
+th.prom-h{background:#16a085;position:sticky;top:0;z-index:3}
+th.prom-sh{background:#1abc9c;font-size:0.68rem;position:sticky;top:28px}
+
+/* ── TBODY ── */
+td{border:1px solid #d0d7de;padding:2px 3px;text-align:center;vertical-align:middle}
+td.ic{width:30px;min-width:30px;color:#888;font-size:0.72rem;position:sticky;left:0;background:#fff;z-index:2}
+td.nc{text-align:left;padding-left:7px;min-width:195px;font-weight:500;position:sticky;left:30px;background:#fff;z-index:2;cursor:pointer;max-width:195px;overflow:hidden;text-overflow:ellipsis}
+td.nc:hover{background:#eaf2fb!important}
+td.prom-c{background:#e8f8f5!important;font-weight:700;color:#16a085;font-size:0.78rem}
+td.prom-c.glo{color:#e74c3c!important}
+td.prom-wk{font-weight:700;font-size:0.75rem;color:#16a085;border-left:2px solid rgba(0,0,0,0.12)!important}
+td.prom-wk.glo{color:#e74c3c!important}
+td.prom-wk.ghi{color:#1a7a40!important}
+tr:nth-child(even) td{background:#f7f9fc}
+tr:nth-child(even) td.ic,tr:nth-child(even) td.nc{background:#f7f9fc}
+tr:hover td{background:#eaf2fb!important}
+tr.hidden-row{display:none}
+
+/* ── INPUTS ── */
+input.gi{width:100%;border:none;background:transparent;text-align:center;font-size:0.75rem;padding:1px;outline:none;color:#333;min-width:28px}
+input.gi:focus{background:rgba(255,255,255,0.6);border-radius:2px}
+.glo{color:#c0392b!important;font-weight:800}
+.ghi{color:#1a7a40!important;font-weight:600}
+
+/* ── ESTADOS ESPECIALES DE CELDA ── */
+td.cell-low{background:#fde8e8!important;border:1.5px solid #e74c3c!important;position:relative}
+td.cell-low input.gi{color:#c0392b!important;font-weight:800}
+td.cell-low::after{content:'✗';position:absolute;top:1px;right:2px;font-size:0.55rem;color:#e74c3c;opacity:.7;pointer-events:none}
+
+td.cell-rec{background:#e8f8e8!important;border:1.5px solid #27ae60!important;position:relative;animation:recPulse .6s ease}
+td.cell-rec input.gi{color:#1a7a40!important;font-weight:800}
+td.cell-rec::after{content:'✓';position:absolute;top:1px;right:2px;font-size:0.55rem;color:#27ae60;opacity:.8;pointer-events:none}
+@keyframes recPulse{0%{box-shadow:0 0 0 0 rgba(39,174,96,.6)}70%{box-shadow:0 0 0 6px rgba(39,174,96,0)}100%{box-shadow:0 0 0 0 rgba(39,174,96,0)}}
+
+td.cell-absent{background:#fff3e0!important;border:1.5px solid #f57c00!important;position:relative}
+td.cell-absent input.gi{color:#e65100!important;font-weight:800;font-size:0.7rem}
+td.cell-absent::after{content:'A';position:absolute;top:1px;right:2px;font-size:0.55rem;color:#f57c00;opacity:.8;pointer-events:none}
+
+td.cell-np{background:#fce4ec!important;border:1.5px solid #c2185b!important;position:relative}
+td.cell-np input.gi{color:#880e4f!important;font-weight:800;font-size:0.7rem}
+td.cell-np::after{content:'NP';position:absolute;top:1px;right:2px;font-size:0.5rem;color:#c2185b;opacity:.8;pointer-events:none}
+
+td.cell-ex{background:#e8eaf6!important;border:1.5px solid #3949ab!important;position:relative}
+td.cell-ex input.gi{color:#1a237e!important;font-weight:800;font-size:0.7rem}
+td.cell-ex::after{content:'EX';position:absolute;top:1px;right:2px;font-size:0.5rem;color:#3949ab;opacity:.8;pointer-events:none}
+
+td.cell-delay{background:#f3e5f5!important;border:1.5px solid #7b1fa2!important;position:relative}
+td.cell-delay input.gi{color:#4a148c!important;font-weight:800;font-size:0.7rem}
+td.cell-delay::after{content:'P';position:absolute;top:1px;right:2px;font-size:0.55rem;color:#7b1fa2;opacity:.8;pointer-events:none}
+
+td.cell-notxt{background:#fafafa!important;border:1.5px dashed #90a4ae!important;position:relative}
+td.cell-notxt input.gi{color:#546e7a!important;font-weight:700;font-size:0.7rem}
+td.cell-notxt::after{content:'ST';position:absolute;top:1px;right:2px;font-size:0.48rem;color:#607d8b;opacity:.8;pointer-events:none}
+
+td.cell-nocuad{background:#fff8e1!important;border:1.5px dashed #fbc02d!important;position:relative}
+td.cell-nocuad input.gi{color:#f57f17!important;font-weight:700;font-size:0.7rem}
+td.cell-nocuad::after{content:'SC';position:absolute;top:1px;right:2px;font-size:0.48rem;color:#f9a825;opacity:.8;pointer-events:none}
+
+/* ── MENÚ CONTEXTUAL ── */
+#ctxMenu{position:fixed;z-index:99999;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.2);min-width:190px;padding:6px 0;display:none;border:1px solid #e0e0e0;animation:slideUp .12s ease}
+.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-size:0.8rem;color:#333;transition:background .1s}
+.ctx-item:hover{background:#f0f4f8}
+.ctx-item .ctx-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.ctx-sep{height:1px;background:#eee;margin:4px 0}
+
+/* ── VISIBILIDAD ── */
+tr.vis-hidden{display:none!important}
+.vis-hidden-col{display:none!important}
+/* stub de columna oculta — pequeña franja clickeable para restaurar */
+th.col-stub{width:10px!important;min-width:10px!important;max-width:10px!important;padding:0!important;cursor:pointer;background:#b0bec5!important;overflow:hidden;position:relative}
+th.col-stub:hover{background:#78909c!important}
+th.col-stub::after{content:'◀▶';font-size:0.45rem;writing-mode:vertical-rl;color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.8}
+td.col-stub{width:10px!important;min-width:10px!important;max-width:10px!important;padding:0!important;background:#eceff1!important;cursor:pointer}
+td.col-stub:hover{background:#cfd8dc!important}
+/* número de fila oculta — franja horizontal */
+tr.row-stub{display:table-row!important;height:6px!important}
+tr.row-stub td{padding:0!important;background:#b0bec5!important;cursor:pointer;font-size:0}
+tr.row-stub:hover td{background:#78909c!important}
+
+/* ── BARRA SCROLL INFERIOR ── */
+#bottom-scroll{overflow-x:auto;overflow-y:hidden;height:14px;background:#e8edf2;border-radius:0 0 8px 8px;border-top:1px solid #d0d7de;scrollbar-width:thin;scrollbar-color:#b0bec5 #e8edf2}
+#bottom-scroll::-webkit-scrollbar{height:10px}
+#bottom-scroll::-webkit-scrollbar-thumb{background:#b0bec5;border-radius:5px}
+#bottom-scroll::-webkit-scrollbar-track{background:#e8edf2}
+
+/* ── RESIZE COLUMNAS ── */
+th{position:relative}
+.col-resizer{
+  position:absolute;right:-3px;top:0;bottom:0;width:8px;
+  cursor:col-resize;z-index:10;background:transparent;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.col-resizer::after{
+  content:'';display:block;width:3px;height:60%;
+  background:rgba(255,255,255,0);border-radius:2px;transition:background .15s;
+}
+.col-resizer:hover::after,.col-resizer.dragging::after{background:rgba(255,255,255,0.85)}
+
+/* ── RESIZE FILAS ── */
+td.ic{position:relative}
+.row-resizer{
+  position:absolute;left:0;right:0;bottom:-3px;height:8px;
+  cursor:row-resize;z-index:10;background:transparent;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.row-resizer::after{
+  content:'';display:block;height:3px;width:60%;
+  background:rgba(46,109,164,0);border-radius:2px;transition:background .15s;
+}
+.row-resizer:hover::after,.row-resizer.dragging::after{background:rgba(46,109,164,0.8)}
+.bt:hover{opacity:.8}
+.bte{background:#3498db;color:#fff}.btd{background:#e74c3c;color:#fff}
+
+/* ── TOOLTIPS ── */
+[data-tip]{position:relative}
+[data-tip]::before{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:#1a2535;color:#fff;font-size:0.7rem;font-weight:500;
+  padding:5px 9px;border-radius:6px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s,transform .15s;
+  transform:translateX(-50%) translateY(4px);
+  z-index:99998;max-width:220px;white-space:normal;text-align:center;line-height:1.4;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25)
+}
+[data-tip]::after{
+  content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:#1a2535;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:99998
+}
+[data-tip]:hover::before,[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Tooltip hacia abajo cuando está en el header */
+.tip-down[data-tip]::before{top:calc(100% + 7px);bottom:auto;transform:translateX(-50%) translateY(-4px)}
+.tip-down[data-tip]::after{top:calc(100% + 2px);bottom:auto;border-top-color:transparent;border-bottom-color:#1a2535}
+.tip-down[data-tip]:hover::before{transform:translateX(-50%) translateY(0)}
+
+/* ── MODALS ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.mo.open{display:flex}
+.md{background:#fff;border-radius:12px;padding:24px;min-width:300px;max-width:460px;width:92%;box-shadow:0 16px 40px rgba(0,0,0,0.25);animation:slideUp .2s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.md h3{margin-bottom:16px;color:#1a3c6e;font-size:1rem;border-bottom:2px solid #eef2f7;padding-bottom:8px}
+.md label{font-size:0.8rem;color:#555;display:block;margin-bottom:3px;font-weight:600}
+.md input,.md select,.md textarea{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.88rem;margin-bottom:10px;transition:border .2s;font-family:inherit}
+.md input:focus,.md select:focus,.md textarea:focus{border-color:#2e6da4;outline:none}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.tip{font-size:0.7rem;color:#999;margin-top:-6px;margin-bottom:8px}
+
+/* ── LEYENDA TIPOS ── */
+.act-legend{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.act-badge{padding:2px 8px;border-radius:10px;font-size:0.68rem;font-weight:700;color:#fff;white-space:nowrap}
+
+/* ── REPORTE ── */
+#reportPanel{display:none;padding:14px 18px}
+.rp-search{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.rp-search input{padding:8px 14px;border:1px solid #ccc;border-radius:8px;font-size:0.9rem;width:280px;outline:none;transition:border .2s}
+.rp-search input:focus{border-color:#2e6da4}
+.rp-card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.09);padding:18px 20px;margin-bottom:14px;animation:slideUp .2s ease}
+.rp-name{font-size:1.05rem;font-weight:700;color:#1a3c6e;margin-bottom:4px}
+.rp-sub{font-size:0.75rem;color:#888;margin-bottom:12px}
+.rp-mat{margin-bottom:10px}
+.rp-mat-title{font-size:0.8rem;font-weight:700;color:#fff;padding:3px 10px;border-radius:5px;display:inline-block;margin-bottom:6px}
+.rp-items{display:flex;flex-wrap:wrap;gap:5px}
+.rp-item{padding:3px 9px;border-radius:12px;font-size:0.72rem;font-weight:600;display:flex;align-items:center;gap:4px;border:1px solid transparent}
+.rp-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.rp-stat{background:#f0f4f8;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px}
+.rp-stat-v{font-size:1rem;font-weight:700;color:#2e6da4}
+.rp-stat-l{font-size:0.65rem;color:#999;text-transform:uppercase}
+.rp-empty{color:#aaa;font-size:0.82rem;font-style:italic;padding:20px 0;text-align:center}
+.rp-all{display:flex;flex-direction:column;gap:6px}
+.rp-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;font-size:0.78rem;cursor:pointer;transition:background .12s}
+.rp-row:hover{background:#f0f4f8}
+.rp-row-name{flex:1;font-weight:600;color:#333}
+.rp-row-badges{display:flex;gap:4px;flex-wrap:wrap}
+.rp-badge{padding:2px 7px;border-radius:8px;font-size:0.65rem;font-weight:700;color:#fff}
+@media print{#reportPanel{display:block!important}.rp-search,.btn{display:none!important}}
+#toast{position:fixed;bottom:20px;right:20px;background:#1a3c6e;color:#fff;padding:10px 18px;border-radius:8px;font-size:0.82rem;z-index:99999;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);animation:fadeIn .3s}
+#toast.show{display:block}
+
+/* ── PRINT ── */
+@media print{
+  header .hi,.toolbar,.tabs,.stats,.bt,.search-bar,th.ath,td.ac{display:none!important}
+  body{background:#fff;font-size:10px}.content{padding:0}
+  table{font-size:0.6rem}
+  th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tw{box-shadow:none;max-height:none;overflow:visible}
+  @page{margin:1cm;size:landscape}
+}
+</style>
+</head>
+<body>
+
+<!-- ── PANTALLA DE LOGIN ── -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0f1923 0%,#1a3c6e 100%);z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:20px">
+  <div style="text-align:center;color:#fff;max-width:380px;padding:20px">
+    <div style="font-size:3rem;margin-bottom:8px">📚</div>
+    <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:6px">Registro de Notas</h1>
+    <p style="opacity:.7;font-size:0.88rem;margin-bottom:28px">Sistema de calificaciones para docentes</p>
+    <button id="loginBtn" onclick="signInGoogle()"
+      style="background:#fff;color:#333;border:none;border-radius:10px;padding:14px 28px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;margin:0 auto;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:transform .15s">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"/>
+      Ingresar con Google
+    </button>
+    <p id="loginError" style="color:#ff8a80;font-size:0.78rem;margin-top:14px;display:none"></p>
+    <p style="opacity:.4;font-size:0.7rem;margin-top:24px">Cada docente accede con su cuenta Google.<br>Tus datos son privados y solo tú los ves.</p>
+  </div>
+</div>
+
+<!-- ── BARRA DE USUARIO ── -->
+<div id="userBar" style="display:none;background:#1a3c6e;color:#fff;padding:4px 18px;font-size:0.75rem;display:none;align-items:center;justify-content:space-between">
+  <span id="userInfo" style="opacity:.8"></span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span id="syncStatus" style="opacity:.6;font-size:0.7rem">⏳ Sincronizando...</span>
+    <button onclick="signOutUser()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:4px;padding:2px 10px;cursor:pointer;font-size:0.72rem">Cerrar sesión</button>
+  </div>
+</div>
+
+<header>
+  <div>
+    <h1>📚 Registro de Notas — Tercer Trimestre</h1>
+    <div class="hdr-sub">Doble clic en nombres, semanas o columnas para editar · Tab/Enter para navegar</div>
+  </div>
+  <div class="hi">
+    <input type="text" id="infoGrado" placeholder="Grado (ej: Sexto C)" oninput="saveHdr()" data-tip="Nombre del grado o curso" class="tip-down"/>
+    <input type="text" id="infoAnio"  placeholder="Año (ej: 2025-2026)"  oninput="saveHdr()" data-tip="Año lectivo" class="tip-down"/>
+    <span class="badge" id="sv">✔ Guardado</span>
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border-radius:5px;padding:4px 10px"
+         data-tip="Ajustar tamaño de letra" class="tip-down">
+      <span style="font-size:0.72rem;color:rgba(255,255,255,0.7);font-weight:600">A</span>
+      <input type="range" id="fontSlider" min="9" max="20" value="13" step="1"
+        oninput="changeFontSize(0,+this.value)"
+        style="width:72px;accent-color:#7eb8f7;cursor:pointer;vertical-align:middle"/>
+      <span style="font-size:1rem;color:rgba(255,255,255,0.7);font-weight:600">A</span>
+      <span id="fontSizeLabel" style="font-size:0.68rem;color:rgba(255,255,255,0.6);min-width:26px">13px</span>
+    </div>
+    <button id="darkBtn" onclick="toggleDark()" data-tip="Alternar modo oscuro / claro" class="tip-down"
+      style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:5px;padding:4px 9px;cursor:pointer;font-size:0.82rem;transition:background .2s">🌙</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="btn bg"  onclick="openAddSt()"   data-tip="Agregar un nuevo estudiante a todas las materias">➕ Estudiante</button>
+  <button class="btn bc"  onclick="openAddWeek()"  data-tip="Agregar una nueva semana a la materia activa">➕ Semana</button>
+  <button class="btn bp"  onclick="openAddCol()"   data-tip="Agregar una actividad (tarea, lección, prueba…) a una semana">➕ Columna</button>
+  <button class="btn bx"  onclick="openDelWeek()"  data-tip="Eliminar una semana y todas sus notas">🗑 Semana</button>
+  <button class="btn bw"  onclick="exportCSV()"    data-tip="Exportar las notas de la materia activa a Excel/CSV">📊 CSV</button>
+  <button class="btn bi"  onclick="printTable()"   data-tip="Imprimir la tabla de notas actual">🖨 Imprimir</button>
+  <button class="btn bl"  onclick="saveData()"     data-tip="Guardar manualmente (también se guarda automáticamente cada 30s)">💾 Guardar</button>
+  <button class="btn bd"  onclick="doClearGrades()" data-tip="Borrar todas las notas de la materia activa o de todas las materias">🧹 Limpiar Notas</button>
+  <button class="btn" style="background:#455a64;color:#fff" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas individualmente">👁 Mostrar/Ocultar</button>
+  <button class="btn" style="background:#00897b;color:#fff" onclick="exportBackup()" data-tip="Descargar un backup completo en JSON con todos los datos">⬇ Backup</button>
+  <button class="btn" style="background:#6d4c41;color:#fff" onclick="document.getElementById('importFile').click()" data-tip="Restaurar datos desde un archivo de backup JSON">⬆ Restaurar</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)"/>
+  <div style="display:flex;gap:2px;margin-left:4px">
+    <button id="btnUndo" class="btn bl" onclick="histUndo()" data-tip="Deshacer último cambio de nota (Ctrl+Z)" style="padding:6px 10px;font-size:1rem" disabled>↩</button>
+    <button id="btnRedo" class="btn bl" onclick="histRedo()" data-tip="Rehacer cambio deshecho (Ctrl+Y)" style="padding:6px 10px;font-size:1rem" disabled>↪</button>
+  </div>
+</div>
+
+<!-- Panel Visibilidad -->
+<div id="visPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:280px;background:#fff;z-index:8888;box-shadow:-4px 0 20px rgba(0,0,0,0.18);display:none;flex-direction:column">
+  <div style="background:#1a3c6e;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-weight:700;font-size:0.9rem">👁 Mostrar / Ocultar</span>
+    <button onclick="closeVisPanel()" style="background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer">✕</button>
+  </div>
+  <div style="padding:10px 14px;border-bottom:1px solid #eee;display:flex;gap:6px;flex-wrap:wrap">
+    <button class="btn bg" style="font-size:0.72rem;padding:4px 8px" onclick="showAllVis()">Mostrar todo</button>
+    <button class="btn bd" style="font-size:0.72rem;padding:4px 8px" onclick="hideAllRows()">Ocultar filas</button>
+  </div>
+  <div id="visPanelBody" style="overflow-y:auto;flex:1;padding:10px 14px"></div>
+</div>
+<div id="visOverlay" onclick="closeVisPanel()" style="display:none;position:fixed;inset:0;z-index:8887;background:rgba(0,0,0,0.25)"></div>
+
+<div class="tabs" id="tabs"></div>
+
+<!-- Barra de vista principal -->
+<div style="background:#fff;border-bottom:2px solid #eef2f7;display:flex;gap:0">
+  <button id="viewNotas"   onclick="switchView('notas')"   data-tip="Ver y editar la tabla de notas" class="tip-down" style="padding:8px 20px;border:none;background:#2e6da4;color:#fff;font-weight:700;font-size:0.82rem;cursor:pointer;border-radius:0">📋 Notas</button>
+  <button id="viewReporte" onclick="switchView('reporte')" data-tip="Ver reporte completo por estudiante con alertas y promedios" class="tip-down" style="padding:8px 20px;border:none;background:transparent;color:#666;font-weight:600;font-size:0.82rem;cursor:pointer;border-radius:0;transition:background .15s">📊 Reportes</button>
+  <button id="viewExport"  onclick="switchView('export')"  data-tip="Exportar promedios por semana para pegar en sistema externo (sistema-orozco)" class="tip-down" style="padding:8px 20px;border:none;background:transparent;color:#666;font-weight:600;font-size:0.82rem;cursor:pointer;border-radius:0;transition:background .15s">📤 Exportar al Sistema</button>
+</div>
+
+<div class="content" id="viewNotasPanel">
+  <div class="stats" id="stats"></div>
+  <div class="search-bar">
+    <input type="text" id="searchInp" placeholder="🔍 Buscar estudiante..." oninput="filterStudents(this.value)" data-tip="Filtra estudiantes por nombre en tiempo real"/>
+    <label id="searchCount"></label>
+    <select id="sortSel" onchange="applySortOrder()" data-tip="Ordenar la lista de estudiantes por nombre, promedio o alertas"
+      style="padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:0.78rem;outline:none;cursor:pointer">
+      <option value="default">↕ Orden original</option>
+      <option value="name-az">A→Z Nombre</option>
+      <option value="name-za">Z→A Nombre</option>
+      <option value="avg-desc">📉 Mayor promedio</option>
+      <option value="avg-asc">📈 Menor promedio</option>
+      <option value="alerts-desc">⚠ Más alertas</option>
+      <option value="alerts-asc">✅ Menos alertas</option>
+    </select>
+  </div>
+  <div class="tw">
+    <table id="mainTable">
+      <thead id="th"></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="reportPanel">
+  <div class="rp-search">    <input type="text" id="rpSearch" placeholder="🔍 Buscar estudiante por nombre..." oninput="rpFilter(this.value)" autocomplete="off"/>
+    <button class="btn bp" onclick="rpShowAll()">Ver todos</button>
+    <button class="btn bw" onclick="rpPrint()">🖨 Imprimir reporte</button>
+    <label id="rpCount" style="font-size:0.78rem;color:#888"></label>
+  </div>
+  <div id="rpBody"></div>
+</div>
+
+<!-- Panel Exportar al Sistema -->
+<div id="exportPanel" style="display:none;padding:14px 18px">
+  <div style="background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.09);padding:20px;margin-bottom:14px">
+    <div style="font-size:1rem;font-weight:700;color:#1a3c6e;margin-bottom:4px">📤 Exportar promedios al sistema externo</div>
+    <div style="font-size:0.78rem;color:#888;margin-bottom:16px">Selecciona la materia y la semana. Se genera una columna con el promedio de cada estudiante en el orden del sistema. Copia y pega directamente.</div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+      <div>
+        <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Materia</label>
+        <select id="expMat" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:180px"></select>
+      </div>
+      <div>
+        <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Semana / Columna</label>
+        <select id="expWeek" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none;min-width:160px"></select>
+      </div>
+      <div>
+        <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Valor a exportar</label>
+        <select id="expType" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none">
+          <option value="prom-week">Promedio de la semana</option>
+          <option value="prom-mat">Promedio de la materia</option>
+          <option value="col">Nota de una columna específica</option>
+        </select>
+      </div>
+      <div id="expColWrap" style="display:none">
+        <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px">Columna</label>
+        <select id="expCol" onchange="expRefresh()" style="padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:0.85rem;outline:none"></select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <button class="btn" style="background:#25a244;color:#fff;font-size:0.85rem;padding:8px 16px" onclick="expGenerateBookmarklet()" data-tip="Genera un botón que llena el sistema automáticamente con un solo clic">⚡ Generar Auto-Relleno</button>
+      <button class="btn bp" onclick="expStartWizard()" data-tip="Modo asistente: copia un valor a la vez">🎯 Asistente</button>
+      <button class="btn bg" onclick="expCopyTSV()" data-tip="Copia para Excel">📊 Excel</button>
+      <span id="expCopied" style="font-size:0.78rem;color:#27ae60;align-self:center;display:none">✔ ¡Copiado!</span>
+    </div>
+
+    <!-- Panel Auto-Relleno (Bookmarklet) -->
+    <div id="expAutoPanel" style="display:none;background:#f0fff4;border:2px solid #25a244;border-radius:10px;padding:18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700;color:#1a5c2a;font-size:0.95rem;margin-bottom:3px">⚡ Auto-Relleno Automático</div>
+          <div style="font-size:0.75rem;color:#555">Llena todos los campos del sistema con un solo clic</div>
+        </div>
+        <button onclick="document.getElementById('expAutoPanel').style.display='none'" style="background:none;border:none;cursor:pointer;color:#888;font-size:1rem">✕</button>
+      </div>
+
+      <!-- Instrucciones paso a paso -->
+      <div style="background:#fff;border-radius:8px;padding:12px 16px;margin-bottom:12px;border:1px solid #c8e6c9">
+        <div style="font-weight:700;font-size:0.8rem;color:#1a5c2a;margin-bottom:8px">📋 Instrucciones (una sola vez):</div>
+        <div style="font-size:0.78rem;color:#444;line-height:1.8">
+          <b>1.</b> Arrastra el botón verde de abajo a tu barra de favoritos del navegador<br>
+          <b>2.</b> Ve al sistema-orozco, abre la página de calificaciones de la materia<br>
+          <b>3.</b> Haz clic en el favorito <strong>"▶ Rellenar Notas"</strong><br>
+          <b>4.</b> ¡Listo! Los campos se llenan solos automáticamente
+        </div>
+      </div>
+
+      <!-- Botón bookmarklet para arrastrar -->
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <div style="font-size:0.78rem;color:#555;font-weight:600">① Arrastra este botón a tus favoritos:</div>
+        <a id="bookmarkletLink" href="#" style="background:#1565c0;color:#fff;padding:8px 16px;border-radius:6px;font-weight:700;font-size:0.85rem;text-decoration:none;box-shadow:0 2px 6px rgba(0,0,0,0.2);cursor:grab;display:inline-block"
+           ondragstart="event.dataTransfer.setData('text/plain',this.href)"
+           onclick="event.preventDefault();alert('Arrastra este botón a tu barra de favoritos del navegador')">
+          ▶ Rellenar Notas
+        </a>
+        <div style="font-size:0.72rem;color:#888">← Arrastra esto a ⭐ Favoritos</div>
+      </div>
+
+      <!-- Alternativa: copiar script -->
+      <div style="margin-bottom:8px">
+        <div style="font-size:0.78rem;color:#555;font-weight:600;margin-bottom:6px">② O copia el script y pégalo en la consola del navegador:</div>
+        <div style="background:#fffde7;border:1px solid #f9a825;border-radius:6px;padding:8px 10px;font-size:0.75rem;color:#555;margin-bottom:6px;line-height:1.7">
+          <b>Pasos en Chrome:</b><br>
+          1. Abre F12 → pestaña <b>Consola</b><br>
+          2. Si ves <em>"Don't paste code..."</em> escribe exactamente: <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.8rem">allow pasting</code> y presiona Enter<br>
+          3. Pega el script y presiona Enter
+        </div>
+        <div style="position:relative">
+          <textarea id="expScript" readonly style="width:100%;height:80px;font-size:0.68rem;font-family:monospace;border:1px solid #ccc;border-radius:6px;padding:8px;background:#f8f8f8;resize:none;color:#333"></textarea>
+          <button onclick="expCopyScript()" style="position:absolute;top:6px;right:6px;background:#1565c0;color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:0.7rem;cursor:pointer">Copiar</button>
+        </div>
+      </div>
+
+      <div style="font-size:0.7rem;color:#888;background:#fffde7;padding:6px 10px;border-radius:5px;border-left:3px solid #f9a825">
+        ⚠ El script detecta los campos de texto del sistema por posición (fila por fila). Si el sistema cambia su estructura, puede necesitar ajuste.
+      </div>
+    </div>
+
+    <!-- Asistente campo a campo -->
+    <div id="expWizard" style="display:none;background:#e8f4fd;border:2px solid #2e6da4;border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-weight:700;color:#1a3c6e;font-size:0.9rem">🎯 Asistente de pegado</span>
+        <button onclick="expStopWizard()" style="background:none;border:none;cursor:pointer;color:#888;font-size:1rem">✕</button>
+      </div>
+      <div style="font-size:0.78rem;color:#555;margin-bottom:10px">
+        1. Haz clic en el primer campo del sistema externo<br>
+        2. Presiona <kbd style="background:#fff;border:1px solid #ccc;border-radius:3px;padding:1px 5px">Ctrl+V</kbd> para pegar<br>
+        3. Presiona <kbd style="background:#fff;border:1px solid #ccc;border-radius:3px;padding:1px 5px">Tab</kbd> en el sistema para ir al siguiente<br>
+        4. Vuelve aquí y presiona <strong>Siguiente →</strong>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="background:#fff;border-radius:8px;padding:10px 18px;text-align:center;min-width:100px;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+          <div style="font-size:0.68rem;color:#888;margin-bottom:2px">Estudiante</div>
+          <div id="wzName" style="font-size:0.78rem;font-weight:700;color:#1a3c6e;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:10px 24px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+          <div style="font-size:0.68rem;color:#888;margin-bottom:2px">Valor a pegar</div>
+          <div id="wzVal" style="font-size:1.8rem;font-weight:800;color:#2e6da4">—</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button id="wzCopyBtn" onclick="wzCopy()" style="background:#2e6da4;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:0.85rem;font-weight:700;cursor:pointer">📋 Copiar</button>
+          <div style="display:flex;gap:6px">
+            <button onclick="wzPrev()" style="background:#ecf0f1;border:1px solid #ccc;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:0.8rem">← Anterior</button>
+            <button onclick="wzNext()" style="background:#27ae60;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:0.8rem;font-weight:700;cursor:pointer">Siguiente →</button>
+          </div>
+        </div>
+        <div style="font-size:0.78rem;color:#888">
+          <span id="wzPos">0</span> / <span id="wzTotal">0</span>
+          <div id="wzDone" style="display:none;color:#27ae60;font-weight:700;margin-top:4px">✅ ¡Completado!</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;background:#c8e6f9;border-radius:4px;height:6px;overflow:hidden">
+        <div id="wzBar" style="background:#2e6da4;height:100%;width:0%;transition:width .3s;border-radius:4px"></div>
+      </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div style="overflow:auto;max-height:55vh;border-radius:8px;border:1px solid #e0e0e0">
+      <table style="border-collapse:collapse;width:100%;font-size:0.8rem">
+        <thead>
+          <tr>
+            <th style="background:#1a3c6e;color:#fff;padding:7px 12px;text-align:left;position:sticky;top:0">#</th>
+            <th style="background:#1a3c6e;color:#fff;padding:7px 12px;text-align:left;position:sticky;top:0">Estudiante</th>
+            <th style="background:#2e6da4;color:#fff;padding:7px 12px;text-align:center;position:sticky;top:0" id="expValHeader">Valor</th>
+            <th style="background:#1a3c6e;color:#fff;padding:7px 12px;text-align:center;position:sticky;top:0">Copiar</th>
+          </tr>
+        </thead>
+        <tbody id="expTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal genérico -->
+<div class="mo" id="modal">
+  <div class="md">
+    <h3 id="mTitle">—</h3>
+    <div id="mBody"></div>
+    <div class="ma">
+      <button class="btn bl" onclick="closeModal()">Cancelar</button>
+      <button class="btn bg" id="mOk">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmar -->
+<div class="mo" id="mCf">
+  <div class="md">
+    <h3 id="cfT">¿Confirmar?</h3>
+    <p id="cfM" style="margin-bottom:14px;color:#555;font-size:0.87rem"></p>
+    <div class="ma">
+      <button class="btn bl" onclick="closeCf()">Cancelar</button>
+      <button class="btn bd" id="cfBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+<div class="xl-sel-info" id="xlInfo"></div>
+<div id="ctxMenu"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATOS POR DEFECTO
+// ══════════════════════════════════════════════════════
+const MATS = ['Lengua','Matemáticas','CCNN','EESS','Artística','Lectura','Acompañamiento Integral'];
+
+const DW = ['SEMANA 1','SEMANA 2'];
+
+// Tipos de actividad: id, etiqueta, color header, color celda
+const ACT_TYPES = [
+  { id:'AC', label:'Actividad en Clase', color:'#1565c0', cell:'rgba(21,101,192,0.08)'  },
+  { id:'T',  label:'Tarea',              color:'#6a1fa0', cell:'rgba(106,31,160,0.08)'  },
+  { id:'L',  label:'Lección',            color:'#b5451b', cell:'rgba(181,69,27,0.08)'   },
+  { id:'TG', label:'Trabajo en Grupo',   color:'#00695c', cell:'rgba(0,105,92,0.08)'    },
+  { id:'PS', label:'Prueba/Examen',      color:'#1a6e3c', cell:'rgba(26,110,60,0.08)'   },
+  { id:'OT', label:'Otro',               color:'#37474f', cell:'rgba(55,71,79,0.08)'    },
+];
+
+function actType(id) {
+  return ACT_TYPES.find(t => t.id === id) || ACT_TYPES[4];
+}
+
+// Columnas como objetos: { name, type, date, color }
+const DC = {
+  'SEMANA 1':[
+    {name:'A1',type:'AC',date:'',color:null},{name:'T1',type:'T',date:'',color:null},
+    {name:'L1',type:'L',date:'',color:null},{name:'TG1',type:'TG',date:'',color:null}
+  ],
+  'SEMANA 2':[
+    {name:'A2',type:'AC',date:'',color:null},{name:'T2',type:'T',date:'',color:null},
+    {name:'L2',type:'L',date:'',color:null},{name:'TG2',type:'TG',date:'',color:null}
+  ]
+};
+
+const DS = [
+  'ALCIVAR MENDOZA AMY SOFIA','ALMEIDA ANZATUÑA EMILY ANAHI',
+  'ALMEIDA TACUAMAN DOMINIC JHARET','ANDINO ORTIZ ERICK JACOBO',
+  'ANTE SUAMBRA MELISA BRIGITH','CAMPOS ESPINOSA JUSTER PAUL',
+  'CASTILLO ROJAS DOMINICK JAZIEL','CEDEÑO PINANJOTA ARLETH SALOME',
+  'CHILENO MEDINA CRISTOFER ALEJANDRO','CHONTA LLUMITAXI ALISSON ESTEFANIA',
+  'CISNEROS MORAN ALEJANDRO PAVEL','ENCARNACION INFANTE TIFANY ESTHER',
+  'FLORES ACERO CAMILA NOEMI','GAGUY CABAY TAMIA MAYTE',
+  'GODOY CEDEÑO SAMANTHA AITANA','GUALOTO DIAZ SAMANTHA ESTEFANIA',
+  'GUANOTASIG SANTIAK JAYDEEN JAACE','GUAYANAY VINUEZA JHON ALEX',
+  'GUERRON ROLDAN ANGEL SEBASTIAN','HEREDIA TITUAÑA JHAIR ALEJANDRO',
+  'IÑIGUEZ MORALES DEMY VALENTINA','JARAMILLO ERAZO YERLIS NAHOMI',
+  'LOYATO CEPEDA EITHAN SEBASTIAN','MALES NARVAEZ DANDY FERNEY',
+  'MERA POZO VALERIA MONSERRATH','MORALES TULCANAZO DANDELAY MIA',
+  'MUSGO MORALES SCARLETT ISABEL','NOLIVIOS LANAS BRYANA MAITE',
+  'PALACIOS PIZARRO DOSTIN MIGUEL','PERALTA ANRANGO ALEXANDER JAVIER',
+  'QUIÑONEZ GARCIA DYLAN JESNER','QUISPE ANTE ALAN JOSUE',
+  'ROBLES CARRION ANGELINE ISABELA','ROSALES LOPEZ ISAAC ANDRES',
+  'ROSERO LITARDO CRISTIAN DANIEL','SANGUCHO AGUIRRE JHOAN SEBASTIAN',
+  'SARZOSA CONTRERAS TYLER LEONEL','SUAREZ GOMEZ VALESKA MALLERLY',
+  'VELASCO RAMOS ESTEBAN ALEXANDER','QUISPE OSCAR PATRICIO'
+];
+
+// Paleta de colores por defecto para semanas (header, subheader, celda tenue)
+const WEEK_PALETTE = [
+  { h:'#1a6e3c', s:'#27ae60', c:'rgba(39,174,96,0.07)'  },  // verde
+  { h:'#1a4a8a', s:'#2e6da4', c:'rgba(46,109,164,0.07)' },  // azul
+  { h:'#7b2d8b', s:'#9b59b6', c:'rgba(155,89,182,0.07)' },  // morado
+  { h:'#b5451b', s:'#e67e22', c:'rgba(230,126,34,0.07)'  },  // naranja
+  { h:'#8b1a1a', s:'#c0392b', c:'rgba(192,57,43,0.07)'   },  // rojo
+  { h:'#1a7a7a', s:'#16a085', c:'rgba(22,160,133,0.07)'  },  // teal
+  { h:'#7a6a00', s:'#f1c40f', c:'rgba(241,196,15,0.07)'  },  // amarillo
+  { h:'#2c3e50', s:'#546e7a', c:'rgba(84,110,122,0.07)'  },  // gris azul
+  { h:'#5d4037', s:'#8d6e63', c:'rgba(141,110,99,0.07)'  },  // café
+  { h:'#1a5c1a', s:'#2ecc71', c:'rgba(46,204,113,0.07)'  },  // verde claro
+  { h:'#0d47a1', s:'#1565c0', c:'rgba(21,101,192,0.07)'  },  // azul oscuro
+  { h:'#880e4f', s:'#c2185b', c:'rgba(194,24,91,0.07)'   },  // rosa
+];
+
+// ══════════════════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════════════════
+// recovered: { "materia||si||week||col": true }
+let S = { grado:'Sexto C', anio:'2025-2026', am:0, students:[], mats:{}, weekColors:{}, recovered:{} };
+
+function initS() {
+  const sv = localStorage.getItem('notas_v6');
+  if (sv) {
+    try { S = JSON.parse(sv); ensureMats(); return; } catch(e) {}
+  }
+  S.students = [...DS];
+  MATS.forEach(m => {
+    S.mats[m] = { weeks:[...DW], cols:JSON.parse(JSON.stringify(DC)), grades:{} };
+    DS.forEach((_,i) => { S.mats[m].grades[i] = {}; });
+  });
+}
+
+function ensureMats() {
+  if (!S.mats) S.mats = {};
+  MATS.forEach(m => {
+    if (!S.mats[m]) {
+      S.mats[m] = { weeks:[...DW], cols:JSON.parse(JSON.stringify(DC)), grades:{} };
+      (S.students||[]).forEach((_,i) => { S.mats[m].grades[i] = {}; });
+    } else {
+      // Migrar columnas antiguas (string) al nuevo formato objeto
+      const mat = S.mats[m];
+      if (mat.cols) {
+        Object.keys(mat.cols).forEach(w => {
+          mat.cols[w] = (mat.cols[w] || []).map(c =>
+            typeof c === 'string' ? {name:c, type:'OT', date:'', color:null} : c
+          );
+        });
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  GUARDAR / TOAST
+// ══════════════════════════════════════════════════════
+function saveData() {
+  localStorage.setItem('notas_v6', JSON.stringify(S));
+  const el = document.getElementById('sv');
+  el.classList.add('on');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('on'), 2000);
+}
+
+function saveHdr() {
+  S.grado = document.getElementById('infoGrado').value;
+  S.anio  = document.getElementById('infoAnio').value;
+  saveData();
+}
+
+function toast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1a3c6e';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+setInterval(saveData, 30000);
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function gm() { return S.mats[MATS[S.am]]; }
+
+function esc(s)    { return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+function escHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escVal(s) { return String(s).replace(/"/g,'&quot;'); }
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeCf()    { document.getElementById('mCf').classList.remove('open'); }
+
+function showModal(title, bodyHTML, okLabel, okFn, okClass) {
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mBody').innerHTML = bodyHTML;
+  const btn = document.getElementById('mOk');
+  btn.textContent = okLabel || 'Guardar';
+  btn.className = 'btn ' + (okClass || 'bg');
+  btn.onclick = okFn;
+  document.getElementById('modal').classList.add('open');
+}
+
+function confirm2(title, msg, fn, btnClass) {
+  document.getElementById('cfT').textContent = title;
+  document.getElementById('cfM').textContent = msg;
+  const btn = document.getElementById('cfBtn');
+  btn.className = 'btn ' + (btnClass || 'bd');
+  btn.onclick = () => { closeCf(); fn(); };
+  document.getElementById('mCf').classList.add('open');
+}
+
+// Promedio de un estudiante en la materia activa
+function studentAvg(si) {
+  const mat = gm();
+  const g = mat.grades[si] || {};
+  const vals = Object.values(g).map(v => parseFloat(v)).filter(n => !isNaN(n));
+  if (!vals.length) return null;
+  return vals.reduce((a,b) => a+b, 0) / vals.length;
+}
+function weekColor(matName, week, wi) {
+  if (!S.weekColors) S.weekColors = {};
+  const key = matName + '||' + week;
+  if (!S.weekColors[key]) {
+    S.weekColors[key] = WEEK_PALETTE[wi % WEEK_PALETTE.length];
+  }
+  return S.weekColors[key];
+}
+
+function setWeekColor(matName, week, colorObj) {
+  if (!S.weekColors) S.weekColors = {};
+  S.weekColors[matName + '||' + week] = colorObj;
+  saveData();
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER PRINCIPAL
+// ══════════════════════════════════════════════════════
+function render() {
+  renderTabs();
+  renderTable();
+  renderStats();
+  document.getElementById('infoGrado').value = S.grado;
+  document.getElementById('infoAnio').value  = S.anio;
+  filterStudents(document.getElementById('searchInp').value);
+  requestAnimationFrame(() => {
+    initNamesColResizer();
+    initColResizers();
+    initRowResizers();
+    initFixedColResizer('th-prom-total', 'td.prom-c', 'prom-total', 44);
+    initFixedColResizer('th-acc',        'td.ac',      'acc',        44);
+    applyColWidths();
+    applyRowHeights();
+    applyColVisibility();
+    applyRowVisibility();
+    initBottomScrollbar();
+  });
+}
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = MATS.map((m,i) =>
+    `<div class="tab ${i===S.am?'active':''}" onclick="switchM(${i})" title="${m}">${m}</div>`
+  ).join('');
+}
+
+function switchM(i) { S.am = i; render(); }
+
+// ══════════════════════════════════════════════════════
+//  RENDER TABLA
+// ══════════════════════════════════════════════════════
+function renderTable() {
+  const mat = gm();
+
+  // ── Fila 1: semanas ──
+  let r1 = `<tr>
+    <th class="fxl" rowspan="2" style="min-width:30px;width:30px">#</th>
+    <th id="th-nombres" class="fxn" rowspan="2" style="min-width:195px;text-align:left;padding-left:7px">
+      NOMBRES
+      <span style="font-size:0.58rem;opacity:.65;display:block;font-weight:400">✎ doble clic</span>
+    </th>`;
+
+  mat.weeks.forEach((w, wi) => {
+    const c = mat.cols[w] || [];
+    const span = (c.length || 1) + 1; // +1 para la columna PROM de la semana
+    const wc = weekColor(MATS[S.am], w, wi);
+    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para renombrar · ${w}"
+      style="background:${wc.h};border-color:${wc.h}">
+      ${escHTML(w)}
+      <span style="font-size:0.55rem;opacity:.7;display:block;font-weight:400">✎ renombrar</span>
+    </th>`;
+  });
+
+  r1 += `<th id="th-prom-total" class="prom-h" rowspan="2" style="min-width:52px">PROM<br><span style="font-size:0.6rem;font-weight:400;opacity:.8">TOTAL</span></th>
+          <th id="th-acc" rowspan="2" class="ath" style="min-width:52px;width:52px">Acc.</th></tr>`;
+
+  // ── Fila 2: subcolumnas con tipo, color y fecha ──
+  let r2 = '<tr>';
+  mat.weeks.forEach((w, wi) => {
+    const c = mat.cols[w] || [];
+    const wc = weekColor(MATS[S.am], w, wi);
+    if (!c.length) {
+      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(w)}')" title="Doble clic para agregar columna"
+        style="background:${wc.s};border-color:${wc.h}">+col</th>`;
+    } else {
+      c.forEach((col, ci) => {
+        const at  = actType(col.type);
+        const bg  = col.color || at.color;
+        const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.58rem;opacity:.8;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
+        const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.75;font-weight:400;letter-spacing:.2px">${escHTML(at.label)}</span>`;
+        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)}${col.date?' · '+col.date:''} · Doble clic para editar"
+          style="background:${bg};border-color:${bg};min-width:42px">${lbl}${typeBadge}</th>`;
+      });
+    }
+    // Columna PROM de la semana
+    r2 += `<th class="sh" style="background:${wc.h};border-color:${wc.h};font-weight:700;opacity:.95">PROM</th>`;
+  });
+  r2 += '</tr>';
+
+  document.getElementById('th').innerHTML = r1 + r2;
+
+  // ── Filas de estudiantes (respeta orden de clasificación) ──
+  document.getElementById('tb').innerHTML = getSortedIndices().map((si, rowPos) => {
+    const name = S.students[si];
+    const g = mat.grades[si] || {};
+    const cells = mat.weeks.map((w, wi) => {
+      const c = mat.cols[w] || [];
+      const wc = weekColor(MATS[S.am], w, wi);
+      // Calcular promedio de esta semana para este estudiante
+      const weekVals = c.map(col => parseFloat(g[w+'||'+col.name])).filter(n => !isNaN(n));
+      const weekAvg  = weekVals.length ? (weekVals.reduce((a,b)=>a+b,0)/weekVals.length) : null;
+      const wAvgDisp = weekAvg !== null ? weekAvg.toFixed(2) : '—';
+      const wAvgCls  = weekAvg !== null && weekAvg < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
+
+      if (!c.length) return `<td style="color:#bbb;background:${wc.c}">—</td>
+        <td class="prom-wk ${wAvgCls}" style="background:${wc.c};font-weight:700;font-size:0.75rem">${wAvgDisp}</td>`;
+
+      const inputs = c.map(col => {
+        const at  = actType(col.type);
+        const cellBg = col.color ? hexToRgba(col.color, 0.09) : at.cell;
+        const k = w + '||' + col.name;
+        const v = g[k] !== undefined ? g[k] : '';
+        const n = parseFloat(v);
+        const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
+        const specCls = specialCls(v);
+        const tdCls = specCls ? specCls
+          : (v !== '' && !isNaN(n)
+            ? (n < 7 ? 'cell-low' : (isRecovered(si, w, col.name) ? 'cell-rec' : ''))
+            : '');
+        const tdBg = tdCls ? '' : cellBg;
+        return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="background:${tdBg}"><input class="gi ${specCls?'':cls}" type="text" inputmode="decimal"
+          value="${escVal(v)}"
+          onchange="upd(${si},'${esc(w)}','${esc(col.name)}',this.value)"
+          oninput="clr(this)"
+          onkeydown="nav(event,this)"/></td>`;
+      }).join('');
+
+      return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(w)}"
+        style="background:${wc.c};font-weight:700;font-size:0.75rem">${wAvgDisp}</td>`;
+    }).join('');
+
+    const avg = studentAvg(si);
+    const avgDisp = avg !== null ? avg.toFixed(2) : '—';
+    const avgCls  = avg !== null && avg < 7 ? 'glo' : '';
+
+    return `<tr data-name="${escVal(name.toLowerCase())}">
+      <td class="ic">${rowPos+1}</td>
+      <td class="nc" ondblclick="editStudentName(${si})" title="Doble clic para editar">${escHTML(name)}</td>
+      ${cells}
+      <td class="prom-c ${avgCls}">${avgDisp}</td>
+      <td class="ac" style="white-space:nowrap">
+        <button class="bt bte" onclick="editStudentName(${si})" title="Editar nombre">✏</button>
+        <button class="bt btd" onclick="delSt(${si})" title="Eliminar estudiante">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats() {
+  const mat = gm();
+  let tot=0, cnt=0, low=0, hi=0, max=-Infinity, min=Infinity;
+  S.students.forEach((_,si) => {
+    Object.values(mat.grades[si]||{}).forEach(v => {
+      const n = parseFloat(v);
+      if (!isNaN(n)) {
+        tot+=n; cnt++;
+        if(n<7) low++;
+        if(n>=9) hi++;
+        if(n>max) max=n;
+        if(n<min) min=n;
+      }
+    });
+  });
+  const avg = cnt > 0 ? (tot/cnt).toFixed(2) : '—';
+  const maxD = cnt > 0 ? max.toFixed(2) : '—';
+  const minD = cnt > 0 ? min.toFixed(2) : '—';
+  document.getElementById('stats').innerHTML = `
+    <div class="si"><span class="sv">${S.students.length}</span><span class="sl">Estudiantes</span></div>
+    <div class="si"><span class="sv">${avg}</span><span class="sl">Promedio</span></div>
+    <div class="si"><span class="sv" style="color:#e74c3c">${low}</span><span class="sl">Notas &lt;7</span></div>
+    <div class="si"><span class="sv" style="color:#27ae60">${hi}</span><span class="sl">Notas ≥9</span></div>
+    <div class="si"><span class="sv" style="color:#27ae60">${maxD}</span><span class="sl">Máxima</span></div>
+    <div class="si"><span class="sv" style="color:#e74c3c">${minD}</span><span class="sl">Mínima</span></div>
+    <div class="si"><span class="sv">${cnt}</span><span class="sl">Ingresadas</span></div>
+    <div class="si"><span class="sv" style="color:#8e44ad;font-size:0.78rem">${MATS[S.am]}</span><span class="sl">Materia</span></div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  BÚSQUEDA
+// ══════════════════════════════════════════════════════
+function filterStudents(q) {
+  const term = (q||'').toLowerCase().trim();
+  const rows = document.querySelectorAll('#tb tr');
+  let vis = 0;
+  rows.forEach(r => {
+    const name = r.getAttribute('data-name') || '';
+    const show = !term || name.includes(term);
+    r.classList.toggle('hidden-row', !show);
+    if (show) vis++;
+  });
+  const lbl = document.getElementById('searchCount');
+  lbl.textContent = term ? `${vis} de ${S.students.length} estudiantes` : '';
+}
+
+// ══════════════════════════════════════════════════════
+//  ACTUALIZAR NOTA
+// ══════════════════════════════════════════════════════
+function recKey(si, week, col) {
+  return MATS[S.am] + '||' + si + '||' + week + '||' + col;
+}
+function isRecovered(si, week, col) {
+  return !!(S.recovered && S.recovered[recKey(si, week, col)]);
+}
+
+// ══════════════════════════════════════════════════════
+//  ESTADOS ESPECIALES (Falta, No Presentó, Exonerado…)
+// ══════════════════════════════════════════════════════
+const SPECIAL = [
+  { val:'F',   label:'Falta',            cls:'cell-absent', color:'#fff3e0', border:'#f57c00', icon:'🟠' },
+  { val:'NP',  label:'No Presentó',      cls:'cell-np',     color:'#fce4ec', border:'#c2185b', icon:'🔴' },
+  { val:'EX',  label:'Exonerado',        cls:'cell-ex',     color:'#e8eaf6', border:'#3949ab', icon:'🔵' },
+  { val:'P',   label:'Pendiente',        cls:'cell-delay',  color:'#f3e5f5', border:'#7b1fa2', icon:'🟣' },
+  { val:'ST',  label:'Sin Texto',        cls:'cell-notxt',  color:'#fafafa', border:'#90a4ae', icon:'📄' },
+  { val:'SC',  label:'Sin Cuaderno',     cls:'cell-nocuad', color:'#fff8e1', border:'#fbc02d', icon:'📓' },
+];
+
+function specialCls(v) {
+  const s = SPECIAL.find(x => x.val === String(v).trim().toUpperCase());
+  return s ? s.cls : null;
+}
+
+// Aplica estado especial a un td+input sin re-render
+function applySpecial(td, inp, val) {
+  const all = SPECIAL.map(s => s.cls).concat(['cell-low','cell-rec']);
+  all.forEach(c => td.classList.remove(c));
+  inp.className = 'gi';
+  const s = SPECIAL.find(x => x.val === val);
+  if (s) {
+    td.classList.add(s.cls);
+    td.style.background = '';
+    inp.value = val;
+  } else {
+    td.style.background = td.dataset.origBg || '';
+    inp.value = '';
+  }
+}
+
+// ── Menú contextual ──
+let _ctxInp = null, _ctxTd = null;
+
+function showCtxMenu(e, inp, td) {
+  e.preventDefault();
+  _ctxInp = inp; _ctxTd = td;
+
+  const curVal = inp.value.trim().toUpperCase();
+
+  let html = `<div style="font-weight:700;color:#1a3c6e;cursor:default;font-size:0.75rem;padding:6px 14px 4px;border-bottom:1px solid #eee;margin-bottom:2px">
+    Estado de la celda</div>`;
+
+  SPECIAL.forEach(s => {
+    const active = curVal === s.val;
+    html += `<div class="ctx-item" onclick="ctxSet('${s.val}')"
+      style="${active?'background:#e8f5e9;':''}">
+      <span class="ctx-dot" style="background:${s.color};border:1.5px solid ${s.border}"></span>
+      <span style="flex:1">${s.icon} ${s.label}</span>
+      <kbd style="font-size:0.65rem;background:#f0f0f0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;color:#555;font-family:monospace">${s.val}</kbd>
+      ${active ? '<span style="color:#27ae60;font-weight:700;margin-left:4px">✓</span>' : ''}
+    </div>`;
+  });
+
+  html += `<div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="ctxSet('clear')">
+      <span class="ctx-dot" style="background:#f5f5f5;border:1.5px solid #bbb"></span>
+      <span style="flex:1">⬜ Limpiar celda</span>
+      <kbd style="font-size:0.65rem;background:#f0f0f0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;color:#555;font-family:monospace">Del</kbd>
+    </div>
+    <div class="ctx-item" onclick="ctxSet('focus')">
+      <span class="ctx-dot" style="background:#fff9c4;border:1.5px solid #f9a825"></span>
+      <span style="flex:1">✏ Ingresar nota</span>
+      <kbd style="font-size:0.65rem;background:#f0f0f0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;color:#555;font-family:monospace">0-10</kbd>
+    </div>`;
+
+  const menu = document.getElementById('ctxMenu');
+  menu.innerHTML = html;
+  menu.style.display = 'block';
+
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = e.clientX, y = e.clientY;
+  menu.style.left = '0'; menu.style.top = '0';
+  const mw = menu.offsetWidth, mh = menu.offsetHeight;
+  if (x + mw > vw) x = vw - mw - 8;
+  if (y + mh > vh) y = vh - mh - 8;
+  menu.style.left = x + 'px';
+  menu.style.top  = y + 'px';
+}
+
+function ctxSet(val) {
+  closeCtxMenu();
+  if (!_ctxInp || !_ctxTd) return;
+  const oc = _ctxInp.getAttribute('onchange') || '';
+  const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+  if (!m) return;
+  const si = parseInt(m[1]), week = m[2], col = m[3];
+
+  if (val === 'focus') {
+    _ctxInp.value = '';
+    _ctxInp.focus(); _ctxInp.select();
+    return;
+  }
+  if (val === 'clear') {
+    upd(si, week, col, '');
+    applySpecial(_ctxTd, _ctxInp, null);
+    return;
+  }
+  // Estado especial
+  upd(si, week, col, val);
+  applySpecial(_ctxTd, _ctxInp, val);
+}
+
+function closeCtxMenu() {
+  document.getElementById('ctxMenu').style.display = 'none';
+  _ctxInp = null; _ctxTd = null;
+}
+
+// Cerrar menú al hacer clic fuera
+document.addEventListener('click', () => closeCtxMenu(), true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtxMenu(); });
+
+// Clic derecho en celda de nota → menú contextual
+document.addEventListener('contextmenu', e => {
+  const inp = e.target.closest('input.gi');
+  if (inp) { showCtxMenu(e, inp, inp.parentElement); return; }
+  const td = e.target.closest('td');
+  if (td && !td.classList.contains('ic') && !td.classList.contains('nc') &&
+      !td.classList.contains('ac') && !td.classList.contains('prom-c') &&
+      !td.classList.contains('prom-wk')) {
+    const i = td.querySelector('input.gi');
+    if (i) showCtxMenu(e, i, td);
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  HISTORIAL — CTRL+Z / CTRL+Y
+// ══════════════════════════════════════════════════════
+const HIST = { stack: [], future: [], max: 100 };
+
+// Guarda un snapshot de la nota anterior antes de cambiarla
+function histPush(si, week, col, prevVal, prevRec) {
+  HIST.stack.push({ si, week, col, prevVal, prevRec, matName: MATS[S.am] });
+  if (HIST.stack.length > HIST.max) HIST.stack.shift();
+  HIST.future = [];
+  updateUndoButtons();
+}
+
+function histUndo() {
+  if (!HIST.stack.length) { toast('⚠ Nada que deshacer', '#888'); return; }
+  const h = HIST.stack.pop();
+  const mat = S.mats[h.matName];
+  if (!mat) return;
+  const key = h.week + '||' + h.col;
+  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
+  const curVal = mat.grades[h.si] ? mat.grades[h.si][key] : undefined;
+  const curRec = S.recovered ? S.recovered[rk] : false;
+  HIST.future.push({ si:h.si, week:h.week, col:h.col, prevVal:curVal, prevRec:curRec, matName:h.matName });
+  applyHistEntry(h);
+  updateUndoButtons();
+  toast(`↩ Deshecho: ${h.col} → ${h.prevVal !== undefined ? h.prevVal : '(vacío)'}`, '#455a64');
+}
+
+function histRedo() {
+  if (!HIST.future.length) { toast('⚠ Nada que rehacer', '#888'); return; }
+  const h = HIST.future.pop();
+  const mat = S.mats[h.matName];
+  if (!mat) return;
+  const key = h.week + '||' + h.col;
+  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
+  const curVal = mat.grades[h.si] ? mat.grades[h.si][key] : undefined;
+  const curRec = S.recovered ? S.recovered[rk] : false;
+  HIST.stack.push({ si:h.si, week:h.week, col:h.col, prevVal:curVal, prevRec:curRec, matName:h.matName });
+  applyHistEntry(h);
+  updateUndoButtons();
+  toast(`↪ Rehecho: ${h.col} → ${h.prevVal !== undefined ? h.prevVal : '(vacío)'}`, '#455a64');
+}
+
+function updateUndoButtons() {
+  const u = document.getElementById('btnUndo');
+  const r = document.getElementById('btnRedo');
+  if (u) {
+    u.disabled = HIST.stack.length === 0;
+    u.style.opacity = HIST.stack.length ? '1' : '0.4';
+    u.title = HIST.stack.length
+      ? `Deshacer: ${HIST.stack[HIST.stack.length-1].col} (Ctrl+Z)`
+      : 'Nada que deshacer';
+  }
+  if (r) {
+    r.disabled = HIST.future.length === 0;
+    r.style.opacity = HIST.future.length ? '1' : '0.4';
+    r.title = HIST.future.length
+      ? `Rehacer: ${HIST.future[HIST.future.length-1].col} (Ctrl+Y)`
+      : 'Nada que rehacer';
+  }
+}
+
+function applyHistEntry(h) {
+  const mat = S.mats[h.matName];
+  if (!mat || !mat.grades[h.si]) mat.grades[h.si] = {};
+  const key = h.week + '||' + h.col;
+  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
+
+  if (h.prevVal === undefined || h.prevVal === '') {
+    delete mat.grades[h.si][key];
+  } else {
+    mat.grades[h.si][key] = String(h.prevVal);
+  }
+
+  // Restaurar estado de recuperación
+  if (!S.recovered) S.recovered = {};
+  if (h.prevRec) S.recovered[rk] = true;
+  else delete S.recovered[rk];
+
+  saveData();
+
+  // Actualizar DOM si la materia activa coincide
+  if (h.matName === MATS[S.am]) {
+    // Actualizar el input en la celda correspondiente
+    const rows = document.querySelectorAll('#tb tr');
+    if (rows[h.si]) {
+      rows[h.si].querySelectorAll('input.gi').forEach(inp => {
+        const oc = inp.getAttribute('onchange') || '';
+        if (oc.includes(`'${h.col}'`) && oc.includes(`'${h.week}'`)) {
+          const newV = h.prevVal !== undefined ? String(h.prevVal) : '';
+          inp.value = newV;
+          // Actualizar clase y td
+          const td = inp.parentElement;
+          const n  = parseFloat(newV);
+          inp.className = 'gi';
+          td.classList.remove('cell-low','cell-rec');
+          if (newV !== '' && !isNaN(n)) {
+            inp.classList.add(n < 7 ? 'glo' : 'ghi');
+            if (n < 7) { td.classList.add('cell-low'); td.style.background = ''; }
+            else if (h.prevRec) { td.classList.add('cell-rec'); td.style.background = ''; }
+            else { td.style.background = td.dataset.origBg || ''; }
+          } else {
+            td.style.background = td.dataset.origBg || '';
+          }
+        }
+      });
+      // Actualizar promedios de fila y semana
+      const savedAm = S.am;
+      S.am = MATS.indexOf(h.matName);
+      const avg = studentAvg(h.si);
+      S.am = savedAm;
+      const pc = rows[h.si].querySelector('.prom-c');
+      if (pc) { pc.textContent = avg !== null ? avg.toFixed(2) : '—'; pc.className = 'prom-c ' + (avg !== null && avg < 7 ? 'glo' : ''); }
+      const wkCell = rows[h.si].querySelector(`.prom-wk[data-si="${h.si}"][data-week="${h.week}"]`);
+      if (wkCell) {
+        const cols2 = mat.cols[h.week] || [];
+        const g2    = mat.grades[h.si] || {};
+        const vals  = cols2.map(c => parseFloat(g2[h.week+'||'+c.name])).filter(n => !isNaN(n));
+        const wAvg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+        wkCell.textContent = wAvg !== null ? wAvg.toFixed(2) : '—';
+        wkCell.className = 'prom-wk ' + (wAvg !== null && wAvg < 7 ? 'glo' : (wAvg !== null ? 'ghi' : ''));
+      }
+    }
+    renderStats();
+  }
+}
+
+function upd(si, week, col, val) {
+  const mat = gm();
+  if (!mat.grades[si]) mat.grades[si] = {};
+  const key  = week + '||' + col;
+  const rk   = recKey(si, week, col);
+  const prev = parseFloat(mat.grades[si][key]);
+  const v    = val.trim().replace(',','.');
+
+  // Guardar en historial ANTES de modificar
+  const prevVal = mat.grades[si][key];
+  const prevRec = !!(S.recovered && S.recovered[rk]);
+  histPush(si, week, col, prevVal, prevRec);
+
+  if (v === '') {
+    delete mat.grades[si][key];
+    if (S.recovered) delete S.recovered[rk];
+  } else {
+    // Permitir valores especiales (F, NP, EX, P)
+    if (!specialCls(v)) {
+      const n = parseFloat(v);
+      if (isNaN(n) || n < 0 || n > 10) {
+        toast('⚠ Nota inválida (0–10)', '#e74c3c');
+        return;
+      }
+    }
+    const n = parseFloat(v);
+    const wasLow = !isNaN(prev) && prev < 7;
+    const nowOk  = n >= 7;
+    mat.grades[si][key] = v;
+
+    if (wasLow && nowOk) {
+      // Marcar como recuperada permanentemente
+      if (!S.recovered) S.recovered = {};
+      S.recovered[rk] = true;
+      // Actualizar celda en el DOM
+      const rows = document.querySelectorAll('#tb tr');
+      if (rows[si]) {
+        rows[si].querySelectorAll('input.gi').forEach(inp => {
+          const oc = inp.getAttribute('onchange') || '';
+          if (oc.includes(`'${col}'`) && oc.includes(`'${week}'`)) {
+            const td = inp.parentElement;
+            td.classList.remove('cell-low');
+            td.classList.add('cell-rec');
+            td.style.background = '';
+          }
+        });
+      }
+      toast(`🎉 ¡Nota recuperada! ${S.students[si].split(' ')[0]} — ${col}: ${n}`, '#27ae60');
+    } else if (n < 7) {
+      // Volvió a reprobar — quitar recuperada
+      if (S.recovered) delete S.recovered[rk];
+    }
+  }
+  saveData();
+  renderStats();
+  // Actualizar promedio total de la fila y promedio de la semana sin re-render completo
+  const avg = studentAvg(si);
+  const avgDisp = avg !== null ? avg.toFixed(2) : '—';
+  const rows = document.querySelectorAll('#tb tr');
+  if (rows[si]) {
+    // Promedio total
+    const pc = rows[si].querySelector('.prom-c');
+    if (pc) {
+      pc.textContent = avgDisp;
+      pc.className = 'prom-c ' + (avg !== null && avg < 7 ? 'glo' : '');
+    }
+    // Promedio de la semana
+    const mat2 = gm();
+    const g2 = mat2.grades[si] || {};
+    const wkCell = rows[si].querySelector(`.prom-wk[data-si="${si}"][data-week="${week}"]`);
+    if (wkCell) {
+      const cols = mat2.cols[week] || [];
+      const vals = cols.map(c => parseFloat(g2[week+'||'+c.name])).filter(n => !isNaN(n));
+      const wAvg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+      wkCell.textContent = wAvg !== null ? wAvg.toFixed(2) : '—';
+      wkCell.className = 'prom-wk ' + (wAvg !== null && wAvg < 7 ? 'glo' : (wAvg !== null ? 'ghi' : ''));
+    }
+  }
+}
+
+function clr(inp) {
+  const v  = inp.value.replace(',','.');
+  const td = inp.parentElement;
+  const oc  = inp.getAttribute('onchange') || '';
+  const m   = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+  const rec = m ? isRecovered(parseInt(m[1]), m[2], m[3]) : false;
+
+  const allSpec = SPECIAL.map(s => s.cls).concat(['cell-low','cell-rec']);
+  allSpec.forEach(c => td.classList.remove(c));
+  inp.className = 'gi';
+
+  // Detectar valor especial completo (incluyendo 2 letras: NP, EX, ST, SC)
+  const spec = SPECIAL.find(s => s.val === v.trim().toUpperCase());
+  if (spec) {
+    td.classList.add(spec.cls);
+    td.style.background = '';
+    // Si es valor de 2 letras y está completo → guardar automáticamente
+    if (spec.val.length === 2 && m) {
+      upd(parseInt(m[1]), m[2], m[3], spec.val);
+      applySpecial(td, inp, spec.val);
+      toast(`${spec.icon} ${spec.label}`, spec.border);
+    }
+    return;
+  }
+
+  const n = parseFloat(v);
+  if (v !== '' && !isNaN(n)) {
+    if (n < 7) {
+      inp.classList.add('glo');
+      td.classList.add('cell-low');
+      td.style.background = '';
+    } else {
+      inp.classList.add('ghi');
+      if (rec) { td.classList.add('cell-rec'); td.style.background = ''; }
+      else { td.style.background = td.dataset.origBg || ''; }
+    }
+  } else {
+    td.style.background = td.dataset.origBg || '';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  NAVEGACIÓN TIPO EXCEL
+// ══════════════════════════════════════════════════════
+
+// Devuelve todos los inputs visibles de la tabla en orden [fila][col]
+function getVisibleInputGrid() {
+  const rows = Array.from(document.querySelectorAll('#tb tr:not(.vis-hidden):not(.hidden-row)'));
+  return rows.map(tr =>
+    Array.from(tr.querySelectorAll('input.gi')).filter(inp => {
+      // Excluir inputs en columnas ocultas
+      const td = inp.parentElement;
+      return td && !td.classList.contains('vis-hidden-col');
+    })
+  ).filter(row => row.length > 0);
+}
+
+// Encuentra la posición [ri, ci] de un input en el grid
+function findInGrid(grid, inp) {
+  for (let ri = 0; ri < grid.length; ri++) {
+    const ci = grid[ri].indexOf(inp);
+    if (ci >= 0) return [ri, ci];
+  }
+  return null;
+}
+
+// Enfoca un input del grid y lo selecciona
+function focusCell(inp) {
+  if (!inp) return;
+  inp.focus();
+  inp.select();
+  // Scroll suave para que sea visible
+  inp.closest('td')?.scrollIntoView({ block:'nearest', inline:'nearest' });
+}
+
+function nav(e, inp) {
+  const grid = getVisibleInputGrid();
+  const pos  = findInGrid(grid, inp);
+  if (!pos) return;
+  let [ri, ci] = pos;
+
+  switch (e.key) {
+    case 'Tab':
+      e.preventDefault();
+      if (e.shiftKey) {
+        // Shift+Tab → izquierda, sube de fila si es necesario
+        if (ci > 0) focusCell(grid[ri][ci - 1]);
+        else if (ri > 0) focusCell(grid[ri - 1][grid[ri - 1].length - 1]);
+      } else {
+        // Tab → derecha, baja de fila si es necesario
+        if (ci < grid[ri].length - 1) focusCell(grid[ri][ci + 1]);
+        else if (ri < grid.length - 1) focusCell(grid[ri + 1][0]);
+      }
+      break;
+
+    case 'Enter':
+      e.preventDefault();
+      if (e.shiftKey) {
+        // Shift+Enter → arriba
+        if (ri > 0) focusCell(grid[ri - 1][Math.min(ci, grid[ri - 1].length - 1)]);
+      } else {
+        // Enter → abajo
+        if (ri < grid.length - 1) focusCell(grid[ri + 1][Math.min(ci, grid[ri + 1].length - 1)]);
+      }
+      break;
+
+    case 'ArrowRight':
+      // Solo mover si el cursor está al final del texto
+      if (inp.selectionStart !== inp.value.length) return;
+      e.preventDefault();
+      if (ci < grid[ri].length - 1) focusCell(grid[ri][ci + 1]);
+      break;
+
+    case 'ArrowLeft':
+      // Solo mover si el cursor está al inicio
+      if (inp.selectionStart !== 0) return;
+      e.preventDefault();
+      if (ci > 0) focusCell(grid[ri][ci - 1]);
+      break;
+
+    case 'ArrowDown':
+      e.preventDefault();
+      if (ri < grid.length - 1) focusCell(grid[ri + 1][Math.min(ci, grid[ri + 1].length - 1)]);
+      break;
+
+    case 'ArrowUp':
+      e.preventDefault();
+      if (ri > 0) focusCell(grid[ri - 1][Math.min(ci, grid[ri - 1].length - 1)]);
+      break;
+
+    case 'Escape':
+      inp.blur();
+      break;
+
+    default: {
+      // Atajos de teclado para estados especiales
+      // Solo si el input está vacío o tiene exactamente el valor especial actual
+      const typed = e.key.toUpperCase();
+      const cur   = inp.value.trim().toUpperCase();
+      // Buscar coincidencia exacta de val (F, NP, EX, P, ST, SC)
+      const match = SPECIAL.find(s => s.val === typed || s.val === cur + e.key.toUpperCase());
+      if (match && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // Si el val es de 1 letra → aplicar al instante
+        if (match.val.length === 1 && typed === match.val) {
+          e.preventDefault();
+          const oc = inp.getAttribute('onchange') || '';
+          const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+          if (m) {
+            upd(parseInt(m[1]), m[2], m[3], match.val);
+            applySpecial(inp.parentElement, inp, match.val);
+            toast(`${match.icon} ${match.label}`, match.border);
+          }
+        }
+        // Si es de 2 letras (NP, EX, ST, SC) → dejar que el usuario escriba,
+        // se detecta en oninput via clr()
+      }
+      break;
+    }
+  }
+}
+
+// Clic en td con input → enfocar el input directamente
+document.addEventListener('mousedown', e => {
+  const td = e.target.closest('td');
+  if (!td) return;
+  const inp = td.querySelector('input.gi');
+  if (inp && e.target !== inp) {
+    // Pequeño delay para que el clic no interfiera con el focus nativo
+    setTimeout(() => { inp.focus(); inp.select(); }, 0);
+  }
+}, true);
+
+// ══════════════════════════════════════════════════════
+//  ESTUDIANTES — AGREGAR / EDITAR / ELIMINAR
+// ══════════════════════════════════════════════════════
+function openAddSt() {
+  showModal(
+    '➕ Agregar Estudiante',
+    `<label>Nombre completo</label>
+     <input type="text" id="mInp" placeholder="Ej: APELLIDO NOMBRE" style="text-transform:uppercase"/>
+     <p class="tip">Se agrega a todas las materias automáticamente.</p>`,
+    'Agregar',
+    () => {
+      const nv = document.getElementById('mInp').value.trim().toUpperCase();
+      if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
+      if (S.students.includes(nv)) { toast('⚠ Ese estudiante ya existe', '#e67e22'); return; }
+      const si = S.students.length;
+      S.students.push(nv);
+      MATS.forEach(m => {
+        if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {};
+      });
+      closeModal(); render(); saveData();
+      toast('✔ Estudiante agregado', '#27ae60');
+    }
+  );
+  setTimeout(() => {
+    const i = document.getElementById('mInp');
+    if(i){ i.focus(); i.addEventListener('input', () => { i.value = i.value.toUpperCase(); }); }
+  }, 50);
+}
+
+function editStudentName(si) {
+  const old = S.students[si];
+  showModal(
+    '✎ Editar Nombre',
+    `<label>Nombre actual</label>
+     <input type="text" id="mInp" value="${escVal(old)}" style="text-transform:uppercase"/>`,
+    'Guardar',
+    () => {
+      const nv = document.getElementById('mInp').value.trim().toUpperCase();
+      if (!nv) { toast('⚠ El nombre no puede estar vacío', '#e67e22'); return; }
+      if (nv === old) { closeModal(); return; }
+      S.students[si] = nv;
+      closeModal(); render(); saveData();
+      toast('✔ Nombre actualizado', '#27ae60');
+    }
+  );
+  setTimeout(() => {
+    const i = document.getElementById('mInp');
+    if(i){ i.focus(); i.select(); i.addEventListener('input', () => { i.value = i.value.toUpperCase(); }); }
+  }, 50);
+}
+
+function delSt(si) {
+  confirm2(
+    '🗑 Eliminar Estudiante',
+    `¿Eliminar a "${S.students[si]}"? Se borrarán todas sus notas.`,
+    () => {
+      S.students.splice(si, 1);
+      MATS.forEach(m => {
+        const mat = S.mats[m];
+        // Reindexar grades
+        const newG = {};
+        S.students.forEach((_, ni) => {
+          const oldIdx = ni >= si ? ni + 1 : ni;
+          newG[ni] = mat.grades[oldIdx] || {};
+        });
+        mat.grades = newG;
+      });
+      render(); saveData();
+      toast('✔ Estudiante eliminado', '#e74c3c');
+    }
+  );
+}
+
+// ══════════════════════════════════════════════════════
+//  SEMANAS — AGREGAR / EDITAR / ELIMINAR
+// ══════════════════════════════════════════════════════
+function openAddWeek() {
+  showModal(
+    '➕ Agregar Semana',
+    `<label>Nombre de la semana</label>
+     <input type="text" id="mInp" placeholder="Ej: SEMANA 9"/>
+     <p class="tip">Se agrega solo a: <strong>${MATS[S.am]}</strong></p>`,
+    'Agregar',
+    () => {
+      const nv = document.getElementById('mInp').value.trim().toUpperCase();
+      if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
+      const mat = gm();
+      if (mat.weeks.includes(nv)) { toast('⚠ Esa semana ya existe', '#e67e22'); return; }
+      mat.weeks.push(nv);
+      mat.cols[nv] = [];
+      closeModal(); render(); saveData();
+      toast('✔ Semana agregada', '#27ae60');
+    }
+  );
+  setTimeout(() => document.getElementById('mInp')?.focus(), 50);
+}
+
+function editWeekName(wi) {
+  const mat = gm();
+  const oldName = mat.weeks[wi];
+  const wc = weekColor(MATS[S.am], oldName, wi);
+  // Convertir color hex a formato para input[type=color]
+  const toHex = c => c.length === 7 ? c : c;
+  showModal(
+    '✎ Editar Semana',
+    `<label>Nombre actual: <strong>${escHTML(oldName)}</strong></label>
+     <input type="text" id="mInp" value="${escVal(oldName)}" placeholder="Nuevo nombre"/>
+     <label>Color de la semana</label>
+     <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+       <input type="color" id="mColor" value="${escVal(wc.h)}" style="width:48px;height:36px;padding:2px;border-radius:5px;cursor:pointer;border:1px solid #ccc"/>
+       <span style="font-size:0.78rem;color:#666">Elige el color principal · el tono claro se genera automáticamente</span>
+     </div>
+     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px" id="colorSwatches">
+       ${WEEK_PALETTE.map((p,i) =>
+         `<div onclick="document.getElementById('mColor').value='${p.h}'" title="Color ${i+1}"
+           style="width:22px;height:22px;border-radius:4px;background:${p.h};cursor:pointer;border:2px solid ${p.h===wc.h?'#fff':'transparent'};box-shadow:0 0 0 1px #999"></div>`
+       ).join('')}
+     </div>
+     <p class="tip">Aplica solo a la materia activa.</p>`,
+    'Guardar',
+    () => {
+      const nv  = document.getElementById('mInp').value.trim().toUpperCase();
+      const hex = document.getElementById('mColor').value;
+      if (!nv) return;
+      // Generar subcolor (más claro) y color de celda a partir del hex elegido
+      const newWc = { h: hex, s: lighten(hex, 20), c: hexToRgba(hex, 0.07) };
+      if (nv !== oldName) {
+        if (mat.weeks.includes(nv)) { toast('⚠ Ese nombre ya existe', '#e67e22'); return; }
+        mat.weeks[wi] = nv;
+        mat.cols[nv] = mat.cols[oldName] || [];
+        delete mat.cols[oldName];
+        S.students.forEach((_,si) => {
+          const g = mat.grades[si] || {};
+          const prefix = oldName + '||';
+          Object.keys(g).forEach(k => {
+            if (k.startsWith(prefix)) {
+              g[nv + '||' + k.slice(prefix.length)] = g[k];
+              delete g[k];
+            }
+          });
+        });
+        // Mover color al nuevo nombre
+        if (S.weekColors) {
+          const oldKey = MATS[S.am] + '||' + oldName;
+          delete S.weekColors[oldKey];
+        }
+        setWeekColor(MATS[S.am], nv, newWc);
+      } else {
+        setWeekColor(MATS[S.am], oldName, newWc);
+      }
+      closeModal(); render(); saveData();
+      toast('✔ Semana actualizada', '#27ae60');
+    }
+  );
+  setTimeout(() => { const i = document.getElementById('mInp'); if(i){i.focus();i.select();} }, 50);
+}
+
+// Aclara un color hex en N puntos de luminosidad
+function lighten(hex, amt) {
+  let r = parseInt(hex.slice(1,3),16);
+  let g = parseInt(hex.slice(3,5),16);
+  let b = parseInt(hex.slice(5,7),16);
+  r = Math.min(255, r + amt); g = Math.min(255, g + amt); b = Math.min(255, b + amt);
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function openDelWeek() {
+  const mat = gm();
+  const opts = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
+  showModal(
+    '🗑 Eliminar Semana',
+    `<label>Selecciona la semana a eliminar</label>
+     <select id="mSel">${opts}</select>
+     <p class="tip" style="color:#e74c3c">⚠ Se eliminarán todas las notas de esa semana.</p>`,
+    'Eliminar',
+    () => {
+      const week = document.getElementById('mSel').value;
+      confirm2(
+        '¿Eliminar semana?',
+        `Se eliminará "${week}" y todas sus notas en ${MATS[S.am]}.`,
+        () => {
+          const mat = gm();
+          mat.weeks = mat.weeks.filter(w => w !== week);
+          delete mat.cols[week];
+          S.students.forEach((_,si) => {
+            const g = mat.grades[si] || {};
+            Object.keys(g).forEach(k => { if (k.startsWith(week + '||')) delete g[k]; });
+          });
+          render(); saveData();
+          toast('✔ Semana eliminada', '#e74c3c');
+        }
+      );
+      closeModal();
+    },
+    'bd'
+  );
+}
+
+// ══════════════════════════════════════════════════════
+//  COLUMNAS — AGREGAR / EDITAR / ELIMINAR
+// ══════════════════════════════════════════════════════
+function colModalBody(selWeek, col) {
+  const mat = gm();
+  const weekOpts = mat.weeks.map(w =>
+    `<option value="${escVal(w)}" ${w===selWeek?'selected':''}>${escHTML(w)}</option>`
+  ).join('');
+  const typeOpts = ACT_TYPES.map(t =>
+    `<option value="${t.id}" ${col&&col.type===t.id?'selected':''}>${t.label}</option>`
+  ).join('');
+  const swatches = ACT_TYPES.map(t =>
+    `<div onclick="document.getElementById('mColColor').value='${t.color}'" title="${t.label}"
+      style="width:20px;height:20px;border-radius:4px;background:${t.color};cursor:pointer;
+             border:2px solid ${col&&(col.color||actType(col.type).color)===t.color?'#fff':'transparent'};
+             box-shadow:0 0 0 1px #aaa;display:inline-block;margin:2px"></div>`
+  ).join('');
+  const curColor = col ? (col.color || actType(col.type).color) : ACT_TYPES[0].color;
+  return `
+    <label>Semana</label>
+    <select id="mSel">${weekOpts}</select>
+    <label>Nombre</label>
+    <input type="text" id="mInp" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, L1…"/>
+    <label>Tipo de actividad</label>
+    <select id="mType" onchange="syncColColor()">${typeOpts}</select>
+    <label>Color personalizado <span style="font-size:0.7rem;color:#aaa">(opcional, sobreescribe el del tipo)</span></label>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <input type="color" id="mColColor" value="${escVal(curColor)}"
+        style="width:44px;height:34px;padding:2px;border-radius:5px;cursor:pointer;border:1px solid #ccc"/>
+      <div style="display:flex;flex-wrap:wrap;gap:2px">${swatches}</div>
+    </div>
+    <label>Fecha <span style="font-size:0.7rem;color:#aaa">(opcional)</span></label>
+    <input type="date" id="mDate" value="${col&&col.date?escVal(col.date):''}"/>`;
+}
+
+function syncColColor() {
+  const sel = document.getElementById('mType');
+  if (!sel) return;
+  const at = actType(sel.value);
+  const ci = document.getElementById('mColColor');
+  if (ci) ci.value = at.color;
+}
+
+function openAddCol() {
+  const mat = gm();
+  showModal(
+    '➕ Agregar Actividad',
+    colModalBody(mat.weeks[0], null),
+    'Agregar',
+    () => {
+      const week  = document.getElementById('mSel').value;
+      const nv    = document.getElementById('mInp').value.trim().toUpperCase();
+      const type  = document.getElementById('mType').value;
+      const color = document.getElementById('mColColor').value;
+      const date  = document.getElementById('mDate').value;
+      if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
+      const mat = gm();
+      if (!mat.cols[week]) mat.cols[week] = [];
+      if (mat.cols[week].find(c => c.name === nv)) { toast('⚠ Esa columna ya existe', '#e67e22'); return; }
+      const defColor = actType(type).color;
+      mat.cols[week].push({ name:nv, type, date, color: color !== defColor ? color : null });
+      closeModal(); render(); saveData();
+      toast('✔ Actividad agregada', '#27ae60');
+    }
+  );
+  setTimeout(() => document.getElementById('mInp')?.focus(), 50);
+}
+
+function addColToWeek(week) {
+  showModal(
+    '➕ Agregar Actividad',
+    colModalBody(week, null),
+    'Agregar',
+    () => {
+      const w     = document.getElementById('mSel').value;
+      const nv    = document.getElementById('mInp').value.trim().toUpperCase();
+      const type  = document.getElementById('mType').value;
+      const color = document.getElementById('mColColor').value;
+      const date  = document.getElementById('mDate').value;
+      if (!nv) { toast('⚠ Ingresa un nombre', '#e67e22'); return; }
+      const mat = gm();
+      if (!mat.cols[w]) mat.cols[w] = [];
+      if (mat.cols[w].find(c => c.name === nv)) { toast('⚠ Esa columna ya existe', '#e67e22'); return; }
+      const defColor = actType(type).color;
+      mat.cols[w].push({ name:nv, type, date, color: color !== defColor ? color : null });
+      closeModal(); render(); saveData();
+      toast('✔ Actividad agregada', '#27ae60');
+    }
+  );
+  setTimeout(() => document.getElementById('mInp')?.focus(), 50);
+}
+
+function editColName(wi, ci) {
+  const mat  = gm();
+  const week = mat.weeks[wi];
+  const col  = mat.cols[week][ci];
+  showModal(
+    '✎ Editar Actividad',
+    colModalBody(week, col) +
+    `<button class="btn bd" style="width:100%;margin-top:6px" onclick="delCol(${wi},${ci})">🗑 Eliminar esta actividad</button>`,
+    'Guardar',
+    () => {
+      const nv    = document.getElementById('mInp').value.trim().toUpperCase();
+      const type  = document.getElementById('mType').value;
+      const color = document.getElementById('mColColor').value;
+      const date  = document.getElementById('mDate').value;
+      if (!nv) return;
+      const defColor = actType(type).color;
+      const newCol = { name:nv, type, date, color: color !== defColor ? color : null };
+      if (nv !== col.name) {
+        if (mat.cols[week].find((c,i) => c.name === nv && i !== ci)) {
+          toast('⚠ Esa columna ya existe', '#e67e22'); return;
+        }
+        // Renombrar clave en grades
+        const oldKey = week + '||' + col.name;
+        const newKey = week + '||' + nv;
+        S.students.forEach((_,si) => {
+          const g = mat.grades[si] || {};
+          if (oldKey in g) { g[newKey] = g[oldKey]; delete g[oldKey]; }
+        });
+      }
+      mat.cols[week][ci] = newCol;
+      closeModal(); render(); saveData();
+      toast('✔ Actividad actualizada', '#27ae60');
+    }
+  );
+  setTimeout(() => { const i = document.getElementById('mInp'); if(i){i.focus();i.select();} }, 50);
+}
+
+function delCol(wi, ci) {
+  const mat  = gm();
+  const week = mat.weeks[wi];
+  const col  = mat.cols[week][ci];
+  closeModal();
+  confirm2(
+    '🗑 Eliminar Actividad',
+    `¿Eliminar "${col.name}" de "${week}"? Se perderán todas sus notas.`,
+    () => {
+      mat.cols[week].splice(ci, 1);
+      const key = week + '||' + col.name;
+      S.students.forEach((_,si) => { delete (mat.grades[si]||{})[key]; });
+      render(); saveData();
+      toast('✔ Actividad eliminada', '#e74c3c');
+    }
+  );
+}
+
+// ══════════════════════════════════════════════════════
+//  LIMPIAR NOTAS
+// ══════════════════════════════════════════════════════
+function doClearGrades() {
+  const mat = gm();
+  const opts = `
+    <label>Alcance</label>
+    <select id="mSel">
+      <option value="mat">Solo materia activa: ${MATS[S.am]}</option>
+      <option value="all">Todas las materias</option>
+    </select>
+    <p class="tip" style="color:#e74c3c">⚠ Esta acción no se puede deshacer.</p>`;
+  showModal('🧹 Limpiar Notas', opts, 'Limpiar', () => {
+    const scope = document.getElementById('mSel').value;
+    closeModal();
+    confirm2(
+      '¿Limpiar notas?',
+      scope === 'all'
+        ? 'Se borrarán TODAS las notas de TODAS las materias.'
+        : `Se borrarán todas las notas de ${MATS[S.am]}.`,
+      () => {
+        const targets = scope === 'all' ? MATS : [MATS[S.am]];
+        targets.forEach(m => {
+          S.students.forEach((_,si) => { S.mats[m].grades[si] = {}; });
+        });
+        render(); saveData();
+        toast('✔ Notas limpiadas', '#e74c3c');
+      }
+    );
+  }, 'bd');
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORTAR CSV
+// ══════════════════════════════════════════════════════
+//  EXPORTAR EXCEL (.xlsx) — sin librerías externas
+// ══════════════════════════════════════════════════════
+
+// Convierte un número a nombre de columna Excel (1→A, 26→Z, 27→AA…)
+function colName(n) {
+  let s = '';
+  while (n > 0) {
+    n--;
+    s = String.fromCharCode(65 + (n % 26)) + s;
+    n = Math.floor(n / 26);
+  }
+  return s;
+}
+
+// Escapa XML
+function xe(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Construye el ZIP XLSX manualmente (formato Open XML)
+function exportCSV() {
+  // Mostrar modal de opciones
+  const matOpts = MATS.map((m,i) =>
+    `<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:0.82rem;cursor:pointer">
+      <input type="checkbox" value="${i}" checked style="cursor:pointer"/> ${escHTML(m)}
+    </label>`
+  ).join('');
+
+  showModal(
+    '📊 Exportar a Excel',
+    `<label>Materias a exportar</label>
+     <div style="border:1px solid #eee;border-radius:6px;padding:8px 12px;margin-bottom:10px;max-height:180px;overflow-y:auto">
+       ${matOpts}
+     </div>
+     <label>Contenido</label>
+     <select id="expScope" style="margin-bottom:10px">
+       <option value="active">Solo materia activa (${MATS[S.am]})</option>
+       <option value="all" selected>Todas las materias (una hoja cada una)</option>
+       <option value="summary">Resumen general (promedios por materia)</option>
+     </select>
+     <p class="tip">Se genera un archivo .xlsx compatible con Excel, Google Sheets y LibreOffice.</p>`,
+    'Descargar Excel',
+    () => {
+      const scope = document.getElementById('expScope').value;
+      const checked = Array.from(document.querySelectorAll('#mBody input[type=checkbox]:checked'))
+        .map(cb => parseInt(cb.value));
+      closeModal();
+      buildXLSX(scope, checked);
+    },
+    'bg'
+  );
+}
+
+function buildXLSX(scope, matIndices) {
+  const sheets = [];
+
+  if (scope === 'active') {
+    sheets.push(buildSheet(MATS[S.am], S.mats[MATS[S.am]]));
+  } else if (scope === 'all') {
+    matIndices.forEach(mi => {
+      const m = MATS[mi];
+      if (S.mats[m]) sheets.push(buildSheet(m, S.mats[m]));
+    });
+  } else {
+    sheets.push(buildSummarySheet());
+  }
+
+  if (!sheets.length) { toast('⚠ Nada que exportar', '#e67e22'); return; }
+
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `Notas_${S.grado}_${S.anio}_${scope}.xlsx`.replace(/\s+/g,'_');
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✔ Excel exportado', '#27ae60');
+}
+
+// Construye los datos de una hoja por materia
+function buildSheet(matName, mat) {
+  const rows = [];
+  // Fila 1: título
+  rows.push([{ v: `${matName} — ${S.grado} — ${S.anio}`, t:'s', s:'title' }]);
+  rows.push([]); // fila vacía
+
+  // Fila 3: cabeceras
+  const hdr = [{ v:'#', t:'s', s:'hdr' }, { v:'NOMBRE', t:'s', s:'hdr' }];
+  mat.weeks.forEach(w => {
+    (mat.cols[w]||[]).forEach(c => {
+      hdr.push({ v:`${w}\n${c.name}\n${actType(c.type).label}`, t:'s', s:'hdr_col' });
+    });
+    hdr.push({ v:`PROM\n${w}`, t:'s', s:'hdr_prom' });
+  });
+  hdr.push({ v:'PROM\nGENERAL', t:'s', s:'hdr_prom' });
+  rows.push(hdr);
+
+  // Filas de estudiantes
+  getSortedIndices().forEach((si, pos) => {
+    const name = S.students[si];
+    const g    = mat.grades[si] || {};
+    const row  = [{ v: pos+1, t:'n', s:'num' }, { v: name, t:'s', s:'name' }];
+
+    mat.weeks.forEach(w => {
+      (mat.cols[w]||[]).forEach(c => {
+        const v = g[w+'||'+c.name];
+        if (v === undefined || v === '') {
+          row.push({ v:'', t:'s', s:'empty' });
+        } else {
+          const sp = SPECIAL_MAP[String(v).toUpperCase()];
+          if (sp) {
+            row.push({ v: sp.label, t:'s', s:'special' });
+          } else {
+            const n = parseFloat(v);
+            if (!isNaN(n)) {
+              const isRec = !!(S.recovered?.[matName+'||'+si+'||'+w+'||'+c.name]);
+              row.push({ v: n, t:'n', s: n < 7 ? (isRec ? 'rec' : 'low') : 'ok' });
+            } else {
+              row.push({ v, t:'s', s:'empty' });
+            }
+          }
+        }
+      });
+      // Promedio semana
+      const cols = mat.cols[w] || [];
+      const nums = cols.map(c => parseFloat(g[w+'||'+c.name])).filter(n => !isNaN(n));
+      const wAvg = nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null;
+      row.push(wAvg !== null
+        ? { v: parseFloat(wAvg.toFixed(2)), t:'n', s: wAvg < 7 ? 'low' : 'prom' }
+        : { v:'—', t:'s', s:'empty' });
+    });
+
+    // Promedio general
+    const vals = Object.values(g).map(v => parseFloat(v)).filter(n => !isNaN(n));
+    const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+    row.push(avg !== null
+      ? { v: parseFloat(avg.toFixed(2)), t:'n', s: avg < 7 ? 'low' : 'prom' }
+      : { v:'—', t:'s', s:'empty' });
+
+    rows.push(row);
+  });
+
+  return { name: matName.slice(0,31), rows };
+}
+
+// Hoja resumen: promedios de todas las materias por estudiante
+function buildSummarySheet() {
+  const rows = [];
+  rows.push([{ v:`Resumen General — ${S.grado} — ${S.anio}`, t:'s', s:'title' }]);
+  rows.push([]);
+  const hdr = [{ v:'#', t:'s', s:'hdr' }, { v:'NOMBRE', t:'s', s:'hdr' }];
+  MATS.forEach(m => hdr.push({ v: m, t:'s', s:'hdr_prom' }));
+  hdr.push({ v:'PROM GLOBAL', t:'s', s:'hdr_prom' });
+  rows.push(hdr);
+
+  getSortedIndices().forEach((si, pos) => {
+    const row = [{ v: pos+1, t:'n', s:'num' }, { v: S.students[si], t:'s', s:'name' }];
+    let totG=0, cntG=0;
+    MATS.forEach(m => {
+      const mat = S.mats[m]; if (!mat) { row.push({ v:'—', t:'s', s:'empty' }); return; }
+      const vals = Object.values(mat.grades[si]||{}).map(v=>parseFloat(v)).filter(n=>!isNaN(n));
+      const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+      if (avg !== null) { totG+=avg; cntG++; }
+      row.push(avg !== null
+        ? { v: parseFloat(avg.toFixed(2)), t:'n', s: avg < 7 ? 'low' : 'ok' }
+        : { v:'—', t:'s', s:'empty' });
+    });
+    const gAvg = cntG ? totG/cntG : null;
+    row.push(gAvg !== null
+      ? { v: parseFloat(gAvg.toFixed(2)), t:'n', s: gAvg < 7 ? 'low' : 'prom' }
+      : { v:'—', t:'s', s:'empty' });
+    rows.push(row);
+  });
+  return { name:'Resumen', rows };
+}
+
+// ── Generador XLSX (Open XML ZIP) ──
+function makeXLSX(sheets) {
+  // Estilos
+  const STYLES = {
+    title:   { font:'bold', size:13, bg:'1a3c6e', fg:'FFFFFF' },
+    hdr:     { font:'bold', size:10, bg:'1a3c6e', fg:'FFFFFF' },
+    hdr_col: { font:'bold', size:9,  bg:'2e6da4', fg:'FFFFFF' },
+    hdr_prom:{ font:'bold', size:9,  bg:'16a085', fg:'FFFFFF' },
+    name:    { font:'normal',size:9, bg:'FFFFFF', fg:'333333' },
+    num:     { font:'normal',size:9, bg:'f0f4f8', fg:'888888' },
+    ok:      { font:'normal',size:9, bg:'f0fff4', fg:'1a7a40' },
+    low:     { font:'bold',  size:9, bg:'fde8e8', fg:'c0392b' },
+    rec:     { font:'bold',  size:9, bg:'e8f8e8', fg:'1a7a40' },
+    prom:    { font:'bold',  size:9, bg:'e8f8f5', fg:'16a085' },
+    special: { font:'normal',size:9, bg:'fff3e0', fg:'e65100' },
+    empty:   { font:'normal',size:9, bg:'FFFFFF', fg:'cccccc' },
+  };
+
+  // Construir XML de estilos
+  const styleKeys = Object.keys(STYLES);
+  const fonts = styleKeys.map((k,i) => {
+    const s = STYLES[k];
+    return `<font><sz val="${s.size}"/><color rgb="FF${s.fg}"/><name val="Calibri"/>${s.font==='bold'?'<b/>':''}</font>`;
+  }).join('');
+  const fills = styleKeys.map((k,i) => {
+    const s = STYLES[k];
+    return `<fill><patternFill patternType="solid"><fgColor rgb="FF${s.bg}"/></patternFill></fill>`;
+  }).join('');
+  const xfs = styleKeys.map((k,i) =>
+    `<xf numFmtId="0" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center" horizontal="center"/></xf>`
+  ).join('');
+  const styleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<fonts count="${styleKeys.length}">${fonts}</fonts>
+<fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border>
+<border><left style="thin"><color rgb="FFcccccc"/></left><right style="thin"><color rgb="FFcccccc"/></right><top style="thin"><color rgb="FFcccccc"/></top><bottom style="thin"><color rgb="FFcccccc"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="${styleKeys.length}">${xfs}</cellXfs>
+</styleSheet>`;
+
+  // Shared strings
+  const strMap = {}, strArr = [];
+  function si(v) {
+    const s = String(v);
+    if (strMap[s] === undefined) { strMap[s] = strArr.length; strArr.push(s); }
+    return strMap[s];
+  }
+
+  // Construir hojas
+  const sheetXmls = sheets.map(sheet => {
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<sheetView showGridLines="1" workbookViewId="0"><selection activeCell="A1"/></sheetView>
+<sheetData>`;
+    sheet.rows.forEach((row, ri) => {
+      if (!row.length) { xml += `<row r="${ri+1}"/>`; return; }
+      xml += `<row r="${ri+1}" ht="30" customHeight="1">`;
+      row.forEach((cell, ci) => {
+        const addr = `${colName(ci+1)}${ri+1}`;
+        const sIdx = styleKeys.indexOf(cell.s || 'empty');
+        const styleIdx = sIdx >= 0 ? sIdx : styleKeys.indexOf('empty');
+        if (cell.t === 'n') {
+          xml += `<c r="${addr}" s="${styleIdx}" t="n"><v>${cell.v}</v></c>`;
+        } else {
+          const idx = si(cell.v);
+          xml += `<c r="${addr}" s="${styleIdx}" t="s"><v>${idx}</v></c>`;
+        }
+      });
+      xml += `</row>`;
+    });
+    xml += `</sheetData></worksheet>`;
+    return xml;
+  });
+
+  const ssXml = strArr.map(s =>
+    `<si><t xml:space="preserve">${xe(s)}</t></si>`
+  ).join('');
+
+  // Workbook
+  const wbXml = `<?xml version="1.0" encoding="UTF-8"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets>
+</workbook>`;
+
+  const wbRels = `<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}
+<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
+<Relationship Id="rId${sheets.length+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml"  ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}
+<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>
+<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+</Types>`;
+
+  const relsRoot = `<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`;
+
+  // Empaquetar ZIP
+  const files = {
+    '[Content_Types].xml': contentTypes,
+    '_rels/.rels': relsRoot,
+    'xl/workbook.xml': wbXml,
+    'xl/_rels/workbook.xml.rels': wbRels,
+    'xl/styles.xml': styleXml,
+    'xl/sharedStrings.xml': `<?xml version="1.0" encoding="UTF-8"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${strArr.length}" uniqueCount="${strArr.length}">${ssXml}</sst>`,
+  };
+  sheetXmls.forEach((xml, i) => { files[`xl/worksheets/sheet${i+1}.xml`] = xml; });
+
+  return zipFiles(files);
+}
+
+// ZIP mínimo sin compresión (stored)
+function zipFiles(files) {
+  const enc = new TextEncoder();
+  const entries = [];
+  let offset = 0;
+
+  for (const [name, content] of Object.entries(files)) {
+    const nameBytes = enc.encode(name);
+    const data      = enc.encode(content);
+    const crc       = crc32(data);
+    const local = new Uint8Array(30 + nameBytes.length + data.length);
+    const dv    = new DataView(local.buffer);
+    dv.setUint32(0,  0x04034b50, true); // signature
+    dv.setUint16(4,  20, true);          // version
+    dv.setUint16(6,  0, true);           // flags
+    dv.setUint16(8,  0, true);           // compression: stored
+    dv.setUint16(10, 0, true);           // mod time
+    dv.setUint16(12, 0, true);           // mod date
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, data.length, true);
+    dv.setUint32(22, data.length, true);
+    dv.setUint16(26, nameBytes.length, true);
+    dv.setUint16(28, 0, true);
+    local.set(nameBytes, 30);
+    local.set(data, 30 + nameBytes.length);
+    entries.push({ name: nameBytes, data, crc, offset, local });
+    offset += local.length;
+  }
+
+  // Central directory
+  const cdParts = entries.map(e => {
+    const cd = new Uint8Array(46 + e.name.length);
+    const dv = new DataView(cd.buffer);
+    dv.setUint32(0,  0x02014b50, true);
+    dv.setUint16(4,  20, true);
+    dv.setUint16(6,  20, true);
+    dv.setUint16(8,  0, true);
+    dv.setUint16(10, 0, true);
+    dv.setUint16(12, 0, true);
+    dv.setUint16(14, 0, true);
+    dv.setUint32(16, e.crc, true);
+    dv.setUint32(20, e.data.length, true);
+    dv.setUint32(24, e.data.length, true);
+    dv.setUint16(28, e.name.length, true);
+    dv.setUint16(30, 0, true); dv.setUint16(32, 0, true);
+    dv.setUint16(34, 0, true); dv.setUint16(36, 0, true);
+    dv.setUint32(38, 0, true);
+    dv.setUint32(42, e.offset, true);
+    cd.set(e.name, 46);
+    return cd;
+  });
+
+  const cdSize   = cdParts.reduce((a,b) => a+b.length, 0);
+  const eocd     = new Uint8Array(22);
+  const eocdDv   = new DataView(eocd.buffer);
+  eocdDv.setUint32(0,  0x06054b50, true);
+  eocdDv.setUint16(4,  0, true);
+  eocdDv.setUint16(6,  0, true);
+  eocdDv.setUint16(8,  entries.length, true);
+  eocdDv.setUint16(10, entries.length, true);
+  eocdDv.setUint32(12, cdSize, true);
+  eocdDv.setUint32(16, offset, true);
+  eocdDv.setUint16(20, 0, true);
+
+  const parts = [...entries.map(e => e.local), ...cdParts, eocd];
+  const total = parts.reduce((a,b) => a+b.length, 0);
+  const out   = new Uint8Array(total);
+  let pos = 0;
+  parts.forEach(p => { out.set(p, pos); pos += p.length; });
+  return out;
+}
+
+function crc32(data) {
+  let crc = 0xFFFFFFFF;
+  const table = crc32.t || (crc32.t = (() => {
+    const t = new Uint32Array(256);
+    for (let i=0;i<256;i++) {
+      let c=i;
+      for (let j=0;j<8;j++) c = (c&1) ? (0xEDB88320^(c>>>1)) : (c>>>1);
+      t[i]=c;
+    }
+    return t;
+  })());
+  for (let i=0;i<data.length;i++) crc = table[(crc^data[i])&0xFF]^(crc>>>8);
+  return (crc^0xFFFFFFFF)>>>0;
+}
+
+// ══════════════════════════════════════════════════════
+//  IMPRIMIR
+// ══════════════════════════════════════════════════════
+function printTable() {
+  const title = document.title;
+  document.title = `Notas_${MATS[S.am]}_${S.grado}_${S.anio}`;
+  window.print();
+  document.title = title;
+}
+
+// ══════════════════════════════════════════════════════
+//  CERRAR MODALES CON ESC
+// ══════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeCf(); }
+});
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('mCf').addEventListener('click', function(e) {
+  if (e.target === this) closeCf();
+});
+
+// ══════════════════════════════════════════════════════
+//  RESIZE COLUMNAS Y FILAS
+// ══════════════════════════════════════════════════════
+const RS = { cols:{}, rows:{}, hiddenCols:{}, hiddenRows:{} };
+
+// Mide el ancho necesario para el contenido más largo de una lista de celdas
+// Incluye el th header si se pasa
+function autoFitColWidth(cells, selector, headerTh) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = '12px Segoe UI, Arial, sans-serif';
+  let max = 32;
+
+  // Medir header
+  if (headerTh) {
+    const txt = (headerTh.innerText || '').trim();
+    const w = ctx.measureText(txt).width + 20;
+    if (w > max) max = w;
+  }
+
+  // Medir celdas
+  const list = selector ? document.querySelectorAll(selector) : (cells || []);
+  list.forEach(cell => {
+    const inp = cell.querySelector('input');
+    const txt = inp ? (inp.value || inp.getAttribute('value') || '') : (cell.innerText || '').trim();
+    const w = ctx.measureText(txt).width + 20;
+    if (w > max) max = w;
+  });
+
+  return Math.ceil(Math.max(32, max));
+} // tamaños guardados en memoria + localStorage
+
+function loadRS() {
+  try {
+    const d = JSON.parse(localStorage.getItem('notas_resize') || '{}');
+    RS.cols       = d.cols       || {};
+    RS.rows       = d.rows       || {};
+    RS.hiddenCols = d.hiddenCols || {};
+    RS.hiddenRows = d.hiddenRows || {};
+  } catch(e) {}
+}
+
+function saveRS() {
+  localStorage.setItem('notas_resize', JSON.stringify(RS));
+}
+
+// Aplica anchos guardados a las columnas de la tabla
+function applyColWidths() {
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+  // Aplicar a cada th de la segunda fila (subcolumnas) por índice
+  const ths = table.querySelectorAll('thead tr:nth-child(2) th');
+  ths.forEach((th, i) => {
+    const w = RS.cols[i];
+    if (w) { th.style.width = w + 'px'; th.style.minWidth = w + 'px'; }
+  });
+}
+
+// Aplica alturas guardadas a las filas del tbody
+function applyRowHeights() {
+  const rows = document.querySelectorAll('#tb tr');
+  rows.forEach((tr, i) => {
+    const h = RS.rows[i];
+    if (h) tr.style.height = h + 'px';
+  });
+}
+
+// ── Barra de desplazamiento espejo en la parte inferior ──
+function initBottomScrollbar() {
+  const tw = document.querySelector('.tw');
+  if (!tw || document.getElementById('bottom-scroll')) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'bottom-scroll';
+  bar.style.cssText = 'overflow-x:auto;overflow-y:hidden;height:14px;background:#e8edf2;border-radius:0 0 8px 8px;border-top:1px solid #d0d7de';
+
+  const inner = document.createElement('div');
+  inner.id = 'bottom-scroll-inner';
+  inner.style.cssText = 'height:1px';
+  bar.appendChild(inner);
+  tw.parentElement.insertBefore(bar, tw.nextSibling);
+
+  // Sincronizar scroll
+  let syncing = false;
+  bar.addEventListener('scroll', () => {
+    if (syncing) return; syncing = true;
+    tw.scrollLeft = bar.scrollLeft;
+    syncing = false;
+  });
+  tw.addEventListener('scroll', () => {
+    if (syncing) return; syncing = true;
+    bar.scrollLeft = tw.scrollLeft;
+    syncing = false;
+  });
+
+  // Actualizar ancho del inner cuando cambia la tabla
+  function syncWidth() {
+    const table = document.getElementById('mainTable');
+    if (table) inner.style.width = table.scrollWidth + 'px';
+  }
+  syncWidth();
+  new ResizeObserver(syncWidth).observe(tw);
+}
+
+// ── Resize genérico para una columna fija (PROM TOTAL, Acc.) ──
+function initFixedColResizer(thId, tdSelector, rsKey, minW) {
+  const th = document.getElementById(thId);
+  if (!th || th.querySelector('.col-resizer')) return;
+
+  const handle = document.createElement('div');
+  handle.className = 'col-resizer';
+  handle.setAttribute('title', 'Arrastrar ↔ · Doble clic para ajustar al contenido');
+  th.appendChild(handle);
+
+  if (RS.cols[rsKey]) {
+    const w = RS.cols[rsKey];
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    document.querySelectorAll(tdSelector).forEach(td => {
+      td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+    });
+  }
+
+  let startX, startW;
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault(); e.stopPropagation();
+    startX = e.clientX; startW = th.getBoundingClientRect().width;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const guide = document.createElement('div');
+    guide.style.cssText = `position:fixed;top:0;bottom:0;width:2px;background:#2e6da4;opacity:.7;z-index:99999;pointer-events:none;left:${e.clientX}px`;
+    document.body.appendChild(guide);
+
+    function onMove(e) {
+      const w = Math.max(minW || 32, startW + e.clientX - startX);
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+      document.querySelectorAll(tdSelector).forEach(td => {
+        td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+      });
+      RS.cols[rsKey] = w;
+      guide.style.left = e.clientX + 'px';
+    }
+    function onUp() {
+      handle.classList.remove('dragging');
+      document.body.style.cursor = ''; document.body.style.userSelect = '';
+      guide.remove(); saveRS();
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+
+  handle.addEventListener('dblclick', e => {
+    e.stopPropagation();
+    const tds = Array.from(document.querySelectorAll(tdSelector));
+    const w = autoFitColWidth(tds, null, th);
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
+    RS.cols[rsKey] = w; saveRS();
+  });
+}
+
+// Resize de la columna NOMBRES (th fijo + todas las td.nc)
+function initNamesColResizer() {  const th = document.getElementById('th-nombres');
+  if (!th || th.querySelector('.col-resizer')) return;
+
+  const handle = document.createElement('div');
+  handle.className = 'col-resizer';
+  handle.setAttribute('title', 'Arrastrar ↔ para cambiar ancho de nombres · Doble clic para ajustar al contenido');
+  th.appendChild(handle);
+
+  // Aplicar ancho guardado
+  if (RS.cols['names']) {
+    const w = RS.cols['names'];
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    document.querySelectorAll('td.nc').forEach(td => {
+      td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
+    });
+  }
+
+  let startX, startW;
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault(); e.stopPropagation();
+    startX = e.clientX;
+    startW = th.getBoundingClientRect().width;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const guide = document.createElement('div');
+    guide.style.cssText = `position:fixed;top:0;bottom:0;width:2px;background:#2e6da4;opacity:.7;z-index:99999;pointer-events:none;left:${e.clientX}px`;
+    document.body.appendChild(guide);
+
+    function onMove(e) {
+      const w = Math.max(80, startW + e.clientX - startX);
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+      document.querySelectorAll('td.nc').forEach(td => {
+        td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
+      });
+      RS.cols['names'] = w;
+      guide.style.left = e.clientX + 'px';
+    }
+    function onUp() {
+      handle.classList.remove('dragging');
+      document.body.style.cursor = ''; document.body.style.userSelect = '';
+      guide.remove(); saveRS();
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+
+  handle.addEventListener('dblclick', e => {
+    e.stopPropagation();
+    // Auto-fit: medir el texto más largo en td.nc
+    const w = autoFitColWidth(document.querySelectorAll('td.nc'), 'td.nc');
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    document.querySelectorAll('td.nc').forEach(td => {
+      td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
+    });
+    RS.cols['names'] = w;
+    saveRS();
+  });
+}
+
+// Inyecta handles de resize en los th de subcolumnas
+function initColResizers() {
+  // Usar tabla completa con colgroup para control real de anchos
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+
+  // Trabajar sobre TODOS los th (fila 1 y fila 2) agrupados por índice de columna visual
+  // El handle va en cada th de la fila 2 (subcolumnas) — más accesible
+  const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+
+  row2ths.forEach((th, colIdx) => {
+    if (th.querySelector('.col-resizer')) return;
+
+    const handle = document.createElement('div');
+    handle.className = 'col-resizer';
+    handle.setAttribute('title', 'Arrastrar ↔ para cambiar ancho · Doble clic para ajustar al contenido');
+    th.appendChild(handle);
+
+    let startX, startW;
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      startX = e.clientX;
+      startW = th.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      // Línea guía vertical
+      const guide = document.createElement('div');
+      guide.style.cssText = `position:fixed;top:0;bottom:0;width:2px;background:#2e6da4;opacity:.7;z-index:99999;pointer-events:none;left:${e.clientX}px`;
+      document.body.appendChild(guide);
+
+      function onMove(e) {
+        const w = Math.max(32, startW + e.clientX - startX);
+        th.style.width = w + 'px';
+        th.style.minWidth = w + 'px';
+        // Aplicar mismo ancho a todas las celdas de esa columna en tbody
+        const tds = table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`);
+        tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
+        RS.cols[colIdx] = w;
+        guide.style.left = e.clientX + 'px';
+      }
+      function onUp() {
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        guide.remove();
+        saveRS();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    handle.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      // Auto-fit: medir el texto más largo en esa columna (th + tds)
+      const tds = Array.from(table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`));
+      const w = autoFitColWidth(tds, null, th);
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+      tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
+      RS.cols[colIdx] = w;
+      saveRS();
+    });
+  });
+}
+
+// Inyecta handles de resize en las celdas .ic de cada fila
+function initRowResizers() {
+  const rows = document.querySelectorAll('#tb tr');
+  rows.forEach((tr, rowIdx) => {
+    const ic = tr.querySelector('td.ic');
+    if (!ic || ic.querySelector('.row-resizer')) return;
+
+    const handle = document.createElement('div');
+    handle.className = 'row-resizer';
+    handle.setAttribute('title', 'Arrastrar ↕ para cambiar alto · Doble clic para ajustar al contenido');
+    ic.appendChild(handle);
+
+    let startY, startH;
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      startY = e.clientY;
+      startH = tr.getBoundingClientRect().height;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'row-resize';
+      document.body.style.userSelect = 'none';
+
+      // Línea guía horizontal
+      const guide = document.createElement('div');
+      guide.style.cssText = `position:fixed;left:0;right:0;height:2px;background:#2e6da4;opacity:.7;z-index:99999;pointer-events:none;top:${e.clientY}px`;
+      document.body.appendChild(guide);
+
+      function onMove(e) {
+        const h = Math.max(20, startH + e.clientY - startY);
+        tr.style.height = h + 'px';
+        RS.rows[rowIdx] = h;
+        guide.style.top = e.clientY + 'px';
+      }
+      function onUp() {
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        guide.remove();
+        saveRS();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    handle.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      // Auto-fit fila: usar scrollHeight natural quitando altura fija
+      tr.style.height = '';
+      const h = tr.scrollHeight || tr.getBoundingClientRect().height;
+      tr.style.height = h + 'px';
+      RS.rows[rowIdx] = h;
+      saveRS();
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  SELECCIÓN TIPO EXCEL
+// ══════════════════════════════════════════════════════
+const XL = { mode: null, cols: new Set(), rows: new Set() };
+// mode: null | 'col' | 'row' | 'cell'
+
+function xlClear() {
+  document.querySelectorAll('.xl-sel,.xl-sel-hdr,.xl-sel-row').forEach(el => {
+    el.classList.remove('xl-sel','xl-sel-hdr','xl-sel-row');
+  });
+  XL.cols.clear(); XL.rows.clear(); XL.mode = null;
+  const info = document.getElementById('xlInfo');
+  if (info) info.style.display = 'none';
+}
+
+function xlShowInfo(txt) {
+  const info = document.getElementById('xlInfo');
+  if (!info) return;
+  info.textContent = txt;
+  info.style.display = 'block';
+  clearTimeout(info._t);
+  info._t = setTimeout(() => { info.style.display = 'none'; }, 3000);
+}
+
+// Seleccionar columna completa por índice de columna en tbody (nth-child)
+function xlSelectCol(colNth, thEl, label, additive) {
+  if (!additive) xlClear();
+  XL.mode = 'col';
+  XL.cols.add(colNth);
+  // Resaltar header
+  if (thEl) thEl.classList.add('xl-sel-hdr');
+  // Resaltar todas las celdas visibles de esa columna
+  document.querySelectorAll(`#tb tr:not(.vis-hidden) td:nth-child(${colNth})`).forEach(td => {
+    td.classList.add('xl-sel');
+  });
+  xlShowInfo(`Columna "${label}" seleccionada · Ctrl+C para copiar`);
+}
+
+// Seleccionar fila completa por índice de tr en tbody
+function xlSelectRow(rowIdx, trEl, additive) {
+  if (!additive) xlClear();
+  XL.mode = 'row';
+  XL.rows.add(rowIdx);
+  if (trEl) {
+    trEl.querySelectorAll('td:not(.ac)').forEach(td => td.classList.add('xl-sel'));
+    const ic = trEl.querySelector('td.ic');
+    if (ic) { ic.classList.remove('xl-sel'); ic.classList.add('xl-sel-row'); }
+    const nc = trEl.querySelector('td.nc');
+    if (nc) { nc.classList.remove('xl-sel'); nc.classList.add('xl-sel-row'); }
+  }
+  const name = S.students[rowIdx] || ('Fila ' + (rowIdx+1));
+  xlShowInfo(`Fila "${name.split(' ')[0]}" seleccionada · Ctrl+C para copiar`);
+}
+
+// Copiar selección al portapapeles (formato TSV como Excel)
+function xlCopy() {
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+
+  if (XL.mode === 'col') {
+    // Copiar valores de las columnas seleccionadas
+    const rows = Array.from(document.querySelectorAll('#tb tr:not(.vis-hidden)'));
+    const lines = rows.map(tr => {
+      return Array.from(XL.cols).sort((a,b)=>a-b).map(nth => {
+        const td = tr.querySelector(`td:nth-child(${nth})`);
+        if (!td) return '';
+        const inp = td.querySelector('input');
+        return inp ? inp.value : td.textContent.trim();
+      }).join('\t');
+    });
+    navigator.clipboard.writeText(lines.join('\n')).then(() => toast('📋 Columna copiada', '#1565c0'));
+
+  } else if (XL.mode === 'row') {
+    const lines = [];
+    Array.from(XL.rows).sort((a,b)=>a-b).forEach(ri => {
+      const tr = document.querySelectorAll('#tb tr')[ri];
+      if (!tr) return;
+      const vals = Array.from(tr.querySelectorAll('td:not(.ac):not(.ic)')).map(td => {
+        const inp = td.querySelector('input');
+        return inp ? inp.value : td.textContent.trim();
+      });
+      lines.push(vals.join('\t'));
+    });
+    navigator.clipboard.writeText(lines.join('\n')).then(() => toast('📋 Fila copiada', '#1565c0'));
+  }
+}
+
+// ── Eventos de selección ──
+
+// Clic en subcolumna th → seleccionar columna
+document.addEventListener('click', e => {
+  // Ignorar clicks en handles de resize o botones
+  if (e.target.classList.contains('col-resizer') ||
+      e.target.classList.contains('row-resizer') ||
+      e.target.closest('button') || e.target.closest('.mo')) return;
+
+  const th = e.target.closest('th.sh');
+  if (th) {
+    const table = document.getElementById('mainTable');
+    const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+    const ci = row2ths.indexOf(th);
+    if (ci < 0) return;
+    const colNth = ci + 3; // offset: td.ic(1) + td.nc(2) + cols start at 3
+    xlSelectCol(colNth, th, th.textContent.trim().split('\n')[0], e.ctrlKey || e.metaKey);
+    return;
+  }
+
+  // Clic en th de semana (fila 1) → seleccionar todas las subcolumnas de esa semana
+  const thW = e.target.closest('th.wh');
+  if (thW) {
+    const table = document.getElementById('mainTable');
+    const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+    // Calcular qué subcolumnas pertenecen a esta semana por colspan
+    const row1ths = Array.from(table.querySelectorAll('thead tr:nth-child(1) th'));
+    let offset = 0; // empezamos en 0 (sin contar # y NOMBRES que son rowspan=2)
+    let found = false;
+    row1ths.forEach(t => {
+      if (t.classList.contains('fxl') || t.classList.contains('fxn') ||
+          t.classList.contains('prom-h') || t.classList.contains('ath')) return;
+      const span = parseInt(t.getAttribute('colspan') || 1);
+      if (t === thW) {
+        if (!e.ctrlKey && !e.metaKey) xlClear();
+        XL.mode = 'col';
+        for (let i = 0; i < span; i++) {
+          const nth = offset + i + 3;
+          XL.cols.add(nth);
+          if (row2ths[offset + i]) row2ths[offset + i].classList.add('xl-sel-hdr');
+          document.querySelectorAll(`#tb tr:not(.vis-hidden) td:nth-child(${nth})`).forEach(td => td.classList.add('xl-sel'));
+        }
+        thW.classList.add('xl-sel-hdr');
+        xlShowInfo(`Semana "${thW.textContent.trim().split('\n')[0]}" seleccionada`);
+        found = true;
+      }
+      if (!found) offset += span;
+    });
+    return;
+  }
+
+  // Clic en td.ic → seleccionar fila (ya manejado para ocultar, pero con Shift selecciona)
+  const ic = e.target.closest('td.ic');
+  if (ic && !e.target.classList.contains('row-resizer')) {
+    const tr = ic.closest('tr');
+    const rows = Array.from(document.querySelectorAll('#tb tr'));
+    const idx = rows.indexOf(tr);
+    if (idx >= 0) {
+      if (e.shiftKey || e.ctrlKey || e.metaKey) {
+        // Shift/Ctrl → seleccionar sin ocultar
+        xlSelectRow(idx, tr, e.ctrlKey || e.metaKey);
+      } else {
+        // Clic simple → ocultar/mostrar (comportamiento anterior)
+        toggleRow(idx);
+      }
+    }
+    return;
+  }
+
+  // Clic en celda de datos → seleccionar esa celda individual
+  const td = e.target.closest('td');
+  if (td && !td.classList.contains('ic') && !td.classList.contains('nc') &&
+      !td.classList.contains('ac') && !e.target.closest('button')) {
+    if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+      xlClear(); // limpiar selección al hacer clic en celda normal
+    }
+  }
+}, true);
+
+// Ctrl+C para copiar selección · Ctrl+Z undo · Ctrl+Y redo
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'c' && XL.mode) {
+    xlCopy();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    // Solo si no hay un input enfocado con texto
+    if (document.activeElement && document.activeElement.classList.contains('gi')) return;
+    e.preventDefault();
+    histUndo();
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+    if (document.activeElement && document.activeElement.classList.contains('gi')) return;
+    e.preventDefault();
+    histRedo();
+  }
+  // Escape limpia selección
+  if (e.key === 'Escape') {
+    xlClear();
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  VISIBILIDAD — OCULTAR / MOSTRAR COLUMNAS Y FILAS
+// ══════════════════════════════════════════════════════
+
+// ── Columnas ──
+// colKey: índice numérico (subcolumnas) | 'names' | 'prom-total' | 'acc' | 'prom-wk-N'
+function hideCol(colKey) {
+  RS.hiddenCols[colKey] = true;
+  saveRS();
+  applyColVisibility();
+  refreshVisPanel();
+}
+function showCol(colKey) {
+  delete RS.hiddenCols[colKey];
+  saveRS();
+  applyColVisibility();
+  refreshVisPanel();
+}
+function toggleCol(colKey) {
+  RS.hiddenCols[colKey] ? showCol(colKey) : hideCol(colKey);
+}
+
+function applyColVisibility() {
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+  const mat = gm();
+
+  // Subcolumnas (fila 2 th + td por índice)
+  const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+  row2ths.forEach((th, ci) => {
+    const hidden = !!RS.hiddenCols[ci];
+    th.classList.toggle('vis-hidden-col', hidden);
+    // Celdas del tbody en esa columna (offset +3: #, nombre, y las cols empiezan en 3)
+    table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
+      td.classList.toggle('vis-hidden-col', hidden);
+    });
+  });
+
+  // Columna NOMBRES
+  const thN = document.getElementById('th-nombres');
+  if (thN) thN.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']);
+  table.querySelectorAll('td.nc').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']));
+
+  // PROM TOTAL
+  const thP = document.getElementById('th-prom-total');
+  if (thP) thP.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']);
+  table.querySelectorAll('td.prom-c').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']));
+
+  // Acc.
+  const thA = document.getElementById('th-acc');
+  if (thA) thA.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']);
+  table.querySelectorAll('td.ac').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']));
+
+  // PROM por semana (prom-wk)
+  const promWkThs = Array.from(table.querySelectorAll('thead tr:nth-child(2) th')).filter(th => th.textContent.trim() === 'PROM');
+  promWkThs.forEach((th, wi) => {
+    const key = 'prom-wk-' + wi;
+    const hidden = !!RS.hiddenCols[key];
+    th.classList.toggle('vis-hidden-col', hidden);
+    table.querySelectorAll(`td.prom-wk[data-week]`).forEach((td, i) => {
+      // Cada prom-wk corresponde a una semana; filtrar por índice de semana
+      if (parseInt(td.dataset.wi || 0) === wi) td.classList.toggle('vis-hidden-col', hidden);
+    });
+  });
+
+  // Actualizar barra inferior
+  const bs = document.getElementById('bottom-scroll-inner');
+  if (bs) {
+    const t = document.getElementById('mainTable');
+    if (t) bs.style.width = t.scrollWidth + 'px';
+  }
+}
+
+// ── Filas ──
+function hideRow(rowIdx) {
+  RS.hiddenRows[rowIdx] = true;
+  saveRS();
+  applyRowVisibility();
+  refreshVisPanel();
+}
+function showRow(rowIdx) {
+  delete RS.hiddenRows[rowIdx];
+  saveRS();
+  applyRowVisibility();
+  refreshVisPanel();
+}
+function toggleRow(rowIdx) {
+  RS.hiddenRows[rowIdx] ? showRow(rowIdx) : hideRow(rowIdx);
+}
+
+function applyRowVisibility() {
+  document.querySelectorAll('#tb tr').forEach((tr, i) => {
+    tr.classList.toggle('vis-hidden', !!RS.hiddenRows[i]);
+  });
+}
+
+function showAllVis() {
+  RS.hiddenCols = {}; RS.hiddenRows = {};
+  saveRS();
+  applyColVisibility();
+  applyRowVisibility();
+  refreshVisPanel();
+}
+function hideAllRows() {
+  document.querySelectorAll('#tb tr').forEach((_, i) => { RS.hiddenRows[i] = true; });
+  saveRS(); applyRowVisibility(); refreshVisPanel();
+}
+
+// ── Panel lateral ──
+function openVisPanel() {
+  refreshVisPanel();
+  document.getElementById('visPanel').style.display   = 'flex';
+  document.getElementById('visOverlay').style.display = 'block';
+}
+function closeVisPanel() {
+  document.getElementById('visPanel').style.display   = 'none';
+  document.getElementById('visOverlay').style.display = 'none';
+}
+
+function refreshVisPanel() {
+  const body = document.getElementById('visPanelBody');
+  if (!body) return;
+  const mat = gm();
+
+  let html = `<div style="font-size:0.72rem;color:#888;margin-bottom:8px">
+    Haz clic en el ojo para ocultar o mostrar. Los cambios se guardan automáticamente.
+  </div>`;
+
+  // ── Columnas fijas ──
+  html += `<div style="font-weight:700;font-size:0.78rem;color:#1a3c6e;margin:8px 0 4px">Columnas fijas</div>`;
+  [
+    {key:'names',      label:'Nombres'},
+    {key:'prom-total', label:'PROM TOTAL'},
+    {key:'acc',        label:'Acciones'},
+  ].forEach(({key, label}) => {
+    const vis = !RS.hiddenCols[key];
+    html += visRow(label, vis, `toggleCol('${key}')`);
+  });
+
+  // ── Semanas y subcolumnas ──
+  html += `<div style="font-weight:700;font-size:0.78rem;color:#1a3c6e;margin:10px 0 4px">Semanas y columnas</div>`;
+  const row2ths = Array.from(document.querySelectorAll('thead tr:nth-child(2) th'));
+  let ci = 0;
+  mat.weeks.forEach((w, wi) => {
+    const cols = mat.cols[w] || [];
+    // PROM de semana
+    const promKey = 'prom-wk-' + wi;
+    html += `<div style="font-size:0.75rem;font-weight:700;color:#555;margin:6px 0 2px;padding-left:4px;border-left:3px solid ${weekColor(MATS[S.am],w,wi).h}">
+      ${escHTML(w)}</div>`;
+    cols.forEach(col => {
+      const vis = !RS.hiddenCols[ci];
+      html += visRow(col.name + ' <span style="opacity:.6;font-size:0.65rem">' + actType(col.type).label + '</span>', vis, `toggleCol(${ci})`);
+      ci++;
+    });
+    const promVis = !RS.hiddenCols[promKey];
+    html += visRow('PROM semana', promVis, `toggleCol('${promKey}')`);
+  });
+
+  // ── Filas / Estudiantes ──
+  html += `<div style="font-weight:700;font-size:0.78rem;color:#1a3c6e;margin:10px 0 4px">Estudiantes</div>`;
+  S.students.forEach((name, i) => {
+    const vis = !RS.hiddenRows[i];
+    html += visRow(escHTML(name), vis, `toggleRow(${i})`);
+  });
+
+  body.innerHTML = html;
+}
+
+function visRow(label, visible, fn) {
+  return `<div onclick="${fn}" style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:5px;cursor:pointer;margin-bottom:2px;transition:background .12s"
+    onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background=''">
+    <span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">${visible ? '👁' : '🙈'}</span>
+    <span style="font-size:0.75rem;color:${visible?'#333':'#aaa'};${visible?'':'text-decoration:line-through'}">${label}</span>
+  </div>`;
+}
+
+// Click en celda # para ocultar/mostrar fila — ahora es DOBLE CLIC
+document.addEventListener('dblclick', e => {
+  const ic = e.target.closest('td.ic');
+  if (!ic) return;
+  if (e.target.classList.contains('row-resizer')) return;
+  const tr = ic.closest('tr');
+  if (!tr) return;
+  const rows = Array.from(document.querySelectorAll('#tb tr'));
+  const idx  = rows.indexOf(tr);
+  if (idx < 0) return;
+  toggleRow(idx);
+});
+
+// ══════════════════════════════════════════════════════
+//  VISTA PRINCIPAL — NOTAS / REPORTES
+// ══════════════════════════════════════════════════════
+let _currentView = 'notas';
+
+function switchView(v) {
+  _currentView = v;
+  document.getElementById('viewNotasPanel').style.display = v === 'notas'   ? '' : 'none';
+  document.getElementById('reportPanel').style.display    = v === 'reporte' ? 'block' : 'none';
+  document.getElementById('exportPanel').style.display    = v === 'export'  ? 'block' : 'none';
+  const bn = document.getElementById('viewNotas');
+  const br = document.getElementById('viewReporte');
+  const be = document.getElementById('viewExport');
+  bn.style.background = v === 'notas'   ? '#2e6da4' : 'transparent';
+  bn.style.color      = v === 'notas'   ? '#fff'    : '#666';
+  br.style.background = v === 'reporte' ? '#2e6da4' : 'transparent';
+  br.style.color      = v === 'reporte' ? '#fff'    : '#666';
+  be.style.background = v === 'export'  ? '#2e6da4' : 'transparent';
+  be.style.color      = v === 'export'  ? '#fff'    : '#666';
+  if (v === 'reporte') { const q = document.getElementById('rpSearch').value; q ? rpFilter(q) : rpShowAll(); }
+  if (v === 'export')  expInit();
+}
+
+// ══════════════════════════════════════════════════════
+//  REPORTE POR ESTUDIANTE
+// ══════════════════════════════════════════════════════
+const SPECIAL_MAP = {};
+// Construir mapa de val → info al cargar
+function buildSpecialMap() { SPECIAL.forEach(s => { SPECIAL_MAP[s.val] = s; }); }
+
+function rpFilter(q) {
+  const term = (q || '').toLowerCase().trim();
+  if (!term) { document.getElementById('rpBody').innerHTML = `<div class="rp-empty">Escribe un nombre para buscar o presiona "Ver todos"</div>`; document.getElementById('rpCount').textContent = ''; return; }
+  const matches = S.students.map((n,i) => ({n,i})).filter(({n}) => n.toLowerCase().includes(term));
+  document.getElementById('rpCount').textContent = `${matches.length} estudiante(s)`;
+  if (!matches.length) { document.getElementById('rpBody').innerHTML = `<div class="rp-empty">No se encontró ningún estudiante con ese nombre.</div>`; return; }
+  document.getElementById('rpBody').innerHTML = matches.map(({n,i}) => buildStudentCard(i)).join('');
+}
+
+function rpShowAll() {
+  document.getElementById('rpSearch').value = '';
+  document.getElementById('rpCount').textContent = `${S.students.length} estudiantes`;
+  // Mostrar lista resumida de todos
+  document.getElementById('rpBody').innerHTML = buildAllList();
+}
+
+function rpPrint() {
+  const v = _currentView;
+  switchView('reporte');
+  setTimeout(() => { window.print(); switchView(v); }, 200);
+}
+
+function shareWhatsApp(si) {
+  const name = S.students[si];
+  const lines = [];
+
+  lines.push(`📚 *REPORTE DE NOTAS*`);
+  lines.push(`👤 *${name}*`);
+  lines.push(`🏫 ${S.grado} · ${S.anio}`);
+  lines.push('');
+
+  // Totales globales
+  let totG = 0, cntG = 0, lowG = 0, recG = 0, missingG = 0;
+  const specCount = {};
+  SPECIAL.forEach(s => { specCount[s.val] = 0; });
+
+  MATS.forEach(matName => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    const g = mat.grades[si] || {};
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const v = g[w + '||' + col.name];
+        if (!v) { missingG++; return; }
+        const sp = SPECIAL_MAP[String(v).toUpperCase()];
+        if (sp) { specCount[sp.val]++; return; }
+        const n = parseFloat(v);
+        if (!isNaN(n)) {
+          totG += n; cntG++;
+          if (n < 7) {
+            const isRec = !!(S.recovered && S.recovered[matName+'||'+si+'||'+w+'||'+col.name]);
+            if (isRec) recG++; else lowG++;
+          }
+        }
+      });
+    });
+  });
+
+  const avgGen = cntG ? (totG / cntG).toFixed(2) : '—';
+  lines.push(`📊 *Promedio general: ${avgGen}*`);
+  if (lowG)     lines.push(`❌ Notas bajas (<7): ${lowG}`);
+  if (recG)     lines.push(`✅ Notas recuperadas: ${recG}`);
+  if (missingG) lines.push(`⬜ Sin nota: ${missingG}`);
+  SPECIAL.forEach(s => { if (specCount[s.val]) lines.push(`${s.icon} ${s.label}: ${specCount[s.val]}`); });
+  lines.push('');
+  lines.push('─────────────────────');
+
+  // Por materia → semanas ordenadas → actividades ordenadas
+  MATS.forEach(matName => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    const g = mat.grades[si] || {};
+
+    let totM = 0, cntM = 0;
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const n = parseFloat(g[w + '||' + col.name]);
+        if (!isNaN(n)) { totM += n; cntM++; }
+      });
+    });
+    const avgMat = cntM ? (totM / cntM).toFixed(2) : '—';
+
+    lines.push('');
+    lines.push(`📖 *${matName}* — Prom: ${avgMat}`);
+
+    const weeksOrdered = [...mat.weeks].sort((a, b) => {
+      const dA = earliestDate(mat.cols[a] || []);
+      const dB = earliestDate(mat.cols[b] || []);
+      if (dA && dB) return dA.localeCompare(dB);
+      if (dA) return -1; if (dB) return 1;
+      return mat.weeks.indexOf(a) - mat.weeks.indexOf(b);
+    });
+
+    weeksOrdered.forEach(w => {
+      const cols = mat.cols[w] || [];
+      if (!cols.length) return;
+
+      const wVals = cols.map(c => parseFloat(g[w+'||'+c.name])).filter(n => !isNaN(n));
+      const wAvg  = wVals.length ? (wVals.reduce((a,b)=>a+b,0)/wVals.length).toFixed(2) : '—';
+
+      lines.push(`  📅 *${w}* (Prom: ${wAvg})`);
+
+      const colsOrdered = [...cols].sort((a, b) => {
+        if (a.date && b.date) return a.date.localeCompare(b.date);
+        if (a.date) return -1; if (b.date) return 1;
+        return cols.indexOf(a) - cols.indexOf(b);
+      });
+
+      colsOrdered.forEach(col => {
+        const v = g[w + '||' + col.name];
+        const dateStr = col.date ? ` [${col.date}]` : '';
+        let estado = '';
+
+        if (!v) {
+          estado = '⬜ Sin nota';
+        } else {
+          const sp = SPECIAL_MAP[String(v).toUpperCase()];
+          if (sp) {
+            estado = `${sp.icon} ${sp.label}`;
+          } else {
+            const n = parseFloat(v);
+            if (!isNaN(n)) {
+              const isRec = !!(S.recovered && S.recovered[matName+'||'+si+'||'+w+'||'+col.name]);
+              if (n < 7 && !isRec) estado = `❌ ${v}`;
+              else if (isRec)      estado = `✅ ${v} (Recuperada)`;
+              else                 estado = `✔ ${v}`;
+            }
+          }
+        }
+        lines.push(`     • ${col.name}${dateStr}: ${estado}`);
+      });
+    });
+  });
+
+  lines.push('');
+  lines.push('─────────────────────');
+  lines.push(`_Generado desde Registro de Notas_`);
+
+  const text = lines.join('\n');
+  const url  = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+// Lista compacta de todos los estudiantes con badges de alertas
+function buildAllList() {
+  let html = `<div class="rp-all">`;
+  S.students.forEach((name, si) => {
+    const alerts = getStudentAlerts(si);
+    const total  = alerts.reduce((a,b) => a + b.items.length, 0);
+    const color  = total === 0 ? '#27ae60' : total <= 3 ? '#f57c00' : '#e74c3c';
+    html += `<div class="rp-row" onclick="rpShowOne(${si})">
+      <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0">${si+1}</span>
+      <span class="rp-row-name">${escHTML(name)}</span>
+      <div class="rp-row-badges">
+        ${total === 0
+          ? `<span class="rp-badge" style="background:#27ae60">✓ Al día</span>`
+          : alerts.flatMap(a => a.items).slice(0,4).map(it =>
+              `<span class="rp-badge" style="background:${it.color}">${it.short}</span>`
+            ).join('') + (total > 4 ? `<span class="rp-badge" style="background:#888">+${total-4}</span>` : '')
+        }
+      </div>
+      <span style="font-size:0.7rem;color:#aaa;margin-left:4px">▶</span>
+    </div>`;
+  });
+  return html + '</div>';
+}
+
+function rpShowOne(si) {
+  document.getElementById('rpSearch').value = S.students[si];
+  document.getElementById('rpCount').textContent = '1 estudiante';
+  document.getElementById('rpBody').innerHTML = buildStudentCard(si);
+}
+
+// Recopila todas las alertas de un estudiante en todas las materias
+function getStudentAlerts(si) {
+  const result = [];
+  MATS.forEach(matName => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    const g = mat.grades[si] || {};
+    const items = [];
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const v = g[w + '||' + col.name];
+        if (v === undefined || v === '') {
+          items.push({ type:'missing', short:'Sin nota', label:`Sin nota: ${col.name} (${w})`, color:'#90a4ae', icon:'⬜' });
+        } else {
+          const sp = SPECIAL_MAP[String(v).toUpperCase()];
+          if (sp) {
+            items.push({ type:'special', short:sp.val, label:`${sp.label}: ${col.name} (${w})`, color:sp.border, icon:sp.icon });
+          } else {
+            const n = parseFloat(v);
+            if (!isNaN(n) && n < 7) {
+              const rec = !!(S.recovered && S.recovered[matName+'||'+si+'||'+w+'||'+col.name]);
+              items.push({ type: rec ? 'recovered' : 'low', short: v, label:`${rec?'Recuperada':'Baja'}: ${col.name} (${w}) = ${v}`, color: rec ? '#27ae60' : '#e74c3c', icon: rec ? '✓' : '✗' });
+            }
+          }
+        }
+      });
+    });
+    if (items.length) result.push({ matName, items });
+  });
+  return result;
+}
+
+function buildStudentCard(si) {
+  const name = S.students[si];
+
+  // ── Totales globales ──
+  let totG = 0, cntG = 0, lowG = 0, recG = 0, missingG = 0;
+  const specCount = {};
+  SPECIAL.forEach(s => { specCount[s.val] = 0; });
+
+  MATS.forEach(matName => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    const g = mat.grades[si] || {};
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const v = g[w + '||' + col.name];
+        if (v === undefined || v === '') { missingG++; return; }
+        const sp = SPECIAL_MAP[String(v).toUpperCase()];
+        if (sp) { specCount[sp.val] = (specCount[sp.val] || 0) + 1; return; }
+        const n = parseFloat(v);
+        if (!isNaN(n)) {
+          totG += n; cntG++;
+          if (n < 7) {
+            const isRec = !!(S.recovered && S.recovered[matName+'||'+si+'||'+w+'||'+col.name]);
+            if (isRec) recG++; else lowG++;
+          }
+        }
+      });
+    });
+  });
+
+  const avgGen   = cntG ? (totG / cntG).toFixed(2) : '—';
+  const avgColor = cntG && (totG / cntG) < 7 ? '#e74c3c' : '#27ae60';
+
+  // ── Cabecera + resumen ──
+  let html = `<div class="rp-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <div>
+        <div class="rp-name">👤 ${escHTML(name)}</div>
+        <div class="rp-sub">${escHTML(S.grado)} · ${escHTML(S.anio)}</div>
+      </div>
+      <button class="btn bl" style="font-size:0.72rem;padding:4px 10px" onclick="rpShowAll()">← Volver</button>
+      <button onclick="shareWhatsApp(${si})" style="background:#25d366;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Compartir
+      </button>
+    </div>
+    <div class="rp-summary">
+      <div class="rp-stat"><div class="rp-stat-v" style="color:${avgColor}">${avgGen}</div><div class="rp-stat-l">Prom. global</div></div>
+      <div class="rp-stat"><div class="rp-stat-v" style="color:#e74c3c">${lowG}</div><div class="rp-stat-l">Notas &lt;7</div></div>
+      <div class="rp-stat"><div class="rp-stat-v" style="color:#27ae60">${recG}</div><div class="rp-stat-l">Recuperadas</div></div>
+      <div class="rp-stat"><div class="rp-stat-v" style="color:#90a4ae">${missingG}</div><div class="rp-stat-l">Sin nota</div></div>
+      ${SPECIAL.map(s => specCount[s.val]
+        ? `<div class="rp-stat"><div class="rp-stat-v" style="color:${s.border}">${specCount[s.val]}</div><div class="rp-stat-l">${s.label}</div></div>`
+        : '').join('')}
+    </div>`;
+
+  // ── Por materia → por semana (ordenadas) → actividades ordenadas por fecha ──
+  const matColors = ['#1a6e3c','#1a4a8a','#7b2d8b','#b5451b','#8b1a1a','#1a7a7a','#7a6a00'];
+
+  MATS.forEach((matName, mi) => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    const g   = mat.grades[si] || {};
+    const mc  = matColors[mi % matColors.length];
+
+    // Calcular promedio de la materia
+    let totM = 0, cntM = 0;
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const n = parseFloat(g[w + '||' + col.name]);
+        if (!isNaN(n)) { totM += n; cntM++; }
+      });
+    });
+    const avgMat   = cntM ? (totM / cntM).toFixed(2) : '—';
+    const avgMatC  = cntM && (totM / cntM) < 7 ? '#e74c3c' : '#27ae60';
+
+    html += `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="background:${mc};color:#fff;font-weight:700;font-size:0.8rem;padding:3px 12px;border-radius:5px">${escHTML(matName)}</span>
+        <span style="font-size:0.78rem;font-weight:700;color:${avgMatC}">Prom: ${avgMat}</span>
+      </div>`;
+
+    // Ordenar semanas: las que tienen fecha primero, luego las sin fecha en orden original
+    const weeksOrdered = [...mat.weeks].sort((a, b) => {
+      // Buscar la fecha más temprana de las columnas de cada semana
+      const dateA = earliestDate(mat.cols[a] || []);
+      const dateB = earliestDate(mat.cols[b] || []);
+      if (dateA && dateB) return dateA.localeCompare(dateB);
+      if (dateA) return -1;
+      if (dateB) return 1;
+      return mat.weeks.indexOf(a) - mat.weeks.indexOf(b);
+    });
+
+    weeksOrdered.forEach((w, wi) => {
+      const cols = mat.cols[w] || [];
+      if (!cols.length) return;
+      const wc = weekColor(matName, w, mat.weeks.indexOf(w));
+
+      // Ordenar columnas por fecha, luego por orden original
+      const colsOrdered = [...cols].sort((a, b) => {
+        if (a.date && b.date) return a.date.localeCompare(b.date);
+        if (a.date) return -1;
+        if (b.date) return 1;
+        return cols.indexOf(a) - cols.indexOf(b);
+      });
+
+      // Promedio de la semana
+      const wVals = cols.map(c => parseFloat(g[w + '||' + c.name])).filter(n => !isNaN(n));
+      const wAvg  = wVals.length ? (wVals.reduce((a,b)=>a+b,0)/wVals.length).toFixed(2) : '—';
+      const wAvgC = wVals.length && parseFloat(wAvg) < 7 ? '#e74c3c' : '#27ae60';
+
+      html += `<div style="margin-bottom:8px;border-left:3px solid ${wc.h};padding-left:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:0.75rem;font-weight:700;color:${wc.h}">${escHTML(w)}</span>
+          <span style="font-size:0.72rem;font-weight:700;color:${wAvgC};background:${wc.c};padding:1px 7px;border-radius:8px">Prom: ${wAvg}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">`;
+
+      colsOrdered.forEach(col => {
+        const v   = g[w + '||' + col.name];
+        const at  = actType(col.type);
+        const colBg = col.color || at.color;
+        const dateStr = col.date ? `<span style="font-size:0.6rem;opacity:.7;display:block">${col.date}</span>` : '';
+        const typeStr = `<span style="font-size:0.6rem;opacity:.75;display:block">${at.label}</span>`;
+
+        let itemStyle = `background:#f5f5f5;border:1px solid #ddd;color:#555`; // sin nota
+        let icon = '⬜', valDisp = 'Sin nota';
+
+        if (v !== undefined && v !== '') {
+          const sp = SPECIAL_MAP[String(v).toUpperCase()];
+          if (sp) {
+            itemStyle = `background:${sp.color};border:1.5px solid ${sp.border};color:${sp.border}`;
+            icon = sp.icon; valDisp = sp.label;
+          } else {
+            const n = parseFloat(v);
+            if (!isNaN(n)) {
+              const isRec = !!(S.recovered && S.recovered[matName+'||'+si+'||'+w+'||'+col.name]);
+              if (n < 7 && !isRec) {
+                itemStyle = `background:#fde8e8;border:1.5px solid #e74c3c;color:#c0392b`;
+                icon = '✗'; valDisp = v;
+              } else if (isRec) {
+                itemStyle = `background:#e8f8e8;border:1.5px solid #27ae60;color:#1a7a40`;
+                icon = '✓'; valDisp = v + ' ✓';
+              } else {
+                itemStyle = `background:#f0fff4;border:1px solid #a5d6a7;color:#2e7d32`;
+                icon = ''; valDisp = v;
+              }
+            }
+          }
+        }
+
+        html += `<div style="${itemStyle};border-radius:7px;padding:4px 8px;font-size:0.72rem;min-width:60px;text-align:center">
+          <div style="font-weight:700;color:${colBg};font-size:0.65rem;margin-bottom:1px">${icon} ${escHTML(col.name)}</div>
+          ${typeStr}${dateStr}
+          <div style="font-size:0.85rem;font-weight:800;margin-top:2px">${escHTML(valDisp)}</div>
+        </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  // ── Gráfica de progreso por semana ──
+  html += buildProgressChart(si);
+
+  html += `</div>`;
+  return html;
+}
+
+// ══════════════════════════════════════════════════════
+//  GRÁFICA DE PROGRESO SVG
+// ══════════════════════════════════════════════════════
+function buildProgressChart(si) {
+  const W = 560, H = 200, PAD = { t:20, r:20, b:50, l:44 };
+  const CW = W - PAD.l - PAD.r;
+  const CH = H - PAD.t - PAD.b;
+  const MIN_NOTE = 0, MAX_NOTE = 10, APROV = 7;
+
+  const matColors = ['#1a6e3c','#1a4a8a','#7b2d8b','#b5451b','#8b1a1a','#1a7a7a','#7a6a00'];
+
+  // Recopilar puntos: { matName, week, avg, wi }
+  // Una línea por materia, puntos = promedio por semana
+  const series = MATS.map((matName, mi) => {
+    const mat = S.mats[matName];
+    if (!mat) return null;
+    const g = mat.grades[si] || {};
+
+    const weeksOrdered = [...mat.weeks].sort((a, b) => {
+      const dA = earliestDate(mat.cols[a] || []);
+      const dB = earliestDate(mat.cols[b] || []);
+      if (dA && dB) return dA.localeCompare(dB);
+      if (dA) return -1; if (dB) return 1;
+      return mat.weeks.indexOf(a) - mat.weeks.indexOf(b);
+    });
+
+    const points = weeksOrdered.map((w, wi) => {
+      const cols = mat.cols[w] || [];
+      const nums = cols.map(c => parseFloat(g[w+'||'+c.name])).filter(n => !isNaN(n));
+      const avg  = nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null;
+      return { w, wi, avg };
+    }).filter(p => p.avg !== null);
+
+    return { matName, mi, points, color: matColors[mi % matColors.length] };
+  }).filter(s => s && s.points.length > 0);
+
+  if (!series.length) return '';
+
+  // Calcular todas las semanas únicas en orden
+  const allWeeks = [];
+  MATS.forEach(matName => {
+    const mat = S.mats[matName];
+    if (!mat) return;
+    mat.weeks.forEach(w => { if (!allWeeks.includes(w)) allWeeks.push(w); });
+  });
+
+  const xStep = allWeeks.length > 1 ? CW / (allWeeks.length - 1) : CW;
+
+  // Helpers
+  const xPos = wi => PAD.l + (allWeeks.length > 1 ? wi * CW / (allWeeks.length - 1) : CW / 2);
+  const yPos = v  => PAD.t + CH - ((v - MIN_NOTE) / (MAX_NOTE - MIN_NOTE)) * CH;
+
+  // Línea de aprobación
+  const yAprov = yPos(APROV);
+
+  let svg = `<div style="margin-top:18px">
+    <div style="font-weight:700;font-size:0.85rem;color:#1a3c6e;margin-bottom:8px">📈 Progreso por semana</div>
+    <div style="overflow-x:auto">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;display:block;font-family:'Segoe UI',Arial,sans-serif">
+      <!-- Fondo -->
+      <rect x="${PAD.l}" y="${PAD.t}" width="${CW}" height="${CH}" fill="#f8fafc" rx="4"/>
+
+      <!-- Líneas de cuadrícula horizontales -->
+      ${[0,2,4,6,7,8,10].map(v => {
+        const y = yPos(v);
+        const isAprov = v === APROV;
+        return `<line x1="${PAD.l}" y1="${y}" x2="${PAD.l+CW}" y2="${y}"
+          stroke="${isAprov ? '#e74c3c' : '#e0e7ef'}"
+          stroke-width="${isAprov ? 1.5 : 0.8}"
+          stroke-dasharray="${isAprov ? '5,3' : ''}"/>
+          <text x="${PAD.l - 5}" y="${y+4}" text-anchor="end" font-size="9" fill="${isAprov?'#e74c3c':'#aaa'}">${v}</text>`;
+      }).join('')}
+
+      <!-- Etiqueta línea aprobación -->
+      <text x="${PAD.l + CW - 2}" y="${yAprov - 4}" text-anchor="end" font-size="8" fill="#e74c3c">mín. 7</text>
+
+      <!-- Líneas de cuadrícula verticales + etiquetas semanas -->
+      ${allWeeks.map((w, wi) => {
+        const x = xPos(wi);
+        const label = w.length > 8 ? w.slice(0,7)+'…' : w;
+        return `<line x1="${x}" y1="${PAD.t}" x2="${x}" y2="${PAD.t+CH}" stroke="#e0e7ef" stroke-width="0.8"/>
+          <text x="${x}" y="${H - 6}" text-anchor="middle" font-size="8" fill="#888"
+            transform="rotate(-35,${x},${H-6})">${escHTML(label)}</text>`;
+      }).join('')}
+
+      <!-- Series por materia -->
+      ${series.map(s => {
+        // Mapear puntos a coordenadas usando índice en allWeeks
+        const pts = s.points.map(p => {
+          const wi = allWeeks.indexOf(p.w);
+          return { x: xPos(wi), y: yPos(p.avg), avg: p.avg, w: p.w };
+        });
+        if (pts.length < 1) return '';
+
+        // Línea suavizada (polyline)
+        const polyline = pts.map((p,i) => `${p.x},${p.y}`).join(' ');
+
+        // Área bajo la curva
+        const areaPath = `M${pts[0].x},${PAD.t+CH} ` +
+          pts.map(p => `L${p.x},${p.y}`).join(' ') +
+          ` L${pts[pts.length-1].x},${PAD.t+CH} Z`;
+
+        return `
+          <path d="${areaPath}" fill="${s.color}" opacity="0.08"/>
+          <polyline points="${polyline}" fill="none" stroke="${s.color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${pts.map((p, i) => {
+            const low = p.avg < APROV;
+            return `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${low?'#e74c3c':s.color}" stroke="#fff" stroke-width="1.5"/>
+              <title>${escHTML(s.matName)} · ${escHTML(p.w)}: ${p.avg.toFixed(2)}</title>`;
+          }).join('')}`;
+      }).join('')}
+
+      <!-- Ejes -->
+      <line x1="${PAD.l}" y1="${PAD.t}" x2="${PAD.l}" y2="${PAD.t+CH}" stroke="#ccc" stroke-width="1"/>
+      <line x1="${PAD.l}" y1="${PAD.t+CH}" x2="${PAD.l+CW}" y2="${PAD.t+CH}" stroke="#ccc" stroke-width="1"/>
+    </svg>
+    </div>
+
+    <!-- Leyenda -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+      ${series.map(s => {
+        const last = s.points[s.points.length-1];
+        const avg  = last ? last.avg.toFixed(2) : '—';
+        const low  = last && last.avg < APROV;
+        return `<div style="display:flex;align-items:center;gap:5px;font-size:0.72rem">
+          <span style="width:14px;height:3px;background:${s.color};display:inline-block;border-radius:2px"></span>
+          <span style="color:#555">${escHTML(s.matName)}</span>
+          <span style="font-weight:700;color:${low?'#e74c3c':'#27ae60'}">${avg}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  return svg;
+}
+
+// Devuelve la fecha más temprana de un array de columnas
+function earliestDate(cols) {
+  const dates = cols.map(c => c.date).filter(d => d && d.trim());
+  if (!dates.length) return null;
+  return dates.sort()[0];
+}
+
+// ══════════════════════════════════════════════════════
+//  MODO OSCURO
+// ══════════════════════════════════════════════════════
+function toggleDark() {
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('notas_dark', dark ? '1' : '0');
+  document.getElementById('darkBtn').textContent = dark ? '☀️' : '🌙';
+}
+function loadDark() {
+  if (localStorage.getItem('notas_dark') === '1') {
+    document.body.classList.add('dark');
+    const btn = document.getElementById('darkBtn');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  TAMAÑO DE FUENTE
+// ══════════════════════════════════════════════════════
+let _fontSize = parseInt(localStorage.getItem('notas_fs') || '13');
+function applyFontSize() {
+  document.documentElement.style.setProperty('--fs', _fontSize + 'px');
+  document.documentElement.style.setProperty('--fs-sm', (_fontSize * 0.85).toFixed(1) + 'px');
+  document.body.style.fontSize = _fontSize + 'px';
+  const lbl = document.getElementById('fontSizeLabel');
+  if (lbl) lbl.textContent = _fontSize + 'px';
+  const slider = document.getElementById('fontSlider');
+  if (slider) slider.value = _fontSize;
+}
+function changeFontSize(delta, absolute) {
+  if (absolute !== undefined) _fontSize = absolute;
+  else _fontSize = Math.min(20, Math.max(9, _fontSize + delta));
+  localStorage.setItem('notas_fs', _fontSize);
+  applyFontSize();
+}
+
+// ══════════════════════════════════════════════════════
+//  ORDENAR ESTUDIANTES
+// ══════════════════════════════════════════════════════
+let _sortOrder = localStorage.getItem('notas_sort') || 'default';
+// Índices originales → orden actual de visualización
+let _sortedIndices = null;
+
+function studentAvgAll(si) {
+  let tot = 0, cnt = 0;
+  MATS.forEach(m => {
+    Object.values(S.mats[m]?.grades[si] || {}).forEach(v => {
+      const n = parseFloat(v); if (!isNaN(n)) { tot += n; cnt++; }
+    });
+  });
+  return cnt ? tot / cnt : null;
+}
+
+function studentAlertCount(si) {
+  let count = 0;
+  MATS.forEach(matName => {
+    const mat = S.mats[matName]; if (!mat) return;
+    const g = mat.grades[si] || {};
+    mat.weeks.forEach(w => {
+      (mat.cols[w] || []).forEach(col => {
+        const v = g[w + '||' + col.name];
+        if (!v) { count++; return; }
+        const sp = SPECIAL_MAP[String(v).toUpperCase()];
+        if (sp) { count++; return; }
+        const n = parseFloat(v);
+        if (!isNaN(n) && n < 7) {
+          const rec = !!(S.recovered?.[matName+'||'+si+'||'+w+'||'+col.name]);
+          if (!rec) count++;
+        }
+      });
+    });
+  });
+  return count;
+}
+
+function getSortedIndices() {
+  const indices = S.students.map((_, i) => i);
+  switch (_sortOrder) {
+    case 'name-az':   return indices.sort((a,b) => S.students[a].localeCompare(S.students[b]));
+    case 'name-za':   return indices.sort((a,b) => S.students[b].localeCompare(S.students[a]));
+    case 'avg-desc':  return indices.sort((a,b) => (studentAvgAll(b)||0) - (studentAvgAll(a)||0));
+    case 'avg-asc':   return indices.sort((a,b) => (studentAvgAll(a)||0) - (studentAvgAll(b)||0));
+    case 'alerts-desc': return indices.sort((a,b) => studentAlertCount(b) - studentAlertCount(a));
+    case 'alerts-asc':  return indices.sort((a,b) => studentAlertCount(a) - studentAlertCount(b));
+    default: return indices;
+  }
+}
+
+function applySortOrder() {
+  const sel = document.getElementById('sortSel');
+  if (sel) _sortOrder = sel.value;
+  localStorage.setItem('notas_sort', _sortOrder);
+  render();
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORTAR AL SISTEMA EXTERNO
+// ══════════════════════════════════════════════════════
+function expInit() {
+  // Poblar selector de materias
+  const matSel = document.getElementById('expMat');
+  if (!matSel) return;
+  matSel.innerHTML = MATS.map((m,i) => `<option value="${i}">${escHTML(m)}</option>`).join('');
+  expRefreshWeeks();
+  expRefresh();
+}
+
+function expRefreshWeeks() {
+  const mi  = parseInt(document.getElementById('expMat').value || 0);
+  const mat = S.mats[MATS[mi]];
+  const sel = document.getElementById('expWeek');
+  if (!mat || !sel) return;
+  sel.innerHTML = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
+  expRefreshCols();
+}
+
+function expRefreshCols() {
+  const mi   = parseInt(document.getElementById('expMat').value || 0);
+  const week = document.getElementById('expWeek').value;
+  const mat  = S.mats[MATS[mi]];
+  const sel  = document.getElementById('expCol');
+  if (!mat || !sel) return;
+  const cols = mat.cols[week] || [];
+  sel.innerHTML = cols.map(c => `<option value="${escVal(c.name)}">${escHTML(c.name)}</option>`).join('');
+}
+
+function expRefresh() {
+  const type = document.getElementById('expType').value;
+  document.getElementById('expColWrap').style.display = type === 'col' ? '' : 'none';
+  if (type !== 'col') expRefreshWeeks();
+  else expRefreshCols();
+
+  const mi   = parseInt(document.getElementById('expMat').value || 0);
+  const matName = MATS[mi];
+  const mat  = S.mats[matName];
+  const week = document.getElementById('expWeek').value;
+  const col  = document.getElementById('expCol').value;
+  if (!mat) return;
+
+  // Cabecera dinámica
+  const hdr = type === 'prom-week' ? `Prom. ${week}`
+            : type === 'prom-mat'  ? `Prom. ${matName}`
+            : `${col} (${week})`;
+  document.getElementById('expValHeader').textContent = hdr;
+
+  // Calcular valores en orden de estudiantes
+  const rows = getSortedIndices().map((si, pos) => {
+    const name = S.students[si];
+    const g    = mat.grades[si] || {};
+    let val;
+
+    if (type === 'prom-week') {
+      const cols = mat.cols[week] || [];
+      const nums = cols.map(c => parseFloat(g[week+'||'+c.name])).filter(n => !isNaN(n));
+      val = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2) : '';
+    } else if (type === 'prom-mat') {
+      let tot=0, cnt=0;
+      mat.weeks.forEach(w => {
+        (mat.cols[w]||[]).forEach(c => {
+          const n = parseFloat(g[w+'||'+c.name]);
+          if (!isNaN(n)) { tot+=n; cnt++; }
+        });
+      });
+      val = cnt ? (tot/cnt).toFixed(2) : '';
+    } else {
+      const v = g[week+'||'+col];
+      val = (v !== undefined && v !== '') ? v : '';
+    }
+
+    return { si, pos: pos+1, name, val };
+  });
+
+  // Renderizar tabla
+  document.getElementById('expTbody').innerHTML = rows.map(r => {
+    const isEmpty = r.val === '';
+    const n = parseFloat(r.val);
+    const color = isEmpty ? '#aaa' : (!isNaN(n) && n < 7 ? '#e74c3c' : '#1a7a40');
+    const bg    = isEmpty ? '' : (!isNaN(n) && n < 7 ? '#fde8e8' : '#f0fff4');
+    return `<tr style="border-bottom:1px solid #eee;${bg?'background:'+bg:''}">
+      <td style="padding:5px 12px;color:#888;font-size:0.75rem">${r.pos}</td>
+      <td style="padding:5px 12px;font-weight:500">${escHTML(r.name)}</td>
+      <td style="padding:5px 12px;text-align:center;font-weight:700;font-size:0.9rem;color:${color}">${r.val || '—'}</td>
+      <td style="padding:5px 12px;text-align:center">
+        <button onclick="expCopyOne('${escVal(r.val)}')" style="background:#e3f2fd;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.72rem;color:#1565c0" data-tip="Copiar solo este valor">📋</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Copia como tabla TSV: nombre TAB valor (para Excel)
+function expCopyTSV() {
+  const rows = document.querySelectorAll('#expTbody tr');
+  const lines = Array.from(rows).map(tr => {
+    const tds = tr.querySelectorAll('td');
+    const name = tds[1] ? tds[1].textContent.trim() : '';
+    const val  = tds[2] ? tds[2].textContent.trim() : '';
+    return `${name}\t${val === '—' ? '' : val}`;
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(() => showExpCopied());
+}
+
+function expCopyOne(val) {
+  navigator.clipboard.writeText(val === '—' ? '' : val).then(() => {
+    toast('📋 Copiado: ' + val, '#1565c0');
+  });
+}
+
+function showExpCopied() {
+  const el = document.getElementById('expCopied');
+  if (!el) return;
+  el.style.display = 'inline';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 2500);
+  toast('📋 ¡Copiado! Pega directamente en el sistema', '#1565c0');
+}
+
+// ── Generador de Bookmarklet / Script Auto-Relleno ──
+function expGenerateBookmarklet() {
+  // Recopilar los valores actuales de la tabla
+  const rows = Array.from(document.querySelectorAll('#expTbody tr'));
+  const vals = rows.map(tr => {
+    const td = tr.querySelectorAll('td')[2];
+    const v  = td ? td.textContent.trim() : '';
+    return v === '—' ? '' : v;
+  }).filter((_, i) => i < rows.length);
+
+  if (!vals.length) { toast('⚠ Primero selecciona materia y semana', '#e67e22'); return; }
+
+  const hdr = document.getElementById('expValHeader')?.textContent || 'Notas';
+
+  // Script que se ejecutará en el sistema externo
+  // Busca todos los inputs de tipo text visibles en la tabla de calificaciones
+  // y los llena en orden con los valores
+  const scriptBody = `
+(function(){
+  var vals=${JSON.stringify(vals)};
+  var label='${hdr.replace(/'/g,"\\'")}';
+  var delay=500;
+
+  function setAngular(el, v){
+    el.focus();
+    el.value = v;
+    // Angular 1.x — método más confiable
+    try{
+      var s = angular.element(el).scope();
+      if(!s) s = angular.element(el).isolateScope();
+      if(s){
+        var model = el.getAttribute('ng-model')||el.getAttribute('data-ng-model')||'';
+        if(model){
+          var parts=model.split('.'), obj=s;
+          for(var i=0;i<parts.length-1;i++) obj=obj[parts[i]];
+          obj[parts[parts.length-1]]=v;
+          s.$apply();
+          return;
+        }
+      }
+    }catch(e){}
+    // Fallback: eventos nativos
+    var ev=['focus','click','keydown','keypress','input','keyup','change','blur'];
+    ev.forEach(function(t){
+      try{el.dispatchEvent(new Event(t,{bubbles:true,cancelable:true}));}catch(e){}
+    });
+    try{
+      var setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+      setter.set.call(el,v);
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    }catch(e){}
+  }
+
+  // Selector específico para sistema-orozco: tabla.tabla_aportes
+  var tabla = document.querySelector('table.tabla_aportes') ||
+              document.querySelector('table[class*="aporte"]') ||
+              document.querySelector('table');
+
+  if(!tabla){alert('❌ No se encontró la tabla de aportes.');return;}
+
+  // Filas de estudiantes (excluir header)
+  var trs = Array.from(tabla.querySelectorAll('tbody tr, tr')).filter(function(tr){
+    return tr.querySelectorAll('input[type=text]').length > 0;
+  });
+
+  if(!trs.length){alert('❌ No se encontraron filas con inputs.');return;}
+
+  // Detectar columna vacía
+  var numCols = trs[0].querySelectorAll('input[type=text]').length;
+  var colIdx  = 0;
+  for(var c=0;c<numCols;c++){
+    var empty=trs.every(function(tr){
+      var i=tr.querySelectorAll('input[type=text]')[c];
+      return i&&i.value.trim()==='';
+    });
+    if(empty){colIdx=c;break;}
+  }
+
+  var inputs=trs.map(function(tr){
+    return tr.querySelectorAll('input[type=text]')[colIdx];
+  }).filter(Boolean);
+
+  var total=Math.min(vals.length,inputs.length);
+  if(!confirm('⚡ '+label+'\\nColumna '+(colIdx+1)+' · '+total+' estudiantes\\n¿Continuar?'))return;
+
+  var n=0;
+  function fill(i){
+    if(i>=total){
+      alert('✅ '+n+' notas ingresadas.\\nPresiona "Guardar Calificaciones".');
+      return;
+    }
+    var inp=inputs[i], v=vals[i]||'';
+    try{inp.scrollIntoView({block:'nearest'});}catch(e){}
+    setAngular(inp,v);
+    if(v!=='')n++;
+    setTimeout(function(){fill(i+1);},delay);
+  }
+  fill(0);
+})();`;
+
+  const bookmarklet = 'javascript:' + encodeURIComponent(scriptBody);
+
+  // Actualizar el link del bookmarklet
+  const link = document.getElementById('bookmarkletLink');
+  if (link) link.href = bookmarklet;
+
+  // Mostrar el script en el textarea
+  const ta = document.getElementById('expScript');
+  if (ta) ta.value = scriptBody.trim();
+
+  document.getElementById('expAutoPanel').style.display = 'block';
+  document.getElementById('expAutoPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function expCopyScript() {
+  const ta = document.getElementById('expScript');
+  if (!ta) return;
+  navigator.clipboard.writeText(ta.value).then(() => {
+    toast('📋 Script copiado — pégalo en F12 → Consola', '#1565c0');
+  });
+}
+// ── Asistente campo a campo ──
+let _wzRows = [], _wzIdx = 0;
+
+function expStartWizard() {
+  const rows = Array.from(document.querySelectorAll('#expTbody tr'));
+  _wzRows = rows.map(tr => {
+    const tds = tr.querySelectorAll('td');
+    return {
+      name: tds[1] ? tds[1].textContent.trim() : '',
+      val:  tds[2] ? tds[2].textContent.trim().replace('—','') : ''
+    };
+  }).filter(r => r.name);
+  if (!_wzRows.length) { toast('⚠ No hay datos para exportar', '#e67e22'); return; }
+  _wzIdx = 0;
+  document.getElementById('expWizard').style.display = 'block';
+  document.getElementById('wzTotal').textContent = _wzRows.length;
+  document.getElementById('wzDone').style.display = 'none';
+  wzUpdate();
+  wzCopy(); // auto-copia el primero
+}
+
+function expStopWizard() {
+  document.getElementById('expWizard').style.display = 'none';
+}
+
+function wzUpdate() {
+  const r = _wzRows[_wzIdx];
+  if (!r) return;
+  document.getElementById('wzName').textContent = r.name;
+  document.getElementById('wzVal').textContent  = r.val || '(vacío)';
+  document.getElementById('wzPos').textContent  = _wzIdx + 1;
+  document.getElementById('wzBar').style.width  = ((_wzIdx + 1) / _wzRows.length * 100) + '%';
+  // Resaltar fila activa en la tabla
+  document.querySelectorAll('#expTbody tr').forEach((tr, i) => {
+    tr.style.background = i === _wzIdx ? '#dbeafe' : '';
+    tr.style.fontWeight = i === _wzIdx ? '700' : '';
+    if (i === _wzIdx) tr.scrollIntoView({ block:'nearest' });
+  });
+  document.getElementById('wzDone').style.display = _wzIdx >= _wzRows.length - 1 && _wzIdx > 0 ? 'block' : 'none';
+}
+
+function wzCopy() {
+  const r = _wzRows[_wzIdx];
+  if (!r) return;
+  navigator.clipboard.writeText(r.val).then(() => {
+    const btn = document.getElementById('wzCopyBtn');
+    btn.textContent = '✔ Copiado';
+    btn.style.background = '#27ae60';
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = '📋 Copiar'; btn.style.background = '#2e6da4'; }, 1200);
+  });
+}
+
+function wzNext() {
+  if (_wzIdx < _wzRows.length - 1) {
+    _wzIdx++;
+    wzUpdate();
+    wzCopy(); // auto-copia el siguiente
+  } else {
+    document.getElementById('wzDone').style.display = 'block';
+    toast('✅ ¡Todos los valores exportados!', '#27ae60');
+  }
+}
+
+function wzPrev() {
+  if (_wzIdx > 0) { _wzIdx--; wzUpdate(); wzCopy(); }
+}
+
+// ── Asistente campo a campo ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('expWizard')?.style.display !== 'none'
+      && _currentView === 'export' && !e.target.closest('input,select,textarea')) {
+    e.preventDefault();
+    wzNext();
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  BACKUP — EXPORTAR / IMPORTAR JSON
+// ══════════════════════════════════════════════════════
+function exportBackup() {
+  const data = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    grado: S.grado,
+    anio: S.anio,
+    state: S,
+    resize: RS
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href     = url;
+  a.download = `Notas_Backup_${(S.grado||'').replace(/\s+/g,'_')}_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✔ Backup exportado', '#00897b');
+}
+
+function importBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Validar estructura mínima
+      if (!data.state || !data.state.mats || !data.state.students) {
+        toast('⚠ Archivo inválido o corrupto', '#e74c3c'); return;
+      }
+      confirm2(
+        '⬆ Restaurar Backup',
+        `¿Restaurar datos de "${data.grado || '?'}" (${data.anio || '?'})? Se reemplazarán todos los datos actuales.`,
+        () => {
+          S = data.state;
+          if (!S.weekColors)  S.weekColors  = {};
+          if (!S.recovered)   S.recovered   = {};
+          if (data.resize) {
+            RS.cols       = data.resize.cols       || {};
+            RS.rows       = data.resize.rows       || {};
+            RS.hiddenCols = data.resize.hiddenCols || {};
+            RS.hiddenRows = data.resize.hiddenRows || {};
+            saveRS();
+          }
+          ensureMats();
+          saveData();
+          render();
+          toast(`✔ Backup restaurado — ${S.students.length} estudiantes`, '#00897b');
+        }
+      );
+    } catch(err) {
+      toast('⚠ Error al leer el archivo', '#e74c3c');
+    }
+    input.value = ''; // reset para poder importar el mismo archivo de nuevo
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════
+//  FIREBASE — CONFIGURACIÓN E INICIALIZACIÓN
+// ══════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDJYqrndXMm_c8uapKeJMDbLElJR3ls3S8",
+  authDomain: "registro-notas-b015c.firebaseapp.com",
+  projectId: "registro-notas-b015c",
+  storageBucket: "registro-notas-b015c.firebasestorage.app",
+  messagingSenderId: "1047822460531",
+  appId: "1:1047822460531:web:d27a540feef2476a9bac06"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+let _currentUser = null;
+let _saveTimeout = null;
+
+// ── Login con Google ──
+function signInGoogle() {
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Conectando...';
+  btn.disabled = true;
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err => {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginError').textContent = 'Error: ' + err.message;
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"/> Ingresar con Google';
+    btn.disabled = false;
+  });
+}
+
+function signOutUser() {
+  auth.signOut();
+}
+
+// ── Observer de autenticación ──
+auth.onAuthStateChanged(user => {
+  if (user) {
+    _currentUser = user;
+    showApp(user);
+    loadFromFirestore();
+  } else {
+    _currentUser = null;
+    showLogin();
+  }
+});
+
+function showLogin() {
+  const ls = document.getElementById('loginScreen');
+  ls.style.display = 'flex';
+  document.getElementById('userBar').style.display = 'none';
+  document.getElementById('loginBtn').innerHTML =
+    '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22"/> Ingresar con Google';
+  document.getElementById('loginBtn').disabled = false;
+}
+
+function showApp(user) {
+  document.getElementById('loginScreen').style.display = 'none';
+  const ub = document.getElementById('userBar');
+  ub.style.display = 'flex';
+  document.getElementById('userInfo').textContent =
+    `👤 ${user.displayName || user.email}  ·  ${user.email}`;
+}
+
+function setSyncStatus(msg, color) {
+  const el = document.getElementById('syncStatus');
+  if (el) { el.textContent = msg; el.style.color = color || 'rgba(255,255,255,0.6)'; }
+}
+
+// ── Cargar datos desde Firestore ──
+async function loadFromFirestore() {
+  if (!_currentUser) return;
+  setSyncStatus('⏳ Cargando...', '#7eb8f7');
+  try {
+    const doc = await db.collection('usuarios').doc(_currentUser.uid)
+      .collection('datos').doc('estado').get();
+    if (doc.exists) {
+      const data = doc.data();
+      S = data.state;
+      if (!S.weekColors) S.weekColors = {};
+      if (!S.recovered)  S.recovered  = {};
+      ensureMats();
+    } else {
+      // Primera vez — inicializar con datos por defecto
+      initS();
+      await saveToFirestore();
+    }
+    loadRS();
+    loadDark();
+    applyFontSize();
+    buildSpecialMap();
+    render();
+    const _ss = document.getElementById('sortSel');
+    if (_ss) _ss.value = _sortOrder;
+    setSyncStatus('✔ Sincronizado', '#b6ffca');
+    setTimeout(() => setSyncStatus('', ''), 3000);
+  } catch(e) {
+    setSyncStatus('⚠ Error al cargar', '#ff8a80');
+    // Fallback a localStorage
+    initS();
+    loadRS(); loadDark(); applyFontSize(); buildSpecialMap(); render();
+  }
+}
+
+// ── Guardar datos en Firestore (con debounce) ──
+async function saveToFirestore() {
+  if (!_currentUser) return;
+  try {
+    await db.collection('usuarios').doc(_currentUser.uid)
+      .collection('datos').doc('estado').set({ state: S, updatedAt: new Date().toISOString() });
+  } catch(e) {
+    setSyncStatus('⚠ Error al guardar', '#ff8a80');
+  }
+}
+
+// ── Sobreescribir saveData para sincronizar con Firebase ──
+const _origSaveData = saveData;
+function saveData() {
+  // Guardar en localStorage como respaldo
+  localStorage.setItem('notas_v6', JSON.stringify(S));
+  const el = document.getElementById('sv');
+  if (el) { el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2000); }
+  // Guardar en Firestore con debounce de 2s
+  clearTimeout(_saveTimeout);
+  setSyncStatus('⏳ Guardando...', '#7eb8f7');
+  _saveTimeout = setTimeout(async () => {
+    await saveToFirestore();
+    setSyncStatus('✔ Guardado en la nube', '#b6ffca');
+    setTimeout(() => setSyncStatus('', ''), 3000);
+  }, 2000);
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+loadRS();
+loadDark();
+applyFontSize();
+buildSpecialMap();
+// La app se inicializa en onAuthStateChanged
+// Mostrar login mientras tanto
+document.getElementById('loginScreen').style.display = 'flex';
+const _ss = document.getElementById('sortSel');
+if (_ss) _ss.value = _sortOrder;
+</script>
+</body>
+</html>
