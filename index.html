@@ -220,6 +220,16 @@ tr.row-stub:hover td{background:#78909c!important}
 #bottom-scroll::-webkit-scrollbar-thumb{background:#b0bec5;border-radius:5px}
 #bottom-scroll::-webkit-scrollbar-track{background:#e8edf2}
 
+/* ── DRAG & DROP REORDENAR ── */
+th.dnd-col{cursor:grab!important}
+th.dnd-col:active{cursor:grabbing!important}
+th.dnd-over{outline:3px dashed #f9a825!important;outline-offset:-2px}
+th.dnd-dragging{opacity:.4}
+td.ic.dnd-row{cursor:grab!important}
+td.ic.dnd-row:active{cursor:grabbing!important}
+tr.dnd-row-over td{border-top:3px solid #f9a825!important}
+tr.dnd-row-dragging{opacity:.4}
+
 /* ── RESIZE COLUMNAS ── */
 th{position:relative}
 .col-resizer{
@@ -843,6 +853,8 @@ function render() {
     applyColVisibility();
     applyRowVisibility();
     initBottomScrollbar();
+    initColDnD();
+    initRowDnD();
   });
 }
 
@@ -1519,10 +1531,62 @@ document.addEventListener('mousedown', e => {
   if (!td) return;
   const inp = td.querySelector('input.gi');
   if (inp && e.target !== inp) {
-    // Pequeño delay para que el clic no interfiera con el focus nativo
     setTimeout(() => { inp.focus(); inp.select(); }, 0);
   }
 }, true);
+
+// ── Pegar desde Excel (Ctrl+V sobre la tabla) ──
+document.addEventListener('paste', e => {
+  // Solo si hay un input de nota enfocado
+  const active = document.activeElement;
+  if (!active || !active.classList.contains('gi')) return;
+
+  const text = e.clipboardData.getData('text/plain');
+  if (!text) return;
+
+  // Parsear TSV (Tab = columna, Enter = fila)
+  const pasteRows = text.trimEnd().split(/\r?\n/).map(r => r.split('\t'));
+  if (!pasteRows.length) return;
+
+  // Si es una sola celda, dejar que el input lo maneje normalmente
+  if (pasteRows.length === 1 && pasteRows[0].length === 1) return;
+
+  e.preventDefault();
+
+  // Encontrar posición del input activo en el grid
+  const grid = getVisibleInputGrid();
+  const pos  = findInGrid(grid, active);
+  if (!pos) return;
+  const [startRow, startCol] = pos;
+
+  let changed = 0;
+  pasteRows.forEach((rowVals, ri) => {
+    rowVals.forEach((val, ci) => {
+      const targetRow = startRow + ri;
+      const targetCol = startCol + ci;
+      if (targetRow >= grid.length) return;
+      if (targetCol >= grid[targetRow].length) return;
+      const inp = grid[targetRow][targetCol];
+      if (!inp) return;
+      const v = val.trim().replace(',', '.');
+      const oc = inp.getAttribute('onchange') || '';
+      const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
+      if (m) {
+        upd(parseInt(m[1]), m[2], m[3], v);
+        inp.value = v;
+        clr(inp);
+        changed++;
+      }
+    });
+  });
+
+  // Enfocar la última celda pegada
+  const lastRow = Math.min(startRow + pasteRows.length - 1, grid.length - 1);
+  const lastCol = Math.min(startCol + pasteRows[0].length - 1, grid[lastRow].length - 1);
+  focusCell(grid[lastRow][lastCol]);
+
+  toast(`📋 ${changed} celda(s) pegadas desde Excel`, '#1565c0');
+});
 
 // ══════════════════════════════════════════════════════
 //  ESTUDIANTES — AGREGAR / EDITAR / ELIMINAR
@@ -4213,6 +4277,160 @@ function importBackup(input) {
     input.value = ''; // reset para poder importar el mismo archivo de nuevo
   };
   reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════
+//  DRAG & DROP — REORDENAR COLUMNAS Y FILAS
+// ══════════════════════════════════════════════════════
+
+// ── Reordenar columnas dentro de una semana ──
+function initColDnD() {
+  const table = document.getElementById('mainTable');
+  if (!table) return;
+  const mat = gm();
+
+  // Trabajar sobre los th de subcolumnas (fila 2), agrupados por semana
+  mat.weeks.forEach((w, wi) => {
+    const cols = mat.cols[w] || [];
+    if (cols.length < 2) return;
+
+    // Obtener los th de esta semana en la fila 2
+    // Calcular offset: sumar columnas de semanas anteriores + 1 (PROM) por semana
+    let offset = 0;
+    for (let i = 0; i < wi; i++) {
+      offset += (mat.cols[mat.weeks[i]] || []).length + 1; // +1 por PROM
+    }
+
+    const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+    const weekThs = cols.map((_, ci) => row2ths[offset + ci]).filter(Boolean);
+
+    weekThs.forEach((th, ci) => {
+      th.classList.add('dnd-col');
+      th.setAttribute('draggable', 'true');
+      th.dataset.week = w;
+      th.dataset.ci   = ci;
+
+      th.addEventListener('dragstart', e => {
+        if (e.target.classList.contains('col-resizer')) { e.preventDefault(); return; }
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', JSON.stringify({ w, ci }));
+        th.classList.add('dnd-dragging');
+      });
+      th.addEventListener('dragend', () => {
+        th.classList.remove('dnd-dragging', 'dnd-over');
+        table.querySelectorAll('th.dnd-over').forEach(el => el.classList.remove('dnd-over'));
+      });
+      th.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        weekThs.forEach(t => t.classList.remove('dnd-over'));
+        th.classList.add('dnd-over');
+      });
+      th.addEventListener('dragleave', () => th.classList.remove('dnd-over'));
+      th.addEventListener('drop', e => {
+        e.preventDefault();
+        th.classList.remove('dnd-over');
+        try {
+          const { w: srcW, ci: srcCi } = JSON.parse(e.dataTransfer.getData('text/plain'));
+          if (srcW !== w || srcCi === ci) return;
+          // Reordenar columnas en el estado
+          const mat2 = gm();
+          const cols2 = mat2.cols[w];
+          const [moved] = cols2.splice(srcCi, 1);
+          cols2.splice(ci, 0, moved);
+          // Reordenar también en grades (las claves no cambian, solo el orden visual)
+          render(); saveData();
+          toast('✔ Columna reubicada', '#f9a825');
+        } catch(err) {}
+      });
+    });
+  });
+}
+
+// ── Reordenar filas (estudiantes) ──
+function initRowDnD() {
+  const rows = document.querySelectorAll('#tb tr');
+  rows.forEach((tr, fromIdx) => {
+    const ic = tr.querySelector('td.ic');
+    if (!ic) return;
+    ic.classList.add('dnd-row');
+    tr.setAttribute('draggable', 'true');
+
+    tr.addEventListener('dragstart', e => {
+      if (e.target.classList.contains('row-resizer') ||
+          e.target.classList.contains('col-resizer')) { e.preventDefault(); return; }
+      // Solo iniciar drag desde la celda #
+      if (!e.target.closest('td.ic')) { e.preventDefault(); return; }
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(fromIdx));
+      tr.classList.add('dnd-row-dragging');
+      document.body.style.userSelect = 'none';
+    });
+    tr.addEventListener('dragend', () => {
+      tr.classList.remove('dnd-row-dragging');
+      document.body.style.userSelect = '';
+      document.querySelectorAll('tr.dnd-row-over').forEach(r => r.classList.remove('dnd-row-over'));
+    });
+    tr.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('tr.dnd-row-over').forEach(r => r.classList.remove('dnd-row-over'));
+      tr.classList.add('dnd-row-over');
+    });
+    tr.addEventListener('dragleave', () => tr.classList.remove('dnd-row-over'));
+    tr.addEventListener('drop', e => {
+      e.preventDefault();
+      tr.classList.remove('dnd-row-over');
+      const srcIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      if (isNaN(srcIdx) || srcIdx === fromIdx) return;
+
+      // Reordenar estudiantes y sus notas en todas las materias
+      const sortedIdx = getSortedIndices();
+      const realSrc  = sortedIdx[srcIdx];
+      const realDst  = sortedIdx[fromIdx];
+
+      // Mover en S.students
+      const [name] = S.students.splice(realSrc, 1);
+      S.students.splice(realDst, 0, name);
+
+      // Reindexar grades en todas las materias
+      MATS.forEach(m => {
+        const mat = S.mats[m];
+        if (!mat) return;
+        const newG = {};
+        const oldG = mat.grades;
+        // Construir nuevo orden
+        const order = Array.from({length: S.students.length}, (_, i) => i);
+        // Aplicar el mismo movimiento
+        const oldOrder = Array.from({length: S.students.length + 1 - 1 + 1}, (_, i) => i);
+        // Simplificado: reconstruir grades con el nuevo índice
+        const tempG = {};
+        Object.keys(oldG).forEach(k => { tempG[parseInt(k)] = oldG[k]; });
+        // Mover entrada
+        const moved = tempG[realSrc];
+        const newKeys = Object.keys(tempG).map(Number).sort((a,b)=>a-b);
+        const reindexed = {};
+        let ni = 0;
+        newKeys.forEach(k => {
+          if (k === realSrc) return;
+          reindexed[ni++] = tempG[k];
+        });
+        // Insertar en nueva posición
+        const final = {};
+        let fi = 0;
+        for (let i = 0; i < ni + 1; i++) {
+          if (i === realDst) { final[fi++] = moved || {}; }
+          if (reindexed[i - (i > realDst ? 1 : 0)] !== undefined) {
+            final[fi++] = reindexed[i - (i > realDst ? 1 : 0)];
+          }
+        }
+        mat.grades = final;
+      });
+
+      render(); saveData();
+      toast('✔ Estudiante reubicado', '#f9a825');
+    });
+  });
 }
 
 // ══════════════════════════════════════════════════════
