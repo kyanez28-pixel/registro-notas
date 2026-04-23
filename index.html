@@ -3084,45 +3084,71 @@ function applyColVisibility() {
   if (!table) return;
   const mat = gm();
 
-  // Subcolumnas (fila 2 th + td por índice)
+  // ── Paso 1: ocultar/mostrar subcolumnas (fila 2 th + td del tbody) ──
   const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
   row2ths.forEach((th, ci) => {
     const hidden = !!RS.hiddenCols[ci];
     th.classList.toggle('vis-hidden-col', hidden);
-    // Celdas del tbody en esa columna (offset +3: #, nombre, y las cols empiezan en 3)
     table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
       td.classList.toggle('vis-hidden-col', hidden);
     });
   });
 
-  // Columna NOMBRES
-  const thN = document.getElementById('th-nombres');
-  if (thN) thN.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']);
-  table.querySelectorAll('td.nc').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']));
+  // ── Paso 2: recalcular colspan de cada th.wh según columnas visibles ──
+  // ci2 avanza por row2ths igual que ci: actividades + 1 PROM por semana (si la semana tiene cols)
+  const whThs = Array.from(table.querySelectorAll('thead tr:nth-child(1) th.wh'));
+  let ci2 = 0;
+  mat.weeks.forEach((w, wi) => {
+    const cols = mat.cols[w] || [];
+    const nCols = cols.length || 1;
+    // Contar actividades visibles (clave numérica)
+    let visCount = 0;
+    for (let k = 0; k < nCols; k++) {
+      if (!RS.hiddenCols[ci2 + k]) visCount++;
+    }
+    ci2 += nCols;
+    // Solo avanzar el slot PROM si la semana tiene columnas reales
+    if (cols.length > 0) ci2 += 1;
+    // PROM de semana (clave string)
+    const promKey = 'prom-wk-' + wi;
+    if (cols.length > 0 && !RS.hiddenCols[promKey]) visCount++;
+    // Actualizar colspan del th.wh
+    const whTh = whThs[wi];
+    if (whTh) {
+      if (visCount === 0) {
+        whTh.classList.add('vis-hidden-col');
+      } else {
+        whTh.classList.remove('vis-hidden-col');
+        whTh.setAttribute('colspan', visCount);
+      }
+    }
+  });
 
-  // PROM TOTAL
-  const thP = document.getElementById('th-prom-total');
-  if (thP) thP.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']);
-  table.querySelectorAll('td.prom-c').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']));
-
-  // Acc.
-  const thA = document.getElementById('th-acc');
-  if (thA) thA.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']);
-  table.querySelectorAll('td.ac').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']));
-
-  // PROM por semana (prom-wk)
-  const promWkThs = Array.from(table.querySelectorAll('thead tr:nth-child(2) th')).filter(th => th.textContent.trim() === 'PROM');
+  // ── Paso 3: PROM por semana (prom-wk th fila2 + td) ──
+  const promWkThs = row2ths.filter(th => th.textContent.trim() === 'PROM');
   promWkThs.forEach((th, wi) => {
     const key = 'prom-wk-' + wi;
     const hidden = !!RS.hiddenCols[key];
     th.classList.toggle('vis-hidden-col', hidden);
-    table.querySelectorAll(`td.prom-wk[data-week]`).forEach((td, i) => {
-      // Cada prom-wk corresponde a una semana; filtrar por índice de semana
+    table.querySelectorAll(`td.prom-wk[data-week]`).forEach(td => {
       if (parseInt(td.dataset.wi || 0) === wi) td.classList.toggle('vis-hidden-col', hidden);
     });
   });
 
-  // Actualizar barra inferior
+  // ── Paso 4: columnas fijas ──
+  const thN = document.getElementById('th-nombres');
+  if (thN) thN.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']);
+  table.querySelectorAll('td.nc').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']));
+
+  const thP = document.getElementById('th-prom-total');
+  if (thP) thP.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']);
+  table.querySelectorAll('td.prom-c').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']));
+
+  const thA = document.getElementById('th-acc');
+  if (thA) thA.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']);
+  table.querySelectorAll('td.ac').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']));
+
+  // ── Paso 5: barra inferior ──
   const bs = document.getElementById('bottom-scroll-inner');
   if (bs) {
     const t = document.getElementById('mainTable');
