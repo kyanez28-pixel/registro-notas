@@ -730,6 +730,7 @@ function ensureMats() {
   if (!S.mats) S.mats = {};
   if (!S.hiddenCols) S.hiddenCols = {};
   if (!S.hiddenRows) S.hiddenRows = {};
+  if (!S.colWidths)  S.colWidths  = {};
   MATS.forEach(m => {
     if (!S.mats[m]) {
       S.mats[m] = { weeks:[...DW], cols:JSON.parse(JSON.stringify(DC)), grades:{} };
@@ -2539,11 +2540,38 @@ function saveRS() {
 function applyColWidths() {
   const table = document.getElementById('mainTable');
   if (!table) return;
-  // Aplicar a cada th de la segunda fila (subcolumnas) por índice
+  const mat = gm();
+  const matName = MATS[S.am];
   const ths = table.querySelectorAll('thead tr:nth-child(2) th');
-  ths.forEach((th, i) => {
-    const w = RS.cols[i];
-    if (w) { th.style.width = w + 'px'; th.style.minWidth = w + 'px'; }
+  
+  let ci = 0;
+  mat.weeks.forEach(w => {
+    const cols = mat.cols[w] || [];
+    // Actividades
+    cols.forEach(col => {
+      const key = `${matName}||${w}||${col.name}`;
+      const wPx = S.colWidths[key] || 60; // Default 60px
+      const th = ths[ci];
+      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; }
+      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
+        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px';
+      });
+      ci++;
+    });
+    // PROM de semana
+    if (cols.length > 0) {
+      const key = `${matName}||${w}||PROM`;
+      const wPx = S.colWidths[key] || 52;
+      const th = ths[ci];
+      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; }
+      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
+        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px';
+      });
+      ci++;
+    } else {
+      // +col
+      ci++;
+    }
   });
 }
 
@@ -2603,8 +2631,8 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
   handle.setAttribute('title', 'Arrastrar ↔ · Doble clic para ajustar al contenido');
   th.appendChild(handle);
 
-  if (RS.cols[rsKey]) {
-    const w = RS.cols[rsKey];
+  if (S.colWidths[rsKey]) {
+    const w = S.colWidths[rsKey];
     th.style.width = w + 'px'; th.style.minWidth = w + 'px';
     document.querySelectorAll(tdSelector).forEach(td => {
       td.style.width = w + 'px'; td.style.minWidth = w + 'px';
@@ -2635,7 +2663,7 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
     function onUp() {
       handle.classList.remove('dragging');
       document.body.style.cursor = ''; document.body.style.userSelect = '';
-      guide.remove(); saveRS();
+      guide.remove(); saveData();
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
     }
@@ -2649,7 +2677,7 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
     const w = autoFitColWidth(tds, null, th);
     th.style.width = w + 'px'; th.style.minWidth = w + 'px';
     tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-    RS.cols[rsKey] = w; saveRS();
+    S.colWidths[rsKey] = w; saveData();
   });
 }
 
@@ -2663,8 +2691,8 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
   th.appendChild(handle);
 
   // Aplicar ancho guardado
-  if (RS.cols['names']) {
-    const w = RS.cols['names'];
+  if (S.colWidths['names']) {
+    const w = S.colWidths['names'];
     th.style.width = w + 'px'; th.style.minWidth = w + 'px';
     document.querySelectorAll('td.nc').forEach(td => {
       td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
@@ -2690,13 +2718,13 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
       document.querySelectorAll('td.nc').forEach(td => {
         td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
       });
-      RS.cols['names'] = w;
+      S.colWidths['names'] = w;
       guide.style.left = e.clientX + 'px';
     }
     function onUp() {
       handle.classList.remove('dragging');
       document.body.style.cursor = ''; document.body.style.userSelect = '';
-      guide.remove(); saveRS();
+      guide.remove(); saveData();
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
     }
@@ -2712,8 +2740,9 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
     document.querySelectorAll('td.nc').forEach(td => {
       td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
     });
-    RS.cols['names'] = w;
-    saveRS();
+    RS.cols['names'] = w; // Mantener en RS para compatibilidad local si se desea, pero priorizar S
+    S.colWidths['names'] = w;
+    saveData();
   });
 }
 
@@ -2725,47 +2754,54 @@ function initColResizers() {
 
   // Trabajar sobre TODOS los th (fila 1 y fila 2) agrupados por índice de columna visual
   // El handle va en cada th de la fila 2 (subcolumnas) — más accesible
-  const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+  const mat = gm();
+  const matName = MATS[S.am];
+  let ci = 0;
+  mat.weeks.forEach(w => {
+    const cols = mat.cols[w] || [];
+    cols.forEach(col => {
+      setupResizer(row2ths[ci], `${matName}||${w}||${col.name}`, ci);
+      ci++;
+    });
+    if (cols.length > 0) {
+      setupResizer(row2ths[ci], `${matName}||${w}||PROM`, ci);
+      ci++;
+    } else {
+      ci++;
+    }
+  });
 
-  row2ths.forEach((th, colIdx) => {
-    if (th.querySelector('.col-resizer')) return;
-
+  function setupResizer(th, key, colIdx) {
+    if (!th || th.querySelector('.col-resizer')) return;
     const handle = document.createElement('div');
     handle.className = 'col-resizer';
     handle.setAttribute('title', 'Arrastrar ↔ para cambiar ancho · Doble clic para ajustar al contenido');
     th.appendChild(handle);
 
     let startX, startW;
-
     handle.addEventListener('mousedown', e => {
       e.preventDefault(); e.stopPropagation();
-      startX = e.clientX;
-      startW = th.getBoundingClientRect().width;
+      startX = e.clientX; startW = th.getBoundingClientRect().width;
       handle.classList.add('dragging');
       document.body.style.cursor = 'col-resize';
       document.body.style.userSelect = 'none';
-
-      // Línea guía vertical
       const guide = document.createElement('div');
       guide.style.cssText = `position:fixed;top:0;bottom:0;width:2px;background:#2e6da4;opacity:.7;z-index:99999;pointer-events:none;left:${e.clientX}px`;
       document.body.appendChild(guide);
 
       function onMove(e) {
         const w = Math.max(32, startW + e.clientX - startX);
-        th.style.width = w + 'px';
-        th.style.minWidth = w + 'px';
-        // Aplicar mismo ancho a todas las celdas de esa columna en tbody
-        const tds = table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`);
-        tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-        RS.cols[colIdx] = w;
+        th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+        table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`).forEach(td => {
+          td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+        });
+        S.colWidths[key] = w;
         guide.style.left = e.clientX + 'px';
       }
       function onUp() {
         handle.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        guide.remove();
-        saveRS();
+        document.body.style.cursor = ''; document.body.style.userSelect = '';
+        guide.remove(); saveData();
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
       }
@@ -2775,15 +2811,14 @@ function initColResizers() {
 
     handle.addEventListener('dblclick', e => {
       e.stopPropagation();
-      // Auto-fit: medir el texto más largo en esa columna (th + tds)
       const tds = Array.from(table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`));
       const w = autoFitColWidth(tds, null, th);
       th.style.width = w + 'px'; th.style.minWidth = w + 'px';
       tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-      RS.cols[colIdx] = w;
-      saveRS();
+      S.colWidths[key] = w;
+      saveData();
     });
-  });
+  }
 }
 
 // Inyecta handles de resize en las celdas .ic de cada fila
