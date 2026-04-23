@@ -728,6 +728,8 @@ function initS() {
 
 function ensureMats() {
   if (!S.mats) S.mats = {};
+  if (!S.hiddenCols) S.hiddenCols = {};
+  if (!S.hiddenRows) S.hiddenRows = {};
   MATS.forEach(m => {
     if (!S.mats[m]) {
       S.mats[m] = { weeks:[...DW], cols:JSON.parse(JSON.stringify(DC)), grades:{} };
@@ -1707,6 +1709,7 @@ function editStudentName(si) {
       if (!nv) { toast('⚠ El nombre no puede estar vacío', '#e67e22'); return; }
       if (nv === old) { closeModal(); return; }
       S.students[si] = nv;
+      if (S.hiddenRows[old]) { S.hiddenRows[nv] = S.hiddenRows[old]; delete S.hiddenRows[old]; }
       closeModal(); render(); saveData();
       toast('✔ Nombre actualizado', '#27ae60');
     }
@@ -1722,6 +1725,7 @@ function delSt(si) {
     '🗑 Eliminar Estudiante',
     `¿Eliminar a "${S.students[si]}"? Se borrarán todas sus notas.`,
     () => {
+      if (S.hiddenRows[S.students[si]]) delete S.hiddenRows[S.students[si]];
       S.students.splice(si, 1);
       MATS.forEach(m => {
         const mat = S.mats[m];
@@ -1813,6 +1817,16 @@ function editWeekName(wi) {
           delete S.weekColors[oldKey];
         }
         setWeekColor(MATS[S.am], nv, newWc);
+        // Actualizar visibilidad
+        const m = MATS[S.am];
+        const oldP = m + '||' + oldName + '||';
+        const newP = m + '||' + nv + '||';
+        Object.keys(S.hiddenCols).forEach(k => {
+          if (k.startsWith(oldP)) {
+            S.hiddenCols[newP + k.slice(oldP.length)] = S.hiddenCols[k];
+            delete S.hiddenCols[k];
+          }
+        });
       } else {
         setWeekColor(MATS[S.am], oldName, newWc);
       }
@@ -1857,6 +1871,9 @@ function openDelWeek() {
           const mat = gm();
           mat.weeks = mat.weeks.filter(w => w !== week);
           delete mat.cols[week];
+          // Limpiar visibilidad
+          const prefix = MATS[S.am] + '||' + week + '||';
+          Object.keys(S.hiddenCols).forEach(k => { if (k.startsWith(prefix)) delete S.hiddenCols[k]; });
           S.students.forEach((_,si) => {
             const g = mat.grades[si] || {};
             Object.keys(g).forEach(k => { if (k.startsWith(week + '||')) delete g[k]; });
@@ -1992,6 +2009,11 @@ function editColName(wi, ci) {
           const g = mat.grades[si] || {};
           if (oldKey in g) { g[newKey] = g[oldKey]; delete g[oldKey]; }
         });
+        // Renombrar clave en hiddenCols
+        const m = MATS[S.am];
+        const oldV = m + '||' + week + '||' + col.name;
+        const newV = m + '||' + week + '||' + nv;
+        if (oldV in S.hiddenCols) { S.hiddenCols[newV] = S.hiddenCols[oldV]; delete S.hiddenCols[oldV]; }
       }
       mat.cols[week][ci] = newCol;
       closeModal(); render(); saveData();
@@ -2012,6 +2034,8 @@ function delCol(wi, ci) {
     () => {
       mat.cols[week].splice(ci, 1);
       const key = week + '||' + col.name;
+      const vKey = MATS[S.am] + '||' + week + '||' + col.name;
+      delete S.hiddenCols[vKey];
       S.students.forEach((_,si) => { delete (mat.grades[si]||{})[key]; });
       render(); saveData();
       toast('✔ Actividad eliminada', '#e74c3c');
@@ -3064,55 +3088,75 @@ function xlDeleteSelected() {
 // ── Columnas ──
 // colKey: índice numérico (subcolumnas) | 'names' | 'prom-total' | 'acc' | 'prom-wk-N'
 function hideCol(colKey) {
-  RS.hiddenCols[colKey] = true;
-  saveRS();
+  S.hiddenCols[colKey] = true;
+  saveData();
   applyColVisibility();
   refreshVisPanel();
 }
 function showCol(colKey) {
-  delete RS.hiddenCols[colKey];
-  saveRS();
+  delete S.hiddenCols[colKey];
+  saveData();
   applyColVisibility();
   refreshVisPanel();
 }
 function toggleCol(colKey) {
-  RS.hiddenCols[colKey] ? showCol(colKey) : hideCol(colKey);
+  S.hiddenCols[colKey] ? showCol(colKey) : hideCol(colKey);
 }
 
 function applyColVisibility() {
   const table = document.getElementById('mainTable');
   if (!table) return;
   const mat = gm();
+  const matName = MATS[S.am];
 
-  // ── Paso 1: ocultar/mostrar subcolumnas (fila 2 th + td del tbody) ──
+  // ── Paso 1: ocultar/mostrar subcolumnas de actividad (fila 2 th + td del tbody) ──
   const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
-  row2ths.forEach((th, ci) => {
-    const hidden = !!RS.hiddenCols[ci];
-    th.classList.toggle('vis-hidden-col', hidden);
-    table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
-      td.classList.toggle('vis-hidden-col', hidden);
+  let ci = 0;
+  mat.weeks.forEach((w, wi) => {
+    const cols = mat.cols[w] || [];
+    // Actividades
+    cols.forEach(col => {
+      const key = `${matName}||${w}||${col.name}`;
+      const hidden = !!S.hiddenCols[key];
+      const th = row2ths[ci];
+      if (th) th.classList.toggle('vis-hidden-col', hidden);
+      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
+        td.classList.toggle('vis-hidden-col', hidden);
+      });
+      ci++;
     });
+    // PROM de semana
+    if (cols.length > 0) {
+      const key = `${matName}||${w}||PROM`;
+      const hidden = !!S.hiddenCols[key];
+      const th = row2ths[ci];
+      if (th) th.classList.toggle('vis-hidden-col', hidden);
+      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
+        td.classList.toggle('vis-hidden-col', hidden);
+      });
+      ci++;
+    } else {
+      // Placeholder "+col"
+      const th = row2ths[ci];
+      if (th) th.classList.toggle('vis-hidden-col', false);
+      ci++;
+    }
   });
 
   // ── Paso 2: recalcular colspan de cada th.wh según columnas visibles ──
-  // ci2 avanza por row2ths igual que ci: actividades + 1 PROM por semana (si la semana tiene cols)
   const whThs = Array.from(table.querySelectorAll('thead tr:nth-child(1) th.wh'));
-  let ci2 = 0;
   mat.weeks.forEach((w, wi) => {
     const cols = mat.cols[w] || [];
-    const nCols = cols.length || 1;
-    // Contar actividades visibles (clave numérica)
     let visCount = 0;
-    for (let k = 0; k < nCols; k++) {
-      if (!RS.hiddenCols[ci2 + k]) visCount++;
+    cols.forEach(col => {
+      if (!S.hiddenCols[`${matName}||${w}||${col.name}`]) visCount++;
+    });
+    if (cols.length > 0) {
+      if (!S.hiddenCols[`${matName}||${w}||PROM`]) visCount++;
+    } else {
+      visCount = 1; // +col
     }
-    ci2 += nCols;
-    // Solo avanzar el slot PROM si la semana tiene columnas reales
-    if (cols.length > 0) ci2 += 1;
-    // PROM de semana (clave string)
-    const promKey = 'prom-wk-' + wi;
-    if (cols.length > 0 && !RS.hiddenCols[promKey]) visCount++;
-    // Actualizar colspan del th.wh
+
     const whTh = whThs[wi];
     if (whTh) {
       if (visCount === 0) {
@@ -3124,31 +3168,20 @@ function applyColVisibility() {
     }
   });
 
-  // ── Paso 3: PROM por semana (prom-wk th fila2 + td) ──
-  const promWkThs = row2ths.filter(th => th.textContent.trim() === 'PROM');
-  promWkThs.forEach((th, wi) => {
-    const key = 'prom-wk-' + wi;
-    const hidden = !!RS.hiddenCols[key];
-    th.classList.toggle('vis-hidden-col', hidden);
-    table.querySelectorAll(`td.prom-wk[data-week]`).forEach(td => {
-      if (parseInt(td.dataset.wi || 0) === wi) td.classList.toggle('vis-hidden-col', hidden);
-    });
-  });
-
-  // ── Paso 4: columnas fijas ──
+  // ── Paso 3: columnas fijas ──
   const thN = document.getElementById('th-nombres');
-  if (thN) thN.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']);
-  table.querySelectorAll('td.nc').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['names']));
+  if (thN) thN.classList.toggle('vis-hidden-col', !!S.hiddenCols['names']);
+  table.querySelectorAll('td.nc').forEach(td => td.classList.toggle('vis-hidden-col', !!S.hiddenCols['names']));
 
   const thP = document.getElementById('th-prom-total');
-  if (thP) thP.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']);
-  table.querySelectorAll('td.prom-c').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['prom-total']));
+  if (thP) thP.classList.toggle('vis-hidden-col', !!S.hiddenCols['prom-total']);
+  table.querySelectorAll('td.prom-c').forEach(td => td.classList.toggle('vis-hidden-col', !!S.hiddenCols['prom-total']));
 
   const thA = document.getElementById('th-acc');
-  if (thA) thA.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']);
-  table.querySelectorAll('td.ac').forEach(td => td.classList.toggle('vis-hidden-col', !!RS.hiddenCols['acc']));
+  if (thA) thA.classList.toggle('vis-hidden-col', !!S.hiddenCols['acc']);
+  table.querySelectorAll('td.ac').forEach(td => td.classList.toggle('vis-hidden-col', !!S.hiddenCols['acc']));
 
-  // ── Paso 5: barra inferior ──
+  // ── Paso 4: barra inferior ──
   const bs = document.getElementById('bottom-scroll-inner');
   if (bs) {
     const t = document.getElementById('mainTable');
@@ -3157,38 +3190,39 @@ function applyColVisibility() {
 }
 
 // ── Filas ──
-function hideRow(rowIdx) {
-  RS.hiddenRows[rowIdx] = true;
-  saveRS();
+function hideRow(name) {
+  S.hiddenRows[name] = true;
+  saveData();
   applyRowVisibility();
   refreshVisPanel();
 }
-function showRow(rowIdx) {
-  delete RS.hiddenRows[rowIdx];
-  saveRS();
+function showRow(name) {
+  delete S.hiddenRows[name];
+  saveData();
   applyRowVisibility();
   refreshVisPanel();
 }
-function toggleRow(rowIdx) {
-  RS.hiddenRows[rowIdx] ? showRow(rowIdx) : hideRow(rowIdx);
+function toggleRow(name) {
+  S.hiddenRows[name] ? showRow(name) : hideRow(name);
 }
 
 function applyRowVisibility() {
-  document.querySelectorAll('#tb tr').forEach((tr, i) => {
-    tr.classList.toggle('vis-hidden', !!RS.hiddenRows[i]);
+  document.querySelectorAll('#tb tr').forEach((tr) => {
+    const name = tr.querySelector('td.nc')?.textContent;
+    if (name) tr.classList.toggle('vis-hidden', !!S.hiddenRows[name]);
   });
 }
 
 function showAllVis() {
-  RS.hiddenCols = {}; RS.hiddenRows = {};
-  saveRS();
+  S.hiddenCols = {}; S.hiddenRows = {};
+  saveData();
   applyColVisibility();
   applyRowVisibility();
   refreshVisPanel();
 }
 function hideAllRows() {
-  document.querySelectorAll('#tb tr').forEach((_, i) => { RS.hiddenRows[i] = true; });
-  saveRS(); applyRowVisibility(); refreshVisPanel();
+  S.students.forEach(name => { S.hiddenRows[name] = true; });
+  saveData(); applyRowVisibility(); refreshVisPanel();
 }
 
 // ── Panel lateral ──
@@ -3206,6 +3240,7 @@ function refreshVisPanel() {
   const body = document.getElementById('visPanelBody');
   if (!body) return;
   const mat = gm();
+  const matName = MATS[S.am];
 
   let html = `<div style="font-size:0.72rem;color:#888;margin-bottom:8px">
     Haz clic en el ojo para ocultar o mostrar. Los cambios se guardan automáticamente.
@@ -3218,34 +3253,33 @@ function refreshVisPanel() {
     {key:'prom-total', label:'PROM TOTAL'},
     {key:'acc',        label:'Acciones'},
   ].forEach(({key, label}) => {
-    const vis = !RS.hiddenCols[key];
+    const vis = !S.hiddenCols[key];
     html += visRow(label, vis, `toggleCol('${key}')`);
   });
 
   // ── Semanas y subcolumnas ──
   html += `<div style="font-weight:700;font-size:0.78rem;color:#1a3c6e;margin:10px 0 4px">Semanas y columnas</div>`;
-  const row2ths = Array.from(document.querySelectorAll('thead tr:nth-child(2) th'));
-  let ci = 0;
   mat.weeks.forEach((w, wi) => {
     const cols = mat.cols[w] || [];
-    // PROM de semana
-    const promKey = 'prom-wk-' + wi;
     html += `<div style="font-size:0.75rem;font-weight:700;color:#555;margin:6px 0 2px;padding-left:4px;border-left:3px solid ${weekColor(MATS[S.am],w,wi).h}">
       ${escHTML(w)}</div>`;
     cols.forEach(col => {
-      const vis = !RS.hiddenCols[ci];
-      html += visRow(col.name + ' <span style="opacity:.6;font-size:0.65rem">' + actType(col.type).label + '</span>', vis, `toggleCol(${ci})`);
-      ci++;
+      const key = `${matName}||${w}||${col.name}`;
+      const vis = !S.hiddenCols[key];
+      html += visRow(col.name + ' <span style="opacity:.6;font-size:0.65rem">' + actType(col.type).label + '</span>', vis, `toggleCol('${esc(key)}')`);
     });
-    const promVis = !RS.hiddenCols[promKey];
-    html += visRow('PROM semana', promVis, `toggleCol('${promKey}')`);
+    if (cols.length > 0) {
+      const promKey = `${matName}||${w}||PROM`;
+      const promVis = !S.hiddenCols[promKey];
+      html += visRow('PROM semana', promVis, `toggleCol('${esc(promKey)}')`);
+    }
   });
 
   // ── Filas / Estudiantes ──
   html += `<div style="font-weight:700;font-size:0.78rem;color:#1a3c6e;margin:10px 0 4px">Estudiantes</div>`;
-  S.students.forEach((name, i) => {
-    const vis = !RS.hiddenRows[i];
-    html += visRow(escHTML(name), vis, `toggleRow(${i})`);
+  S.students.forEach((name) => {
+    const vis = !S.hiddenRows[name];
+    html += visRow(escHTML(name), vis, `toggleRow('${esc(name)}')`);
   });
 
   body.innerHTML = html;
@@ -3266,10 +3300,8 @@ document.addEventListener('dblclick', e => {
   if (e.target.classList.contains('row-resizer')) return;
   const tr = ic.closest('tr');
   if (!tr) return;
-  const rows = Array.from(document.querySelectorAll('#tb tr'));
-  const idx  = rows.indexOf(tr);
-  if (idx < 0) return;
-  toggleRow(idx);
+  const name = tr.querySelector('td.nc')?.textContent;
+  if (name) toggleRow(name);
 });
 
 // ══════════════════════════════════════════════════════
