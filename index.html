@@ -2752,6 +2752,8 @@ function initColResizers() {
   const table = document.getElementById('mainTable');
   if (!table) return;
 
+  const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
+
   // Trabajar sobre TODOS los th (fila 1 y fila 2) agrupados por índice de columna visual
   // El handle va en cada th de la fila 2 (subcolumnas) — más accesible
   const mat = gm();
