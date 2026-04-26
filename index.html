@@ -128,7 +128,7 @@ td.nc.xl-sel-row{background:#dbeafe!important}
 .xl-sel-info{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1565c0;color:#fff;padding:5px 14px;border-radius:20px;font-size:0.75rem;z-index:9999;pointer-events:none;display:none;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
 
 /* ── THEAD ── */
-th{background:#1a3c6e;color:#fff;padding:5px 5px;text-align:center;position:sticky;top:0;z-index:3;border:1px solid #2e6da4;user-select:none}
+th{background:#1a3c6e;color:#fff;padding:5px 5px;text-align:center;position:sticky;top:0;z-index:3;border:1px solid #2e6da4;user-select:none;overflow:hidden;text-overflow:ellipsis}
 th.wh{background:#2e6da4;cursor:pointer}
 th.wh:hover{filter:brightness(0.88)}
 th.sh{background:#3a7fc1;font-size:0.68rem;cursor:pointer;position:sticky;top:28px}
@@ -139,7 +139,7 @@ th.prom-h{background:#16a085;position:sticky;top:0;z-index:3}
 th.prom-sh{background:#1abc9c;font-size:0.68rem;position:sticky;top:28px}
 
 /* ── TBODY ── */
-td{border:1px solid #d0d7de;padding:2px 3px;text-align:center;vertical-align:middle}
+td{border:1px solid #d0d7de;padding:2px 3px;text-align:center;vertical-align:middle;overflow:hidden;text-overflow:ellipsis}
 td.ic{width:30px;min-width:30px;color:#888;font-size:0.72rem;position:sticky;left:0;background:#fff;z-index:2}
 td.nc{text-align:left;padding-left:7px;min-width:195px;font-weight:500;position:sticky;left:30px;background:#fff;z-index:2;cursor:pointer;max-width:195px;overflow:hidden;text-overflow:ellipsis}
 td.nc:hover{background:#eaf2fb!important}
@@ -2552,9 +2552,9 @@ function applyColWidths() {
       const key = `${matName}||${w}||${col.name}`;
       const wPx = S.colWidths[key] || 60; // Default 60px
       const th = ths[ci];
-      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; }
+      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; th.style.maxWidth = wPx + 'px'; }
       table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
-        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px';
+        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px'; td.style.maxWidth = wPx + 'px';
       });
       ci++;
     });
@@ -2563,9 +2563,9 @@ function applyColWidths() {
       const key = `${matName}||${w}||PROM`;
       const wPx = S.colWidths[key] || 52;
       const th = ths[ci];
-      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; }
+      if (th) { th.style.width = wPx + 'px'; th.style.minWidth = wPx + 'px'; th.style.maxWidth = wPx + 'px'; }
       table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
-        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px';
+        td.style.width = wPx + 'px'; td.style.minWidth = wPx + 'px'; td.style.maxWidth = wPx + 'px';
       });
       ci++;
     } else {
@@ -2633,9 +2633,9 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
 
   if (S.colWidths[rsKey]) {
     const w = S.colWidths[rsKey];
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
     document.querySelectorAll(tdSelector).forEach(td => {
-      td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+      td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
     });
   }
 
@@ -2653,9 +2653,9 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
 
     function onMove(e) {
       const w = Math.max(minW || 32, startW + e.clientX - startX);
-      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
       document.querySelectorAll(tdSelector).forEach(td => {
-        td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+        td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
       });
       RS.cols[rsKey] = w;
       guide.style.left = e.clientX + 'px';
@@ -2675,8 +2675,8 @@ function initFixedColResizer(thId, tdSelector, rsKey, minW) {
     e.stopPropagation();
     const tds = Array.from(document.querySelectorAll(tdSelector));
     const w = autoFitColWidth(tds, null, th);
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
-    tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
+    tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px'; });
     S.colWidths[rsKey] = w; saveData();
   });
 }
@@ -2693,7 +2693,7 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
   // Aplicar ancho guardado
   if (S.colWidths['names']) {
     const w = S.colWidths['names'];
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
     document.querySelectorAll('td.nc').forEach(td => {
       td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
     });
@@ -2714,7 +2714,7 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
 
     function onMove(e) {
       const w = Math.max(80, startW + e.clientX - startX);
-      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
       document.querySelectorAll('td.nc').forEach(td => {
         td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
       });
@@ -2736,7 +2736,7 @@ function initNamesColResizer() {  const th = document.getElementById('th-nombres
     e.stopPropagation();
     // Auto-fit: medir el texto más largo en td.nc
     const w = autoFitColWidth(document.querySelectorAll('td.nc'), 'td.nc');
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+    th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
     document.querySelectorAll('td.nc').forEach(td => {
       td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
     });
@@ -2793,9 +2793,9 @@ function initColResizers() {
 
       function onMove(e) {
         const w = Math.max(32, startW + e.clientX - startX);
-        th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+        th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
         table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`).forEach(td => {
-          td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+          td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
         });
         S.colWidths[key] = w;
         guide.style.left = e.clientX + 'px';
@@ -2815,8 +2815,8 @@ function initColResizers() {
       e.stopPropagation();
       const tds = Array.from(table.querySelectorAll(`#tb tr td:nth-child(${colIdx + 3})`));
       const w = autoFitColWidth(tds, null, th);
-      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
-      tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
+      th.style.width = w + 'px'; th.style.minWidth = w + 'px'; th.style.maxWidth = w + 'px';
+      tds.forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px'; });
       S.colWidths[key] = w;
       saveData();
     });
