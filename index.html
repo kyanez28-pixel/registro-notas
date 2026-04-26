@@ -48,6 +48,8 @@ body.dark td.prom-wk{color:#4caf7d}
 body.dark tr:nth-child(even) td{background:#1e2d3d}
 body.dark tr:nth-child(even) td.ic,body.dark tr:nth-child(even) td.nc{background:#1e2d3d}
 body.dark tr:hover td{background:#243040!important}
+body.dark tr.active-work-row td{background:#2d3e50!important}
+body.dark tr.active-work-row td.ic,body.dark tr.active-work-row td.nc{background:#1a2f4c!important;color:#90caf9;font-weight:600}
 body.dark input.gi{color:#e0e6f0}
 body.dark input.gi:focus{background:rgba(255,255,200,0.1)}
 body.dark .md{background:#1a2535;color:#e0e6f0}
@@ -151,6 +153,8 @@ td.prom-wk.ghi{color:#1a7a40!important}
 tr:nth-child(even) td{background:#f7f9fc}
 tr:nth-child(even) td.ic,tr:nth-child(even) td.nc{background:#f7f9fc}
 tr:hover td{background:#eaf2fb!important}
+tr.active-work-row td{background:#eaf2fb!important}
+tr.active-work-row td.ic,tr.active-work-row td.nc{background:#dbeafe!important;color:#0d47a1;font-weight:600}
 tr.hidden-row{display:none}
 
 /* ── INPUTS ── */
@@ -2972,6 +2976,13 @@ function xlCopy() {
 
 // Clic en subcolumna th → seleccionar columna
 document.addEventListener('click', e => {
+  // Active work row highlight
+  const trWork = e.target.closest('#tb tr');
+  if (trWork) {
+    document.querySelectorAll('#tb tr.active-work-row').forEach(r => r.classList.remove('active-work-row'));
+    trWork.classList.add('active-work-row');
+  }
+
   // Ignorar clicks en handles de resize o botones
   if (e.target.classList.contains('col-resizer') ||
       e.target.classList.contains('row-resizer') ||
