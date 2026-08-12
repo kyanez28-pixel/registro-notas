@@ -1681,7 +1681,7 @@ function upd(si, week, col, val) {
   const key  = week + '||' + col;
   const rk   = recKey(si, week, col);
   const prev = parseFloat(mat.grades[si][key]);
-  const v    = val.trim().replace(',', '.');
+  let v      = val.trim().replace(',', '.');
 
   histPush(si, week, col, mat.grades[si][key], !!(S.recovered && S.recovered[rk]));
 
@@ -1690,10 +1690,23 @@ function upd(si, week, col, val) {
     if (S.recovered) delete S.recovered[rk];
   } else {
     if (!specialCls(v)) {
-      const n = parseFloat(v);
-      if (isNaN(n) || n < 0 || n > 10) {
-        toast('⚠ Calificación inválida (escala 0,00 a 10,00)', '#dc2626');
+      let n = parseFloat(v);
+      if (isNaN(n)) {
+        toast('⚠️ Escala ministerial: Ingresa una nota de 1,00 a 10,00', '#dc2626');
+        render();
         return;
+      }
+      // Ajuste automático estricto a la escala oficial 1,00 a 10,00
+      if (n > 10) {
+        n = 10.00;
+        v = '10.00';
+        toast('⚠️ Nota ajustada al límite máximo oficial (10,00)', '#d97706');
+      } else if (n < 1) {
+        n = 1.00;
+        v = '1.00';
+        toast('⚠️ Nota ajustada al límite mínimo oficial (1,00)', '#d97706');
+      } else {
+        v = trunc2(n);
       }
     }
     const n = parseFloat(v);
@@ -1713,7 +1726,7 @@ function upd(si, week, col, val) {
 }
 
 function clr(inp) {
-  const v = inp.value.replace(',', '.');
+  let v = inp.value.replace(',', '.');
   const td = inp.parentElement;
   const allSpec = SPECIAL.map(s => s.cls).concat(['cell-low','cell-rec']);
   allSpec.forEach(c => td.classList.remove(c));
