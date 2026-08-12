@@ -946,6 +946,42 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 </div>
 
+<!-- ══ VISTA: PROYECTO INTERDISCIPLINARIO ══ -->
+<div id="piPanel" style="display:none" class="content">
+
+  <!-- Encabezado del Módulo PI -->
+  <div style="background:linear-gradient(135deg,#d97706,#b45309);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:900;letter-spacing:0.3px">📚 Evaluación del Proyecto Interdisciplinario</div>
+      <div style="font-size:0.75rem;opacity:.85;margin-top:3px">Componente Sumativo (30%) · Rúbrica Ministerial MINEDUC</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openPiConfig()">&#9881; Configurar Proyecto</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="exportPiXLSX()">📊 Excel PI</button>
+    </div>
+  </div>
+
+  <!-- Info del Proyecto -->
+  <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.78rem"></div>
+
+  <!-- Leyenda de Rúbrica -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center">
+    <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-right:4px">ESCALA RÚcBRICA:</span>
+    <span style="background:#16a34a;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">10 — Excelente</span>
+    <span style="background:#2563eb;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">8-9 — Muy Bueno</span>
+    <span style="background:#ca8a04;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">6-7 — En Proceso</span>
+    <span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">1-5 — Inicio</span>
+  </div>
+
+  <!-- Tabla de Calificaciones PI -->
+  <div class="tw" style="max-height:calc(100vh - 320px)">
+    <table id="piTable">
+      <thead id="piTh"></thead>
+      <tbody id="piTb"></tbody>
+    </table>
+  </div>
+</div>
+
 <!-- ── PANEL DE VISIBILIDAD ── -->
 <div id="visPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--bg-card);z-index:8888;box-shadow:var(--shadow-xl);border-left:1px solid var(--border-color);flex-direction:column">
   <div style="background:#1e3a8a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
@@ -2505,8 +2541,10 @@ function switchView(v) {
   document.getElementById('attendancePanel').style.display  = v === 'asistencia' ? 'block' : 'none';
   document.getElementById('reportPanel').style.display      = v === 'reporte'    ? 'block' : 'none';
   document.getElementById('exportPanel').style.display      = v === 'export'     ? 'block' : 'none';
+  document.getElementById('piPanel').style.display          = v === 'pi'         ? 'block' : 'none';
 
   document.getElementById('viewNotas').className      = 'view-btn ' + (v === 'notas' ? 'active' : '');
+  document.getElementById('viewPi').className         = 'view-btn ' + (v === 'pi' ? 'active' : '');
   document.getElementById('viewAttendance').className = 'view-btn ' + (v === 'asistencia' ? 'active' : '');
   document.getElementById('viewReporte').className    = 'view-btn ' + (v === 'reporte' ? 'active' : '');
   document.getElementById('viewExport').className     = 'view-btn ' + (v === 'export' ? 'active' : '');
@@ -2514,6 +2552,7 @@ function switchView(v) {
   if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') rpShowAll();
   if (v === 'export') expInit();
+  if (v === 'pi') renderPi();
 }
 
 function printTable() {
@@ -3445,6 +3484,330 @@ window.addEventListener('offline', () => { setSyncStatus('🟡 Sin conexión', '
 // ══════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MÓDULO PROYECTO INTERDISCIPLINARIO (PI)
+//  Rúbrica Ministerial MINEDUC — Componente Sumativo 30%
+// ══════════════════════════════════════════════════════
+
+const PI_DEFAULT_CONFIG = {
+  titulo:   'PROYECTO INTERDISCIPLINARIO — TRIMESTRE I',
+  tema:     '',
+  fecha:    '',
+  indicadores: [
+    { id: 'PI1', nombre: 'Relación con el tema central del proyecto',       peso: 20 },
+    { id: 'PI2', nombre: 'Aplicación de contenidos de la asignatura',       peso: 20 },
+    { id: 'PI3', nombre: 'Calidad y presentación del trabajo entregado',    peso: 20 },
+    { id: 'PI4', nombre: 'Trabajo colaborativo y participación activa',     peso: 20 },
+    { id: 'PI5', nombre: 'Creatividad e innovación en la propuesta',        peso: 20 }
+  ]
+};
+
+// Asegura que S.pi existe
+function ensurePi() {
+  if (!S.pi) S.pi = {};
+  if (!S.pi.config) S.pi.config = JSON.parse(JSON.stringify(PI_DEFAULT_CONFIG));
+  // Asignaturas activas en el PI (por defecto todas las cuantitativas)
+  if (!S.pi.mats) {
+    S.pi.mats = getMats().filter(m => !isQualitativeMat(m));
+  }
+  // grades[materia][si][indicadorId] = nota
+  if (!S.pi.grades) S.pi.grades = {};
+  S.pi.mats.forEach(m => {
+    if (!S.pi.grades[m]) S.pi.grades[m] = {};
+    S.students.forEach((_, si) => {
+      if (!S.pi.grades[m][si]) S.pi.grades[m][si] = {};
+    });
+  });
+}
+
+function piGradeColor(n) {
+  if (n === null || n === undefined || n === '') return '';
+  const v = parseFloat(n);
+  if (isNaN(v)) return '';
+  if (v >= 9) return '#dcfce7';
+  if (v >= 7) return '#dbeafe';
+  if (v >= 5) return '#fef9c3';
+  return '#fee2e2';
+}
+
+function renderPi() {
+  ensurePi();
+  const cfg    = S.pi.config;
+  const mats   = S.pi.mats;
+  const inds   = cfg.indicadores;
+
+  // Info bar
+  const infoBar = document.getElementById('piInfoBar');
+  if (infoBar) {
+    infoBar.innerHTML = `
+      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">TÍTULO DEL PROYECTO</span><br><span style="font-weight:800;font-size:0.85rem">${escHTML(cfg.titulo||'—')}</span></div>
+      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">TEMA GENERADOR</span><br><span style="font-weight:700;font-size:0.82rem">${escHTML(cfg.tema||'—')}</span></div>
+      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">FECHA DE ENTREGA</span><br><span style="font-weight:700;font-size:0.82rem">${escHTML(cfg.fecha||'—')}</span></div>
+      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">ASIGNATURAS INVOLUCRADAS</span><br><span style="font-weight:700;font-size:0.82rem">${mats.length}</span></div>
+      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">INDICADORES DE RÚBRICA</span><br><span style="font-weight:700;font-size:0.82rem">${inds.length}</span></div>
+    `;
+  }
+
+  // Build table headers
+  // Row 1: #, Nombre, then per-mat cols (span = inds.length + 1 for NOTA MAT), then NOTA PI FINAL
+  let r1 = `<tr>
+    <th class="fxl" rowspan="2" style="min-width:30px;width:30px">#</th>
+    <th class="fxn" rowspan="2" style="min-width:200px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
+
+  mats.forEach((m, mi) => {
+    const span = inds.length + 1; // indicadores + nota asignatura
+    const colors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
+    const bg = colors[mi % colors.length];
+    r1 += `<th class="wh" colspan="${span}" style="background:${bg};border-color:${bg}">${escHTML(m)}</th>`;
+  });
+  r1 += `<th class="th-trim" rowspan="2" style="min-width:65px">NOTA PI<br><span style="font-size:0.58rem;font-weight:400">PROMEDIO</span></th>`;
+  r1 += `</tr>`;
+
+  // Row 2: indicator subheaders per subject + NOTA
+  let r2 = `<tr>`;
+  const indColors = ['#2563eb','#7c3aed','#ea580c','#0d9488','#ca8a04'];
+  mats.forEach((m, mi) => {
+    const matBgColors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
+    const matBg = matBgColors[mi % matBgColors.length];
+    inds.forEach((ind, ii) => {
+      const bg = indColors[ii % indColors.length];
+      r2 += `<th class="sh" title="${escHTML(ind.nombre)}" style="background:${bg};border-color:${bg};min-width:48px;max-width:70px">
+        <div style="position:relative;padding:1px 0">
+          <span style="display:block;font-weight:800;font-size:0.72rem">${escHTML(ind.id)}</span>
+          <span style="display:block;font-size:0.52rem;opacity:.9;white-space:normal;line-height:1.2;max-width:65px">${escHTML(ind.nombre.substring(0,30))}...</span>
+          <span style="display:block;font-size:0.55rem;opacity:.75">(${ind.peso}%)</span>
+        </div>
+      </th>`;
+    });
+    r2 += `<th class="sh" style="background:${matBg};border-color:${matBg};font-weight:700;min-width:52px">NOTA<br><span style="font-size:0.52rem">ASIGNATURA</span></th>`;
+  });
+  r2 += `</tr>`;
+
+  document.getElementById('piTh').innerHTML = r1 + r2;
+
+  // Body rows
+  const sorted = getSortedIndices();
+  let bodyHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    let cells = '';
+    const matNotas = [];
+
+    mats.forEach((m, mi) => {
+      const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
+
+      // indicator cells
+      const indVals = [];
+      inds.forEach((ind, ii) => {
+        const v = mGrades[ind.id] !== undefined ? mGrades[ind.id] : '';
+        const n = parseFloat(v);
+        const bg = piGradeColor(v);
+        const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
+        cells += `<td style="background:${bg||''}">
+          <input class="gi ${cls}" type="text" inputmode="decimal"
+            value="${escVal(v)}"
+            onchange="updPi(${si},'${esc(m)}','${esc(ind.id)}',this.value)"
+            onfocus="this.select()"
+            onkeydown="navPi(event,this,${si},'${esc(m)}','${esc(ind.id)}')"/>
+        </td>`;
+        if (v !== '' && !isNaN(n)) indVals.push(n);
+      });
+
+      // NOTA ASIGNATURA = weighted average of ind vals (each peso/100 weight)
+      let matNota = null;
+      if (indVals.length === inds.length) {
+        let weightedSum = 0;
+        let weightTotal = 0;
+        inds.forEach((ind, ii) => {
+          const v = parseFloat(mGrades[ind.id]);
+          if (!isNaN(v)) { weightedSum += v * (ind.peso / 100); weightTotal += ind.peso / 100; }
+        });
+        matNota = weightTotal > 0 ? trunc2(weightedSum / weightTotal) : null;
+      } else if (indVals.length > 0) {
+        matNota = trunc2(indVals.reduce((a,b) => a+b, 0) / indVals.length);
+      }
+
+      const matBgColors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
+      const matBg = matBgColors[mi % matBgColors.length];
+      const notaDisp = matNota !== null ? matNota : '—';
+      const notaCls  = matNota !== null && parseFloat(matNota) < 7 ? 'glo' : (matNota !== null ? 'ghi' : '');
+      cells += `<td class="prom-wk ${notaCls}" style="background:${piGradeColor(matNota)||'var(--bg-card)'};font-weight:700">${notaDisp}</td>`;
+      if (matNota !== null) matNotas.push(parseFloat(matNota));
+    });
+
+    // NOTA PI FINAL = average of all subject notes
+    let piNota = null;
+    if (matNotas.length > 0) {
+      piNota = trunc2(matNotas.reduce((a,b) => a+b, 0) / matNotas.length);
+    }
+    const piDisp = piNota !== null ? piNota : '—';
+    const piCls  = piNota !== null && parseFloat(piNota) < 7 ? 'cell-low' : '';
+
+    return `<tr data-name="${escVal(name.toUpperCase())}">
+      <td class="ic">${rowPos+1}</td>
+      <td class="nc">${escHTML(name)}</td>
+      ${cells}
+      <td class="${piCls}" style="font-weight:900;font-size:0.88rem;text-align:center">${piDisp}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('piTb').innerHTML = bodyHtml;
+}
+
+function updPi(si, mat, indId, val) {
+  ensurePi();
+  if (!S.pi.grades[mat]) S.pi.grades[mat] = {};
+  if (!S.pi.grades[mat][si]) S.pi.grades[mat][si] = {};
+
+  let v = val.trim().replace(',', '.');
+  if (v === '') {
+    delete S.pi.grades[mat][si][indId];
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) { toast('⚠️ Ingresa una nota válida de 1.00 a 10.00', '#dc2626'); renderPi(); return; }
+    if (n > 10) { n = 10; toast('⚠️ Ajustado al máximo (10.00)', '#d97706'); }
+    else if (n < 1) { n = 1; toast('⚠️ Ajustado al mínimo (1.00)', '#d97706'); }
+    S.pi.grades[mat][si][indId] = String(trunc2(n));
+  }
+  saveData();
+  renderPi();
+}
+
+function navPi(e, inp, si, mat, indId) {
+  if (e.key === 'Tab' || e.key === 'Enter') {
+    e.preventDefault();
+    const allInputs = Array.from(document.querySelectorAll('#piTb input.gi'));
+    const idx = allInputs.indexOf(inp);
+    // Move down (next student, same column)
+    const colCount = (S.pi.mats.length * (S.pi.config.indicadores.length + 1));
+    const totalRows = S.students.length;
+    const col = idx % (S.pi.config.indicadores.length * S.pi.mats.length + S.pi.mats.length);
+    const grid = [];
+    const rows = Array.from(document.querySelectorAll('#piTb tr'));
+    rows.forEach(tr => { grid.push(Array.from(tr.querySelectorAll('input.gi'))); });
+    let ri = -1, ci = -1;
+    for (let r = 0; r < grid.length; r++) {
+      const c = grid[r].indexOf(inp);
+      if (c >= 0) { ri = r; ci = c; break; }
+    }
+    if (ri === -1) return;
+    if (e.shiftKey) {
+      if (ri > 0 && grid[ri-1][ci]) { grid[ri-1][ci].focus(); setTimeout(() => grid[ri-1][ci].select(), 10); }
+    } else {
+      if (ri < grid.length - 1 && grid[ri+1][ci]) { grid[ri+1][ci].focus(); setTimeout(() => grid[ri+1][ci].select(), 10); }
+      else if (grid[0][ci+1]) { grid[0][ci+1].focus(); setTimeout(() => grid[0][ci+1].select(), 10); }
+    }
+  }
+}
+
+function openPiConfig() {
+  ensurePi();
+  const cfg = S.pi.config;
+  const matsOpts = getMats().filter(m => !isQualitativeMat(m)).map(m =>
+    `<label style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:0.8rem;margin-bottom:4px">
+      <input type="checkbox" value="${escVal(m)}" ${S.pi.mats.includes(m)?'checked':''}> ${escHTML(m)}
+    </label>`
+  ).join('');
+
+  const indsHtml = cfg.indicadores.map((ind, i) =>
+    `<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+      <input type="text" value="${escVal(ind.id)}" id="piIndId${i}" style="width:55px;font-weight:800;text-align:center;font-size:0.8rem" placeholder="PI1">
+      <input type="text" value="${escVal(ind.nombre)}" id="piIndNom${i}" style="flex:1;font-size:0.78rem" placeholder="Nombre del indicador">
+      <input type="number" value="${ind.peso}" id="piIndPeso${i}" style="width:52px;font-size:0.78rem;text-align:center" min="0" max="100" placeholder="%">
+      <span style="font-size:0.72rem;color:var(--text-muted)">%</span>
+    </div>`
+  ).join('');
+
+  showModal(
+    '⚙ Configurar Proyecto Interdisciplinario',
+    `
+    <label>Título del Proyecto</label>
+    <input type="text" id="piTitulo" value="${escVal(cfg.titulo)}" placeholder="PROYECTO INTERDISCIPLINARIO — TRIMESTRE I"/>
+    <label>Tema Generador</label>
+    <input type="text" id="piTema" value="${escVal(cfg.tema)}" placeholder="Ej: La biodiversidad del Ecuador"/>
+    <label>Fecha de Entrega</label>
+    <input type="date" id="piFecha" value="${escVal(cfg.fecha)}"/>
+    
+    <label style="margin-top:8px">Asignaturas Participantes</label>
+    <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 12px;max-height:120px;overflow-y:auto">${matsOpts}</div>
+    
+    <label style="margin-top:10px">Indicadores de Evaluación de la Rúbrica</label>
+    <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 10px;max-height:200px;overflow-y:auto">
+      ${indsHtml}
+    </div>
+    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">* Los pesos deben sumar 100%</div>
+    `,
+    'Guardar Configuración',
+    () => {
+      cfg.titulo = document.getElementById('piTitulo').value.trim().toUpperCase() || cfg.titulo;
+      cfg.tema   = document.getElementById('piTema').value.trim();
+      cfg.fecha  = document.getElementById('piFecha').value;
+
+      // Selected mats
+      const checkboxes = document.querySelectorAll('[type="checkbox"]');
+      S.pi.mats = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
+      // Update indicators
+      cfg.indicadores.forEach((ind, i) => {
+        const idEl   = document.getElementById('piIndId' + i);
+        const nomEl  = document.getElementById('piIndNom' + i);
+        const pesoEl = document.getElementById('piIndPeso' + i);
+        if (idEl)   ind.id     = idEl.value.trim().toUpperCase() || ind.id;
+        if (nomEl)  ind.nombre = nomEl.value.trim() || ind.nombre;
+        if (pesoEl) ind.peso   = parseInt(pesoEl.value) || ind.peso;
+      });
+
+      closeModal();
+      ensurePi();
+      saveData();
+      renderPi();
+      toast('✔ Proyecto Interdisciplinario configurado', '#16a34a');
+    }
+  );
+}
+
+function exportPiXLSX() {
+  ensurePi();
+  if (typeof XLSX === 'undefined') { toast('⚠️ XLSX no disponible', '#dc2626'); return; }
+  const cfg  = S.pi.config;
+  const mats = S.pi.mats;
+  const inds = cfg.indicadores;
+
+  const header1 = ['#', 'ESTUDIANTE'];
+  const header2 = ['', ''];
+  mats.forEach(m => {
+    inds.forEach(ind => { header1.push(m); header2.push(ind.id + ' — ' + ind.nombre); });
+    header1.push(m); header2.push('NOTA ASIGNATURA');
+  });
+  header1.push('NOTA PI FINAL'); header2.push('');
+
+  const rows = [header1, header2];
+  const sorted = getSortedIndices();
+  sorted.forEach((si, rowPos) => {
+    const row = [rowPos + 1, S.students[si]];
+    const matNotas = [];
+    mats.forEach(m => {
+      const mg = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
+      const indVals = [];
+      inds.forEach(ind => {
+        const v = mg[ind.id] !== undefined ? mg[ind.id] : '';
+        row.push(v !== '' ? parseFloat(v) : '');
+        if (v !== '') indVals.push(parseFloat(v));
+      });
+      const nota = indVals.length > 0 ? trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length) : '';
+      row.push(nota);
+      if (nota !== '') matNotas.push(parseFloat(nota));
+    });
+    row.push(matNotas.length > 0 ? trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length) : '');
+    rows.push(row);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'PI');
+  XLSX.writeFile(wb, `Proyecto_Interdisciplinario_${S.grado||'7mo'}.xlsx`);
+  toast('📊 Excel del PI descargado', '#16a34a');
+}
+
 loadDark();
 applyFontSize();
 initS();
