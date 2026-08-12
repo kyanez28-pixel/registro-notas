@@ -729,6 +729,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <button class="btn btn-magic" onclick="openNewYearWizard()" data-tip="Iniciar configuración guiada para el nuevo año lectivo">
     ✨ Nuevo Año Lectivo
   </button>
+  <button class="btn btn-teal" onclick="applyPresetRobertoCamana()" data-tip="Estructurar materia activa con los Insumos Individuales, Grupales y Refuerzo del Profe Roberto Camaña">
+    🎯 Insumos Roberto Camaña
+  </button>
   <div class="toolbar-sep"></div>
 
   <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar un estudiante a la nómina">
@@ -2111,6 +2114,110 @@ function openDelWeek() {
     delete mat.cols[target];
     closeModal(); render(); saveData();
   }, 'btn-danger');
+}
+
+function applyPresetRobertoCamana() {
+  const mName = curMatName();
+  if (isQualitativeMat(mName)) {
+    toast('⚠️ La materia activa es Cualitativa', '#d97706');
+    return;
+  }
+  confirm2('🎯 Cargar Plantilla Profe Roberto Camaña', 
+    `¿Deseas estructurar <strong>${escHTML(mName)}</strong> exactamente como el Excel del Profe Roberto Camaña?<br><br>` +
+    `• <strong>Aportes Individuales</strong>: Lecciones (Ins 1, 2), Pruebas (Ins 1, 2), Tareas (Ins 1, 2), Proyectos (Ins 1, 2)<br>` +
+    `• <strong>Aportes Grupales</strong>: Proyectos (Ins 1, 2), Exposiciones (Ins 1, 2), Talleres (Ins 1, 2), Productos (Ins 1, 2)<br>` +
+    `• <strong>Refuerzo Pedagógico</strong>: Refuerzo 1, Refuerzo 2, Refuerzo 3<br>` +
+    `• <strong>Evaluación Sumativa</strong>: Proyecto Interdisciplinar, Examen Sumativo`,
+    () => {
+      const mat = gm();
+      mat.weeks = [
+        'APORTES INDIVIDUALES',
+        'APORTES GRUPALES',
+        'REFUERZO PEDAGÓGICO',
+        'EVALUACIÓN SUMATIVA'
+      ];
+      mat.cols = {
+        'APORTES INDIVIDUALES': [
+          { name:'Lec 1', type:'L', date:'', color:'#2563eb' },
+          { name:'Lec 2', type:'L', date:'', color:'#2563eb' },
+          { name:'Pru 1', type:'AC', date:'', color:'#3b82f6' },
+          { name:'Pru 2', type:'AC', date:'', color:'#3b82f6' },
+          { name:'Tar 1', type:'T', date:'', color:'#7c3aed' },
+          { name:'Tar 2', type:'T', date:'', color:'#7c3aed' },
+          { name:'Proy 1', type:'EXP', date:'', color:'#0284c7' },
+          { name:'Proy 2', type:'EXP', date:'', color:'#0284c7' }
+        ],
+        'APORTES GRUPALES': [
+          { name:'Proy 1', type:'TG', date:'', color:'#0d9488' },
+          { name:'Proy 2', type:'TG', date:'', color:'#0d9488' },
+          { name:'Exp 1',  type:'EXP', date:'', color:'#0284c7' },
+          { name:'Exp 2',  type:'EXP', date:'', color:'#0284c7' },
+          { name:'Tal 1',  type:'TG', date:'', color:'#059669' },
+          { name:'Tal 2',  type:'TG', date:'', color:'#059669' },
+          { name:'Prod 1', type:'TG', date:'', color:'#10b981' },
+          { name:'Prod 2', type:'TG', date:'', color:'#10b981' }
+        ],
+        'REFUERZO PEDAGÓGICO': [
+          { name:'Ref 1', type:'RF', date:'', color:'#15803d' },
+          { name:'Ref 2', type:'RF', date:'', color:'#15803d' },
+          { name:'Ref 3', type:'RF', date:'', color:'#15803d' }
+        ],
+        'EVALUACIÓN SUMATIVA': [
+          { name:'Proy Inter', type:'PI', date:'', color:'#d97706' },
+          { name:'Eval Sum',   type:'PS', date:'', color:'#16a34a' }
+        ]
+      };
+      render(); saveData();
+      toast('✔ Plantilla Roberto Camaña 2026-2027 cargada', '#16a34a');
+    },
+    'btn-success'
+  );
+}
+
+function applyPresetRobertoCamanaAll() {
+  getMats().forEach(mName => {
+    if (isQualitativeMat(mName)) return;
+    const mat = S.mats[mName];
+    if (!mat) return;
+    mat.weeks = [
+      'APORTES INDIVIDUALES',
+      'APORTES GRUPALES',
+      'REFUERZO PEDAGÓGICO',
+      'EVALUACIÓN SUMATIVA'
+    ];
+    mat.cols = {
+      'APORTES INDIVIDUALES': [
+        { name:'Lec 1', type:'L', date:'', color:'#2563eb' },
+        { name:'Lec 2', type:'L', date:'', color:'#2563eb' },
+        { name:'Pru 1', type:'AC', date:'', color:'#3b82f6' },
+        { name:'Pru 2', type:'AC', date:'', color:'#3b82f6' },
+        { name:'Tar 1', type:'T', date:'', color:'#7c3aed' },
+        { name:'Tar 2', type:'T', date:'', color:'#7c3aed' },
+        { name:'Proy 1', type:'EXP', date:'', color:'#0284c7' },
+        { name:'Proy 2', type:'EXP', date:'', color:'#0284c7' }
+      ],
+      'APORTES GRUPALES': [
+        { name:'Proy 1', type:'TG', date:'', color:'#0d9488' },
+        { name:'Proy 2', type:'TG', date:'', color:'#0d9488' },
+        { name:'Exp 1',  type:'EXP', date:'', color:'#0284c7' },
+        { name:'Exp 2',  type:'EXP', date:'', color:'#0284c7' },
+        { name:'Tal 1',  type:'TG', date:'', color:'#059669' },
+        { name:'Tal 2',  type:'TG', date:'', color:'#059669' },
+        { name:'Prod 1', type:'TG', date:'', color:'#10b981' },
+        { name:'Prod 2', type:'TG', date:'', color:'#10b981' }
+      ],
+      'REFUERZO PEDAGÓGICO': [
+        { name:'Ref 1', type:'RF', date:'', color:'#15803d' },
+        { name:'Ref 2', type:'RF', date:'', color:'#15803d' },
+        { name:'Ref 3', type:'RF', date:'', color:'#15803d' }
+      ],
+      'EVALUACIÓN SUMATIVA': [
+        { name:'Proy Inter', type:'PI', date:'', color:'#d97706' },
+        { name:'Eval Sum',   type:'PS', date:'', color:'#16a34a' }
+      ]
+    };
+  });
+  render(); saveData();
 }
 
 function openAddCol() {
