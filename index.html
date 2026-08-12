@@ -402,6 +402,38 @@ body.dark td.td-sum  { background: rgba(124, 58, 237, 0.15) !important; color: #
 body.dark td.td-trim { background: rgba(22, 163, 74, 0.15) !important; color: #86efac; }
 body.dark td.td-trim.glo { background: rgba(220, 38, 38, 0.15) !important; color: #fca5a5; }
 
+/* Refuerzo Pedagógico */
+td.td-rf { background: #ecfdf5 !important; border: 1.5px solid #22c55e !important; position: relative; }
+td.td-rf input.gi { color: #15803d !important; font-weight: 800; }
+td.td-rf::before { content: '📚'; position: absolute; top: 0; left: 1px; font-size: 0.5rem; }
+th.th-rf { background: #15803d !important; font-size: 0.68rem; }
+
+/* Attendance Module */
+.att-panel { padding: 16px 18px; }
+.att-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+.att-row { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 6px 10px; }
+.att-name { flex: 1; font-weight: 600; font-size: 0.82rem; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.att-btn { padding: 3px 7px; border-radius: 4px; border: 1.5px solid transparent; font-weight: 800; font-size: 0.72rem; cursor: pointer; transition: all .1s; }
+.att-btn.P { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.att-btn.F { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+.att-btn.T { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+.att-btn.J { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
+.att-btn.active { box-shadow: 0 0 0 2.5px rgba(0,0,0,0.3); transform: scale(1.12); }
+.att-absence-bar { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.att-absence-badge { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+.att-absence-badge.warn { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+
+/* Print Institutional Header */
+.print-header { display: none; }
+@media print {
+  .print-header { display: block; margin-bottom: 10px; font-size: 9pt; }
+  .print-header table { border: none !important; font-size: 9pt !important; }
+  .print-header td { border: none !important; padding: 1px 6px !important; background: transparent !important; }
+  .ph-inst { text-align: center; font-size: 11pt; font-weight: 900; color: #1e3a8a; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a !important; padding-bottom: 4px !important; }
+  .ph-sub { font-size: 8pt; color: #334155; }
+  .ph-row { display: flex; justify-content: space-between; font-size: 8.5pt; padding: 2px 0; }
+}
+
 /* Weekly Average */
 td.prom-wk {
   font-weight: 700; font-family: var(--font-mono); font-size: 0.76rem;
@@ -560,7 +592,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 .rp-row-name { flex: 1; font-weight: 600; color: var(--text-main); }
 
 @media print {
-  header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll { display: none !important; }
+  header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
   .content { padding: 0; }
   .tw { box-shadow: none; max-height: none; overflow: visible; border: none; }
@@ -568,6 +600,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   th, td { border: 1px solid #94a3b8 !important; padding: 2px 4px !important; }
   th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #1e3a8a !important; color: #fff !important; }
   #reportPanel { display: block !important; padding: 0; }
+  #viewNotasPanel { display: block !important; }
+  .print-header { display: block !important; }
   @page { margin: 1cm; size: landscape; }
 }
 </style>
@@ -613,6 +647,32 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 </div>
 
+<!-- ── ENCABEZADO INSTITUCIONAL (SOLO IMPRESIÓN) ── -->
+<div class="print-header" id="printHeader">
+  <table width="100%" cellpadding="2" cellspacing="0">
+    <tr>
+      <td width="80" style="text-align:center;vertical-align:middle">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Ecuador_coat_of_arms.svg/80px-Ecuador_coat_of_arms.svg.png" height="60" alt="Ecuador" onerror="this.style.display='none'"/>
+      </td>
+      <td>
+        <div class="ph-inst" id="phInstName">INSTITUCIÓN EDUCATIVA FISCAL</div>
+        <div style="text-align:center;font-size:9pt;font-weight:700;color:#334155;margin:2px 0">REGISTRO DE CALIFICACIONES — EVALUACIÓN FORMATIVA Y SUMATIVA</div>
+        <div style="display:flex;justify-content:space-between;font-size:8pt;margin-top:4px">
+          <span>Docente: <strong id="phDocente"></strong></span>
+          <span>Grado: <strong id="phGrado"></strong></span>
+          <span>Asignatura: <strong id="phMat"></strong></span>
+          <span>Tutor/a: <strong id="phTutor"></strong></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8pt">
+          <span>Año Lectivo: <strong id="phAnio"></strong></span>
+          <span>Periodo: <strong id="phPeriodo"></strong></span>
+          <span>Normativa: <strong>70% Formativo + 30% Sumativo · 2 decimales truncados</strong></span>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
 <!-- ── HEADER ── -->
 <header>
   <div class="hdr-brand">
@@ -637,6 +697,14 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <div class="hi-input-group" data-tip="Año lectivo actual" class="tip-down">
       <span>Año:</span>
       <input type="text" id="infoAnio" placeholder="2026-2027" oninput="saveHdr()"/>
+    </div>
+    <div class="hi-input-group" data-tip="Nombre del docente para encabezado" class="tip-down">
+      <span>Docente:</span>
+      <input type="text" id="infoDocente" placeholder="Mg. Luis Lema" oninput="saveHdr()" style="width:120px"/>
+    </div>
+    <div class="hi-input-group" data-tip="Nombre del tutor/a del aula" class="tip-down">
+      <span>Tutor/a:</span>
+      <input type="text" id="infoTutor" placeholder="Lcda. Ligia Jácome" oninput="saveHdr()" style="width:120px"/>
     </div>
     <span class="badge-saved" id="sv">✔ Guardado</span>
 
@@ -718,14 +786,17 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
 <!-- ── BARRA DE VISTAS ── -->
 <div class="view-bar">
-  <button id="viewNotas"   class="view-btn active" onclick="switchView('notas')">
+  <button id="viewNotas"       class="view-btn active" onclick="switchView('notas')">
     📋 Calificaciones (70/30)
   </button>
-  <button id="viewReporte" class="view-btn" onclick="switchView('reporte')">
+  <button id="viewAttendance"  class="view-btn" onclick="switchView('asistencia')">
+    📅 Asistencia
+  </button>
+  <button id="viewReporte"     class="view-btn" onclick="switchView('reporte')">
     📊 Reportes & WhatsApp
   </button>
-  <button id="viewExport"  class="view-btn" onclick="switchView('export')">
-    📤 Exportar al Sistema (Auto-Relleno)
+  <button id="viewExport"      class="view-btn" onclick="switchView('export')">
+    📤 Exportar al Sistema
   </button>
 </div>
 
@@ -756,6 +827,26 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <tbody id="tb"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ── VISTA: ASISTENCIA ── -->
+<div id="attendancePanel" style="display:none" class="att-panel">
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:3px">Fecha de Registro</label>
+      <input type="date" id="attDate" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.85rem;font-family:inherit" onchange="renderAttendance()"/>
+    </div>
+    <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar todos como Presentes">✔ Todos Presentes</button>
+    <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar todos como Falta">✗ Todos Falta</button>
+    <button class="btn btn-teal"    onclick="exportAttendanceXLSX()">📊 Exportar Asistencia Excel</button>
+    <span id="attSummary" style="font-size:0.8rem;font-weight:700;color:var(--text-muted)"></span>
+  </div>
+
+  <!-- Contadores de inasistencias por estudiante -->
+  <div id="attAbsBar" class="att-absence-bar"></div>
+
+  <!-- Grilla de registro diario -->
+  <div id="attGrid"></div>
 </div>
 
 <!-- ── VISTA: REPORTES ── -->
@@ -916,7 +1007,8 @@ const ACT_TYPES = [
   { id:'PI',  label:'Proyecto Interdisciplinar', cat:'sum', color:'#d97706', cell:'rgba(217,119,6,0.09)' },
   { id:'PS',  label:'Evaluación Sumativa', cat:'sum', color:'#16a34a', cell:'rgba(22,163,74,0.09)'  },
   { id:'EX',  label:'Examen Trimestral',  cat:'sum',  color:'#db2777', cell:'rgba(219,39,119,0.09)'},
-  { id:'MEJ', label:'Evaluación de Mejora',cat:'mej', color:'#059669', cell:'rgba(5,150,105,0.09)'  }
+  { id:'MEJ', label:'Evaluación de Mejora',cat:'mej', color:'#059669', cell:'rgba(5,150,105,0.09)'  },
+  { id:'RF',  label:'Refuerzo Pedagógico',cat:'rf',  color:'#15803d', cell:'rgba(21,128,61,0.09)'   }
 ];
 
 function actType(id) {
@@ -1007,6 +1099,8 @@ let S = {
   grado: 'Séptimo C',
   anio: '2026-2027',
   periodo: '1er Trimestre',
+  docente: '',
+  tutor: '',
   am: 0,
   matsList: DEFAULT_MATS.map(m => m.name),
   matsMeta: JSON.parse(JSON.stringify(DEFAULT_MATS)),
@@ -1016,7 +1110,8 @@ let S = {
   recovered: {},
   colWidths: {},
   hiddenCols: {},
-  hiddenRows: {}
+  hiddenRows: {},
+  asistencia: {}
 };
 
 function getMats() {
@@ -1070,6 +1165,9 @@ function ensureMats() {
   if (!S.recovered)  S.recovered  = {};
   if (!S.periodo)    S.periodo    = '1er Trimestre';
   if (!S.students)   S.students   = [];
+  if (!S.asistencia) S.asistencia = {};
+  if (!S.docente)    S.docente    = '';
+  if (!S.tutor)      S.tutor      = '';
 
   getMats().forEach(m => {
     if (!S.mats[m]) {
@@ -1118,8 +1216,10 @@ function saveData(manual) {
 }
 
 function saveHdr() {
-  S.grado = document.getElementById('infoGrado').value;
-  S.anio  = document.getElementById('infoAnio').value;
+  if (document.getElementById('infoGrado'))   S.grado   = document.getElementById('infoGrado').value;
+  if (document.getElementById('infoAnio'))    S.anio    = document.getElementById('infoAnio').value;
+  if (document.getElementById('infoDocente')) S.docente = document.getElementById('infoDocente').value;
+  if (document.getElementById('infoTutor'))   S.tutor   = document.getElementById('infoTutor').value;
   saveData();
 }
 
@@ -1150,7 +1250,7 @@ function curMatName() {
 }
 
 function esc(s)     { return String(s||'').replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
-function escHTML(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHTML(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&gt;'); }
 function escVal(s)  { return String(s||'').replace(/"/g,'&quot;'); }
 
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
@@ -1211,6 +1311,7 @@ function getStudentTrimestreCalc(si, mName) {
   // Materia cuantitativa (Ponderación 70% Formativo / 30% Sumativo)
   const formVals = [];
   const sumVals  = [];
+  const rfVals   = [];
 
   mat.weeks.forEach(w => {
     (mat.cols[w] || []).forEach(col => {
@@ -1220,10 +1321,28 @@ function getStudentTrimestreCalc(si, mName) {
       if (isNaN(n)) return;
 
       const at = actType(col.type);
-      if (at.cat === 'sum') sumVals.push(n);
-      else formVals.push(n);
+      if (at.cat === 'rf' || at.cat === 'mej') {
+        rfVals.push(n);
+      } else if (at.cat === 'sum') {
+        sumVals.push(n);
+      } else {
+        formVals.push(n);
+      }
     });
   });
+
+  // Aplicar mejora de Refuerzo Pedagógico (RF/MEJ) sobre las notas más bajas si corresponde
+  if (rfVals.length > 0) {
+    rfVals.forEach(rfVal => {
+      if (formVals.length > 0) {
+        let minIdx = 0;
+        for (let i = 1; i < formVals.length; i++) {
+          if (formVals[i] < formVals[minIdx]) minIdx = i;
+        }
+        if (rfVal > formVals[minIdx]) formVals[minIdx] = rfVal;
+      }
+    });
+  }
 
   const rawFormAvg = formVals.length ? (formVals.reduce((a,b)=>a+b,0) / formVals.length) : null;
   const rawSumAvg  = sumVals.length  ? (sumVals.reduce((a,b)=>a+b,0) / sumVals.length)   : null;
@@ -2064,16 +2183,173 @@ function applySortOrder() {
 }
 
 function switchView(v) {
-  document.getElementById('viewNotasPanel').style.display = v === 'notas'   ? '' : 'none';
-  document.getElementById('reportPanel').style.display    = v === 'reporte' ? 'block' : 'none';
-  document.getElementById('exportPanel').style.display    = v === 'export'  ? 'block' : 'none';
+  document.getElementById('viewNotasPanel').style.display   = v === 'notas'      ? '' : 'none';
+  document.getElementById('attendancePanel').style.display  = v === 'asistencia' ? 'block' : 'none';
+  document.getElementById('reportPanel').style.display      = v === 'reporte'    ? 'block' : 'none';
+  document.getElementById('exportPanel').style.display      = v === 'export'     ? 'block' : 'none';
 
-  document.getElementById('viewNotas').className   = 'view-btn ' + (v === 'notas' ? 'active' : '');
-  document.getElementById('viewReporte').className = 'view-btn ' + (v === 'reporte' ? 'active' : '');
-  document.getElementById('viewExport').className  = 'view-btn ' + (v === 'export' ? 'active' : '');
+  document.getElementById('viewNotas').className      = 'view-btn ' + (v === 'notas' ? 'active' : '');
+  document.getElementById('viewAttendance').className = 'view-btn ' + (v === 'asistencia' ? 'active' : '');
+  document.getElementById('viewReporte').className    = 'view-btn ' + (v === 'reporte' ? 'active' : '');
+  document.getElementById('viewExport').className     = 'view-btn ' + (v === 'export' ? 'active' : '');
 
+  if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') rpShowAll();
   if (v === 'export') expInit();
+}
+
+function printTable() {
+  const phDocente = document.getElementById('phDocente');
+  const phGrado   = document.getElementById('phGrado');
+  const phMat     = document.getElementById('phMat');
+  const phTutor   = document.getElementById('phTutor');
+  const phAnio    = document.getElementById('phAnio');
+  const phPeriodo = document.getElementById('phPeriodo');
+
+  if (phDocente) phDocente.textContent = S.docente || '—';
+  if (phGrado)   phGrado.textContent   = S.grado || '—';
+  if (phMat)     phMat.textContent     = curMatName();
+  if (phTutor)   phTutor.textContent   = S.tutor || '—';
+  if (phAnio)    phAnio.textContent    = S.anio || '—';
+  if (phPeriodo) phPeriodo.textContent = S.periodo || '—';
+
+  window.print();
+}
+
+// ══════════════════════════════════════════════════════
+//  MÓDULO DE ASISTENCIA DIARIA
+// ══════════════════════════════════════════════════════
+function getTodayDateStr() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth()+1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function renderAttendance() {
+  const dateInp = document.getElementById('attDate');
+  if (!dateInp) return;
+  if (!dateInp.value) dateInp.value = getTodayDateStr();
+  const dateStr = dateInp.value;
+
+  if (!S.asistencia) S.asistencia = {};
+  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
+  const dayAtt = S.asistencia[dateStr];
+
+  const totalDays = Object.keys(S.asistencia).length || 1;
+  const absStats = {};
+  S.students.forEach((_, si) => {
+    let countF = 0, countT = 0, countJ = 0;
+    Object.keys(S.asistencia).forEach(dt => {
+      const val = S.asistencia[dt][si];
+      if (val === 'F') countF++;
+      if (val === 'T') countT++;
+      if (val === 'J') countJ++;
+    });
+    absStats[si] = { F: countF, T: countT, J: countJ, pct: Math.round((countF / totalDays) * 100) };
+  });
+
+  let absBarHTML = `<div style="font-weight:700;font-size:0.8rem;color:var(--text-main);margin-right:auto">📊 Días Registrados: ${totalDays}</div>`;
+  S.students.forEach((name, si) => {
+    const st = absStats[si];
+    if (st.F > 0 || st.T > 0) {
+      const isWarn = st.pct >= 25;
+      absBarHTML += `<span class="att-absence-badge ${isWarn?'warn':''}">
+        ${escHTML(name)}: ${st.F} Faltas (${st.pct}%) ${st.T>0?st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
+      </span>`;
+    }
+  });
+  const absBarEl = document.getElementById('attAbsBar');
+  if (absBarEl) absBarEl.innerHTML = absBarHTML;
+
+  let gridHTML = '<div class="att-grid">';
+  S.students.forEach((name, si) => {
+    const currentVal = dayAtt[si] || 'P';
+    gridHTML += `<div class="att-row">
+      <span class="att-name" title="${escVal(name)}">${si+1}. ${escHTML(name)}</span>
+      <div style="display:flex;gap:3px">
+        <button class="att-btn P ${currentVal==='P'?'active':''}" onclick="setAttState(${si}, 'P')">P</button>
+        <button class="att-btn F ${currentVal==='F'?'active':''}" onclick="setAttState(${si}, 'F')">F</button>
+        <button class="att-btn T ${currentVal==='T'?'active':''}" onclick="setAttState(${si}, 'T')">T</button>
+        <button class="att-btn J ${currentVal==='J'?'active':''}" onclick="setAttState(${si}, 'J')">J</button>
+      </div>
+    </div>`;
+  });
+  gridHTML += '</div>';
+  const gridEl = document.getElementById('attGrid');
+  if (gridEl) gridEl.innerHTML = gridHTML;
+
+  let pCount = 0, fCount = 0, tCount = 0, jCount = 0;
+  S.students.forEach((_, si) => {
+    const v = dayAtt[si] || 'P';
+    if (v==='P') pCount++;
+    if (v==='F') fCount++;
+    if (v==='T') tCount++;
+    if (v==='J') jCount++;
+  });
+  const sumEl = document.getElementById('attSummary');
+  if (sumEl) sumEl.textContent = `Presentes: ${pCount} | Faltas: ${fCount} | Tardanzas: ${tCount} | Justificadas: ${jCount}`;
+}
+
+function setAttState(si, state) {
+  const dateInp = document.getElementById('attDate');
+  const dateStr = (dateInp && dateInp.value) ? dateInp.value : getTodayDateStr();
+  if (!S.asistencia) S.asistencia = {};
+  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
+  S.asistencia[dateStr][si] = state;
+  saveData();
+  renderAttendance();
+}
+
+function attMarkAll(state) {
+  const dateInp = document.getElementById('attDate');
+  const dateStr = (dateInp && dateInp.value) ? dateInp.value : getTodayDateStr();
+  if (!S.asistencia) S.asistencia = {};
+  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
+  S.students.forEach((_, si) => {
+    S.asistencia[dateStr][si] = state;
+  });
+  saveData();
+  renderAttendance();
+}
+
+function exportAttendanceXLSX() {
+  const dates = Object.keys(S.asistencia || {}).sort();
+  if (!dates.length) {
+    toast('⚠️ No hay registros de asistencia aún', '#d97706');
+    return;
+  }
+  const sheets = [{
+    name: 'Asistencia',
+    rows: [
+      [{ v:`REGISTRO DE ASISTENCIA — ${S.grado} (${S.periodo})`, t:'s', s:'title' }],
+      [],
+      [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }, ...dates.map(d => ({ v:d, t:'s', s:'hdr_col' })), { v:'TOTAL FALTAS', t:'s', s:'hdr_prom' }, { v:'TARDANZAS', t:'s', s:'hdr_prom' }]
+    ]
+  }];
+
+  const totalDays = dates.length || 1;
+  S.students.forEach((name, si) => {
+    let f = 0, t = 0;
+    const row = [{ v:si+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
+    dates.forEach(d => {
+      const st = (S.asistencia[d] || {})[si] || 'P';
+      if (st === 'F') f++;
+      if (st === 'T') t++;
+      row.push({ v:st, t:'s', s:st==='F'?'low':(st==='T'?'empty':'ok') });
+    });
+    row.push({ v:f, t:'n', s:f>0?'low':'ok' }, { v:t, t:'n', s:'empty' });
+    sheets[0].rows.push(row);
+  });
+
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Asistencia_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}.xlsx`;
+  a.click();
+  toast('✔ Asistencia exportada a Excel', '#16a34a');
 }
 
 function rpShowAll() {
