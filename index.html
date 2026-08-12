@@ -737,6 +737,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <button class="btn btn-magic" onclick="openNewYearWizard()" data-tip="Iniciar configuración guiada para el nuevo año lectivo">
     ✨ Nuevo Año Lectivo
   </button>
+  <button class="btn btn-purple" onclick="openManageTrimestres()" data-tip="Cambiar, crear o gestionar Trimestres (1er, 2do, 3er Trimestre)">
+    📅 Trimestres
+  </button>
   <div class="toolbar-sep"></div>
 
   <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
@@ -1442,6 +1445,7 @@ function studentGeneralAvg(si) {
 //  RENDERIZADO
 // ══════════════════════════════════════════════════════
 function render() {
+  ensureTrimestres();
   renderHeaderInfo();
   renderTabs();
   renderTable();
@@ -1464,7 +1468,7 @@ function renderHeaderInfo() {
   const p = document.getElementById('hdrPeriodBadge');
   if (g) g.value = S.grado || '';
   if (a) a.value = S.anio  || '';
-  if (p) p.textContent = (S.periodo || '1er Trimestre') + ' ✎';
+  if (p) p.textContent = (S.currentTrimestre || S.periodo || '1er Trimestre') + ' ✎';
 }
 
 function renderTabs() {
@@ -3913,6 +3917,169 @@ function exportPiXLSX() {
   XLSX.utils.book_append_sheet(wb, ws, 'PI');
   XLSX.writeFile(wb, `Proyecto_Interdisciplinario_${S.grado||'7mo'}.xlsx`);
   toast('📊 Excel del PI descargado', '#16a34a');
+}
+
+// ══════════════════════════════════════════════════════
+//  GESTIÓN DE TRIMESTRES (1ER, 2DO, 3ER TRIMESTRE INDEPENDIENTES)
+// ══════════════════════════════════════════════════════
+function ensureTrimestres() {
+  if (!S.trimestres) S.trimestres = {};
+  const curName = S.currentTrimestre || S.periodo || '1er Trimestre';
+  if (!S.trimestres[curName]) {
+    S.trimestres[curName] = {
+      mats: JSON.parse(JSON.stringify(S.mats || {})),
+      asistencia: JSON.parse(JSON.stringify(S.asistencia || {})),
+      pi: JSON.parse(JSON.stringify(S.pi || {}))
+    };
+  }
+  S.currentTrimestre = S.currentTrimestre || curName;
+  S.periodo = S.currentTrimestre;
+}
+
+function switchTrimestre(targetName) {
+  ensureTrimestres();
+  const cur = S.currentTrimestre || '1er Trimestre';
+
+  // Guardar estado del trimestre actual antes de cambiar
+  S.trimestres[cur] = {
+    mats: JSON.parse(JSON.stringify(S.mats)),
+    asistencia: JSON.parse(JSON.stringify(S.asistencia || {})),
+    pi: JSON.parse(JSON.stringify(S.pi || {}))
+  };
+
+  // Si el trimestre destino no existe, crearlo
+  if (!S.trimestres[targetName]) {
+    createTrimestre(targetName, 'copy');
+    return;
+  }
+
+  // Cargar datos del trimestre seleccionado
+  const tData = S.trimestres[targetName];
+  S.mats = JSON.parse(JSON.stringify(tData.mats));
+  S.asistencia = JSON.parse(JSON.stringify(tData.asistencia || {}));
+  S.pi = JSON.parse(JSON.stringify(tData.pi || {}));
+  S.currentTrimestre = targetName;
+  S.periodo = targetName;
+
+  saveData();
+  render();
+  toast(`✔ Cambiado a ${targetName}`, '#16a34a');
+}
+
+function createTrimestre(name, mode) {
+  ensureTrimestres();
+  let newMats = {};
+
+  if (mode === 'copy') {
+    getMats().forEach(m => {
+      const curMat = S.mats[m] || { weeks: [...DEFAULT_WEEKS], cols: JSON.parse(JSON.stringify(DEFAULT_COLS)) };
+      newMats[m] = {
+        weeks: JSON.parse(JSON.stringify(curMat.weeks)),
+        cols: JSON.parse(JSON.stringify(curMat.cols)),
+        grades: {}
+      };
+      S.students.forEach((_, i) => { newMats[m].grades[i] = {}; });
+    });
+  } else {
+    getMats().forEach(m => {
+      newMats[m] = { weeks: [...DEFAULT_WEEKS], cols: JSON.parse(JSON.stringify(DEFAULT_COLS)), grades: {} };
+      S.students.forEach((_, i) => { newMats[m].grades[i] = {}; });
+    });
+  }
+
+  S.trimestres[name] = {
+    mats: newMats,
+    asistencia: {},
+    pi: {}
+  };
+
+  S.mats = newMats;
+  S.asistencia = {};
+  S.pi = {};
+  S.currentTrimestre = name;
+  S.periodo = name;
+
+  saveData();
+  render();
+  toast(`🎉 ¡${name} creado e ingresado!`, '#16a34a');
+}
+
+function deleteTrimestre(name) {
+  ensureTrimestres();
+  const keys = Object.keys(S.trimestres);
+  if (keys.length <= 1) {
+    toast('⚠️ No se puede eliminar el único trimestre activo', '#d97706');
+    return;
+  }
+
+  confirm2('🗑 Eliminar Trimestre', `¿Deseas eliminar el <strong>${escHTML(name)}</strong> y todas sus calificaciones?`, () => {
+    delete S.trimestres[name];
+    const remaining = Object.keys(S.trimestres)[0];
+    switchTrimestre(remaining);
+    closeModal();
+    toast(`🗑 ${name} eliminado`, '#dc2626');
+  });
+}
+
+function openManageTrimestres() {
+  ensureTrimestres();
+  const keys = Object.keys(S.trimestres);
+  const cur = S.currentTrimestre || '1er Trimestre';
+
+  let listHTML = `<div style="margin-bottom:14px">`;
+  keys.forEach(tName => {
+    const isActive = tName === cur;
+    listHTML += `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:6px;border-radius:8px;border:1.5px solid ${isActive ? 'var(--primary)' : 'var(--border-color)'};background:${isActive ? 'var(--primary-light)' : 'var(--bg-card)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.1rem">${isActive ? '📌' : '📅'}</span>
+          <span style="font-weight:800;font-size:0.88rem;color:${isActive ? 'var(--primary)' : 'var(--text-main)'}">${escHTML(tName)}</span>
+          ${isActive ? '<span style="font-size:0.68rem;background:var(--primary);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">ACTIVO</span>' : ''}
+        </div>
+        <div style="display:flex;gap:6px">
+          ${!isActive ? `<button class="btn btn-primary" style="font-size:0.75rem;padding:4px 10px" onclick="closeModal();switchTrimestre('${esc(tName)}')">▶ Cambiar</button>` : ''}
+          ${keys.length > 1 ? `<button class="btn btn-danger" style="font-size:0.75rem;padding:4px 8px" onclick="deleteTrimestre('${esc(tName)}')">✕</button>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  listHTML += `</div>`;
+
+  let nextName = '2do Trimestre';
+  if (keys.includes('1er Trimestre') && !keys.includes('2do Trimestre')) nextName = '2do Trimestre';
+  else if (keys.includes('2do Trimestre') && !keys.includes('3er Trimestre')) nextName = '3er Trimestre';
+  else nextName = `Trimestre ${keys.length + 1}`;
+
+  showModal(
+    '📅 Gestión y Creación de Trimestres',
+    `
+    ${listHTML}
+    
+    <div style="border-top:1px solid var(--border-color);padding-top:12px;margin-top:10px">
+      <div style="font-weight:800;font-size:0.88rem;margin-bottom:8px">➕ Crear Nuevo Trimestre</div>
+      <label>Nombre del Trimestre</label>
+      <input type="text" id="mNewTrimName" value="${escVal(nextName)}" placeholder="Ej: 2do Trimestre, 3er Trimestre"/>
+      
+      <label style="margin-top:8px">Estructura Inicial de Materias/Actividades</label>
+      <select id="mNewTrimMode">
+        <option value="copy" selected>Copiar semanas y actividades del trimestre anterior (sin notas)</option>
+        <option value="clean">Empezar con estructura limpia por defecto</option>
+      </select>
+    </div>
+    `,
+    '✨ Crear e Ingresar al Trimestre',
+    () => {
+      const nv = document.getElementById('mNewTrimName').value.trim();
+      const mode = document.getElementById('mNewTrimMode').value;
+      if (!nv) return;
+      closeModal();
+      createTrimestre(nv, mode);
+    }
+  );
+}
+
+function openEditPeriod() {
+  openManageTrimestres();
 }
 
 loadDark();
