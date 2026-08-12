@@ -731,8 +731,11 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
   <div class="toolbar-sep"></div>
 
-  <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar un estudiante a la nómina">
+  <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
     ➕ Estudiante
+  </button>
+  <button class="btn btn-teal" onclick="openManageNomina()" data-tip="Gestionar, reordenar (▲/▼) y organizar nómina de estudiantes">
+    ⚙ Nómina
   </button>
   <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
     ➕ Semana
@@ -1572,8 +1575,11 @@ function renderTable() {
       ${cells}
       ${summaryCells}
       <td class="ac" style="white-space:nowrap">
-        <button class="bt bte" onclick="editStudentName(${si})" title="Editar">✏</button>
-        <button class="bt btd" onclick="delSt(${si})" title="Eliminar">✕</button>
+        <button class="bt bte" onclick="moveStudent(${si},-1)" title="Subir en la nómina" ${si===0?'disabled':''}>▲</button>
+        <button class="bt bte" onclick="moveStudent(${si},1)" title="Bajar en la nómina" ${si===S.students.length-1?'disabled':''}>▼</button>
+        <button class="bt bte" onclick="openInsertStudentModal(${si})" title="Insertar estudiante aquí">➕</button>
+        <button class="bt bte" onclick="editStudentName(${si})" title="Editar nombre">✏</button>
+        <button class="bt btd" onclick="delSt(${si})" title="Eliminar estudiante">✕</button>
       </td>
     </tr>`;
   }).join('');
@@ -2021,21 +2027,141 @@ function delMat(i) {
 // ══════════════════════════════════════════════════════
 //  ESTUDIANTES & SEMANAS
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  GESTIÓN DE ESTUDIANTES (AUMENTAR, MOVER, ELIMINAR, REORDENAR)
+// ══════════════════════════════════════════════════════
 function openAddSt() {
+  const posOptions = S.students.map((st, i) => 
+    `<option value="${i}">Antes del #${i+1}: ${escHTML(st.slice(0, 25))}</option>`
+  ).join('');
+
   showModal(
-    '➕ Agregar Estudiante',
-    `<label>Nombre Completo</label><input type="text" id="mInpSt" placeholder="APELLIDO NOMBRE" style="text-transform:uppercase"/>`,
+    '➕ Agregar / Insertar Estudiante',
+    `
+    <label>Nombre Completo</label>
+    <input type="text" id="mInpSt" placeholder="APELLIDO NOMBRE" style="text-transform:uppercase;margin-bottom:10px"/>
+    
+    <label>Ubicación en la Nómina</label>
+    <select id="mInpPos">
+      <option value="end" selected>Al final de la nómina (#${S.students.length + 1})</option>
+      <option value="0">Al inicio de la nómina (#1)</option>
+      ${posOptions}
+    </select>
+    `,
     'Agregar',
     () => {
       const nv = document.getElementById('mInpSt').value.trim().toUpperCase();
-      if (!nv || S.students.includes(nv)) return;
-      const si = S.students.length;
-      S.students.push(nv);
-      getMats().forEach(m => { if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {}; });
-      closeModal(); render(); saveData();
-      toast('✔ Estudiante agregado', '#16a34a');
+      if (!nv) return;
+      const posVal = document.getElementById('mInpPos').value;
+      const targetPos = posVal === 'end' ? S.students.length : parseInt(posVal);
+      closeModal();
+      insertStudentAt(targetPos, nv);
     }
   );
+}
+
+function openInsertStudentModal(atPos) {
+  const stName = S.students[atPos];
+  showModal(
+    `➕ Insertar cerca de #${atPos + 1}`,
+    `
+    <label>Nombre del Nuevo Estudiante</label>
+    <input type="text" id="mInpSt" placeholder="APELLIDO NOMBRE" style="text-transform:uppercase;margin-bottom:10px"/>
+    
+    <label>Ubicación</label>
+    <select id="mInpRelPos">
+      <option value="before">Antes de #${atPos + 1}: ${escHTML(stName)}</option>
+      <option value="after" selected>Después de #${atPos + 1}: ${escHTML(stName)}</option>
+    </select>
+    `,
+    'Insertar',
+    () => {
+      const nv = document.getElementById('mInpSt').value.trim().toUpperCase();
+      if (!nv) return;
+      const rel = document.getElementById('mInpRelPos').value;
+      const targetPos = rel === 'before' ? atPos : atPos + 1;
+      closeModal();
+      insertStudentAt(targetPos, nv);
+    }
+  );
+}
+
+function insertStudentAt(targetPos, nameUpper) {
+  if (!nameUpper) return;
+  if (S.students.includes(nameUpper)) {
+    toast('⚠️ Ese estudiante ya existe en la nómina', '#d97706');
+    return;
+  }
+  const insertPos = Math.max(0, Math.min(S.students.length, targetPos));
+
+  // 1. Insert in S.students array
+  S.students.splice(insertPos, 0, nameUpper);
+
+  // 2. Shift grades in all subjects
+  getMats().forEach(m => {
+    const mat = S.mats[m];
+    const newGrades = {};
+    for (let i = 0; i < S.students.length; i++) {
+      if (i < insertPos) {
+        newGrades[i] = mat.grades[i] || {};
+      } else if (i === insertPos) {
+        newGrades[i] = {};
+      } else {
+        newGrades[i] = mat.grades[i - 1] || {};
+      }
+    }
+    mat.grades = newGrades;
+  });
+
+  // 3. Shift attendance
+  if (S.asistencia) {
+    Object.keys(S.asistencia).forEach(dt => {
+      const dayAtt = S.asistencia[dt];
+      const newAtt = {};
+      for (let i = 0; i < S.students.length; i++) {
+        if (i < insertPos) {
+          newAtt[i] = dayAtt[i] || 'P';
+        } else if (i === insertPos) {
+          newAtt[i] = 'P';
+        } else {
+          newAtt[i] = dayAtt[i - 1] || 'P';
+        }
+      }
+      S.asistencia[dt] = newAtt;
+    });
+  }
+
+  render(); saveData();
+  toast(`✔ Estudiante insertado en posición #${insertPos + 1}`, '#16a34a');
+}
+
+function moveStudent(si, dir) {
+  const target = si + dir;
+  if (target < 0 || target >= S.students.length) return;
+
+  // Swap names
+  const tempName = S.students[si];
+  S.students[si] = S.students[target];
+  S.students[target] = tempName;
+
+  // Swap grades in all subjects
+  getMats().forEach(m => {
+    const mat = S.mats[m];
+    const tempG = mat.grades[si] || {};
+    mat.grades[si] = mat.grades[target] || {};
+    mat.grades[target] = tempG;
+  });
+
+  // Swap attendance
+  if (S.asistencia) {
+    Object.keys(S.asistencia).forEach(dt => {
+      const tempA = S.asistencia[dt][si] || 'P';
+      S.asistencia[dt][si] = S.asistencia[dt][target] || 'P';
+      S.asistencia[dt][target] = tempA;
+    });
+  }
+
+  render(); saveData();
 }
 
 function editStudentName(si) {
@@ -2053,19 +2179,93 @@ function editStudentName(si) {
 }
 
 function delSt(si) {
-  confirm2('🗑 Eliminar Estudiante', `¿Eliminar a <strong>${escHTML(S.students[si])}</strong>?`, () => {
+  confirm2('🗑 Eliminar Estudiante', `¿Eliminar a <strong>${escHTML(S.students[si])}</strong> de la nómina?`, () => {
     S.students.splice(si, 1);
     getMats().forEach(m => {
       const mat = S.mats[m];
-      const newG = {};
-      S.students.forEach((_, ni) => {
-        const oldIdx = ni >= si ? ni + 1 : ni;
-        newG[ni] = mat.grades[oldIdx] || {};
-      });
-      mat.grades = newG;
+      const newGrades = {};
+      for (let i = 0; i < S.students.length; i++) {
+        const oldIdx = i >= si ? i + 1 : i;
+        newGrades[i] = mat.grades[oldIdx] || {};
+      }
+      mat.grades = newGrades;
     });
+
+    if (S.asistencia) {
+      Object.keys(S.asistencia).forEach(dt => {
+        const dayAtt = S.asistencia[dt];
+        const newAtt = {};
+        for (let i = 0; i < S.students.length; i++) {
+          const oldIdx = i >= si ? i + 1 : i;
+          newAtt[i] = dayAtt[oldIdx] || 'P';
+        }
+        S.asistencia[dt] = newAtt;
+      });
+    }
+
     render(); saveData();
+    toast('🗑 Estudiante eliminado de la nómina', '#dc2626');
   });
+}
+
+function sortStudentsAZ() {
+  confirm2('🔤 Ordenar Nómina A → Z', '¿Deseas ordenar todos los estudiantes alfabéticamente manteniendo sus calificaciones asociadas?', () => {
+    const paired = S.students.map((name, i) => ({ name, i }));
+    paired.sort((a, b) => a.name.localeCompare(b.name));
+
+    S.students = paired.map(p => p.name);
+
+    getMats().forEach(m => {
+      const mat = S.mats[m];
+      const newGrades = {};
+      paired.forEach((p, newIdx) => {
+        newGrades[newIdx] = mat.grades[p.i] || {};
+      });
+      mat.grades = newGrades;
+    });
+
+    if (S.asistencia) {
+      Object.keys(S.asistencia).forEach(dt => {
+        const dayAtt = S.asistencia[dt];
+        const newAtt = {};
+        paired.forEach((p, newIdx) => {
+          newAtt[newIdx] = dayAtt[p.i] || 'P';
+        });
+        S.asistencia[dt] = newAtt;
+      });
+    }
+
+    render(); saveData();
+    toast('✔ Nómina ordenada alfabéticamente A → Z', '#16a34a');
+  });
+}
+
+function openManageNomina() {
+  let listHTML = `<div style="max-height:50vh;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:6px;margin-bottom:12px">`;
+  S.students.forEach((name, i) => {
+    listHTML += `<div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-bottom:1px solid var(--border-color)">
+      <span style="font-size:0.75rem;font-weight:700;width:24px;color:var(--text-muted)">${i+1}</span>
+      <span style="flex:1;font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span>
+      <button class="bt bte" onclick="moveStudent(${i},-1);openManageNomina()" ${i===0?'disabled':''} title="Subir">▲</button>
+      <button class="bt bte" onclick="moveStudent(${i},1);openManageNomina()" ${i===S.students.length-1?'disabled':''} title="Bajar">▼</button>
+      <button class="bt bte" onclick="editStudentName(${i})" title="Editar">✏</button>
+      <button class="bt btd" onclick="delSt(${i});openManageNomina()" title="Eliminar">✕</button>
+    </div>`;
+  });
+  listHTML += `</div>`;
+
+  showModal(
+    '⚙ Gestión de Nómina (' + S.students.length + ' estudiantes)',
+    `
+    ${listHTML}
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-success" onclick="openAddSt()">➕ Agregar Estudiante</button>
+      <button class="btn btn-teal"    onclick="sortStudentsAZ();closeModal()">🔤 Ordenar A → Z</button>
+    </div>
+    `,
+    'Cerrar',
+    closeModal
+  );
 }
 
 function openAddWeek() {
