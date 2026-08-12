@@ -959,7 +959,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <div style="font-size:0.75rem;opacity:.85;margin-top:3px">Componente Sumativo (30%) · Rúbrica Ministerial MINEDUC</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openPiConfig()">&#9881; Configurar Proyecto</button>
+      <button class="btn" style="background:rgba(255,255,255,0.25);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="syncPiToSubjects()" data-tip="Pasar automáticamente las notas del PI a la columna PI (30% Sumativo) de cada materia">⚡ Sincronizar a Asignaturas (30%)</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openPiConfig()">⚙ Configurar Proyecto</button>
       <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="exportPiXLSX()">📊 Excel PI</button>
     </div>
   </div>
@@ -3702,6 +3703,66 @@ function navPi(e, inp, si, mat, indId) {
   }
 }
 
+function saveCurrentPiConfigDraft() {
+  const cfg = S.pi.config;
+  const titleEl = document.getElementById('piTitulo');
+  const temaEl  = document.getElementById('piTema');
+  const fechaEl = document.getElementById('piFecha');
+  if (titleEl) cfg.titulo = titleEl.value.trim().toUpperCase() || cfg.titulo;
+  if (temaEl)  cfg.tema   = temaEl.value.trim();
+  if (fechaEl) cfg.fecha  = fechaEl.value;
+
+  const checkboxes = document.querySelectorAll('#piConfigForm input[type="checkbox"]');
+  if (checkboxes.length) {
+    S.pi.mats = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+  }
+
+  cfg.indicadores.forEach((ind, i) => {
+    const idEl   = document.getElementById('piIndId' + i);
+    const nomEl  = document.getElementById('piIndNom' + i);
+    const pesoEl = document.getElementById('piIndPeso' + i);
+    if (idEl)   ind.id     = idEl.value.trim().toUpperCase() || ind.id;
+    if (nomEl)  ind.nombre = nomEl.value.trim() || ind.nombre;
+    if (pesoEl) ind.peso   = parseInt(pesoEl.value) || 0;
+  });
+}
+
+function addPiIndicator() {
+  saveCurrentPiConfigDraft();
+  const cfg = S.pi.config;
+  const num = cfg.indicadores.length + 1;
+  cfg.indicadores.push({
+    id: `PI${num}`,
+    nombre: `Indicador ${num}`,
+    peso: 0
+  });
+  distributePiWeights();
+  openPiConfig();
+}
+
+function removePiIndicator(i) {
+  saveCurrentPiConfigDraft();
+  const cfg = S.pi.config;
+  if (cfg.indicadores.length <= 1) {
+    toast('⚠️ Debe existir al menos 1 indicador', '#d97706');
+    return;
+  }
+  cfg.indicadores.splice(i, 1);
+  distributePiWeights();
+  openPiConfig();
+}
+
+function distributePiWeights() {
+  const cfg = S.pi.config;
+  const count = cfg.indicadores.length;
+  if (!count) return;
+  const baseWeight = Math.floor(100 / count);
+  const remainder  = 100 - (baseWeight * count);
+  cfg.indicadores.forEach((ind, i) => {
+    ind.peso = baseWeight + (i === 0 ? remainder : 0);
+  });
+}
+
 function openPiConfig() {
   ensurePi();
   const cfg = S.pi.config;
@@ -3717,48 +3778,40 @@ function openPiConfig() {
       <input type="text" value="${escVal(ind.nombre)}" id="piIndNom${i}" style="flex:1;font-size:0.78rem" placeholder="Nombre del indicador">
       <input type="number" value="${ind.peso}" id="piIndPeso${i}" style="width:52px;font-size:0.78rem;text-align:center" min="0" max="100" placeholder="%">
       <span style="font-size:0.72rem;color:var(--text-muted)">%</span>
+      <button type="button" class="bt btd" onclick="removePiIndicator(${i})" title="Eliminar indicador" style="padding:2px 6px">✕</button>
     </div>`
   ).join('');
 
   showModal(
     '⚙ Configurar Proyecto Interdisciplinario',
     `
-    <label>Título del Proyecto</label>
-    <input type="text" id="piTitulo" value="${escVal(cfg.titulo)}" placeholder="PROYECTO INTERDISCIPLINARIO — TRIMESTRE I"/>
-    <label>Tema Generador</label>
-    <input type="text" id="piTema" value="${escVal(cfg.tema)}" placeholder="Ej: La biodiversidad del Ecuador"/>
-    <label>Fecha de Entrega</label>
-    <input type="date" id="piFecha" value="${escVal(cfg.fecha)}"/>
-    
-    <label style="margin-top:8px">Asignaturas Participantes</label>
-    <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 12px;max-height:120px;overflow-y:auto">${matsOpts}</div>
-    
-    <label style="margin-top:10px">Indicadores de Evaluación de la Rúbrica</label>
-    <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 10px;max-height:200px;overflow-y:auto">
-      ${indsHtml}
+    <div id="piConfigForm">
+      <label>Título del Proyecto</label>
+      <input type="text" id="piTitulo" value="${escVal(cfg.titulo)}" placeholder="PROYECTO INTERDISCIPLINARIO — TRIMESTRE I"/>
+      <label>Tema Generador</label>
+      <input type="text" id="piTema" value="${escVal(cfg.tema)}" placeholder="Ej: La biodiversidad del Ecuador"/>
+      <label>Fecha de Entrega</label>
+      <input type="date" id="piFecha" value="${escVal(cfg.fecha)}"/>
+      
+      <label style="margin-top:8px">Asignaturas Participantes</label>
+      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 12px;max-height:120px;overflow-y:auto">${matsOpts}</div>
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:4px">
+        <label style="margin:0">Indicadores de Evaluación de la Rúbrica</label>
+        <button type="button" class="btn btn-teal" style="font-size:0.7rem;padding:3px 8px" onclick="saveCurrentPiConfigDraft();distributePiWeights();openPiConfig()">⚖️ Pesos % Iguales</button>
+      </div>
+      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 10px;max-height:220px;overflow-y:auto">
+        ${indsHtml}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <button type="button" class="btn btn-success" style="font-size:0.75rem;padding:4px 10px" onclick="addPiIndicator()">➕ Agregar Indicador</button>
+        <span style="font-size:0.72rem;color:var(--text-muted)">* Los pesos deben sumar 100%</span>
+      </div>
     </div>
-    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">* Los pesos deben sumar 100%</div>
     `,
     'Guardar Configuración',
     () => {
-      cfg.titulo = document.getElementById('piTitulo').value.trim().toUpperCase() || cfg.titulo;
-      cfg.tema   = document.getElementById('piTema').value.trim();
-      cfg.fecha  = document.getElementById('piFecha').value;
-
-      // Selected mats
-      const checkboxes = document.querySelectorAll('[type="checkbox"]');
-      S.pi.mats = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-
-      // Update indicators
-      cfg.indicadores.forEach((ind, i) => {
-        const idEl   = document.getElementById('piIndId' + i);
-        const nomEl  = document.getElementById('piIndNom' + i);
-        const pesoEl = document.getElementById('piIndPeso' + i);
-        if (idEl)   ind.id     = idEl.value.trim().toUpperCase() || ind.id;
-        if (nomEl)  ind.nombre = nomEl.value.trim() || ind.nombre;
-        if (pesoEl) ind.peso   = parseInt(pesoEl.value) || ind.peso;
-      });
-
+      saveCurrentPiConfigDraft();
       closeModal();
       ensurePi();
       saveData();
@@ -3766,6 +3819,57 @@ function openPiConfig() {
       toast('✔ Proyecto Interdisciplinario configurado', '#16a34a');
     }
   );
+}
+
+function syncPiToSubjects() {
+  ensurePi();
+  const mats = S.pi.mats;
+  const inds = S.pi.config.indicadores;
+  let count = 0;
+
+  mats.forEach(m => {
+    const mat = S.mats[m];
+    if (!mat) return;
+
+    let piWeek = null;
+    let piColName = null;
+
+    Object.keys(mat.cols).forEach(w => {
+      (mat.cols[w] || []).forEach(c => {
+        if (c.type === 'PI') {
+          piWeek = w;
+          piColName = c.name;
+        }
+      });
+    });
+
+    if (!piWeek || !piColName) return;
+
+    S.students.forEach((_, si) => {
+      const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
+      let weightedSum = 0;
+      let weightTotal = 0;
+
+      inds.forEach(ind => {
+        const v = parseFloat(mGrades[ind.id]);
+        if (!isNaN(v)) {
+          weightedSum += v * (ind.peso / 100);
+          weightTotal += ind.peso / 100;
+        }
+      });
+
+      if (weightTotal > 0) {
+        const notaMat = trunc2(weightedSum / weightTotal);
+        if (!mat.grades[si]) mat.grades[si] = {};
+        mat.grades[si][piWeek + '||' + piColName] = String(notaMat);
+        count++;
+      }
+    });
+  });
+
+  saveData();
+  render();
+  toast(`⚡ Sincronizadas ${count} notas de PI hacia las asignaturas`, '#16a34a');
 }
 
 function exportPiXLSX() {
