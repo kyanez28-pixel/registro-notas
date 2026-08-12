@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registro de Notas — Sistema de Calificaciones</title>
+<title>Registro de Notas — EGB Media (Séptimo de Básica)</title>
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
 <!-- Firebase SDK Compat -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -75,7 +75,7 @@
   --radius-full: 9999px;
 }
 
-/* ══ MODO OSCURO (DEEP SLATE & SAPPHIRE) ══ */
+/* ══ MODO OSCURO ══ */
 body.dark {
   --bg-app: #090d16;
   --bg-card: #111827;
@@ -136,40 +136,20 @@ body.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
   justify-content: space-between;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
-.user-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
+.user-pill { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
 .user-avatar-badge {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #3b82f6;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.7rem;
+  width: 22px; height: 22px; border-radius: 50%; background: #3b82f6; color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem;
 }
 .sync-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 600;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
+  border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 600;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
   transition: all .2s ease;
 }
 .sync-badge.online { color: #86efac; border-color: rgba(134,239,172,0.3); background: rgba(22,163,74,0.15); }
 .sync-badge.offline { color: #fde047; border-color: rgba(253,224,71,0.3); background: rgba(202,138,4,0.15); }
 .sync-badge.syncing { color: #93c5fd; border-color: rgba(147,197,253,0.3); background: rgba(37,99,235,0.15); }
-.sync-badge.error { color: #fca5a5; border-color: rgba(252,165,165,0.3); background: rgba(220,38,38,0.15); }
 
 /* ══════════════════════════════════════════════════════
    HEADER
@@ -187,164 +167,76 @@ header {
   position: relative;
   z-index: 10;
 }
-.hdr-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.hdr-brand { display: flex; align-items: center; gap: 12px; }
 .hdr-logo {
-  width: 38px;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  width: 38px; height: 38px; background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 .hdr-title-area h1 {
-  font-size: var(--fs-h1);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: var(--fs-h1); font-weight: 800; letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
 .hdr-period-tag {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 2px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all .15s ease;
+  background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2px 10px; border-radius: var(--radius-full); font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all .15s ease;
 }
-.hdr-period-tag:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-.hdr-sub {
-  font-size: 0.72rem;
-  opacity: 0.85;
-  margin-top: 2px;
-  font-weight: 400;
+.hdr-period-tag:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
+.hdr-sub { font-size: 0.72rem; opacity: 0.85; margin-top: 2px; font-weight: 400; }
+
+.normative-pill {
+  background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #a7f3d0; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
 }
 
-.hi {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-}
+.hi { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .hi-input-group {
-  display: flex;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: var(--radius-sm);
-  padding: 2px 6px;
-  align-items: center;
-  backdrop-filter: blur(4px);
+  display: flex; background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25); border-radius: var(--radius-sm);
+  padding: 2px 6px; align-items: center; backdrop-filter: blur(4px);
 }
-.hi-input-group:focus-within {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-.hi-input-group span {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  padding-right: 4px;
-}
+.hi-input-group:focus-within { background: rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.6); }
+.hi-input-group span { font-size: 0.7rem; opacity: 0.7; padding-right: 4px; }
 .hi input[type="text"] {
-  background: transparent;
-  border: none;
-  color: #fff;
-  padding: 4px 6px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  outline: none;
-  font-family: inherit;
+  background: transparent; border: none; color: #fff; padding: 4px 6px;
+  font-size: 0.82rem; font-weight: 600; outline: none; font-family: inherit;
 }
 .hi input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.5); font-weight: 400; }
-#infoGrado { width: 110px; }
+#infoGrado { width: 115px; }
 #infoAnio  { width: 95px; }
 
 .badge-saved {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #86efac;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  display: none;
-  align-items: center;
-  gap: 4px;
-  border: 1px solid rgba(134,239,172,0.3);
-  animation: fadeIn .2s ease;
+  font-size: 0.72rem; font-weight: 700; color: #86efac; background: rgba(0, 0, 0, 0.25);
+  padding: 4px 10px; border-radius: var(--radius-full); display: none; align-items: center;
+  gap: 4px; border: 1px solid rgba(134,239,172,0.3); animation: fadeIn .2s ease;
 }
 .badge-saved.on { display: inline-flex; }
 
 .font-controller {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
+  display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25); border-radius: var(--radius-sm); padding: 4px 8px;
 }
 
 /* ══════════════════════════════════════════════════════
    TOOLBAR
    ══════════════════════════════════════════════════════ */
 .toolbar {
-  background: var(--bg-toolbar);
-  padding: 8px 18px;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  z-index: 9;
+  background: var(--bg-toolbar); padding: 8px 18px; display: flex; gap: 6px;
+  flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm); position: relative; z-index: 9;
 }
 .btn {
-  padding: 6px 12px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 600;
-  font-family: var(--font-main);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  box-shadow: var(--shadow-xs);
-  white-space: nowrap;
+  padding: 6px 12px; border: 1px solid transparent; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 0.78rem; font-weight: 600; font-family: var(--font-main);
+  display: inline-flex; align-items: center; gap: 6px; transition: all .15s ease;
+  user-select: none; box-shadow: var(--shadow-xs); white-space: nowrap;
 }
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-  filter: brightness(1.04);
-}
-.btn:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: var(--shadow-xs);
-}
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(1.04); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
 
 /* Button Colors */
 .btn-primary   { background: #2563eb; color: #fff; }
@@ -354,388 +246,166 @@ header {
 .btn-danger    { background: #dc2626; color: #fff; }
 .btn-teal      { background: #0d9488; color: #fff; }
 .btn-dark      { background: #334155; color: #fff; }
-.btn-amber     { background: #d97706; color: #fff; }
 .btn-outline   { background: var(--bg-card); color: var(--text-main); border-color: var(--border-color); }
 .btn-outline:hover { background: var(--bg-card-subtle); border-color: #cbd5e1; }
 .btn-magic {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
-  color: #fff;
-  font-weight: 700;
-  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; font-weight: 700; border: 1px solid rgba(255,255,255,0.2);
   box-shadow: 0 2px 10px rgba(124, 58, 237, 0.35);
 }
-
-.toolbar-sep {
-  width: 1px;
-  height: 22px;
-  background: var(--border-color);
-  margin: 0 4px;
-}
+.toolbar-sep { width: 1px; height: 22px; background: var(--border-color); margin: 0 4px; }
 
 /* ══════════════════════════════════════════════════════
-   SUBJECT TABS (DYNAMIC & SLEEK)
+   SUBJECT TABS (DYNAMIC & DISTINGUISHING QUAL/QUANT)
    ══════════════════════════════════════════════════════ */
 .tabs-container {
-  background: var(--bg-card);
-  padding: 6px 18px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid var(--primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  gap: 8px;
+  background: var(--bg-card); padding: 6px 18px 0; display: flex;
+  align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04); gap: 8px;
 }
-.tabs-scroll {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex: 1;
-}
+.tabs-scroll { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex: 1; }
 .tabs-scroll::-webkit-scrollbar { display: none; }
 
 .tab {
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  white-space: nowrap;
-  color: var(--text-muted);
-  border: 1px solid transparent;
-  border-bottom: none;
-  background: transparent;
-  transition: all .15s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  padding: 8px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; white-space: nowrap;
+  color: var(--text-muted); border: 1px solid transparent; border-bottom: none;
+  background: transparent; transition: all .15s ease; display: flex; align-items: center; gap: 6px;
 }
-.tab:hover {
-  background: var(--primary-light);
-  color: var(--primary);
-}
+.tab:hover { background: var(--primary-light); color: var(--primary); }
 .tab.active {
-  background: var(--primary);
-  color: #ffffff;
-  border-color: var(--primary);
+  background: var(--primary); color: #ffffff; border-color: var(--primary);
   box-shadow: 0 -2px 8px rgba(37, 99, 235, 0.25);
 }
+.tab-tag {
+  font-size: 0.6rem; padding: 1px 5px; border-radius: 4px; font-weight: 700;
+}
+.tab.active .tab-tag { background: rgba(255,255,255,0.25); color: #fff; }
+.tab:not(.active) .tab-tag-qual { background: #fef3c7; color: #b45309; }
+.tab:not(.active) .tab-tag-quant { background: #dbeafe; color: #1e40af; }
+
 .tab-action-btn {
-  background: transparent;
-  border: 1px dashed var(--border-color);
-  color: var(--text-muted);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 4px;
-  transition: all .15s ease;
+  background: transparent; border: 1px dashed var(--border-color); color: var(--text-muted);
+  border-radius: var(--radius-sm); padding: 4px 10px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px;
 }
-.tab-action-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-light);
-}
+.tab-action-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
 /* ══════════════════════════════════════════════════════
-   VIEW SWITCHER BAR
+   VIEW BAR & CONTENT
    ══════════════════════════════════════════════════════ */
 .view-bar {
-  background: var(--bg-card);
-  padding: 4px 18px;
-  display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--border-color);
-  align-items: center;
+  background: var(--bg-card); padding: 4px 18px; display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border-color); align-items: center;
 }
 .view-btn {
-  padding: 7px 18px;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all .15s ease;
+  padding: 7px 18px; border: none; background: transparent; color: var(--text-muted);
+  font-weight: 600; font-size: 0.8rem; cursor: pointer; border-radius: var(--radius-sm);
+  display: inline-flex; align-items: center; gap: 6px; transition: all .15s ease;
 }
-.view-btn:hover {
-  background: var(--bg-card-subtle);
-  color: var(--text-main);
-}
-.view-btn.active {
-  background: var(--primary-light);
-  color: var(--primary);
-  font-weight: 700;
-}
+.view-btn:hover { background: var(--bg-card-subtle); color: var(--text-main); }
+.view-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
 
-/* ══════════════════════════════════════════════════════
-   MAIN CONTENT & STATS
-   ══════════════════════════════════════════════════════ */
 .content { padding: 14px 18px; }
 
+/* ── STATS CARDS ── */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 10px;
-  margin-bottom: 12px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 10px; margin-bottom: 12px;
 }
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-xs);
-  transition: transform .15s ease, box-shadow .15s ease;
-  position: relative;
-  overflow: hidden;
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); padding: 10px 14px; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-xs); transition: transform .15s ease, box-shadow .15s ease;
+  position: relative; overflow: hidden;
 }
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--card-accent, #3b82f6);
-}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-accent, #3b82f6); }
 .stat-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;
 }
-.stat-val {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--card-text, var(--text-main));
-}
-.stat-sub {
-  font-size: 0.65rem;
-  color: var(--text-light);
-  margin-top: 2px;
-}
+.stat-val { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: var(--card-text, var(--text-main)); }
+.stat-sub { font-size: 0.65rem; color: var(--text-light); margin-top: 2px; }
 
-/* ══════════════════════════════════════════════════════
-   SEARCH & FILTER BAR
-   ══════════════════════════════════════════════════════ */
+/* ── SEARCH & FILTER ── */
 .filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 10px; flex-wrap: wrap;
 }
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
-  max-width: 380px;
-}
-.search-wrapper svg {
-  position: absolute;
-  left: 10px;
-  color: var(--text-light);
-  pointer-events: none;
-}
+.search-wrapper { position: relative; display: flex; align-items: center; flex: 1; max-width: 360px; }
+.search-wrapper svg { position: absolute; left: 10px; color: var(--text-light); pointer-events: none; }
 .search-input {
-  width: 100%;
-  padding: 7px 12px 7px 34px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  color: var(--text-main);
-  outline: none;
-  font-family: inherit;
-  transition: border-color .15s ease, box-shadow .15s ease;
+  width: 100%; padding: 7px 12px 7px 34px; background: var(--bg-card);
+  border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.82rem;
+  color: var(--text-main); outline: none; font-family: inherit;
 }
-.search-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-}
-.search-badge {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
+.search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
 .sort-select {
-  padding: 6px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  color: var(--text-main);
-  outline: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-.sort-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  padding: 6px 12px; background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--text-main); outline: none; cursor: pointer;
 }
 
 /* ══════════════════════════════════════════════════════
-   TABLE DESIGN & INTERACTIVITY
+   TABLE DESIGN & MINISTERIAL PONDERATIONS
    ══════════════════════════════════════════════════════ */
 .tw {
-  overflow: auto;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  max-height: calc(100vh - 245px);
-  position: relative;
+  overflow: auto; border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color); background: var(--bg-card);
+  max-height: calc(100vh - 250px); position: relative;
 }
-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  background: var(--bg-card);
-  font-size: 0.75rem;
-  white-space: nowrap;
-  width: 100%;
-}
+table { border-collapse: separate; border-spacing: 0; background: var(--bg-card); font-size: 0.75rem; white-space: nowrap; width: 100%; }
 
 /* Headers */
 th {
-  background: #1e3a8a;
-  color: #ffffff;
-  padding: 6px 5px;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  border-right: 1px solid rgba(255,255,255,0.15);
-  border-bottom: 1px solid rgba(255,255,255,0.15);
-  user-select: none;
-  font-weight: 700;
-  letter-spacing: 0.2px;
+  background: #1e3a8a; color: #ffffff; padding: 6px 5px; text-align: center;
+  position: sticky; top: 0; z-index: 3; border-right: 1px solid rgba(255,255,255,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.15); user-select: none; font-weight: 700;
 }
-th.wh {
-  cursor: pointer;
-  transition: filter .15s ease;
-}
+th.wh { cursor: pointer; transition: filter .15s ease; }
 th.wh:hover { filter: brightness(1.12); }
-th.sh {
-  font-size: 0.7rem;
-  cursor: pointer;
-  position: sticky;
-  top: 30px;
-  font-weight: 600;
-}
+th.sh { font-size: 0.7rem; cursor: pointer; position: sticky; top: 30px; font-weight: 600; }
 th.sh:hover { filter: brightness(1.1); }
 
 /* Sticky Left Columns */
-th.fxl {
-  position: sticky;
-  left: 0;
-  z-index: 6;
-  background: #1e3a8a;
-  box-shadow: 1px 0 0 rgba(255,255,255,0.2);
-}
-th.fxn {
-  position: sticky;
-  left: 32px;
-  z-index: 6;
-  background: #1e3a8a;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.15);
-}
+th.fxl { position: sticky; left: 0; z-index: 6; background: #1e3a8a; }
+th.fxn { position: sticky; left: 32px; z-index: 6; background: #1e3a8a; box-shadow: 2px 0 6px rgba(0,0,0,0.15); }
 
-/* Summary Headers */
-th.prom-h {
-  background: #0f766e;
-  position: sticky;
-  top: 0;
-  z-index: 4;
-}
-th.prom-sh {
-  background: #14b8a6;
-  font-size: 0.68rem;
-  position: sticky;
-  top: 30px;
-}
+/* Ministerial Summary Headers */
+th.th-form { background: #0284c7; position: sticky; top: 0; z-index: 4; }
+th.th-sum  { background: #7c3aed; position: sticky; top: 0; z-index: 4; }
+th.th-trim { background: #0f766e; position: sticky; top: 0; z-index: 4; }
 
 /* Table Cells */
 td {
-  border-right: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  padding: 3px 4px;
-  text-align: center;
-  vertical-align: middle;
-  transition: background-color .1s ease;
-  background: var(--bg-card);
+  border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+  padding: 3px 4px; text-align: center; vertical-align: middle; background: var(--bg-card);
 }
 td.ic {
-  width: 32px;
-  min-width: 32px;
-  color: var(--text-light);
-  font-size: 0.72rem;
-  font-weight: 600;
-  position: sticky;
-  left: 0;
-  background: var(--bg-card);
-  z-index: 2;
-  border-right: 1px solid var(--border-color);
+  width: 32px; min-width: 32px; color: var(--text-light); font-size: 0.72rem; font-weight: 600;
+  position: sticky; left: 0; background: var(--bg-card); z-index: 2; border-right: 1px solid var(--border-color);
 }
 td.nc {
-  text-align: left;
-  padding-left: 10px;
-  min-width: 200px;
-  max-width: 200px;
-  font-weight: 600;
-  color: var(--text-main);
-  position: sticky;
-  left: 32px;
-  background: var(--bg-card);
-  z-index: 2;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.03);
+  text-align: left; padding-left: 10px; min-width: 200px; max-width: 200px; font-weight: 600;
+  color: var(--text-main); position: sticky; left: 32px; background: var(--bg-card); z-index: 2;
+  cursor: pointer; overflow: hidden; text-overflow: ellipsis; box-shadow: 2px 0 5px rgba(0,0,0,0.03);
 }
-td.nc:hover {
-  background: var(--primary-light) !important;
-  color: var(--primary);
-}
+td.nc:hover { background: var(--primary-light) !important; color: var(--primary); }
 
-td.prom-c {
-  background: #f0fdf4 !important;
-  font-weight: 800;
-  color: #16a34a;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-}
-body.dark td.prom-c { background: rgba(22, 163, 74, 0.15) !important; color: #86efac; }
-td.prom-c.glo { color: #dc2626 !important; background: #fef2f2 !important; }
-body.dark td.prom-c.glo { color: #fca5a5 !important; background: rgba(220, 38, 38, 0.15) !important; }
+/* Ministerial Result Columns */
+td.td-form { background: #f0f9ff !important; font-family: var(--font-mono); font-weight: 700; color: #0284c7; }
+td.td-sum  { background: #faf5ff !important; font-family: var(--font-mono); font-weight: 700; color: #7c3aed; }
+td.td-trim { background: #f0fdf4 !important; font-family: var(--font-mono); font-weight: 800; color: #16a34a; font-size: 0.84rem; }
+td.td-trim.glo { color: #dc2626 !important; background: #fef2f2 !important; }
+body.dark td.td-form { background: rgba(2, 132, 199, 0.15) !important; color: #7dd3fc; }
+body.dark td.td-sum  { background: rgba(124, 58, 237, 0.15) !important; color: #c084fc; }
+body.dark td.td-trim { background: rgba(22, 163, 74, 0.15) !important; color: #86efac; }
+body.dark td.td-trim.glo { background: rgba(220, 38, 38, 0.15) !important; color: #fca5a5; }
 
+/* Weekly Average */
 td.prom-wk {
-  font-weight: 700;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: #0f766e;
-  border-left: 2px solid rgba(0,0,0,0.08) !important;
+  font-weight: 700; font-family: var(--font-mono); font-size: 0.76rem;
+  color: #0f766e; border-left: 2px solid rgba(0,0,0,0.08) !important;
 }
 body.dark td.prom-wk { color: #2dd4bf; }
 td.prom-wk.glo { color: #dc2626 !important; }
@@ -748,45 +418,33 @@ body.dark tr:hover td { background: #1e293b !important; }
 
 tr.active-work-row td { background: #e0f2fe !important; }
 body.dark tr.active-work-row td { background: #1e3a8a !important; }
-tr.active-work-row td.ic, tr.active-work-row td.nc {
-  background: #bae6fd !important;
-  color: #0369a1 !important;
-  font-weight: 700;
-}
-body.dark tr.active-work-row td.ic, body.dark tr.active-work-row td.nc {
-  background: #172554 !important;
-  color: #93c5fd !important;
-}
+tr.active-work-row td.ic, tr.active-work-row td.nc { background: #bae6fd !important; color: #0369a1 !important; font-weight: 700; }
+body.dark tr.active-work-row td.ic, body.dark tr.active-work-row td.nc { background: #172554 !important; color: #93c5fd !important; }
 tr.hidden-row { display: none !important; }
 
-/* ── INPUTS DE NOTA ── */
+/* ── INPUTS DE NOTAS & BOTONES CUALITATIVOS ── */
 input.gi {
-  width: 100%;
-  border: none;
-  background: transparent;
-  text-align: center;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 2px;
-  outline: none;
-  color: var(--text-main);
-  min-width: 30px;
-  border-radius: var(--radius-sm);
-  transition: all .15s ease;
+  width: 100%; border: none; background: transparent; text-align: center;
+  font-size: 0.78rem; font-weight: 600; padding: 2px; outline: none;
+  color: var(--text-main); min-width: 30px; border-radius: var(--radius-sm);
 }
-input.gi:focus {
-  background: #ffffff;
-  box-shadow: 0 0 0 2px var(--primary);
-  color: #000;
-}
-body.dark input.gi:focus {
-  background: #0f172a;
-  color: #fff;
-}
+input.gi:focus { background: #ffffff; box-shadow: 0 0 0 2px var(--primary); color: #000; }
+body.dark input.gi:focus { background: #0f172a; color: #fff; }
 .glo { color: #dc2626 !important; font-weight: 800; }
 .ghi { color: #16a34a !important; font-weight: 700; }
 
-/* ── ESTADOS ESPECIALES DE CELDA ── */
+/* Cualitativos Badges */
+.badge-qual {
+  padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.75rem;
+  display: inline-block; cursor: pointer; transition: transform .1s;
+}
+.badge-qual:hover { transform: scale(1.1); }
+.qual-A  { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.qual-EP { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
+.qual-I  { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+.qual-NE { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+/* Estados Especiales Cuantitativos */
 td.cell-low { background: #fef2f2 !important; border: 1.5px solid #ef4444 !important; position: relative; }
 td.cell-low input.gi { color: #dc2626 !important; font-weight: 800; }
 td.cell-low::after { content: '✗'; position: absolute; top: 1px; right: 2px; font-size: 0.55rem; color: #ef4444; font-weight: 900; }
@@ -811,342 +469,98 @@ td.cell-delay { background: #faf5ff !important; border: 1.5px solid #a855f7 !imp
 td.cell-delay input.gi { color: #7e22ce !important; font-weight: 800; }
 td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; font-size: 0.52rem; color: #9333ea; font-weight: 800; }
 
-td.cell-notxt { background: #f8fafc !important; border: 1.5px dashed #94a3b8 !important; position: relative; }
-td.cell-notxt input.gi { color: #475569 !important; font-weight: 700; }
-td.cell-notxt::after { content: 'ST'; position: absolute; top: 1px; right: 2px; font-size: 0.48rem; color: #64748b; font-weight: 700; }
-
-td.cell-nocuad { background: #fefce8 !important; border: 1.5px dashed #eab308 !important; position: relative; }
-td.cell-nocuad input.gi { color: #a16207 !important; font-weight: 700; }
-td.cell-nocuad::after { content: 'SC'; position: absolute; top: 1px; right: 2px; font-size: 0.48rem; color: #ca8a04; font-weight: 700; }
-
 @keyframes recPulse {
   0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
   70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
   100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 
-/* ── EXCEL SELECTION ── */
-td.xl-sel { outline: 2px solid #2563eb !important; outline-offset: -2px; background: #dbeafe !important; position: relative; z-index: 1; }
-body.dark td.xl-sel { outline-color: #60a5fa !important; background: #1e3a8a !important; }
-th.xl-sel-hdr { background: #1d4ed8 !important; color: #fff !important; }
-td.ic.xl-sel-row, td.nc.xl-sel-row { background: #dbeafe !important; color: #1d4ed8 !important; font-weight: 700; }
-body.dark td.ic.xl-sel-row, body.dark td.nc.xl-sel-row { background: #1e3a8a !important; color: #93c5fd !important; }
-.xl-sel-info {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #0f172a;
-  color: #fff;
-  padding: 6px 18px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
-  z-index: 9999;
-  pointer-events: none;
-  display: none;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-/* ── RESIZERS & DND ── */
-.col-resizer {
-  position: absolute; right: -3px; top: 0; bottom: 0; width: 8px;
-  cursor: col-resize; z-index: 10; user-select: none;
-  display: flex; align-items: center; justify-content: center;
-}
-.col-resizer::after {
-  content: ''; display: block; width: 3px; height: 50%;
-  background: rgba(255,255,255,0.2); border-radius: 2px; transition: background .15s;
-}
+/* Resizers & Actions */
+.col-resizer { position: absolute; right: -3px; top: 0; bottom: 0; width: 8px; cursor: col-resize; z-index: 10; display: flex; align-items: center; justify-content: center; }
+.col-resizer::after { content: ''; display: block; width: 3px; height: 50%; background: rgba(255,255,255,0.2); border-radius: 2px; }
 .col-resizer:hover::after, .col-resizer.dragging::after { background: #60a5fa; width: 4px; height: 80%; }
 
-.row-resizer {
-  position: absolute; left: 0; right: 0; bottom: -3px; height: 8px;
-  cursor: row-resize; z-index: 10; user-select: none;
-  display: flex; align-items: center; justify-content: center;
-}
-.row-resizer::after {
-  content: ''; display: block; height: 2px; width: 50%;
-  background: rgba(37,99,235,0.2); border-radius: 2px; transition: background .15s;
-}
-.row-resizer:hover::after, .row-resizer.dragging::after { background: #2563eb; height: 3px; width: 80%; }
-
-th.dnd-col { cursor: grab !important; }
-th.dnd-col:active { cursor: grabbing !important; }
-th.dnd-over { outline: 3px dashed #f59e0b !important; outline-offset: -2px; }
-th.dnd-dragging { opacity: 0.35; }
-td.ic.dnd-row { cursor: grab !important; }
-td.ic.dnd-row:active { cursor: grabbing !important; }
-tr.dnd-row-over td { border-top: 3px solid #f59e0b !important; }
-tr.dnd-row-dragging { opacity: 0.35; }
-
-/* ── ACTION BUTTONS IN TABLE ── */
-.bt {
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 2px 6px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .12s ease;
-  margin: 0 1px;
-}
+.bt { border: none; border-radius: var(--radius-sm); padding: 2px 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer; margin: 0 1px; }
 .bt:hover { transform: scale(1.1); }
 .bte { background: var(--info-bg); color: var(--info); }
 .btd { background: var(--danger-bg); color: var(--danger); }
 
 /* ══════════════════════════════════════════════════════
-   MODALS (GLASSMORPHISM & ANIMATED)
+   MODALS, TOASTS & CONTEXT MENU
    ══════════════════════════════════════════════════════ */
 .mo {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(6px);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  animation: fadeIn .18s ease;
+  display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center; padding: 16px;
 }
 .mo.open { display: flex; }
-
 .md {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  min-width: 320px;
-  max-width: 520px;
-  width: 95%;
-  box-shadow: var(--shadow-xl);
-  animation: slideUp .22s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 90vh;
-  overflow-y: auto;
+  background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+  padding: 24px; min-width: 320px; max-width: 520px; width: 95%; box-shadow: var(--shadow-xl);
+  max-height: 90vh; overflow-y: auto; animation: slideUp .2s ease;
 }
-@keyframes slideUp {
-  from { transform: translateY(24px) scale(0.97); opacity: 0; }
-  to   { transform: translateY(0) scale(1); opacity: 1; }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-.md h3 {
-  color: var(--text-main);
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.md label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 4px;
-}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.md h3 { color: var(--text-main); font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.md label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px; }
 .md input, .md select, .md textarea {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  background: var(--bg-card);
-  color: var(--text-main);
-  margin-bottom: 12px;
-  outline: none;
-  font-family: inherit;
-  transition: border-color .15s ease, box-shadow .15s ease;
+  width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+  font-size: 0.85rem; background: var(--bg-card); color: var(--text-main); margin-bottom: 12px; outline: none; font-family: inherit;
 }
-.md input:focus, .md select:focus, .md textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-}
-.ma {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 14px;
-  border-top: 1px solid var(--border-color);
-  padding-top: 12px;
-}
-.tip {
-  font-size: 0.72rem;
-  color: var(--text-light);
-  margin-top: -8px;
-  margin-bottom: 10px;
-}
+.md input:focus, .md select:focus, .md textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.ma { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+.tip { font-size: 0.72rem; color: var(--text-light); margin-top: -8px; margin-bottom: 10px; }
 
-/* ── WIZARD STEPPER ── */
-.wizard-steps {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 18px;
-  background: var(--bg-card-subtle);
-  padding: 4px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-}
-.wizard-step {
-  flex: 1;
-  text-align: center;
-  padding: 6px 4px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  border-radius: var(--radius-sm);
-  transition: all .15s ease;
-}
-.wizard-step.active {
-  background: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow-sm);
-}
-.wizard-step.done {
-  background: var(--success-bg);
-  color: var(--success);
-}
+.wizard-steps { display: flex; gap: 6px; margin-bottom: 18px; background: var(--bg-card-subtle); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+.wizard-step { flex: 1; text-align: center; padding: 6px 4px; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); border-radius: var(--radius-sm); }
+.wizard-step.active { background: var(--primary); color: #fff; }
+.wizard-step.done { background: var(--success-bg); color: var(--success); }
 
-/* ══════════════════════════════════════════════════════
-   CONTEXT MENU & TOASTS
-   ══════════════════════════════════════════════════════ */
-#ctxMenu {
-  position: fixed;
-  z-index: 99999;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-xl);
-  min-width: 210px;
-  padding: 6px 0;
-  display: none;
-  border: 1px solid var(--border-color);
-  animation: slideUp .12s ease;
-}
-.ctx-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-main);
-  transition: background .1s;
-}
+#ctxMenu { position: fixed; z-index: 99999; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-xl); min-width: 220px; padding: 6px 0; display: none; border: 1px solid var(--border-color); }
+.ctx-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 500; color: var(--text-main); }
 .ctx-item:hover { background: var(--bg-card-subtle); }
 .ctx-item .ctx-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 .ctx-sep { height: 1px; background: var(--border-color); margin: 4px 0; }
 
 #toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #0f172a;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  font-size: 0.82rem;
-  font-weight: 600;
-  z-index: 99999;
-  display: none;
-  box-shadow: var(--shadow-xl);
-  border: 1px solid rgba(255,255,255,0.15);
-  animation: slideUp .2s ease;
+  position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #fff;
+  padding: 10px 18px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 600;
+  z-index: 99999; display: none; box-shadow: var(--shadow-xl); border: 1px solid rgba(255,255,255,0.15);
 }
 #toast.show { display: flex; align-items: center; gap: 8px; }
 
 /* ── TOOLTIPS ── */
 [data-tip] { position: relative; }
 [data-tip]::before {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: calc(100% + 7px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: #0f172a;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 500;
-  padding: 5px 9px;
-  border-radius: 6px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .15s ease, transform .15s ease;
-  z-index: 99998;
-  max-width: 220px;
-  white-space: normal;
-  text-align: center;
-  line-height: 1.4;
-  box-shadow: var(--shadow-md);
+  content: attr(data-tip); position: absolute; bottom: calc(100% + 7px); left: 50%;
+  transform: translateX(-50%) translateY(4px); background: #0f172a; color: #fff; font-size: 0.7rem;
+  font-weight: 500; padding: 5px 9px; border-radius: 6px; pointer-events: none; opacity: 0;
+  transition: opacity .15s ease, transform .15s ease; z-index: 99998; max-width: 220px; text-align: center;
 }
 [data-tip]::after {
-  content: '';
-  position: absolute;
-  bottom: calc(100% + 2px);
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: #0f172a;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .15s;
-  z-index: 99998;
+  content: ''; position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #0f172a; pointer-events: none; opacity: 0; z-index: 99998;
 }
-[data-tip]:hover::before, [data-tip]:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+[data-tip]:hover::before, [data-tip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 .tip-down[data-tip]::before { top: calc(100% + 7px); bottom: auto; transform: translateX(-50%) translateY(-4px); }
 .tip-down[data-tip]::after  { top: calc(100% + 2px); bottom: auto; border-top-color: transparent; border-bottom-color: #0f172a; }
 .tip-down[data-tip]:hover::before { transform: translateX(-50%) translateY(0); }
 
-/* ══════════════════════════════════════════════════════
-   REPORT & EXPORT PANELS
-   ══════════════════════════════════════════════════════ */
+/* ── REPORTS & EXPORT ── */
 #reportPanel, #exportPanel { display: none; padding: 16px 20px; }
-.rp-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 20px;
-  margin-bottom: 14px;
-}
+.rp-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 20px; margin-bottom: 14px; }
 .rp-name { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px; }
 .rp-sub  { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 14px; }
 .rp-summary { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-.rp-stat {
-  background: var(--bg-card-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  text-align: center;
-  min-width: 80px;
-}
+.rp-stat { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; text-align: center; min-width: 80px; }
 .rp-stat-v { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 800; color: var(--primary); }
 .rp-stat-l { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
 .rp-all { display: flex; flex-direction: column; gap: 6px; }
-.rp-row {
-  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  background: var(--bg-card); border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); cursor: pointer; transition: all .12s;
-}
+.rp-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; }
 .rp-row:hover { background: var(--bg-card-subtle); transform: translateX(3px); }
 .rp-row-name { flex: 1; font-weight: 600; color: var(--text-main); }
-.rp-badge { padding: 3px 8px; border-radius: var(--radius-full); font-size: 0.68rem; font-weight: 700; color: #fff; }
 
-/* ── PRINT RULES ── */
 @media print {
-  header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll {
-    display: none !important;
-  }
+  header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
   .content { padding: 0; }
   .tw { box-shadow: none; max-height: none; overflow: visible; border: none; }
@@ -1162,12 +576,16 @@ tr.dnd-row-dragging { opacity: 0.35; }
 
 <!-- ── PANTALLA DE LOGIN ── -->
 <div id="loginScreen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#090d16 0%,#111827 50%,#1e3a8a 100%);z-index:99999;align-items:center;justify-content:center;flex-direction:column;padding:20px">
-  <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(16px);border-radius:20px;padding:36px 30px;max-width:420px;width:100%;text-align:center;color:#fff;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5)">
-    <div style="width:64px;height:64px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;box-shadow:0 8px 20px rgba(0,0,0,0.2)">📚</div>
-    <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:6px;letter-spacing:-0.02em">Registro de Notas</h1>
-    <p style="opacity:.8;font-size:0.88rem;margin-bottom:28px">Sistema Profesional de Evaluación para Docentes</p>
+  <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(16px);border-radius:20px;padding:36px 30px;max-width:440px;width:100%;text-align:center;color:#fff;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5)">
+    <div style="width:64px;height:64px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px">📚</div>
+    <h1 style="font-size:1.55rem;font-weight:800;margin-bottom:6px">Registro de Notas</h1>
+    <p style="opacity:.8;font-size:0.85rem;margin-bottom:6px">Séptimo de Básica (EGB Media)</p>
+    <div style="display:inline-block;background:rgba(16,185,129,0.2);color:#86efac;font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:24px;border:1px solid rgba(134,239,172,0.3)">
+      ✔ Normativa Ministerial 70% Formativo / 30% Sumativo
+    </div>
+    
     <button id="loginBtn" onclick="signInGoogle()"
-      style="background:#ffffff;color:#0f172a;border:none;border-radius:12px;padding:12px 24px;font-size:0.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto;box-shadow:0 4px 14px rgba(0,0,0,0.25);transition:all .15s ease;width:100%">
+      style="background:#ffffff;color:#0f172a;border:none;border-radius:12px;padding:12px 24px;font-size:0.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto;box-shadow:0 4px 14px rgba(0,0,0,0.25);width:100%">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22" alt="Google"/>
       Ingresar con Google
     </button>
@@ -1176,7 +594,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
     </button>
     <p id="loginError" style="color:#f87171;font-size:0.78rem;margin-top:14px;display:none;background:rgba(220,38,38,0.2);padding:6px 10px;border-radius:6px"></p>
     <div style="margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.72rem;opacity:.65">
-      🔒 Tus calificaciones se respaldan localmente y en la nube cuando inicias sesión con Google.
+      🔒 Tus calificaciones se respaldan localmente y en la nube con Firebase.
     </div>
   </div>
 </div>
@@ -1202,11 +620,12 @@ tr.dnd-row-dragging { opacity: 0.35; }
     <div class="hdr-title-area">
       <h1>
         <span id="hdrTitleMain">Registro de Notas</span>
-        <span class="hdr-period-tag" id="hdrPeriodBadge" onclick="openEditPeriod()" data-tip="Clic para cambiar de periodo (ej: 1er Trimestre, Quimestre)">
+        <span class="hdr-period-tag" id="hdrPeriodBadge" onclick="openEditPeriod()" data-tip="Clic para cambiar de trimestre">
           1er Trimestre ✎
         </span>
+        <span class="normative-pill">70% Form. + 30% Sum.</span>
       </h1>
-      <div class="hdr-sub">Doble clic en celdas, materias o semanas para editar · Navegación tipo Excel</div>
+      <div class="hdr-sub">Subnivel Media · Promedios con 2 decimales truncados · Asignaturas cuantitativas y cualitativas</div>
     </div>
   </div>
 
@@ -1221,7 +640,6 @@ tr.dnd-row-dragging { opacity: 0.35; }
     </div>
     <span class="badge-saved" id="sv">✔ Guardado</span>
 
-    <!-- Controlador tamaño de letra -->
     <div class="font-controller tip-down" data-tip="Ajustar tamaño de letra">
       <span style="font-size:0.7rem;font-weight:700;opacity:.8">A</span>
       <input type="range" id="fontSlider" min="10" max="18" value="13" step="1"
@@ -1231,7 +649,6 @@ tr.dnd-row-dragging { opacity: 0.35; }
       <span id="fontSizeLabel" style="font-size:0.68rem;opacity:.7;min-width:26px">13px</span>
     </div>
 
-    <!-- Toggle Modo Oscuro -->
     <button id="darkBtn" onclick="toggleDark()" data-tip="Alternar modo oscuro / claro" class="btn btn-outline tip-down"
       style="padding:5px 9px;color:#fff;background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25)">
       🌙
@@ -1241,52 +658,50 @@ tr.dnd-row-dragging { opacity: 0.35; }
 
 <!-- ── TOOLBAR ── -->
 <div class="toolbar">
-  <!-- Asistente Nuevo Año Lectivo -->
-  <button class="btn btn-magic" onclick="openNewYearWizard()" data-tip="Iniciar configuración de un nuevo año lectivo, curso o importar lista">
+  <button class="btn btn-magic" onclick="openNewYearWizard()" data-tip="Iniciar configuración guiada para el nuevo año lectivo">
     ✨ Nuevo Año Lectivo
   </button>
   <div class="toolbar-sep"></div>
 
-  <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar un estudiante a la nómina general">
+  <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar un estudiante a la nómina">
     ➕ Estudiante
   </button>
   <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
     ➕ Semana
   </button>
-  <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar una actividad evaluativa (tarea, lección, prueba…)">
+  <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
     ➕ Actividad
   </button>
-  <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana y sus notas en la materia activa">
+  <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
     🗑 Semana
   </button>
   <div class="toolbar-sep"></div>
 
-  <button class="btn btn-warning" onclick="exportCSV()" data-tip="Exportar las notas completas en formato Excel (.xlsx)">
+  <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
     📊 Descargar Excel
   </button>
-  <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir la planilla de notas actual">
+  <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir planilla de calificaciones">
     🖨 Imprimir
   </button>
-  <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar manualmente en la nube y respaldo local">
+  <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar en la nube y caché local">
     💾 Guardar
   </button>
-  <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar las notas de la materia o de todas las materias">
-    🧹 Limpiar Notas
+  <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar calificaciones">
+    🧹 Limpiar
   </button>
   <div class="toolbar-sep"></div>
 
   <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
     👁 Columnas
   </button>
-  <button class="btn btn-outline" onclick="exportBackup()" data-tip="Descargar archivo de respaldo JSON completo">
+  <button class="btn btn-outline" onclick="exportBackup()" data-tip="Descargar copia de seguridad JSON">
     ⬇ Backup
   </button>
-  <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" data-tip="Restaurar datos desde un archivo JSON">
+  <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" data-tip="Restaurar datos desde archivo JSON">
     ⬆ Restaurar
   </button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)"/>
 
-  <!-- Deshacer / Rehacer -->
   <div style="display:flex;gap:2px;margin-left:auto">
     <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
     <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
@@ -1296,7 +711,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
 <!-- ── PESTAÑAS DE MATERIAS ── -->
 <div class="tabs-container">
   <div class="tabs-scroll" id="tabs"></div>
-  <button class="tab-action-btn" onclick="openManageMats()" data-tip="Añadir, renombrar o reorganizar asignaturas">
+  <button class="tab-action-btn" onclick="openManageMats()" data-tip="Gestionar asignaturas (cuantitativas y cualitativas)">
     ⚙ Materias
   </button>
 </div>
@@ -1304,7 +719,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
 <!-- ── BARRA DE VISTAS ── -->
 <div class="view-bar">
   <button id="viewNotas"   class="view-btn active" onclick="switchView('notas')">
-    📋 Calificaciones
+    📋 Calificaciones (70/30)
   </button>
   <button id="viewReporte" class="view-btn" onclick="switchView('reporte')">
     📊 Reportes & WhatsApp
@@ -1314,32 +729,27 @@ tr.dnd-row-dragging { opacity: 0.35; }
   </button>
 </div>
 
-<!-- ── VISTA PRINCIPAL: NOTAS ── -->
+<!-- ── VISTA: NOTAS ── -->
 <div class="content" id="viewNotasPanel">
-  <!-- Tarjetas de Estadísticas -->
   <div class="stats-grid" id="stats"></div>
 
-  <!-- Buscador y Filtros -->
   <div class="filter-bar">
     <div class="search-wrapper">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="searchInp" class="search-input" placeholder="Buscar estudiante por nombre..." oninput="filterStudents(this.value)"/>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
-      <span class="search-badge" id="searchCount"></span>
+      <span id="searchCount" style="font-size:0.72rem;font-weight:600;color:var(--text-muted)"></span>
       <select id="sortSel" class="sort-select" onchange="applySortOrder()">
         <option value="default">↕ Orden Original</option>
         <option value="name-az">A → Z Nombre</option>
         <option value="name-za">Z → A Nombre</option>
         <option value="avg-desc">📉 Mayor Promedio</option>
         <option value="avg-asc">📈 Menor Promedio</option>
-        <option value="alerts-desc">⚠ Más Alertas/Bajas</option>
-        <option value="alerts-asc">✅ Menos Alertas</option>
       </select>
     </div>
   </div>
 
-  <!-- Contenedor Tabla -->
   <div class="tw">
     <table id="mainTable">
       <thead id="th"></thead>
@@ -1367,7 +777,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
   <div class="rp-card">
     <div style="font-size:1.1rem;font-weight:800;color:var(--text-main);margin-bottom:4px">📤 Exportar Promedios a Sistemas Externos</div>
     <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
-      Herramienta para trasladar automáticamente las notas a sistemas educativos (sistema-orozco, Carmenta, etc.) sin digitar una por una.
+      Herramienta para trasladar notas trimestrales truncadas a plataformas educativas oficiales sin digitar manualmente.
     </div>
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
@@ -1376,19 +786,18 @@ tr.dnd-row-dragging { opacity: 0.35; }
         <select id="expMat" onchange="expRefreshWeeks();expRefresh()" style="min-width:180px"></select>
       </div>
       <div>
-        <label>Semana / Evaluación</label>
-        <div style="display:flex;gap:4px">
-          <select id="expWeek" onchange="expRefresh()" style="min-width:160px"></select>
-          <button onclick="expRefreshWeeks();expRefresh()" class="btn btn-outline" style="padding:6px 10px">🔄</button>
-        </div>
-      </div>
-      <div>
         <label>Valor a Exportar</label>
         <select id="expType" onchange="expRefresh()">
-          <option value="prom-week">Promedio de la Semana</option>
-          <option value="prom-mat">Promedio General de la Materia</option>
-          <option value="col">Nota de una Actividad Específica</option>
+          <option value="prom-trim">Nota Trimestral Final (70% Form + 30% Sum)</option>
+          <option value="prom-form">Promedio Formativo (70%)</option>
+          <option value="prom-sum">Promedio Sumativo / Proyecto (30%)</option>
+          <option value="prom-week">Promedio de una Semana Específica</option>
+          <option value="col">Actividad Individual</option>
         </select>
+      </div>
+      <div id="expWeekWrap" style="display:none">
+        <label>Semana</label>
+        <select id="expWeek" onchange="expRefresh()" style="min-width:140px"></select>
       </div>
       <div id="expColWrap" style="display:none">
         <label>Actividad</label>
@@ -1400,74 +809,29 @@ tr.dnd-row-dragging { opacity: 0.35; }
       <button class="btn btn-success" style="font-size:0.85rem;padding:8px 16px" onclick="expGenerateBookmarklet()">
         ⚡ Generar Auto-Relleno Automático
       </button>
-      <button class="btn btn-primary" onclick="expStartWizard()">
-        🎯 Asistente Paso a Paso
-      </button>
       <button class="btn btn-teal" onclick="expCopyTSV()">
         📊 Copiar para Excel
       </button>
       <span id="expCopied" style="font-size:0.8rem;color:var(--success);font-weight:700;display:none">✔ ¡Copiado!</span>
     </div>
 
-    <!-- Panel Bookmarklet -->
     <div id="expAutoPanel" style="display:none;background:var(--success-bg);border:1.5px solid var(--success-border);border-radius:var(--radius-md);padding:18px;margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div>
-          <div style="font-weight:800;color:var(--success);font-size:0.95rem">⚡ Botón de Relleno Automático para Navegador</div>
-          <div style="font-size:0.75rem;color:var(--text-muted)">Permite autocompletar la tabla en la plataforma externa con 1 solo clic.</div>
-        </div>
-        <button onclick="document.getElementById('expAutoPanel').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem">✕</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0">
-        <span style="font-size:0.8rem;font-weight:600">Arrastra a Favoritos:</span>
-        <a id="bookmarkletLink" href="#" style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:var(--radius-sm);font-weight:700;font-size:0.82rem;text-decoration:none;box-shadow:var(--shadow-sm);cursor:grab;display:inline-block">
+      <div style="font-weight:800;color:var(--success);font-size:0.95rem;margin-bottom:6px">⚡ Botón de Relleno Automático para Navegador</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Arrastra este botón a tu barra de favoritos y ejecútalo dentro del sistema de notas:</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a id="bookmarkletLink" href="#" style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:var(--radius-sm);font-weight:700;font-size:0.82rem;text-decoration:none;cursor:grab;display:inline-block">
           ▶ Rellenar Notas
         </a>
       </div>
-      <div>
-        <label style="font-size:0.75rem">O copia este script y pégalo en la consola (F12):</label>
-        <div style="position:relative">
-          <textarea id="expScript" readonly style="width:100%;height:70px;font-size:0.7rem;font-family:var(--font-mono);background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;padding:8px;resize:none"></textarea>
-          <button onclick="expCopyScript()" class="btn btn-primary" style="position:absolute;top:6px;right:6px;padding:3px 8px;font-size:0.7rem">Copiar</button>
-        </div>
-      </div>
     </div>
 
-    <!-- Wizard Asistente -->
-    <div id="expWizard" style="display:none;background:var(--primary-light);border:2px solid var(--primary);border-radius:var(--radius-md);padding:16px;margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <span style="font-weight:800;color:var(--primary);font-size:0.9rem">🎯 Asistente de Pegado</span>
-        <button onclick="expStopWizard()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem">✕</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-        <div style="background:var(--bg-card);border-radius:8px;padding:8px 16px;border:1px solid var(--border-color)">
-          <div style="font-size:0.68rem;color:var(--text-muted)">Estudiante</div>
-          <div id="wzName" style="font-size:0.85rem;font-weight:800;color:var(--text-main)">—</div>
-        </div>
-        <div style="background:var(--bg-card);border-radius:8px;padding:8px 20px;border:1px solid var(--border-color);text-align:center">
-          <div style="font-size:0.68rem;color:var(--text-muted)">Nota</div>
-          <div id="wzVal" style="font-family:var(--font-mono);font-size:1.8rem;font-weight:800;color:var(--primary)">—</div>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button id="wzCopyBtn" onclick="wzCopy()" class="btn btn-primary">📋 Copiar</button>
-          <button onclick="wzPrev()" class="btn btn-outline">← Anterior</button>
-          <button onclick="wzNext()" class="btn btn-success">Siguiente →</button>
-        </div>
-        <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted)">
-          <span id="wzPos">0</span> / <span id="wzTotal">0</span>
-          <div id="wzDone" style="display:none;color:var(--success)">✅ ¡Completado!</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla Previa de Exportación -->
     <div style="overflow:auto;max-height:45vh;border-radius:var(--radius-md);border:1px solid var(--border-color)">
       <table style="width:100%">
         <thead>
           <tr>
             <th style="width:40px;text-align:left">#</th>
             <th style="text-align:left">Estudiante</th>
-            <th style="text-align:center" id="expValHeader">Valor</th>
+            <th style="text-align:center" id="expValHeader">Valor Truncado</th>
             <th style="width:60px;text-align:center">Copiar</th>
           </tr>
         </thead>
@@ -1477,7 +841,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
   </div>
 </div>
 
-<!-- ── PANEL LATERAL DE VISIBILIDAD ── -->
+<!-- ── PANEL DE VISIBILIDAD ── -->
 <div id="visPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--bg-card);z-index:8888;box-shadow:var(--shadow-xl);border-left:1px solid var(--border-color);flex-direction:column">
   <div style="background:#1e3a8a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
     <span style="font-weight:800;font-size:0.92rem">👁 Mostrar / Ocultar</span>
@@ -1515,9 +879,7 @@ tr.dnd-row-dragging { opacity: 0.35; }
   </div>
 </div>
 
-<!-- ── MENÚ CONTEXTUAL DE CELDA ── -->
 <div id="ctxMenu"></div>
-<div class="xl-sel-info" id="xlInfo"></div>
 <div id="toast"></div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -1525,37 +887,64 @@ tr.dnd-row-dragging { opacity: 0.35; }
      ══════════════════════════════════════════════════════ -->
 <script>
 // ══════════════════════════════════════════════════════
-//  CONFIGURACIÓN & VALORES POR DEFECTO
+//  NORMATIVA MINISTERIAL & CONFIGURACIONES (EGB MEDIA)
 // ══════════════════════════════════════════════════════
-const DEFAULT_MATS = ['Lengua y Literatura', 'Matemáticas', 'Ciencias Naturales', 'Estudios Sociales', 'Educación Artística', 'Lectura', 'Acompañamiento Integral'];
-const DEFAULT_WEEKS = ['SEMANA 1', 'SEMANA 2'];
 
+// Asignaturas oficiales de Séptimo de Básica (Cuantitativas y Cualitativas)
+const DEFAULT_MATS = [
+  { name:'Lengua y Literatura', qual:false },
+  { name:'Matemáticas',         qual:false },
+  { name:'Ciencias Naturales',  qual:false },
+  { name:'Estudios Sociales',   qual:false },
+  { name:'Educación Artística', qual:false },
+  { name:'Educación Física',    qual:false },
+  { name:'Inglés',              qual:false },
+  { name:'Cívica y Acompañamiento Integral', qual:true },
+  { name:'Animación a la Lectura',           qual:true },
+  { name:'Comportamiento',                   qual:true }
+];
+
+const DEFAULT_WEEKS = ['SEMANA 1', 'SEMANA 2', 'EVALUACIÓN SUMATIVA'];
+
+// Tipos de actividades con clasificación ministerial (Formativa 70% vs Sumativa 30%)
 const ACT_TYPES = [
-  { id:'AC', label:'Actividad en Clase', color:'#2563eb', cell:'rgba(37,99,235,0.07)' },
-  { id:'T',  label:'Tarea',              color:'#7c3aed', cell:'rgba(124,58,237,0.07)' },
-  { id:'L',  label:'Lección / Control',  color:'#ea580c', cell:'rgba(234,88,12,0.07)'  },
-  { id:'TG', label:'Trabajo en Grupo',   color:'#0d9488', cell:'rgba(13,148,136,0.07)' },
-  { id:'PS', label:'Prueba Sumativa',    color:'#16a34a', cell:'rgba(22,163,74,0.07)'  },
-  { id:'EX', label:'Examen / Proyecto',  color:'#db2777', cell:'rgba(219,39,119,0.07)' },
-  { id:'OT', label:'Otro',               color:'#475569', cell:'rgba(71,85,105,0.07)'  },
+  { id:'AC',  label:'Actividad en Clase', cat:'form', color:'#2563eb', cell:'rgba(37,99,235,0.07)' },
+  { id:'T',   label:'Tarea',              cat:'form', color:'#7c3aed', cell:'rgba(124,58,237,0.07)' },
+  { id:'L',   label:'Lección Oral/Escrita',cat:'form',color:'#ea580c', cell:'rgba(234,88,12,0.07)'  },
+  { id:'TG',  label:'Taller / Grupo',     cat:'form', color:'#0d9488', cell:'rgba(13,148,136,0.07)' },
+  { id:'EXP', label:'Experiencial',       cat:'form', color:'#0284c7', cell:'rgba(2,132,199,0.07)'  },
+  { id:'PI',  label:'Proyecto Interdisciplinar', cat:'sum', color:'#d97706', cell:'rgba(217,119,6,0.09)' },
+  { id:'PS',  label:'Evaluación Sumativa', cat:'sum', color:'#16a34a', cell:'rgba(22,163,74,0.09)'  },
+  { id:'EX',  label:'Examen Trimestral',  cat:'sum',  color:'#db2777', cell:'rgba(219,39,119,0.09)'},
+  { id:'MEJ', label:'Evaluación de Mejora',cat:'mej', color:'#059669', cell:'rgba(5,150,105,0.09)'  }
 ];
 
 function actType(id) {
-  return ACT_TYPES.find(t => t.id === id) || ACT_TYPES[ACT_TYPES.length - 1];
+  return ACT_TYPES.find(t => t.id === id) || ACT_TYPES[0];
 }
+
+// Escala Cualitativa Ministerial (Cívica, Animación a la Lectura, Comportamiento)
+const QUAL_SCALE = [
+  { val:'A',  label:'Adquirido / Destacado',  cls:'qual-A',  desc:'Demuestra dominio total de los aprendizajes y habilidades', color:'#16a34a' },
+  { val:'EP', label:'En Proceso',             cls:'qual-EP', desc:'En proceso de consolidación de aprendizajes',               color:'#ca8a04' },
+  { val:'I',  label:'Iniciado',               cls:'qual-I',  desc:'Muestra dificultad para iniciar aprendizajes',              color:'#ea580c' },
+  { val:'NE', label:'No Evaluado / No Evid.', cls:'qual-NE', desc:'No se dispone de evidencias suficientes',                  color:'#64748b' }
+];
 
 const DEFAULT_COLS = {
   'SEMANA 1': [
     { name:'A1', type:'AC', date:'', color:null },
     { name:'T1', type:'T',  date:'', color:null },
-    { name:'L1', type:'L',  date:'', color:null },
-    { name:'TG1',type:'TG', date:'', color:null }
+    { name:'L1', type:'L',  date:'', color:null }
   ],
   'SEMANA 2': [
     { name:'A2', type:'AC', date:'', color:null },
-    { name:'T2', type:'T',  date:'', color:null },
-    { name:'L2', type:'L',  date:'', color:null },
-    { name:'TG2',type:'TG', date:'', color:null }
+    { name:'TG1',type:'TG', date:'', color:null },
+    { name:'T2', type:'T',  date:'', color:null }
+  ],
+  'EVALUACIÓN SUMATIVA': [
+    { name:'PI', type:'PI', date:'', color:null },
+    { name:'EV', type:'PS', date:'', color:null }
   ]
 };
 
@@ -1587,24 +976,29 @@ const WEEK_PALETTE = [
   { h:'#1e40af', s:'#3b82f6', c:'rgba(59,130,246,0.06)' },
   { h:'#7e22ce', s:'#a855f7', c:'rgba(168,85,247,0.06)' },
   { h:'#c2410c', s:'#f97316', c:'rgba(249,115,22,0.06)' },
-  { h:'#b91c1c', s:'#ef4444', c:'rgba(239,68,68,0.06)'  },
   { h:'#0f766e', s:'#14b8a6', c:'rgba(20,184,166,0.06)' },
-  { h:'#a16207', s:'#eab308', c:'rgba(234,179,8,0.06)'  },
-  { h:'#334155', s:'#64748b', c:'rgba(100,116,139,0.06)'},
-  { h:'#431407', s:'#9a3412', c:'rgba(154,52,18,0.06)'  },
-  { h:'#0369a1', s:'#0ea5e9', c:'rgba(14,165,233,0.06)' }
+  { h:'#a16207', s:'#eab308', c:'rgba(234,179,8,0.06)'  }
 ];
 
 const SPECIAL = [
   { val:'F',   label:'Falta',         cls:'cell-absent', color:'#fff7ed', border:'#f97316', icon:'🟠' },
   { val:'NP',  label:'No Presentó',   cls:'cell-np',     color:'#fdf2f8', border:'#ec4899', icon:'🔴' },
   { val:'EX',  label:'Exonerado',     cls:'cell-ex',     color:'#eff6ff', border:'#3b82f6', icon:'🔵' },
-  { val:'P',   label:'Pendiente',     cls:'cell-delay',  color:'#faf5ff', border:'#a855f7', icon:'🟣' },
-  { val:'ST',  label:'Sin Texto',     cls:'cell-notxt',  color:'#f8fafc', border:'#94a3b8', icon:'📄' },
-  { val:'SC',  label:'Sin Cuaderno',  cls:'cell-nocuad', color:'#fefce8', border:'#eab308', icon:'📓' },
+  { val:'P',   label:'Pendiente',     cls:'cell-delay',  color:'#faf5ff', border:'#a855f7', icon:'🟣' }
 ];
-const SPECIAL_MAP = {};
-SPECIAL.forEach(s => { SPECIAL_MAP[s.val] = s; });
+
+// ══════════════════════════════════════════════════════
+//  MOTOR DE CÁLCULO TRUNCADO A 2 DECIMALES
+// ══════════════════════════════════════════════════════
+
+// Trunca estrictamente a dos decimales sin redondear
+function trunc2(n) {
+  if (n === null || n === undefined || isNaN(n)) return null;
+  const num = Number(n);
+  const factor = 100;
+  const truncated = Math.floor((num + 0.000000001) * factor) / factor;
+  return truncated.toFixed(2);
+}
 
 // ══════════════════════════════════════════════════════
 //  ESTADO PRINCIPAL
@@ -1614,7 +1008,8 @@ let S = {
   anio: '2026-2027',
   periodo: '1er Trimestre',
   am: 0,
-  matsList: [...DEFAULT_MATS],
+  matsList: DEFAULT_MATS.map(m => m.name),
+  matsMeta: JSON.parse(JSON.stringify(DEFAULT_MATS)),
   students: [...DEFAULT_STUDENTS],
   mats: {},
   weekColors: {},
@@ -1626,9 +1021,20 @@ let S = {
 
 function getMats() {
   if (!S.matsList || !S.matsList.length) {
-    S.matsList = Object.keys(S.mats).length ? Object.keys(S.mats) : [...DEFAULT_MATS];
+    S.matsList = DEFAULT_MATS.map(m => m.name);
   }
   return S.matsList;
+}
+
+function isQualitativeMat(mName) {
+  if (S.matsMeta) {
+    const meta = S.matsMeta.find(m => (typeof m === 'object' ? m.name : m) === mName);
+    if (meta && typeof meta === 'object') return !!meta.qual;
+  }
+  const low = (mName||'').toLowerCase();
+  return low.includes('cívica') || low.includes('civica') ||
+         low.includes('lectura') || low.includes('acompañamiento') ||
+         low.includes('comportamiento');
 }
 
 function initS() {
@@ -1641,8 +1047,10 @@ function initS() {
     } catch(e) {}
   }
   S.students = [...DEFAULT_STUDENTS];
-  S.matsList = [...DEFAULT_MATS];
+  S.matsList = DEFAULT_MATS.map(m => m.name);
+  S.matsMeta = JSON.parse(JSON.stringify(DEFAULT_MATS));
   S.periodo  = S.periodo || '1er Trimestre';
+
   getMats().forEach(m => {
     S.mats[m] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
     S.students.forEach((_,i) => { S.mats[m].grades[i] = {}; });
@@ -1651,7 +1059,10 @@ function initS() {
 
 function ensureMats() {
   if (!S.mats) S.mats = {};
-  if (!S.matsList) S.matsList = Object.keys(S.mats).length ? Object.keys(S.mats) : [...DEFAULT_MATS];
+  if (!S.matsList) S.matsList = DEFAULT_MATS.map(m => m.name);
+  if (!S.matsMeta) {
+    S.matsMeta = S.matsList.map(m => ({ name: m, qual: isQualitativeMat(m) }));
+  }
   if (!S.hiddenCols) S.hiddenCols = {};
   if (!S.hiddenRows) S.hiddenRows = {};
   if (!S.colWidths)  S.colWidths  = {};
@@ -1671,7 +1082,7 @@ function ensureMats() {
       if (!mat.grades) mat.grades = {};
       Object.keys(mat.cols).forEach(w => {
         mat.cols[w] = (mat.cols[w] || []).map(c =>
-          typeof c === 'string' ? { name:c, type:'OT', date:'', color:null } : c
+          typeof c === 'string' ? { name:c, type:'AC', date:'', color:null } : c
         );
       });
     }
@@ -1680,17 +1091,14 @@ function ensureMats() {
 }
 
 // ══════════════════════════════════════════════════════
-//  PERSISTENCIA (LOCAL + FIRESTORE)
+//  PERSISTENCIA
 // ══════════════════════════════════════════════════════
 let _saveTimeout = null;
 
 function saveData(manual) {
-  // Respaldo local de seguridad
   try {
     localStorage.setItem('notas_cache_v7', JSON.stringify(S));
-  } catch(e) {
-    console.warn('LocalStorage limit reached', e);
-  }
+  } catch(e) {}
 
   const el = document.getElementById('sv');
   if (el) {
@@ -1699,10 +1107,9 @@ function saveData(manual) {
     el._t = setTimeout(() => el.classList.remove('on'), 2000);
   }
 
-  // Sincronizar con Firebase (con debounce o inmediato si manual)
   if (manual) {
     saveToFirestore();
-    toast('💾 Datos guardados en la nube', '#16a34a');
+    toast('💾 Datos respaldados en la nube', '#16a34a');
   } else {
     setSyncStatus('⏳ Guardando...', 'syncing');
     clearTimeout(_saveTimeout);
@@ -1726,11 +1133,10 @@ function toast(msg, color) {
   t._t = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// Auto-guardado periódico cada 30 segundos
 setInterval(() => saveData(false), 30000);
 
 // ══════════════════════════════════════════════════════
-//  HELPERS GENERALES
+//  HELPERS & CÁLCULOS MINISTERIALES (70/30)
 // ══════════════════════════════════════════════════════
 function gm() {
   const mats = getMats();
@@ -1784,16 +1190,83 @@ function setWeekColor(matName, week, colorObj) {
   saveData();
 }
 
-function studentAvg(si) {
-  const mat = gm();
-  if (!mat || !mat.grades[si]) return null;
-  const vals = Object.values(mat.grades[si]).map(v => parseFloat(v)).filter(n => !isNaN(n));
-  if (!vals.length) return null;
-  return vals.reduce((a,b) => a+b, 0) / vals.length;
+// ── CÁLCULOS MINISTERIALES POR ESTUDIANTE ──
+function getStudentTrimestreCalc(si, mName) {
+  const isQual = isQualitativeMat(mName);
+  const mat = S.mats[mName];
+  if (!mat || !mat.grades[si]) return { isQual, formAvg:null, sumAvg:null, trimAvg:null, qualVal:null };
+
+  const g = mat.grades[si];
+
+  if (isQual) {
+    // Materia cualitativa: calcula la moda o valor predominante
+    const vals = Object.values(g).filter(v => v && ['A','EP','I','NE'].includes(String(v).toUpperCase()));
+    if (!vals.length) return { isQual:true, qualVal:'NE' };
+    const counts = {};
+    vals.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+    const top = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
+    return { isQual:true, qualVal: top || 'NE' };
+  }
+
+  // Materia cuantitativa (Ponderación 70% Formativo / 30% Sumativo)
+  const formVals = [];
+  const sumVals  = [];
+
+  mat.weeks.forEach(w => {
+    (mat.cols[w] || []).forEach(col => {
+      const v = g[w + '||' + col.name];
+      if (v === undefined || v === '') return;
+      const n = parseFloat(v);
+      if (isNaN(n)) return;
+
+      const at = actType(col.type);
+      if (at.cat === 'sum') sumVals.push(n);
+      else formVals.push(n);
+    });
+  });
+
+  const rawFormAvg = formVals.length ? (formVals.reduce((a,b)=>a+b,0) / formVals.length) : null;
+  const rawSumAvg  = sumVals.length  ? (sumVals.reduce((a,b)=>a+b,0) / sumVals.length)   : null;
+
+  const formAvg = rawFormAvg !== null ? parseFloat(trunc2(rawFormAvg)) : null;
+  const sumAvg  = rawSumAvg  !== null ? parseFloat(trunc2(rawSumAvg))  : null;
+
+  let trimAvg = null;
+  if (formAvg !== null && sumAvg !== null) {
+    const rawTrim = (formAvg * 0.70) + (sumAvg * 0.30);
+    trimAvg = trunc2(rawTrim);
+  } else if (formAvg !== null) {
+    trimAvg = trunc2(formAvg);
+  } else if (sumAvg !== null) {
+    trimAvg = trunc2(sumAvg);
+  }
+
+  return {
+    isQual: false,
+    formAvg: formAvg !== null ? trunc2(formAvg) : '—',
+    sumAvg:  sumAvg  !== null ? trunc2(sumAvg)  : '—',
+    trimAvg: trimAvg !== null ? trimAvg : '—',
+    formWeighted: formAvg !== null ? trunc2(formAvg * 0.70) : '—',
+    sumWeighted:  sumAvg  !== null ? trunc2(sumAvg * 0.30)  : '—'
+  };
+}
+
+// Promedio general de promoción (Solo asignaturas cuantitativas)
+function studentGeneralAvg(si) {
+  let tot = 0, cnt = 0;
+  getMats().forEach(m => {
+    if (isQualitativeMat(m)) return; // Excluye cualitativas del promedio de promoción
+    const calc = getStudentTrimestreCalc(si, m);
+    if (calc.trimAvg && calc.trimAvg !== '—') {
+      const n = parseFloat(calc.trimAvg);
+      if (!isNaN(n)) { tot += n; cnt++; }
+    }
+  });
+  return cnt ? trunc2(tot / cnt) : null;
 }
 
 // ══════════════════════════════════════════════════════
-//  RENDERIZADO PRINCIPAL
+//  RENDERIZADO
 // ══════════════════════════════════════════════════════
 function render() {
   renderHeaderInfo();
@@ -1805,16 +1278,10 @@ function render() {
   requestAnimationFrame(() => {
     initNamesColResizer();
     initColResizers();
-    initRowResizers();
-    initFixedColResizer('th-prom-total', 'td.prom-c', 'prom-total', 52);
-    initFixedColResizer('th-acc',        'td.ac',      'acc',        48);
     applyColWidths();
-    applyRowHeights();
     applyColVisibility();
     applyRowVisibility();
     initBottomScrollbar();
-    initColDnD();
-    initRowDnD();
   });
 }
 
@@ -1829,11 +1296,13 @@ function renderHeaderInfo() {
 
 function renderTabs() {
   const mats = getMats();
-  const html = mats.map((m, i) =>
-    `<div class="tab ${i === S.am ? 'active' : ''}" onclick="switchM(${i})" title="${escHTML(m)}">
-      <span>${escHTML(m)}</span>
-    </div>`
-  ).join('');
+  const html = mats.map((m, i) => {
+    const isQual = isQualitativeMat(m);
+    const tag = isQual ? `<span class="tab-tag tab-tag-qual">Cualitativa</span>` : `<span class="tab-tag tab-tag-quant">70/30</span>`;
+    return `<div class="tab ${i === S.am ? 'active' : ''}" onclick="switchM(${i})" title="${escHTML(m)}">
+      <span>${escHTML(m)}</span> ${tag}
+    </div>`;
+  }).join('');
   document.getElementById('tabs').innerHTML = html;
 }
 
@@ -1843,14 +1312,15 @@ function switchM(i) {
 }
 
 // ══════════════════════════════════════════════════════
-//  RENDER TABLA DE CALIFICACIONES
+//  TABLA DE CALIFICACIONES
 // ══════════════════════════════════════════════════════
 function renderTable() {
   const mat = gm();
   if (!mat) return;
   const mName = curMatName();
+  const isQual = isQualitativeMat(mName);
 
-  // Fila 1: Semanas
+  // Fila 1: Semanas y Bloques Ponderados
   let r1 = `<tr>
     <th class="fxl" rowspan="2" style="min-width:32px;width:32px">#</th>
     <th id="th-nombres" class="fxn" rowspan="2" style="min-width:200px;text-align:left;padding-left:10px">
@@ -1862,17 +1332,23 @@ function renderTable() {
     const c = mat.cols[w] || [];
     const span = (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, w, wi);
-    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para renombrar o cambiar color · ${escHTML(w)}"
+    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para renombrar · ${escHTML(w)}"
       style="background:${wc.h};border-color:${wc.h}">
       ${escHTML(w)}
-      <span style="font-size:0.55rem;opacity:.75;display:block;font-weight:400">✎ opciones</span>
     </th>`;
   });
 
-  r1 += `<th id="th-prom-total" class="prom-h" rowspan="2" style="min-width:56px">PROM<br><span style="font-size:0.6rem;font-weight:400;opacity:.85">GENERAL</span></th>
-         <th id="th-acc" rowspan="2" class="ath" style="min-width:48px;width:48px">Acc.</th></tr>`;
+  if (!isQual) {
+    r1 += `<th class="th-form" rowspan="2" style="min-width:56px">70%<br><span style="font-size:0.58rem;font-weight:400">FORMATIVO</span></th>
+           <th class="th-sum"  rowspan="2" style="min-width:56px">30%<br><span style="font-size:0.58rem;font-weight:400">SUMATIVO</span></th>
+           <th class="th-trim" rowspan="2" style="min-width:60px">NOTA<br><span style="font-size:0.58rem;font-weight:400">TRIMESTRE</span></th>`;
+  } else {
+    r1 += `<th class="th-trim" rowspan="2" style="min-width:60px">EVALUACIÓN<br><span style="font-size:0.58rem;font-weight:400">CUALITATIVA</span></th>`;
+  }
 
-  // Fila 2: Subcolumnas de Actividad
+  r1 += `<th rowspan="2" class="ath" style="min-width:48px;width:48px">Acc.</th></tr>`;
+
+  // Fila 2: Subcolumnas
   let r2 = '<tr>';
   mat.weeks.forEach((w, wi) => {
     const c = mat.cols[w] || [];
@@ -1884,9 +1360,10 @@ function renderTable() {
       c.forEach((col, ci) => {
         const at = actType(col.type);
         const bg = col.color || at.color;
+        const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
         const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
-        const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.8;font-weight:400">${escHTML(at.label)}</span>`;
-        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)}${col.date?' · '+col.date:''} · Doble clic para editar"
+        const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
+        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar"
           style="background:${bg};border-color:${bg};min-width:46px">${lbl}${typeBadge}</th>`;
       });
     }
@@ -1906,16 +1383,16 @@ function renderTable() {
       const c = mat.cols[w] || [];
       const wc = weekColor(mName, w, wi);
 
-      // Calcular promedio de la semana
+      // Promedio semanal
       const weekVals = c.map(col => {
         const v = g[w + '||' + col.name];
         if (v === undefined || v === '') return NaN;
         return parseFloat(v);
       }).filter(n => !isNaN(n));
 
-      const weekAvg  = weekVals.length ? (weekVals.reduce((a,b)=>a+b,0) / weekVals.length) : null;
-      const wAvgDisp = weekAvg !== null ? weekAvg.toFixed(2) : '—';
-      const wAvgCls  = weekAvg !== null && weekAvg < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
+      const weekAvg  = weekVals.length ? trunc2(weekVals.reduce((a,b)=>a+b,0) / weekVals.length) : null;
+      const wAvgDisp = weekAvg !== null ? weekAvg : '—';
+      const wAvgCls  = weekAvg !== null && parseFloat(weekAvg) < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
 
       if (!c.length) {
         return `<td style="color:var(--text-light);background:${wc.c}">—</td>
@@ -1927,13 +1404,20 @@ function renderTable() {
         const cellBg = col.color ? hexToRgba(col.color, 0.08) : at.cell;
         const k = w + '||' + col.name;
         const v = g[k] !== undefined ? g[k] : '';
+
+        if (isQual) {
+          // Input o Botón Cualitativo
+          const qVal = v ? String(v).toUpperCase() : 'NE';
+          const qObj = QUAL_SCALE.find(q => q.val === qVal) || QUAL_SCALE[3];
+          return `<td style="background:${cellBg}">
+            <span class="badge-qual ${qObj.cls}" onclick="cycleQual(${si},'${esc(w)}','${esc(col.name)}')">${qObj.val}</span>
+          </td>`;
+        }
+
         const n = parseFloat(v);
         const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
         const specCls = specialCls(v);
-        const tdCls = specCls ? specCls
-          : (v !== '' && !isNaN(n)
-            ? (n < 7 ? 'cell-low' : (isRecovered(si, w, col.name) ? 'cell-rec' : ''))
-            : '');
+        const tdCls = specCls ? specCls : (v !== '' && !isNaN(n) ? (n < 7 ? 'cell-low' : (isRecovered(si, w, col.name) ? 'cell-rec' : '')) : '');
         const tdBg = tdCls ? '' : cellBg;
 
         return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="background:${tdBg}">
@@ -1948,15 +1432,26 @@ function renderTable() {
       return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(w)}" style="background:${wc.c}">${wAvgDisp}</td>`;
     }).join('');
 
-    const avg = studentAvg(si);
-    const avgDisp = avg !== null ? avg.toFixed(2) : '—';
-    const avgCls  = avg !== null && avg < 7 ? 'glo' : '';
+    const calc = getStudentTrimestreCalc(si, mName);
+    let summaryCells = '';
+
+    if (!isQual) {
+      const trimCls = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7 ? 'glo' : '';
+      summaryCells = `
+        <td class="td-form">${calc.formWeighted}</td>
+        <td class="td-sum">${calc.sumWeighted}</td>
+        <td class="td-trim ${trimCls}">${calc.trimAvg}</td>
+      `;
+    } else {
+      const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
+      summaryCells = `<td class="td-trim"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span></td>`;
+    }
 
     return `<tr data-name="${escVal(name.toLowerCase())}">
       <td class="ic">${rowPos+1}</td>
-      <td class="nc" ondblclick="editStudentName(${si})" title="Doble clic para editar nombre">${escHTML(name)}</td>
+      <td class="nc" ondblclick="editStudentName(${si})" title="Doble clic para editar">${escHTML(name)}</td>
       ${cells}
-      <td class="prom-c ${avgCls}">${avgDisp}</td>
+      ${summaryCells}
       <td class="ac" style="white-space:nowrap">
         <button class="bt bte" onclick="editStudentName(${si})" title="Editar">✏</button>
         <button class="bt btd" onclick="delSt(${si})" title="Eliminar">✕</button>
@@ -1965,16 +1460,32 @@ function renderTable() {
   }).join('');
 }
 
+function cycleQual(si, w, colName) {
+  const mat = gm();
+  if (!mat.grades[si]) mat.grades[si] = {};
+  const k = w + '||' + colName;
+  const cur = mat.grades[si][k] || 'NE';
+  const order = ['NE', 'I', 'EP', 'A'];
+  const next = order[(order.indexOf(cur) + 1) % order.length];
+  mat.grades[si][k] = next;
+  saveData();
+  render();
+}
+
 // ══════════════════════════════════════════════════════
-//  ESTADÍSTICAS
+//  ESTADÍSTICAS (NORMATIVA 70/30)
 // ══════════════════════════════════════════════════════
 function renderStats() {
+  const mName = curMatName();
+  const isQual = isQualitativeMat(mName);
   const mat = gm();
+
   let tot = 0, cnt = 0, low = 0, hi = 0, max = -Infinity, min = Infinity;
 
   S.students.forEach((_, si) => {
-    Object.values(mat?.grades[si] || {}).forEach(v => {
-      const n = parseFloat(v);
+    const calc = getStudentTrimestreCalc(si, mName);
+    if (!isQual && calc.trimAvg !== '—') {
+      const n = parseFloat(calc.trimAvg);
       if (!isNaN(n)) {
         tot += n; cnt++;
         if (n < 7) low++;
@@ -1982,46 +1493,43 @@ function renderStats() {
         if (n > max) max = n;
         if (n < min) min = n;
       }
-    });
+    }
   });
 
-  const avg  = cnt > 0 ? (tot / cnt).toFixed(2) : '—';
-  const maxD = cnt > 0 ? max.toFixed(2) : '—';
-  const minD = cnt > 0 ? min.toFixed(2) : '—';
+  const avg  = cnt > 0 ? trunc2(tot / cnt) : '—';
+  const maxD = cnt > 0 ? trunc2(max) : '—';
+  const minD = cnt > 0 ? trunc2(min) : '—';
   const avgColor = cnt > 0 && parseFloat(avg) < 7 ? 'var(--danger)' : 'var(--primary)';
 
   document.getElementById('stats').innerHTML = `
     <div class="stat-card" style="--card-accent:#2563eb">
       <div class="stat-label"><span>Estudiantes</span> 👥</div>
       <div class="stat-val">${S.students.length}</div>
-      <div class="stat-sub">Nómina activa</div>
+      <div class="stat-sub">Nómina Séptimo de Básica</div>
     </div>
     <div class="stat-card" style="--card-accent:${avgColor}">
-      <div class="stat-label"><span>Promedio Materia</span> 📊</div>
+      <div class="stat-label"><span>Promedio Trimestre</span> 📊</div>
       <div class="stat-val" style="color:${avgColor}">${avg}</div>
-      <div class="stat-sub">Meta institucional: ≥ 7.00</div>
+      <div class="stat-sub">Ponderado 70/30 Truncado</div>
     </div>
     <div class="stat-card" style="--card-accent:#dc2626">
-      <div class="stat-label"><span>Notas &lt; 7.00</span> ⚠</div>
+      <div class="stat-label"><span>Refuerzo / &lt; 7.00</span> ⚠</div>
       <div class="stat-val" style="color:#dc2626">${low}</div>
-      <div class="stat-sub">Requieren refuerzo</div>
+      <div class="stat-sub">Derecho a mejora (hasta 2 evals)</div>
     </div>
     <div class="stat-card" style="--card-accent:#16a34a">
       <div class="stat-label"><span>Destacadas (≥ 9)</span> ⭐</div>
       <div class="stat-val" style="color:#16a34a">${hi}</div>
-      <div class="stat-sub">Alto rendimiento</div>
+      <div class="stat-sub">Dominan el aprendizaje</div>
     </div>
     <div class="stat-card" style="--card-accent:#0d9488">
       <div class="stat-label"><span>Rango (Máx / Mín)</span> 🎯</div>
       <div class="stat-val" style="font-size:1rem;padding-top:4px">${maxD} <span style="opacity:.4">/</span> ${minD}</div>
-      <div class="stat-sub">${cnt} notas registradas</div>
+      <div class="stat-sub">Sin redondeo (truncado)</div>
     </div>
   `;
 }
 
-// ══════════════════════════════════════════════════════
-//  FILTRO Y BÚSQUEDA
-// ══════════════════════════════════════════════════════
 function filterStudents(q) {
   const term = (q || '').toLowerCase().trim();
   const rows = document.querySelectorAll('#tb tr');
@@ -2037,14 +1545,10 @@ function filterStudents(q) {
 }
 
 // ══════════════════════════════════════════════════════
-//  ACTUALIZACIÓN DE CALIFICACIÓN & RECUPERACIONES
+//  ACTUALIZAR NOTAS CON REGLA DE MEJORA
 // ══════════════════════════════════════════════════════
-function recKey(si, week, col) {
-  return curMatName() + '||' + si + '||' + week + '||' + col;
-}
-function isRecovered(si, week, col) {
-  return !!(S.recovered && S.recovered[recKey(si, week, col)]);
-}
+function recKey(si, week, col) { return curMatName() + '||' + si + '||' + week + '||' + col; }
+function isRecovered(si, week, col) { return !!(S.recovered && S.recovered[recKey(si, week, col)]); }
 
 function upd(si, week, col, val) {
   const mat = gm();
@@ -2054,10 +1558,7 @@ function upd(si, week, col, val) {
   const prev = parseFloat(mat.grades[si][key]);
   const v    = val.trim().replace(',', '.');
 
-  // Guardar en historial antes de modificar
-  const prevVal = mat.grades[si][key];
-  const prevRec = !!(S.recovered && S.recovered[rk]);
-  histPush(si, week, col, prevVal, prevRec);
+  histPush(si, week, col, mat.grades[si][key], !!(S.recovered && S.recovered[rk]));
 
   if (v === '') {
     delete mat.grades[si][key];
@@ -2066,7 +1567,7 @@ function upd(si, week, col, val) {
     if (!specialCls(v)) {
       const n = parseFloat(v);
       if (isNaN(n) || n < 0 || n > 10) {
-        toast('⚠ Ingrese una nota válida (0 a 10)', '#dc2626');
+        toast('⚠ Calificación inválida (escala 0,00 a 10,00)', '#dc2626');
         return;
       }
     }
@@ -2078,72 +1579,30 @@ function upd(si, week, col, val) {
     if (wasLow && nowOk) {
       if (!S.recovered) S.recovered = {};
       S.recovered[rk] = true;
-      toast(`🎉 ¡Nota recuperada! ${S.students[si].split(' ')[0]} — ${col}: ${n}`, '#16a34a');
-    } else if (n < 7) {
-      if (S.recovered) delete S.recovered[rk];
+      toast(`🎉 ¡Mejora registrada! ${S.students[si].split(' ')[0]} — ${col}: ${n}`, '#16a34a');
     }
   }
 
   saveData();
-  renderStats();
-
-  // Actualizar fila en tiempo real
-  const avg = studentAvg(si);
-  const avgDisp = avg !== null ? avg.toFixed(2) : '—';
-  const rows = document.querySelectorAll('#tb tr');
-  if (rows[si]) {
-    const pc = rows[si].querySelector('.prom-c');
-    if (pc) {
-      pc.textContent = avgDisp;
-      pc.className = 'prom-c ' + (avg !== null && avg < 7 ? 'glo' : '');
-    }
-    const wkCell = rows[si].querySelector(`.prom-wk[data-si="${si}"][data-week="${week}"]`);
-    if (wkCell) {
-      const cols = mat.cols[week] || [];
-      const vals = cols.map(c => parseFloat(mat.grades[si][week+'||'+c.name])).filter(num => !isNaN(num));
-      const wAvg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
-      wkCell.textContent = wAvg !== null ? wAvg.toFixed(2) : '—';
-      wkCell.className = 'prom-wk ' + (wAvg !== null && wAvg < 7 ? 'glo' : (wAvg !== null ? 'ghi' : ''));
-    }
-  }
+  render();
 }
 
 function clr(inp) {
   const v = inp.value.replace(',', '.');
   const td = inp.parentElement;
-  const oc = inp.getAttribute('onchange') || '';
-  const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
-  const rec = m ? isRecovered(parseInt(m[1]), m[2], m[3]) : false;
-
   const allSpec = SPECIAL.map(s => s.cls).concat(['cell-low','cell-rec']);
   allSpec.forEach(c => td.classList.remove(c));
-  inp.className = 'gi';
 
   const spec = SPECIAL.find(s => s.val === v.trim().toUpperCase());
   if (spec) {
     td.classList.add(spec.cls);
-    td.style.background = '';
-    if (spec.val.length === 2 && m) {
-      upd(parseInt(m[1]), m[2], m[3], spec.val);
-      applySpecial(td, inp, spec.val);
-      toast(`${spec.icon} ${spec.label}`, spec.border);
-    }
     return;
   }
 
   const n = parseFloat(v);
   if (v !== '' && !isNaN(n)) {
-    if (n < 7) {
-      inp.classList.add('glo');
-      td.classList.add('cell-low');
-      td.style.background = '';
-    } else {
-      inp.classList.add('ghi');
-      if (rec) { td.classList.add('cell-rec'); td.style.background = ''; }
-      else { td.style.background = td.dataset.origBg || ''; }
-    }
-  } else {
-    td.style.background = td.dataset.origBg || '';
+    if (n < 7) { td.classList.add('cell-low'); }
+    else { inp.classList.add('ghi'); }
   }
 }
 
@@ -2152,229 +1611,78 @@ function specialCls(v) {
   return s ? s.cls : null;
 }
 
-function applySpecial(td, inp, val) {
-  const all = SPECIAL.map(s => s.cls).concat(['cell-low','cell-rec']);
-  all.forEach(c => td.classList.remove(c));
-  inp.className = 'gi';
-  const s = SPECIAL.find(x => x.val === val);
-  if (s) {
-    td.classList.add(s.cls);
-    td.style.background = '';
-    inp.value = val;
-  } else {
-    td.style.background = td.dataset.origBg || '';
-    inp.value = '';
-  }
-}
-
 // ══════════════════════════════════════════════════════
-//  NAVEGACIÓN & PEGADO TIPO EXCEL
+//  NAVEGACIÓN EXCEL
 // ══════════════════════════════════════════════════════
 function getVisibleInputGrid() {
   const rows = Array.from(document.querySelectorAll('#tb tr:not(.vis-hidden):not(.hidden-row)'));
-  return rows.map(tr =>
-    Array.from(tr.querySelectorAll('input.gi')).filter(inp => {
-      const td = inp.parentElement;
-      return td && !td.classList.contains('vis-hidden-col');
-    })
-  ).filter(row => row.length > 0);
-}
-
-function findInGrid(grid, inp) {
-  for (let ri = 0; ri < grid.length; ri++) {
-    const ci = grid[ri].indexOf(inp);
-    if (ci >= 0) return [ri, ci];
-  }
-  return null;
-}
-
-function focusCell(inp) {
-  if (!inp) return;
-  inp.focus();
-  inp.select();
-  inp.closest('td')?.scrollIntoView({ block:'nearest', inline:'nearest' });
+  return rows.map(tr => Array.from(tr.querySelectorAll('input.gi'))).filter(row => row.length > 0);
 }
 
 function nav(e, inp) {
   const grid = getVisibleInputGrid();
-  const pos  = findInGrid(grid, inp);
+  let pos = null;
+  for (let ri = 0; ri < grid.length; ri++) {
+    const ci = grid[ri].indexOf(inp);
+    if (ci >= 0) { pos = [ri, ci]; break; }
+  }
   if (!pos) return;
-  let [ri, ci] = pos;
+  const [ri, ci] = pos;
 
-  switch (e.key) {
-    case 'Tab':
-      e.preventDefault();
-      if (e.shiftKey) {
-        if (ci > 0) focusCell(grid[ri][ci - 1]);
-        else if (ri > 0) focusCell(grid[ri - 1][grid[ri - 1].length - 1]);
-      } else {
-        if (ci < grid[ri].length - 1) focusCell(grid[ri][ci + 1]);
-        else if (ri < grid.length - 1) focusCell(grid[ri + 1][0]);
-      }
-      break;
-    case 'Enter':
-      e.preventDefault();
-      if (e.shiftKey) {
-        if (ri > 0) focusCell(grid[ri - 1][Math.min(ci, grid[ri - 1].length - 1)]);
-      } else {
-        if (ri < grid.length - 1) focusCell(grid[ri + 1][Math.min(ci, grid[ri + 1].length - 1)]);
-      }
-      break;
-    case 'ArrowRight':
-      if (inp.selectionStart !== inp.value.length) return;
-      e.preventDefault();
-      if (ci < grid[ri].length - 1) focusCell(grid[ri][ci + 1]);
-      break;
-    case 'ArrowLeft':
-      if (inp.selectionStart !== 0) return;
-      e.preventDefault();
-      if (ci > 0) focusCell(grid[ri][ci - 1]);
-      break;
-    case 'ArrowDown':
-      e.preventDefault();
-      if (ri < grid.length - 1) focusCell(grid[ri + 1][Math.min(ci, grid[ri + 1].length - 1)]);
-      break;
-    case 'ArrowUp':
-      e.preventDefault();
-      if (ri > 0) focusCell(grid[ri - 1][Math.min(ci, grid[ri - 1].length - 1)]);
-      break;
-    case 'Escape':
-      inp.blur();
-      break;
-    default: {
-      if (inp.value.trim() !== '') break;
-      const typed = e.key.toUpperCase();
-      const match = SPECIAL.find(s => s.val === typed);
-      if (match && match.val.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        e.preventDefault();
-        const oc = inp.getAttribute('onchange') || '';
-        const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
-        if (m) {
-          upd(parseInt(m[1]), m[2], m[3], match.val);
-          applySpecial(inp.parentElement, inp, match.val);
-          toast(`${match.icon} ${match.label}`, match.border);
-        }
-      }
-      break;
+  if (e.key === 'Tab' || e.key === 'Enter') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      if (ci > 0) grid[ri][ci - 1].focus();
+      else if (ri > 0) grid[ri - 1][grid[ri - 1].length - 1].focus();
+    } else {
+      if (ci < grid[ri].length - 1) grid[ri][ci + 1].focus();
+      else if (ri < grid.length - 1) grid[ri + 1][0].focus();
     }
+  } else if (e.key === 'ArrowDown' && ri < grid.length - 1) {
+    e.preventDefault(); grid[ri + 1][ci].focus();
+  } else if (e.key === 'ArrowUp' && ri > 0) {
+    e.preventDefault(); grid[ri - 1][ci].focus();
   }
 }
 
-// Pegado desde Excel
-document.addEventListener('paste', e => {
-  const active = document.activeElement;
-  if (!active || !active.classList.contains('gi')) return;
-
-  const text = e.clipboardData.getData('text/plain');
-  if (!text) return;
-
-  const pasteRows = text.trimEnd().split(/\r?\n/).map(r => r.split('\t'));
-  if (!pasteRows.length || (pasteRows.length === 1 && pasteRows[0].length === 1)) return;
-
-  e.preventDefault();
-  const grid = getVisibleInputGrid();
-  const pos  = findInGrid(grid, active);
-  if (!pos) return;
-  const [startRow, startCol] = pos;
-
-  let changed = 0;
-  pasteRows.forEach((rowVals, ri) => {
-    rowVals.forEach((val, ci) => {
-      const targetRow = startRow + ri;
-      const targetCol = startCol + ci;
-      if (targetRow >= grid.length) return;
-      if (targetCol >= grid[targetRow].length) return;
-      const inp = grid[targetRow][targetCol];
-      if (!inp) return;
-      const v = val.trim().replace(',', '.');
-      const oc = inp.getAttribute('onchange') || '';
-      const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
-      if (m) {
-        upd(parseInt(m[1]), m[2], m[3], v);
-        inp.value = v;
-        clr(inp);
-        changed++;
-      }
-    });
-  });
-
-  const lastRow = Math.min(startRow + pasteRows.length - 1, grid.length - 1);
-  const lastCol = Math.min(startCol + pasteRows[0].length - 1, grid[lastRow].length - 1);
-  focusCell(grid[lastRow][lastCol]);
-  toast(`📋 ${changed} calificación(es) pegadas desde Excel`, '#2563eb');
-});
-
 // ══════════════════════════════════════════════════════
-//  HISTORIAL: DESHACER (Ctrl+Z) & REHACER (Ctrl+Y)
+//  HISTORIAL UNDO / REDO
 // ══════════════════════════════════════════════════════
-const HIST = { stack: [], future: [], max: 100 };
+const HIST = { stack: [], future: [] };
 
 function histPush(si, week, col, prevVal, prevRec) {
   HIST.stack.push({ si, week, col, prevVal, prevRec, matName: curMatName() });
-  if (HIST.stack.length > HIST.max) HIST.stack.shift();
   HIST.future = [];
   updateUndoButtons();
 }
-
 function histUndo() {
-  if (!HIST.stack.length) { toast('⚠ Nada que deshacer', '#64748b'); return; }
+  if (!HIST.stack.length) return;
   const h = HIST.stack.pop();
   const mat = S.mats[h.matName];
   if (!mat) return;
-  const key = h.week + '||' + h.col;
-  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
-  const curVal = mat.grades[h.si] ? mat.grades[h.si][key] : undefined;
-  const curRec = S.recovered ? S.recovered[rk] : false;
-  HIST.future.push({ si:h.si, week:h.week, col:h.col, prevVal:curVal, prevRec:curRec, matName:h.matName });
-  applyHistEntry(h);
-  updateUndoButtons();
-  toast(`↩ Deshecho: ${h.col} (${h.prevVal !== undefined ? h.prevVal : 'vacío'})`, '#475569');
+  HIST.future.push({ si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName });
+  if (h.prevVal === undefined) delete mat.grades[h.si][h.week+'||'+h.col];
+  else mat.grades[h.si][h.week+'||'+h.col] = String(h.prevVal);
+  saveData(); render(); updateUndoButtons();
 }
-
 function histRedo() {
-  if (!HIST.future.length) { toast('⚠ Nada que rehacer', '#64748b'); return; }
+  if (!HIST.future.length) return;
   const h = HIST.future.pop();
   const mat = S.mats[h.matName];
   if (!mat) return;
-  const key = h.week + '||' + h.col;
-  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
-  const curVal = mat.grades[h.si] ? mat.grades[h.si][key] : undefined;
-  const curRec = S.recovered ? S.recovered[rk] : false;
-  HIST.stack.push({ si:h.si, week:h.week, col:h.col, prevVal:curVal, prevRec:curRec, matName:h.matName });
-  applyHistEntry(h);
-  updateUndoButtons();
-  toast(`↪ Rehecho: ${h.col} (${h.prevVal !== undefined ? h.prevVal : 'vacío'})`, '#475569');
+  HIST.stack.push({ si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName });
+  mat.grades[h.si][h.week+'||'+h.col] = String(h.prevVal);
+  saveData(); render(); updateUndoButtons();
 }
-
-function applyHistEntry(h) {
-  const mat = S.mats[h.matName];
-  if (!mat || !mat.grades[h.si]) mat.grades[h.si] = {};
-  const key = h.week + '||' + h.col;
-  const rk  = h.matName + '||' + h.si + '||' + h.week + '||' + h.col;
-
-  if (h.prevVal === undefined || h.prevVal === '') delete mat.grades[h.si][key];
-  else mat.grades[h.si][key] = String(h.prevVal);
-
-  if (!S.recovered) S.recovered = {};
-  if (h.prevRec) S.recovered[rk] = true;
-  else delete S.recovered[rk];
-
-  saveData();
-  render();
-}
-
 function updateUndoButtons() {
-  const u = document.getElementById('btnUndo');
-  const r = document.getElementById('btnRedo');
-  if (u) u.disabled = HIST.stack.length === 0;
-  if (r) r.disabled = HIST.future.length === 0;
+  document.getElementById('btnUndo').disabled = HIST.stack.length === 0;
+  document.getElementById('btnRedo').disabled = HIST.future.length === 0;
 }
 
 // ══════════════════════════════════════════════════════
-//  ASISTENTE: NUEVO AÑO LECTIVO
+//  ASISTENTE NUEVO AÑO LECTIVO
 // ══════════════════════════════════════════════════════
-let _nyStep = 1;
-let _nyData = { anio:'', grado:'', periodo:'', mats:[], students:[] };
+let _nyStep = 1, _nyData = {};
 
 function openNewYearWizard() {
   _nyStep = 1;
@@ -2382,8 +1690,7 @@ function openNewYearWizard() {
     anio: S.anio || '2026-2027',
     grado: S.grado || 'Séptimo A',
     periodo: S.periodo || '1er Trimestre',
-    mats: [...getMats()],
-    students: []
+    mats: [...getMats()]
   };
   renderWizardStep();
 }
@@ -2404,90 +1711,57 @@ function renderWizardStep() {
     </div>
   `;
 
-  let body = '';
-  let okBtn = 'Siguiente →';
-  let okFn = () => wizardNext();
+  let body = '', okBtn = 'Siguiente →', okFn = () => wizardNext();
 
   if (_nyStep === 1) {
     body = `
       <div style="text-align:center;padding:10px 0 16px">
         <div style="font-size:2.5rem;margin-bottom:8px">📦</div>
-        <h4 style="font-size:1rem;font-weight:700;margin-bottom:6px">Paso 1: Respalda el año actual</h4>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
-          Antes de configurar el nuevo año lectivo, te recomendamos descargar una copia de seguridad con todas tus notas históricas.
-        </p>
-        <button class="btn btn-teal" style="margin:0 auto" onclick="exportBackup()">
-          ⬇ Descargar Respaldo JSON Completo
-        </button>
-      </div>
-    `;
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:6px">Paso 1: Descarga tu respaldo de seguridad</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">Guarda tus calificaciones anteriores antes de iniciar el nuevo ciclo trimestral.</p>
+        <button class="btn btn-teal" style="margin:0 auto" onclick="exportBackup()">⬇ Descargar Respaldo JSON</button>
+      </div>`;
   } else if (_nyStep === 2) {
     body = `
-      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 2: Datos del nuevo ciclo escolar</h4>
-      <label>Año Lectivo</label>
-      <input type="text" id="nyAnio" value="${escVal(_nyData.anio)}" placeholder="Ej: 2026-2027"/>
-      <label>Grado / Curso / Paralelo</label>
-      <input type="text" id="nyGrado" value="${escVal(_nyData.grado)}" placeholder="Ej: Séptimo C, 1ero BGU A"/>
-      <label>Periodo de Inicio</label>
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 2: Datos Institucionales</h4>
+      <label>Año Lectivo</label><input type="text" id="nyAnio" value="${escVal(_nyData.anio)}"/>
+      <label>Grado / Paralelo</label><input type="text" id="nyGrado" value="${escVal(_nyData.grado)}"/>
+      <label>Periodo Académico Inicial</label>
       <select id="nyPeriodo">
-        <option value="1er Trimestre" ${_nyData.periodo==='1er Trimestre'?'selected':''}>1er Trimestre</option>
-        <option value="2do Trimestre" ${_nyData.periodo==='2do Trimestre'?'selected':''}>2do Trimestre</option>
-        <option value="3er Trimestre" ${_nyData.periodo==='3er Trimestre'?'selected':''}>3er Trimestre</option>
-        <option value="1er Quimestre" ${_nyData.periodo==='1er Quimestre'?'selected':''}>1er Quimestre</option>
-        <option value="2do Quimestre" ${_nyData.periodo==='2do Quimestre'?'selected':''}>2do Quimestre</option>
-      </select>
-    `;
+        <option value="1er Trimestre">1er Trimestre</option>
+        <option value="2do Trimestre">2do Trimestre</option>
+        <option value="3er Trimestre">3er Trimestre</option>
+      </select>`;
   } else if (_nyStep === 3) {
-    const listHtml = _nyData.mats.map((m, i) =>
+    const list = _nyData.mats.map((m, i) =>
       `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg-card-subtle);border-radius:6px;margin-bottom:4px;border:1px solid var(--border-color)">
         <span style="font-size:0.8rem;font-weight:600">${escHTML(m)}</span>
         <button onclick="nyRemoveMat(${i})" style="background:none;border:none;color:#ef4444;font-weight:700;cursor:pointer">✕</button>
       </div>`
     ).join('');
-
     body = `
-      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 3: Materias del curso</h4>
-      <div style="max-height:160px;overflow-y:auto;margin-bottom:10px">${listHtml}</div>
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 3: Asignaturas de Séptimo de Básica</h4>
+      <div style="max-height:160px;overflow-y:auto;margin-bottom:10px">${list}</div>
       <div style="display:flex;gap:6px">
-        <input type="text" id="nyNewMat" placeholder="Nueva materia (ej: Inglés, Robótica)" style="margin-bottom:0"/>
+        <input type="text" id="nyNewMat" placeholder="Añadir asignatura..." style="margin-bottom:0"/>
         <button class="btn btn-primary" onclick="nyAddMat()">➕</button>
-      </div>
-    `;
+      </div>`;
   } else if (_nyStep === 4) {
     body = `
-      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 4: Nueva nómina de estudiantes</h4>
-      <label>Pega la lista de alumnos desde Excel (una columna con nombres):</label>
-      <textarea id="nyStudents" rows="7" placeholder="Copia la columna de nombres en Excel y pega aquí..."></textarea>
-      <div id="nyCount" style="font-size:0.75rem;color:var(--primary);font-weight:700"></div>
-      <p class="tip">Se inicializarán las materias con semanas limpias listas para el nuevo año.</p>
-    `;
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:12px">Paso 4: Nómina de Estudiantes</h4>
+      <label>Pega la lista de alumnos desde Excel:</label>
+      <textarea id="nyStudents" rows="7" placeholder="ALVAREZ JUAN\nBARRIOS MARIA..."></textarea>`;
     okBtn = '🚀 Inicializar Año Lectivo';
     okFn = () => wizardFinish();
   }
 
-  showModal(
-    '✨ Asistente de Nuevo Año Lectivo',
-    stepsHeader + body,
-    okBtn,
-    okFn,
-    _nyStep === 4 ? 'btn-magic' : 'btn-primary'
-  );
-
-  if (_nyStep === 4) {
-    const ta = document.getElementById('nyStudents');
-    if (ta) {
-      ta.addEventListener('input', () => {
-        const count = ta.value.split('\n').map(l=>l.trim()).filter(l=>l.length>1).length;
-        document.getElementById('nyCount').textContent = count ? `✔ ${count} estudiantes detectados` : '';
-      });
-    }
-  }
+  showModal('✨ Asistente de Nuevo Año Lectivo', stepsHeader + body, okBtn, okFn, _nyStep===4?'btn-magic':'btn-primary');
 }
 
 function wizardNext() {
   if (_nyStep === 2) {
     _nyData.anio    = document.getElementById('nyAnio').value.trim() || '2026-2027';
-    _nyData.grado   = document.getElementById('nyGrado').value.trim() || 'Curso';
+    _nyData.grado   = document.getElementById('nyGrado').value.trim() || 'Séptimo A';
     _nyData.periodo = document.getElementById('nyPeriodo').value;
   }
   _nyStep++;
@@ -2495,117 +1769,93 @@ function wizardNext() {
 }
 
 function nyAddMat() {
-  const inp = document.getElementById('nyNewMat');
-  const val = inp?.value.trim();
-  if (val && !_nyData.mats.includes(val)) {
-    _nyData.mats.push(val);
-    renderWizardStep();
-  }
+  const v = document.getElementById('nyNewMat')?.value.trim();
+  if (v && !_nyData.mats.includes(v)) { _nyData.mats.push(v); renderWizardStep(); }
 }
-
-function nyRemoveMat(i) {
-  _nyData.mats.splice(i, 1);
-  renderWizardStep();
-}
+function nyRemoveMat(i) { _nyData.mats.splice(i, 1); renderWizardStep(); }
 
 function wizardFinish() {
   const raw = document.getElementById('nyStudents')?.value || '';
-  let students = raw.split('\n')
-    .map(l => l.trim().toUpperCase().replace(/\t/g,' ').replace(/\s+/g,' '))
-    .filter(l => l.length > 1);
-
-  if (!students.length) {
-    students = [...DEFAULT_STUDENTS];
-    toast('ℹ Se usó lista por defecto al no ingresar nombres', '#3b82f6');
-  }
+  let students = raw.split('\n').map(l=>l.trim().toUpperCase()).filter(l=>l.length>1);
+  if (!students.length) students = [...DEFAULT_STUDENTS];
 
   confirm2(
-    '¿Iniciar Nuevo Año Lectivo?',
-    `Se configurará el curso <strong>${escHTML(_nyData.grado)}</strong> (${escHTML(_nyData.anio)}) con <strong>${students.length}</strong> estudiantes y <strong>${_nyData.mats.length}</strong> materias.`,
+    '¿Inicializar Año Lectivo?',
+    `Se configurará <strong>${escHTML(_nyData.grado)}</strong> (${escHTML(_nyData.anio)}) con <strong>${students.length}</strong> estudiantes.`,
     () => {
       S.anio     = _nyData.anio;
       S.grado    = _nyData.grado;
       S.periodo  = _nyData.periodo;
       S.matsList = [..._nyData.mats];
+      S.matsMeta = S.matsList.map(m => ({ name:m, qual: isQualitativeMat(m) }));
       S.students = students;
       S.mats     = {};
-      S.recovered  = {};
-      S.hiddenCols = {};
-      S.hiddenRows = {};
+      S.recovered = {};
 
       S.matsList.forEach(m => {
-        S.mats[m] = {
-          weeks: ['SEMANA 1', 'SEMANA 2'],
-          cols: JSON.parse(JSON.stringify(DEFAULT_COLS)),
-          grades: {}
-        };
+        S.mats[m] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
         S.students.forEach((_, i) => { S.mats[m].grades[i] = {}; });
       });
 
-      S.am = 0;
       closeModal();
       render();
       saveData(true);
-      toast('🎉 ¡Nuevo año lectivo inicializado con éxito!', '#16a34a');
+      toast('🎉 ¡Año lectivo inicializado con éxito!', '#16a34a');
     },
     'btn-magic'
   );
 }
 
 // ══════════════════════════════════════════════════════
-//  GESTIÓN DE PERIODOS ACADÉMICOS
+//  GESTIÓN DE PERIODOS Y MATERIAS
 // ══════════════════════════════════════════════════════
 function openEditPeriod() {
   showModal(
-    '✎ Cambiar Periodo Académico',
+    '✎ Periodo Trimestral',
     `
-    <label>Selecciona o escribe el periodo actual:</label>
-    <select id="mPeriodSel" onchange="document.getElementById('mPeriodInp').value = this.value">
-      <option value="1er Trimestre" ${S.periodo==='1er Trimestre'?'selected':''}>1er Trimestre</option>
+    <label>Selecciona el Trimestre Activo:</label>
+    <select id="mPeriodSel">
+      <option value="1er Trimestre" ${S.periodo==='1er Trimestre'?'selected':''}>1er Trimestre (Diagnóstica, Formativa, Sumativa)</option>
       <option value="2do Trimestre" ${S.periodo==='2do Trimestre'?'selected':''}>2do Trimestre</option>
       <option value="3er Trimestre" ${S.periodo==='3er Trimestre'?'selected':''}>3er Trimestre</option>
-      <option value="1er Quimestre" ${S.periodo==='1er Quimestre'?'selected':''}>1er Quimestre</option>
-      <option value="2do Quimestre" ${S.periodo==='2do Quimestre'?'selected':''}>2do Quimestre</option>
-      <option value="Supletorio / Final" ${S.periodo==='Supletorio / Final'?'selected':''}>Supletorio / Final</option>
+      <option value="Evaluación Supletoria" ${S.periodo==='Evaluación Supletoria'?'selected':''}>Evaluación Supletoria (4.01 a 6.99)</option>
     </select>
-    <label style="margin-top:6px">Nombre personalizado:</label>
-    <input type="text" id="mPeriodInp" value="${escVal(S.periodo || '1er Trimestre')}"/>
-    <p class="tip">El periodo se reflejará en reportes, planillas y descargas de Excel.</p>
     `,
     'Guardar',
     () => {
-      const p = document.getElementById('mPeriodInp').value.trim() || '1er Trimestre';
-      S.periodo = p;
+      S.periodo = document.getElementById('mPeriodSel').value;
       closeModal();
       renderHeaderInfo();
       saveData();
-      toast(`✔ Periodo cambiado a: ${p}`, '#2563eb');
+      toast(`✔ Periodo cambiado a: ${S.periodo}`, '#2563eb');
     }
   );
 }
 
-// ══════════════════════════════════════════════════════
-//  GESTIÓN DINÁMICA DE MATERIAS
-// ══════════════════════════════════════════════════════
 function openManageMats() {
   const mats = getMats();
-  const list = mats.map((m, i) =>
-    `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg-card-subtle);border-radius:var(--radius-sm);margin-bottom:6px;border:1px solid var(--border-color)">
-      <span style="font-weight:700;font-size:0.85rem">${escHTML(m)}</span>
-      <div style="display:flex;gap:4px">
-        <button class="bt bte" onclick="renameMat(${i})">✎</button>
-        <button class="bt btd" onclick="delMat(${i})">✕</button>
+  const list = mats.map((m, i) => {
+    const isQual = isQualitativeMat(m);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg-card-subtle);border-radius:var(--radius-sm);margin-bottom:6px;border:1px solid var(--border-color)">
+      <div>
+        <span style="font-weight:700;font-size:0.85rem">${escHTML(m)}</span>
+        <span style="font-size:0.7rem;color:var(--text-muted);display:block">${isQual ? 'Evaluación Cualitativa (A, EP, I, NE)' : 'Ponderada 70% Formativo + 30% Sumativo'}</span>
       </div>
-    </div>`
-  ).join('');
+      <button class="bt btd" onclick="delMat(${i})">✕</button>
+    </div>`;
+  }).join('');
 
   showModal(
-    '⚙ Gestión de Materias',
+    '⚙ Gestión de Asignaturas',
     `
     <div style="max-height:220px;overflow-y:auto;margin-bottom:12px">${list}</div>
-    <label>Añadir nueva materia:</label>
-    <div style="display:flex;gap:6px">
-      <input type="text" id="mNewMatInp" placeholder="Ej: Inglés, Educación Física" style="margin-bottom:0"/>
+    <label>Añadir nueva asignatura:</label>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <input type="text" id="mNewMatInp" placeholder="Ej: Francés, Robótica" style="margin-bottom:0"/>
+      <select id="mNewMatQual" style="width:140px;margin-bottom:0">
+        <option value="0">Cuantitativa (70/30)</option>
+        <option value="1">Cualitativa (A/EP/I/NE)</option>
+      </select>
       <button class="btn btn-primary" onclick="addNewMat()">➕ Añadir</button>
     </div>
     `,
@@ -2616,208 +1866,101 @@ function openManageMats() {
 }
 
 function addNewMat() {
-  const inp = document.getElementById('mNewMatInp');
-  const nv = inp?.value.trim();
+  const nv = document.getElementById('mNewMatInp')?.value.trim();
+  const qual = document.getElementById('mNewMatQual')?.value === '1';
   if (!nv) return;
   const mats = getMats();
-  if (mats.includes(nv)) { toast('⚠ Esa materia ya existe', '#ea580c'); return; }
+  if (mats.includes(nv)) return;
 
   mats.push(nv);
   S.matsList = mats;
-  S.mats[nv] = {
-    weeks: ['SEMANA 1', 'SEMANA 2'],
-    cols: JSON.parse(JSON.stringify(DEFAULT_COLS)),
-    grades: {}
-  };
+  if (!S.matsMeta) S.matsMeta = [];
+  S.matsMeta.push({ name: nv, qual });
+
+  S.mats[nv] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
   S.students.forEach((_, i) => { S.mats[nv].grades[i] = {}; });
 
   openManageMats();
   renderTabs();
   saveData();
-  toast('✔ Materia agregada', '#16a34a');
+  toast('✔ Asignatura agregada', '#16a34a');
 }
 
-function renameMat(idx) {
+function delMat(i) {
   const mats = getMats();
-  const old = mats[idx];
-  showModal(
-    '✎ Renombrar Materia',
-    `<label>Nombre actual</label><input type="text" id="mRenMat" value="${escVal(old)}"/>`,
-    'Guardar',
-    () => {
-      const nv = document.getElementById('mRenMat').value.trim();
-      if (!nv || nv === old) { closeModal(); return; }
-      if (mats.includes(nv)) { toast('⚠ Ya existe una materia con ese nombre', '#ea580c'); return; }
-
-      mats[idx] = nv;
-      S.matsList = mats;
-      S.mats[nv] = S.mats[old];
-      delete S.mats[old];
-
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Materia renombrada', '#16a34a');
-    }
-  );
-}
-
-function delMat(idx) {
-  const mats = getMats();
-  if (mats.length <= 1) { toast('⚠ No puedes eliminar la única materia', '#dc2626'); return; }
-  const target = mats[idx];
-
-  confirm2(
-    '🗑 Eliminar Materia',
-    `¿Eliminar <strong>${escHTML(target)}</strong> y todas sus calificaciones registradas?`,
-    () => {
-      mats.splice(idx, 1);
-      S.matsList = mats;
-      delete S.mats[target];
-      if (S.am >= mats.length) S.am = 0;
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Materia eliminada', '#dc2626');
-    }
-  );
+  if (mats.length <= 1) return;
+  const target = mats[i];
+  confirm2('🗑 Eliminar Asignatura', `¿Eliminar <strong>${escHTML(target)}</strong>?`, () => {
+    mats.splice(i, 1);
+    S.matsList = mats;
+    delete S.mats[target];
+    if (S.am >= mats.length) S.am = 0;
+    closeModal(); render(); saveData();
+  });
 }
 
 // ══════════════════════════════════════════════════════
-//  GESTIÓN DE ESTUDIANTES
+//  ESTUDIANTES & SEMANAS
 // ══════════════════════════════════════════════════════
 function openAddSt() {
   showModal(
-    '➕ Agregar Estudiante(s)',
-    `
-    <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:6px">
-      <button id="stTabOne" class="btn btn-primary" onclick="switchStTab('one')">👤 Uno por uno</button>
-      <button id="stTabBulk" class="btn btn-outline" onclick="switchStTab('bulk')">📋 Masivo desde Excel</button>
-    </div>
-    <div id="stPanelOne">
-      <label>Nombre Completo</label>
-      <input type="text" id="mInpSt" placeholder="APELLIDO NOMBRE" style="text-transform:uppercase"/>
-      <p class="tip">Se agregará a todas las materias automáticamente.</p>
-    </div>
-    <div id="stPanelBulk" style="display:none">
-      <label>Pega la lista desde Excel (una columna):</label>
-      <textarea id="mBulkSt" rows="6" placeholder="ALVAREZ JUAN\nBARRIOS MARIA\n..."></textarea>
-      <div id="bulkCount" style="font-size:0.75rem;color:var(--primary);font-weight:700"></div>
-    </div>
-    `,
+    '➕ Agregar Estudiante',
+    `<label>Nombre Completo</label><input type="text" id="mInpSt" placeholder="APELLIDO NOMBRE" style="text-transform:uppercase"/>`,
     'Agregar',
     () => {
-      const isBulk = document.getElementById('stPanelBulk').style.display !== 'none';
-      if (!isBulk) {
-        const nv = document.getElementById('mInpSt').value.trim().toUpperCase();
-        if (!nv) return;
-        if (S.students.includes(nv)) { toast('⚠ Ya existe ese estudiante', '#ea580c'); return; }
-        const si = S.students.length;
-        S.students.push(nv);
-        getMats().forEach(m => {
-          if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {};
-        });
-        closeModal();
-        render();
-        saveData();
-        toast('✔ Estudiante agregado', '#16a34a');
-      } else {
-        const raw = document.getElementById('mBulkSt').value;
-        const names = raw.split('\n')
-          .map(l => l.trim().toUpperCase().replace(/\t/g,' ').replace(/\s+/g,' '))
-          .filter(l => l.length > 1);
-        if (!names.length) return;
-
-        let added = 0;
-        names.forEach(nv => {
-          if (S.students.includes(nv)) return;
-          const si = S.students.length;
-          S.students.push(nv);
-          getMats().forEach(m => {
-            if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {};
-          });
-          added++;
-        });
-
-        closeModal();
-        render();
-        saveData();
-        toast(`✔ ${added} estudiante(s) agregado(s)`, '#16a34a');
-      }
+      const nv = document.getElementById('mInpSt').value.trim().toUpperCase();
+      if (!nv || S.students.includes(nv)) return;
+      const si = S.students.length;
+      S.students.push(nv);
+      getMats().forEach(m => { if (!S.mats[m].grades[si]) S.mats[m].grades[si] = {}; });
+      closeModal(); render(); saveData();
+      toast('✔ Estudiante agregado', '#16a34a');
     }
   );
-
-  setTimeout(() => document.getElementById('mInpSt')?.focus(), 50);
-}
-
-function switchStTab(t) {
-  document.getElementById('stPanelOne').style.display  = t === 'one' ? '' : 'none';
-  document.getElementById('stPanelBulk').style.display = t === 'bulk' ? '' : 'none';
-  document.getElementById('stTabOne').className  = 'btn ' + (t === 'one' ? 'btn-primary' : 'btn-outline');
-  document.getElementById('stTabBulk').className = 'btn ' + (t === 'bulk' ? 'btn-primary' : 'btn-outline');
 }
 
 function editStudentName(si) {
-  const old = S.students[si];
   showModal(
-    '✎ Editar Nombre',
-    `<label>Nombre</label><input type="text" id="mEdSt" value="${escVal(old)}" style="text-transform:uppercase"/>`,
+    '✎ Editar Estudiante',
+    `<label>Nombre</label><input type="text" id="mEdSt" value="${escVal(S.students[si])}" style="text-transform:uppercase"/>`,
     'Guardar',
     () => {
       const nv = document.getElementById('mEdSt').value.trim().toUpperCase();
-      if (!nv || nv === old) { closeModal(); return; }
+      if (!nv) return;
       S.students[si] = nv;
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Nombre actualizado', '#16a34a');
+      closeModal(); render(); saveData();
     }
   );
 }
 
 function delSt(si) {
-  confirm2(
-    '🗑 Eliminar Estudiante',
-    `¿Eliminar a <strong>${escHTML(S.students[si])}</strong> y todas sus calificaciones?`,
-    () => {
-      S.students.splice(si, 1);
-      getMats().forEach(m => {
-        const mat = S.mats[m];
-        const newG = {};
-        S.students.forEach((_, ni) => {
-          const oldIdx = ni >= si ? ni + 1 : ni;
-          newG[ni] = mat.grades[oldIdx] || {};
-        });
-        mat.grades = newG;
+  confirm2('🗑 Eliminar Estudiante', `¿Eliminar a <strong>${escHTML(S.students[si])}</strong>?`, () => {
+    S.students.splice(si, 1);
+    getMats().forEach(m => {
+      const mat = S.mats[m];
+      const newG = {};
+      S.students.forEach((_, ni) => {
+        const oldIdx = ni >= si ? ni + 1 : ni;
+        newG[ni] = mat.grades[oldIdx] || {};
       });
-      render();
-      saveData();
-      toast('✔ Estudiante eliminado', '#dc2626');
-    }
-  );
+      mat.grades = newG;
+    });
+    render(); saveData();
+  });
 }
 
-// ══════════════════════════════════════════════════════
-//  SEMANAS & ACTIVIDADES
-// ══════════════════════════════════════════════════════
 function openAddWeek() {
   const mat = gm();
-  const nextNum = (mat.weeks.length || 0) + 1;
   showModal(
     '➕ Agregar Semana',
-    `<label>Nombre de la semana</label><input type="text" id="mWeekInp" value="SEMANA ${nextNum}"/>
-     <p class="tip">Se agregará a la materia activa: <strong>${escHTML(curMatName())}</strong></p>`,
+    `<label>Nombre de la Semana</label><input type="text" id="mWeekInp" value="SEMANA ${(mat.weeks.length||0)+1}"/>`,
     'Agregar',
     () => {
       const nv = document.getElementById('mWeekInp').value.trim().toUpperCase();
-      if (!nv) return;
-      if (mat.weeks.includes(nv)) { toast('⚠ Ya existe esa semana', '#ea580c'); return; }
+      if (!nv || mat.weeks.includes(nv)) return;
       mat.weeks.push(nv);
       mat.cols[nv] = [];
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Semana agregada', '#16a34a');
+      closeModal(); render(); saveData();
     }
   );
 }
@@ -2825,54 +1968,17 @@ function openAddWeek() {
 function editWeekName(wi) {
   const mat = gm();
   const old = mat.weeks[wi];
-  const wc = weekColor(curMatName(), old, wi);
-
   showModal(
-    '✎ Configurar Semana',
-    `
-    <label>Nombre de la Semana</label>
-    <input type="text" id="mWeekEdit" value="${escVal(old)}"/>
-    <label>Color de Encabezado</label>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-      <input type="color" id="mWeekColor" value="${escVal(wc.h)}" style="width:48px;height:36px;cursor:pointer"/>
-      <div style="display:flex;gap:4px;flex-wrap:wrap">
-        ${WEEK_PALETTE.map(p =>
-          `<div onclick="document.getElementById('mWeekColor').value='${p.h}'" style="width:20px;height:20px;border-radius:4px;background:${p.h};cursor:pointer"></div>`
-        ).join('')}
-      </div>
-    </div>
-    `,
+    '✎ Editar Semana',
+    `<label>Nombre</label><input type="text" id="mWeekEdit" value="${escVal(old)}"/>`,
     'Guardar',
     () => {
       const nv = document.getElementById('mWeekEdit').value.trim().toUpperCase();
-      const hex = document.getElementById('mWeekColor').value;
-      if (!nv) return;
-
-      const newWc = { h: hex, s: hex, c: hexToRgba(hex, 0.07) };
-      if (nv !== old) {
-        if (mat.weeks.includes(nv)) { toast('⚠ Ese nombre ya existe', '#ea580c'); return; }
-        mat.weeks[wi] = nv;
-        mat.cols[nv]  = mat.cols[old] || [];
-        delete mat.cols[old];
-        S.students.forEach((_, si) => {
-          const g = mat.grades[si] || {};
-          const pfx = old + '||';
-          Object.keys(g).forEach(k => {
-            if (k.startsWith(pfx)) {
-              g[nv + '||' + k.slice(pfx.length)] = g[k];
-              delete g[k];
-            }
-          });
-        });
-        setWeekColor(curMatName(), nv, newWc);
-      } else {
-        setWeekColor(curMatName(), old, newWc);
-      }
-
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Semana actualizada', '#16a34a');
+      if (!nv || nv === old) { closeModal(); return; }
+      mat.weeks[wi] = nv;
+      mat.cols[nv] = mat.cols[old] || [];
+      delete mat.cols[old];
+      closeModal(); render(); saveData();
     }
   );
 }
@@ -2880,194 +1986,80 @@ function editWeekName(wi) {
 function openDelWeek() {
   const mat = gm();
   const opts = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
-  showModal(
-    '🗑 Eliminar Semana',
-    `<label>Selecciona la semana:</label><select id="mDelWeekSel">${opts}</select>
-     <p class="tip" style="color:var(--danger)">⚠ Se borrarán todas las notas de esta semana.</p>`,
-    'Eliminar',
-    () => {
-      const target = document.getElementById('mDelWeekSel').value;
-      confirm2(
-        '¿Eliminar Semana?',
-        `Se eliminará <strong>${escHTML(target)}</strong> de ${escHTML(curMatName())}.`,
-        () => {
-          mat.weeks = mat.weeks.filter(w => w !== target);
-          delete mat.cols[target];
-          S.students.forEach((_, si) => {
-            const g = mat.grades[si] || {};
-            Object.keys(g).forEach(k => { if (k.startsWith(target + '||')) delete g[k]; });
-          });
-          closeModal();
-          render();
-          saveData();
-          toast('✔ Semana eliminada', '#dc2626');
-        }
-      );
-    },
-    'btn-danger'
-  );
+  showModal('🗑 Eliminar Semana', `<label>Semana:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar', () => {
+    const target = document.getElementById('mDelWeekSel').value;
+    mat.weeks = mat.weeks.filter(w => w !== target);
+    delete mat.cols[target];
+    closeModal(); render(); saveData();
+  }, 'btn-danger');
 }
 
 function openAddCol() {
-  const mat = gm();
-  showColModal(mat.weeks[0] || 'SEMANA 1', null, false);
+  showColModal(gm().weeks[0] || 'SEMANA 1', null, false);
 }
-
-function addColToWeek(w) {
-  showColModal(w, null, false);
-}
-
+function addColToWeek(w) { showColModal(w, null, false); }
 function editColName(wi, ci) {
-  const mat = gm();
-  const w = mat.weeks[wi];
-  const col = mat.cols[w][ci];
-  showColModal(w, col, true, wi, ci);
+  const w = gm().weeks[wi];
+  showColModal(w, gm().cols[w][ci], true, wi, ci);
 }
 
 function showColModal(selWeek, col, isEdit, wi, ci) {
   const mat = gm();
-  const weekOpts = mat.weeks.map(w =>
-    `<option value="${escVal(w)}" ${w===selWeek?'selected':''}>${escHTML(w)}</option>`
-  ).join('');
-
-  const typeOpts = ACT_TYPES.map(t =>
-    `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}</option>`
-  ).join('');
-
-  const curColor = col ? (col.color || actType(col.type).color) : ACT_TYPES[0].color;
-
-  const deleteBtn = isEdit
-    ? `<button class="btn btn-danger" style="width:100%;margin-top:8px" onclick="delCol(${wi},${ci})">🗑 Eliminar esta actividad</button>`
-    : '';
+  const weekOpts = mat.weeks.map(w => `<option value="${escVal(w)}" ${w===selWeek?'selected':''}>${escHTML(w)}</option>`).join('');
+  const typeOpts = ACT_TYPES.map(t => {
+    const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
+    return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
+  }).join('');
 
   showModal(
-    isEdit ? '✎ Editar Actividad Evaluativa' : '➕ Nueva Actividad Evaluativa',
+    isEdit ? '✎ Editar Actividad' : '➕ Nueva Actividad Evaluativa',
     `
-    <label>Semana</label>
-    <select id="mColWeek">${weekOpts}</select>
-    <label>Nombre / Código</label>
-    <input type="text" id="mColName" value="${col ? escVal(col.name) : ''}" placeholder="Ej: T1, A1, Lección 1"/>
-    <label>Tipo de Actividad</label>
-    <select id="mColType" onchange="document.getElementById('mColColor').value = actType(this.value).color">${typeOpts}</select>
-    <label>Color</label>
-    <input type="color" id="mColColor" value="${escVal(curColor)}" style="width:48px;height:34px;cursor:pointer"/>
-    <label>Fecha (Opcional)</label>
-    <input type="date" id="mColDate" value="${col && col.date ? escVal(col.date) : ''}"/>
-    ${deleteBtn}
+    <label>Semana</label><select id="mColWeek">${weekOpts}</select>
+    <label>Código / Nombre</label><input type="text" id="mColName" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, PI, Examen"/>
+    <label>Tipo Ministerial</label><select id="mColType">${typeOpts}</select>
+    <label>Fecha (Opcional)</label><input type="date" id="mColDate" value="${col&&col.date?escVal(col.date):''}"/>
     `,
     'Guardar',
     () => {
       const w    = document.getElementById('mColWeek').value;
       const nv   = document.getElementById('mColName').value.trim().toUpperCase();
       const type = document.getElementById('mColType').value;
-      const colr = document.getElementById('mColColor').value;
       const date = document.getElementById('mColDate').value;
-
       if (!nv) return;
+
       if (!mat.cols[w]) mat.cols[w] = [];
+      const newObj = { name:nv, type, date, color: actType(type).color };
 
-      const defColor = actType(type).color;
-      const newObj = { name:nv, type, date, color: colr !== defColor ? colr : null };
+      if (isEdit) mat.cols[w][ci] = newObj;
+      else mat.cols[w].push(newObj);
 
-      if (isEdit) {
-        const oldCol = mat.cols[w][ci];
-        if (nv !== oldCol.name) {
-          const oldK = w + '||' + oldCol.name;
-          const newK = w + '||' + nv;
-          S.students.forEach((_, si) => {
-            const g = mat.grades[si] || {};
-            if (oldK in g) { g[newK] = g[oldK]; delete g[oldK]; }
-          });
-        }
-        mat.cols[w][ci] = newObj;
-      } else {
-        if (mat.cols[w].find(c => c.name === nv)) { toast('⚠ Esa actividad ya existe en la semana', '#ea580c'); return; }
-        mat.cols[w].push(newObj);
-      }
-
-      closeModal();
-      render();
-      saveData();
-      toast('✔ Actividad guardada', '#16a34a');
-    }
-  );
-}
-
-function delCol(wi, ci) {
-  const mat = gm();
-  const w = mat.weeks[wi];
-  const col = mat.cols[w][ci];
-  closeModal();
-
-  confirm2(
-    '🗑 Eliminar Actividad',
-    `¿Eliminar <strong>${escHTML(col.name)}</strong> de ${escHTML(w)}? Se perderán sus calificaciones.`,
-    () => {
-      mat.cols[w].splice(ci, 1);
-      const k = w + '||' + col.name;
-      S.students.forEach((_, si) => { delete (mat.grades[si]||{})[k]; });
-      render();
-      saveData();
-      toast('✔ Actividad eliminada', '#dc2626');
+      closeModal(); render(); saveData();
     }
   );
 }
 
 function doClearGrades() {
-  showModal(
-    '🧹 Limpiar Calificaciones',
-    `
-    <label>Alcance del borrado:</label>
-    <select id="mClearScope">
-      <option value="cur">Solo materia activa (${escHTML(curMatName())})</option>
-      <option value="all">Todas las materias del curso</option>
-    </select>
-    <p class="tip" style="color:var(--danger)">⚠ Esta acción vacía las notas pero conserva la nómina y semanas.</p>
-    `,
-    'Limpiar',
-    () => {
-      const scope = document.getElementById('mClearScope').value;
-      closeModal();
-      confirm2(
-        '¿Confirmar Borrado de Notas?',
-        scope === 'all'
-          ? 'Se borrarán TODAS las notas de TODAS las materias.'
-          : `Se borrarán todas las notas de ${escHTML(curMatName())}.`,
-        () => {
-          const targets = scope === 'all' ? getMats() : [curMatName()];
-          targets.forEach(m => {
-            S.students.forEach((_, si) => { S.mats[m].grades[si] = {}; });
-          });
-          render();
-          saveData();
-          toast('✔ Calificaciones limpiadas', '#dc2626');
-        }
-      );
-    },
-    'btn-danger'
-  );
+  confirm2('¿Limpiar Calificaciones?', 'Se borrarán las notas de la materia activa manteniendo nómina y semanas.', () => {
+    S.students.forEach((_, si) => { gm().grades[si] = {}; });
+    render(); saveData();
+  });
 }
 
 // ══════════════════════════════════════════════════════
-//  ORDENACIÓN & REPORTES
+//  REPORTES & EXPORTACIÓN EXCEL
 // ══════════════════════════════════════════════════════
-let _sortOrder = localStorage.getItem('notas_sort') || 'default';
+let _sortOrder = 'default';
 
 function getSortedIndices() {
   const indices = S.students.map((_, i) => i);
-  switch (_sortOrder) {
-    case 'name-az': return indices.sort((a,b) => (S.students[a]||'').localeCompare(S.students[b]||''));
-    case 'name-za': return indices.sort((a,b) => (S.students[b]||'').localeCompare(S.students[a]||''));
-    case 'avg-desc': return indices.sort((a,b) => (studentAvg(b)||0) - (studentAvg(a)||0));
-    case 'avg-asc': return indices.sort((a,b) => (studentAvg(a)||0) - (studentAvg(b)||0));
-    default: return indices;
-  }
+  if (_sortOrder === 'name-az') return indices.sort((a,b) => (S.students[a]||'').localeCompare(S.students[b]||''));
+  if (_sortOrder === 'name-za') return indices.sort((a,b) => (S.students[b]||'').localeCompare(S.students[a]||''));
+  if (_sortOrder === 'avg-desc') return indices.sort((a,b) => (studentGeneralAvg(b)||0) - (studentGeneralAvg(a)||0));
+  if (_sortOrder === 'avg-asc')  return indices.sort((a,b) => (studentGeneralAvg(a)||0) - (studentGeneralAvg(b)||0));
+  return indices;
 }
-
 function applySortOrder() {
-  const sel = document.getElementById('sortSel');
-  if (sel) _sortOrder = sel.value;
-  localStorage.setItem('notas_sort', _sortOrder);
+  _sortOrder = document.getElementById('sortSel').value;
   render();
 }
 
@@ -3084,55 +2076,45 @@ function switchView(v) {
   if (v === 'export') expInit();
 }
 
-function rpFilter(q) {
-  const term = (q || '').toLowerCase().trim();
-  if (!term) { rpShowAll(); return; }
-  const matches = S.students.map((n,i)=>({n,i})).filter(({n})=>n.toLowerCase().includes(term));
-  document.getElementById('rpCount').textContent = `${matches.length} estudiante(s)`;
-  if (!matches.length) {
-    document.getElementById('rpBody').innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted)">No se encontraron estudiantes</div>`;
-    return;
-  }
-  document.getElementById('rpBody').innerHTML = matches.map(({i}) => buildStudentCard(i)).join('');
-}
-
 function rpShowAll() {
-  document.getElementById('rpSearch').value = '';
   document.getElementById('rpCount').textContent = `${S.students.length} estudiantes`;
-  document.getElementById('rpBody').innerHTML = buildAllList();
-}
-
-function rpShowOne(si) {
-  document.getElementById('rpSearch').value = S.students[si];
-  document.getElementById('rpBody').innerHTML = buildStudentCard(si);
-}
-
-function rpPrint() {
-  window.print();
-}
-
-function buildAllList() {
   let html = `<div class="rp-all">`;
   S.students.forEach((name, si) => {
-    const avg = studentAvg(si);
-    const avgDisp = avg !== null ? avg.toFixed(2) : '—';
-    const color = avg !== null && avg < 7 ? '#ef4444' : '#16a34a';
-
+    const gAvg = studentGeneralAvg(si);
+    const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
     html += `<div class="rp-row" onclick="rpShowOne(${si})">
       <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800">${si+1}</span>
       <span class="rp-row-name">${escHTML(name)}</span>
-      <span style="font-family:var(--font-mono);font-weight:700;font-size:0.85rem;color:${color}">Prom: ${avgDisp}</span>
+      <span style="font-family:var(--font-mono);font-weight:700;font-size:0.85rem;color:${color}">Prom. General: ${gAvg || '—'}</span>
       <span style="color:var(--text-light);font-size:0.75rem">▶</span>
     </div>`;
   });
-  return html + '</div>';
+  document.getElementById('rpBody').innerHTML = html + '</div>';
+}
+
+function rpFilter(q) {
+  const term = (q||'').toLowerCase().trim();
+  if (!term) { rpShowAll(); return; }
+  const matches = S.students.map((n,i)=>({n,i})).filter(({n})=>n.toLowerCase().includes(term));
+  document.getElementById('rpBody').innerHTML = matches.map(({i})=>buildStudentCard(i)).join('');
+}
+
+function rpShowOne(si) {
+  document.getElementById('rpBody').innerHTML = buildStudentCard(si);
 }
 
 function buildStudentCard(si) {
   const name = S.students[si];
-  const avg = studentAvg(si);
-  const avgDisp = avg !== null ? avg.toFixed(2) : '—';
-  const avgColor = avg !== null && avg < 7 ? '#ef4444' : '#16a34a';
+  const gAvg = studentGeneralAvg(si);
+  const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
+
+  let statusBadge = '🟢 Domina los aprendizajes (Aprobado)';
+  if (gAvg !== null) {
+    const n = parseFloat(gAvg);
+    if (n < 4.01) statusBadge = '⚠ Promoción Excepcional (Requiere acuerdo y plan)';
+    else if (n < 7.00) statusBadge = '🔴 Supletorio (Requiere 5 días de refuerzo previo)';
+    else if (n < 9.00) statusBadge = '🟡 Alcanza aprendizajes (Opción a 1 mejora)';
+  }
 
   let html = `
     <div class="rp-card">
@@ -3140,6 +2122,7 @@ function buildStudentCard(si) {
         <div>
           <div class="rp-name">👤 ${escHTML(name)}</div>
           <div class="rp-sub">${escHTML(S.grado)} · ${escHTML(S.anio)} · ${escHTML(S.periodo)}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:${color};margin-top:4px">${statusBadge}</div>
         </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-outline" onclick="rpShowAll()">← Lista</button>
@@ -3147,230 +2130,137 @@ function buildStudentCard(si) {
         </div>
       </div>
       <div class="rp-summary">
-        <div class="rp-stat"><div class="rp-stat-v" style="color:${avgColor}">${avgDisp}</div><div class="rp-stat-l">Promedio</div></div>
+        <div class="rp-stat"><div class="rp-stat-v" style="color:${color}">${gAvg || '—'}</div><div class="rp-stat-l">Prom. General Truncado</div></div>
       </div>
   `;
 
-  // Detalle por Materia
+  // Desglose por Materia
   getMats().forEach(mName => {
-    const mat = S.mats[mName];
-    if (!mat) return;
-    const g = mat.grades[si] || {};
-
-    html += `<div style="margin-bottom:12px;border:1px solid var(--border-color);border-radius:8px;padding:10px">
-      <div style="font-weight:800;font-size:0.85rem;color:var(--primary);margin-bottom:6px">${escHTML(mName)}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">`;
-
-    mat.weeks.forEach(w => {
-      (mat.cols[w] || []).forEach(col => {
-        const v = g[w + '||' + col.name];
-        const n = parseFloat(v);
-        let bg = 'var(--bg-card-subtle)', fg = 'var(--text-main)';
-        if (v && !isNaN(n)) {
-          if (n < 7) { bg = '#fee2e2'; fg = '#dc2626'; }
-          else { bg = '#dcfce7'; fg = '#16a34a'; }
-        }
-        html += `<div style="background:${bg};color:${fg};padding:4px 8px;border-radius:6px;font-size:0.75rem;font-weight:700">
-          <span style="font-size:0.65rem;opacity:.8;display:block">${escHTML(w)} · ${escHTML(col.name)}</span>
-          ${v || '—'}
-        </div>`;
-      });
-    });
-
-    html += `</div></div>`;
+    const calc = getStudentTrimestreCalc(si, mName);
+    if (!calc.isQual) {
+      html += `<div style="margin-bottom:10px;border:1px solid var(--border-color);border-radius:8px;padding:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:800;font-size:0.85rem;color:var(--primary)">${escHTML(mName)}</span>
+          <span style="font-family:var(--font-mono);font-weight:800;font-size:0.9rem">Nota Trimestre: ${calc.trimAvg}</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">
+          70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) | 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
+        </div>
+      </div>`;
+    } else {
+      const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
+      html += `<div style="margin-bottom:10px;border:1px solid var(--border-color);border-radius:8px;padding:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">${escHTML(mName)}</span>
+          <span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label}</span>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">${qObj.desc}</div>
+      </div>`;
+    }
   });
 
-  html += `</div>`;
-  return html;
+  return html + `</div>`;
 }
 
 function shareWhatsApp(si) {
   const name = S.students[si];
-  const avg = studentAvg(si);
+  const gAvg = studentGeneralAvg(si);
   const lines = [
-    `📚 *REPORTE ACADÉMICO*`,
+    `📚 *INFORME TRIMESTRAL DE CALIFICACIONES*`,
     `👤 *${name}*`,
     `🏫 ${S.grado} · ${S.anio} · ${S.periodo}`,
-    `📊 Promedio General: *${avg !== null ? avg.toFixed(2) : '—'}*`,
-    `─────────────────────`
+    `📊 *Promedio General: ${gAvg || '—'}*`,
+    `─────────────────────`,
+    `*ASIGNATURAS CUANTITATIVAS (70/30):*`
   ];
 
   getMats().forEach(m => {
-    const mat = S.mats[m];
-    if (!mat) return;
-    const g = mat.grades[si] || {};
-    const vals = Object.values(g).map(parseFloat).filter(n => !isNaN(n));
-    const mAvg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : '—';
-    lines.push(`📖 *${m}*: ${mAvg}`);
+    const calc = getStudentTrimestreCalc(si, m);
+    if (!calc.isQual) lines.push(`• *${m}*: ${calc.trimAvg} (70%: ${calc.formWeighted} | 30%: ${calc.sumWeighted})`);
   });
 
   lines.push(`─────────────────────`);
-  lines.push(`_Registro de Notas Docente_`);
+  lines.push(`*EVALUACIÓN CUALITATIVA:*`);
+  getMats().forEach(m => {
+    const calc = getStudentTrimestreCalc(si, m);
+    if (calc.isQual) lines.push(`• *${m}*: [${calc.qualVal}]`);
+  });
 
-  const url = `https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`;
-  window.open(url, '_blank');
+  lines.push(`─────────────────────`);
+  lines.push(`_Instructivo Oficial EGB Media — 2 decimales truncados_`);
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
 }
 
-// ══════════════════════════════════════════════════════
-//  EXPORTAR AL SISTEMA EXTERNO (BOOKMARKLET & TSV)
-// ══════════════════════════════════════════════════════
+function rpPrint() { window.print(); }
+
+// ── EXPORTACIÓN AL SISTEMA ──
 function expInit() {
   const matSel = document.getElementById('expMat');
-  if (!matSel) return;
   matSel.innerHTML = getMats().map((m, i) => `<option value="${i}">${escHTML(m)}</option>`).join('');
   expRefreshWeeks();
   expRefresh();
 }
-
 function expRefreshWeeks() {
   const mi = parseInt(document.getElementById('expMat')?.value || 0);
-  const mName = getMats()[mi];
-  const mat = S.mats[mName];
+  const mat = S.mats[getMats()[mi]];
   const sel = document.getElementById('expWeek');
   if (!mat || !sel) return;
   sel.innerHTML = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
-  expRefreshCols();
 }
-
-function expRefreshCols() {
-  const mi = parseInt(document.getElementById('expMat')?.value || 0);
-  const mName = getMats()[mi];
-  const mat = S.mats[mName];
-  const week = document.getElementById('expWeek')?.value;
-  const sel = document.getElementById('expCol');
-  if (!mat || !sel) return;
-  const cols = mat.cols[week] || [];
-  sel.innerHTML = cols.map(c => `<option value="${escVal(c.name)}">${escHTML(c.name)}</option>`).join('');
-}
-
 function expRefresh() {
-  const type = document.getElementById('expType')?.value;
-  document.getElementById('expColWrap').style.display = type === 'col' ? '' : 'none';
-
-  const mi = parseInt(document.getElementById('expMat')?.value || 0);
+  const type = document.getElementById('expType').value;
+  document.getElementById('expWeekWrap').style.display = type === 'prom-week' ? '' : 'none';
+  const mi = parseInt(document.getElementById('expMat').value || 0);
   const mName = getMats()[mi];
-  const mat = S.mats[mName];
-  const week = document.getElementById('expWeek')?.value;
-  const col  = document.getElementById('expCol')?.value;
-  if (!mat) return;
-
-  const hdr = type === 'prom-week' ? `Prom. ${week}` : (type === 'prom-mat' ? `Prom. ${mName}` : `${col} (${week})`);
-  document.getElementById('expValHeader').textContent = hdr;
 
   const rows = getSortedIndices().map((si, pos) => {
     const name = S.students[si];
-    const g = mat.grades[si] || {};
+    const calc = getStudentTrimestreCalc(si, mName);
     let val = '';
-
-    if (type === 'prom-week') {
-      const cols = mat.cols[week] || [];
-      const nums = cols.map(c => parseFloat(g[week+'||'+c.name])).filter(n => !isNaN(n));
-      val = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2) : '';
-    } else if (type === 'prom-mat') {
-      const nums = Object.values(g).map(parseFloat).filter(n => !isNaN(n));
-      val = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2) : '';
-    } else {
-      val = g[week+'||'+col] !== undefined ? g[week+'||'+col] : '';
-    }
-
-    return { si, pos: pos+1, name, val };
+    if (type === 'prom-trim') val = calc.trimAvg;
+    else if (type === 'prom-form') val = calc.formWeighted;
+    else if (type === 'prom-sum') val = calc.sumWeighted;
+    return { pos: pos+1, name, val: val==='—'?'':val };
   });
 
   document.getElementById('expTbody').innerHTML = rows.map(r => `
     <tr>
-      <td style="color:var(--text-muted);font-weight:600">${r.pos}</td>
+      <td style="color:var(--text-muted)">${r.pos}</td>
       <td style="font-weight:600">${escHTML(r.name)}</td>
-      <td style="text-align:center;font-family:var(--font-mono);font-weight:700;color:var(--primary)">${r.val || '—'}</td>
-      <td style="text-align:center">
-        <button onclick="expCopyOne('${escVal(r.val)}')" class="btn btn-outline" style="padding:2px 6px">📋</button>
-      </td>
+      <td style="text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--primary)">${r.val||'—'}</td>
+      <td style="text-align:center"><button onclick="navigator.clipboard.writeText('${escVal(r.val)}')" class="btn btn-outline" style="padding:2px 6px">📋</button></td>
     </tr>
   `).join('');
 }
-
 function expCopyTSV() {
-  const rows = document.querySelectorAll('#expTbody tr');
-  const lines = Array.from(rows).map(tr => {
+  const rows = Array.from(document.querySelectorAll('#expTbody tr')).map(tr => {
     const tds = tr.querySelectorAll('td');
-    const name = tds[1] ? tds[1].textContent.trim() : '';
-    const val  = tds[2] ? tds[2].textContent.trim().replace('—','') : '';
-    return `${name}\t${val}`;
+    return `${tds[1]?.textContent.trim()}\t${tds[2]?.textContent.trim().replace('—','')}`;
   });
-  navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    toast('📋 Calificaciones copiadas para Excel', '#2563eb');
-  });
+  navigator.clipboard.writeText(rows.join('\n')).then(() => toast('📋 Calificaciones copiadas para Excel', '#2563eb'));
 }
-
-function expCopyOne(val) {
-  navigator.clipboard.writeText(val === '—' ? '' : val).then(() => {
-    toast('📋 Copiado: ' + val, '#2563eb');
-  });
-}
-
 function expGenerateBookmarklet() {
-  const rows = Array.from(document.querySelectorAll('#expTbody tr'));
-  const vals = rows.map(tr => {
-    const td = tr.querySelectorAll('td')[2];
-    const v = td ? td.textContent.trim() : '';
-    return v === '—' ? '' : v;
-  });
-
-  if (!vals.length) { toast('⚠ No hay valores para exportar', '#ea580c'); return; }
-
-  const scriptBody = `(function(){
+  const vals = Array.from(document.querySelectorAll('#expTbody tr')).map(tr => tr.querySelectorAll('td')[2]?.textContent.trim().replace('—',''));
+  const script = `(function(){
     var vals=${JSON.stringify(vals)};
-    var inputs=Array.from(document.querySelectorAll('input[type=text]')).filter(function(i){
-      return i.offsetParent !== null && !i.readOnly;
-    });
-    if(!inputs.length){alert('❌ No se encontraron campos de texto visibles.');return;}
-    var total=Math.min(vals.length,inputs.length);
-    if(!confirm('⚡ ¿Rellenar '+total+' calificaciones automáticamente?'))return;
-    for(var i=0;i<total;i++){
-      inputs[i].value=vals[i];
-      inputs[i].dispatchEvent(new Event('input',{bubbles:true}));
-      inputs[i].dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    alert('✅ '+total+' notas ingresadas con éxito.');
+    var inputs=Array.from(document.querySelectorAll('input[type=text]')).filter(function(i){return i.offsetParent!==null&&!i.readOnly;});
+    for(var i=0;i<Math.min(vals.length,inputs.length);i++){inputs[i].value=vals[i];inputs[i].dispatchEvent(new Event('input',{bubbles:true}));}
+    alert('✅ Notas transferidas.');
   })();`;
-
-  const link = document.getElementById('bookmarkletLink');
-  if (link) link.href = 'javascript:' + encodeURIComponent(scriptBody);
-  document.getElementById('expScript').value = scriptBody;
+  document.getElementById('bookmarkletLink').href = 'javascript:' + encodeURIComponent(script);
   document.getElementById('expAutoPanel').style.display = 'block';
-  toast('⚡ Auto-Relleno generado', '#16a34a');
 }
 
-function expCopyScript() {
-  const ta = document.getElementById('expScript');
-  navigator.clipboard.writeText(ta.value).then(() => {
-    toast('📋 Script copiado al portapapeles', '#2563eb');
-  });
-}
-
-// ══════════════════════════════════════════════════════
-//  BACKUP JSON & EXPORTAR EXCEL (.XLSX)
-// ══════════════════════════════════════════════════════
+// ── BACKUP & EXCEL NATIVO (.XLSX) ──
 function exportBackup() {
-  const data = {
-    version: 3,
-    exportedAt: new Date().toISOString(),
-    grado: S.grado,
-    anio: S.anio,
-    periodo: S.periodo,
-    state: S
-  };
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  const d    = new Date().toISOString().slice(0,10);
-  a.href     = url;
-  a.download = `Respaldo_Notas_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}_${d}.json`;
+  const data = { version:4, exportedAt:new Date().toISOString(), grado:S.grado, anio:S.anio, periodo:S.periodo, state:S };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Notas_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}.json`;
   a.click();
-  URL.revokeObjectURL(url);
-  toast('✔ Respaldo JSON descargado', '#0d9488');
 }
-
 function importBackup(input) {
   const file = input.files[0];
   if (!file) return;
@@ -3378,108 +2268,70 @@ function importBackup(input) {
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
-      if (!data.state || !data.state.mats) { toast('⚠ Archivo de respaldo no válido', '#dc2626'); return; }
-
-      confirm2(
-        '⬆ Restaurar Respaldo',
-        `¿Restaurar datos de <strong>${escHTML(data.grado || 'Curso')}</strong> (${escHTML(data.anio || 'Año')})? Se reemplazarán los datos actuales.`,
-        () => {
-          S = data.state;
-          ensureMats();
-          saveData(true);
-          render();
-          toast('✔ Respaldo restaurado exitosamente', '#16a34a');
-        }
-      );
-    } catch(err) {
-      toast('⚠ Error al leer archivo JSON', '#dc2626');
-    }
-    input.value = '';
+      if (data.state) { S = data.state; ensureMats(); saveData(true); render(); toast('✔ Respaldo restaurado', '#16a34a'); }
+    } catch(err) { toast('⚠ Error en archivo JSON', '#dc2626'); }
   };
   reader.readAsText(file);
 }
 
-// ── Exportar a Excel XLSX Nativo (Sin librerías externas) ──
 function exportCSV() {
-  const mats = getMats();
-  const sheets = mats.map(m => buildSheet(m, S.mats[m]));
-  sheets.push(buildSummarySheet());
+  const sheets = getMats().map(m => {
+    const mat = S.mats[m];
+    const isQual = isQualitativeMat(m);
+    const rows = [
+      [{ v:`${m} — ${S.grado} — ${S.periodo} (${S.anio})`, t:'s', s:'title' }],
+      [],
+      [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }]
+    ];
+    mat.weeks.forEach(w => {
+      (mat.cols[w]||[]).forEach(c => rows[2].push({ v:`${w}\n${c.name}`, t:'s', s:'hdr_col' }));
+      rows[2].push({ v:`PROM\n${w}`, t:'s', s:'hdr_prom' });
+    });
+    if (!isQual) {
+      rows[2].push({ v:'70% FORM.', t:'s', s:'hdr_prom' }, { v:'30% SUM.', t:'s', s:'hdr_prom' }, { v:'NOTA TRIM.', t:'s', s:'hdr_prom' });
+    } else {
+      rows[2].push({ v:'EVAL. CUALITATIVA', t:'s', s:'hdr_prom' });
+    }
+
+    getSortedIndices().forEach((si, pos) => {
+      const name = S.students[si];
+      const g = mat.grades[si] || {};
+      const row = [{ v:pos+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
+
+      mat.weeks.forEach(w => {
+        (mat.cols[w]||[]).forEach(c => {
+          const v = g[w+'||'+c.name];
+          const n = parseFloat(v);
+          if (v && !isNaN(n)) row.push({ v:n, t:'n', s:n<7?'low':'ok' });
+          else row.push({ v:v||'', t:'s', s:'empty' });
+        });
+        const nums = (mat.cols[w]||[]).map(c=>parseFloat(g[w+'||'+c.name])).filter(num=>!isNaN(num));
+        const wAvg = nums.length ? parseFloat(trunc2(nums.reduce((a,b)=>a+b,0)/nums.length)) : null;
+        row.push(wAvg!==null ? { v:wAvg, t:'n', s:wAvg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
+      });
+
+      const calc = getStudentTrimestreCalc(si, m);
+      if (!isQual) {
+        row.push(
+          { v:calc.formWeighted!=='—'?parseFloat(calc.formWeighted):'—', t:'s', s:'prom' },
+          { v:calc.sumWeighted!=='—'?parseFloat(calc.sumWeighted):'—', t:'s', s:'prom' },
+          { v:calc.trimAvg!=='—'?parseFloat(calc.trimAvg):'—', t:'s', s:parseFloat(calc.trimAvg)<7?'low':'prom' }
+        );
+      } else {
+        row.push({ v:calc.qualVal, t:'s', s:'prom' });
+      }
+      rows.push(row);
+    });
+    return { name:m.slice(0,31), rows };
+  });
 
   const zip = makeXLSX(sheets);
   const blob = new Blob([zip], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `Notas_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}_${(S.anio||'').replace(/\s+/g,'_')}.xlsx`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Notas_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}.xlsx`;
   a.click();
-  URL.revokeObjectURL(url);
   toast('✔ Archivo Excel descargado', '#16a34a');
-}
-
-function buildSheet(mName, mat) {
-  const rows = [];
-  rows.push([{ v: `${mName} — ${S.grado} — ${S.periodo} (${S.anio})`, t:'s', s:'title' }]);
-  rows.push([]);
-
-  const hdr = [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }];
-  mat.weeks.forEach(w => {
-    (mat.cols[w] || []).forEach(c => hdr.push({ v:`${w}\n${c.name}`, t:'s', s:'hdr_col' }));
-    hdr.push({ v:`PROM\n${w}`, t:'s', s:'hdr_prom' });
-  });
-  hdr.push({ v:'PROM\nGENERAL', t:'s', s:'hdr_prom' });
-  rows.push(hdr);
-
-  getSortedIndices().forEach((si, pos) => {
-    const name = S.students[si];
-    const g = mat.grades[si] || {};
-    const row = [{ v: pos+1, t:'n', s:'num' }, { v: name, t:'s', s:'name' }];
-
-    mat.weeks.forEach(w => {
-      (mat.cols[w] || []).forEach(c => {
-        const v = g[w+'||'+c.name];
-        const n = parseFloat(v);
-        if (v !== undefined && v !== '' && !isNaN(n)) row.push({ v: n, t:'n', s: n<7?'low':'ok' });
-        else row.push({ v: v||'', t:'s', s:'empty' });
-      });
-      const nums = (mat.cols[w]||[]).map(c => parseFloat(g[w+'||'+c.name])).filter(n => !isNaN(n));
-      const wAvg = nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null;
-      row.push(wAvg !== null ? { v: parseFloat(wAvg.toFixed(2)), t:'n', s: wAvg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
-    });
-
-    const vals = Object.values(g).map(parseFloat).filter(n => !isNaN(n));
-    const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
-    row.push(avg !== null ? { v: parseFloat(avg.toFixed(2)), t:'n', s: avg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
-    rows.push(row);
-  });
-
-  return { name: mName.slice(0,31), rows };
-}
-
-function buildSummarySheet() {
-  const rows = [];
-  rows.push([{ v: `Resumen General — ${S.grado} — ${S.periodo} (${S.anio})`, t:'s', s:'title' }]);
-  rows.push([]);
-  const hdr = [{ v:'#', t:'s', s:'hdr' }, { v:'ESTUDIANTE', t:'s', s:'hdr' }];
-  getMats().forEach(m => hdr.push({ v: m, t:'s', s:'hdr_prom' }));
-  hdr.push({ v:'PROM GENERAL', t:'s', s:'hdr_prom' });
-  rows.push(hdr);
-
-  getSortedIndices().forEach((si, pos) => {
-    const row = [{ v: pos+1, t:'n', s:'num' }, { v: S.students[si], t:'s', s:'name' }];
-    let tot = 0, cnt = 0;
-    getMats().forEach(m => {
-      const g = S.mats[m]?.grades[si] || {};
-      const vals = Object.values(g).map(parseFloat).filter(n => !isNaN(n));
-      const avg  = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
-      if (avg !== null) { tot += avg; cnt++; }
-      row.push(avg !== null ? { v: parseFloat(avg.toFixed(2)), t:'n', s: avg<7?'low':'ok' } : { v:'—', t:'s', s:'empty' });
-    });
-    const gAvg = cnt ? tot/cnt : null;
-    row.push(gAvg !== null ? { v: parseFloat(gAvg.toFixed(2)), t:'n', s: gAvg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
-    rows.push(row);
-  });
-
-  return { name:'Resumen', rows };
 }
 
 function colName(n) {
@@ -3491,16 +2343,16 @@ function xe(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 function makeXLSX(sheets) {
   const STYLES = {
-    title:   { font:'bold', size:12, bg:'1E3A8A', fg:'FFFFFF' },
-    hdr:     { font:'bold', size:10, bg:'1E3A8A', fg:'FFFFFF' },
-    hdr_col: { font:'bold', size:9,  bg:'2563EB', fg:'FFFFFF' },
-    hdr_prom:{ font:'bold', size:9,  bg:'0D9488', fg:'FFFFFF' },
-    name:    { font:'normal',size:9, bg:'FFFFFF', fg:'0F172A' },
-    num:     { font:'normal',size:9, bg:'F8FAFC', fg:'64748B' },
-    ok:      { font:'normal',size:9, bg:'DCFCE7', fg:'16A34A' },
-    low:     { font:'bold',  size:9, bg:'FEE2E2', fg:'DC2626' },
-    prom:    { font:'bold',  size:9, bg:'F0FDF4', fg:'16A34A' },
-    empty:   { font:'normal',size:9, bg:'FFFFFF', fg:'CBD5E1' }
+    title: { font:'bold', size:12, bg:'1E3A8A', fg:'FFFFFF' },
+    hdr:   { font:'bold', size:10, bg:'1E3A8A', fg:'FFFFFF' },
+    hdr_col:{font:'bold', size:9,  bg:'2563EB', fg:'FFFFFF' },
+    hdr_prom:{font:'bold',size:9,  bg:'0D9488', fg:'FFFFFF' },
+    name:  { font:'normal',size:9, bg:'FFFFFF', fg:'0F172A' },
+    num:   { font:'normal',size:9, bg:'F8FAFC', fg:'64748B' },
+    ok:    { font:'normal',size:9, bg:'DCFCE7', fg:'16A34A' },
+    low:   { font:'bold',  size:9, bg:'FEE2E2', fg:'DC2626' },
+    prom:  { font:'bold',  size:9, bg:'F0FDF4', fg:'16A34A' },
+    empty: { font:'normal',size:9, bg:'FFFFFF', fg:'CBD5E1' }
   };
   const styleKeys = Object.keys(STYLES);
   const fonts = styleKeys.map(k => `<font><sz val="${STYLES[k].size}"/><color rgb="FF${STYLES[k].fg}"/><name val="Calibri"/>${STYLES[k].font==='bold'?'<b/>':''}</font>`).join('');
@@ -3535,11 +2387,8 @@ function makeXLSX(sheets) {
 
   const ssXml = strArr.map(s => `<si><t xml:space="preserve">${xe(s)}</t></si>`).join('');
   const wbXml = `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`;
-
   const wbRels = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/><Relationship Id="rId${sheets.length+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
-
   const contentTypes = `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`;
-
   const relsRoot = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
 
   const files = {
@@ -3624,12 +2473,6 @@ function crc32(data) {
   return (crc ^ 0xFFFFFFFF) >>> 0;
 }
 
-function lighten(hex, amt) {
-  let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-  r = Math.min(255, r + amt); g = Math.min(255, g + amt); b = Math.min(255, b + amt);
-  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
-}
-
 function hexToRgba(hex, alpha) {
   if (!hex || hex.length < 7) return `rgba(37,99,235,${alpha})`;
   const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
@@ -3637,7 +2480,7 @@ function hexToRgba(hex, alpha) {
 }
 
 // ══════════════════════════════════════════════════════
-//  RESIZE & DRAG AND DROP
+//  RESIZE & VISIBILIDAD
 // ══════════════════════════════════════════════════════
 function applyColWidths() {
   const table = document.getElementById('mainTable');
@@ -3672,21 +2515,12 @@ function applyColWidths() {
   });
 }
 
-function applyRowHeights() {}
-
 function initNamesColResizer() {
   const th = document.getElementById('th-nombres');
   if (!th || th.querySelector('.col-resizer')) return;
   const handle = document.createElement('div');
   handle.className = 'col-resizer';
   th.appendChild(handle);
-
-  if (S.colWidths['names']) {
-    const w = S.colWidths['names'];
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
-    document.querySelectorAll('td.nc').forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-  }
-
   let startX, startW;
   handle.addEventListener('mousedown', e => {
     e.preventDefault(); e.stopPropagation();
@@ -3734,7 +2568,6 @@ function initColResizers() {
     const handle = document.createElement('div');
     handle.className = 'col-resizer';
     th.appendChild(handle);
-
     let startX, startW;
     handle.addEventListener('mousedown', e => {
       e.preventDefault(); e.stopPropagation();
@@ -3758,164 +2591,6 @@ function initColResizers() {
       document.addEventListener('mouseup', onUp);
     });
   }
-}
-
-function initRowResizers() {
-  const rows = document.querySelectorAll('#tb tr');
-  rows.forEach((tr) => {
-    const ic = tr.querySelector('td.ic');
-    if (!ic || ic.querySelector('.row-resizer')) return;
-    const handle = document.createElement('div');
-    handle.className = 'row-resizer';
-    ic.appendChild(handle);
-  });
-}
-
-function initFixedColResizer(thId, tdSelector, rsKey, minW) {
-  const th = document.getElementById(thId);
-  if (!th || th.querySelector('.col-resizer')) return;
-  const handle = document.createElement('div');
-  handle.className = 'col-resizer';
-  th.appendChild(handle);
-
-  if (S.colWidths[rsKey]) {
-    const w = S.colWidths[rsKey];
-    th.style.width = w + 'px'; th.style.minWidth = w + 'px';
-    document.querySelectorAll(tdSelector).forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-  }
-
-  let startX, startW;
-  handle.addEventListener('mousedown', e => {
-    e.preventDefault(); e.stopPropagation();
-    startX = e.clientX; startW = th.getBoundingClientRect().width;
-    handle.classList.add('dragging');
-    function onMove(e) {
-      const w = Math.max(minW || 34, startW + e.clientX - startX);
-      th.style.width = w + 'px'; th.style.minWidth = w + 'px';
-      document.querySelectorAll(tdSelector).forEach(td => { td.style.width = w + 'px'; td.style.minWidth = w + 'px'; });
-      S.colWidths[rsKey] = w;
-    }
-    function onUp() {
-      handle.classList.remove('dragging');
-      saveData();
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-    }
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  });
-}
-
-function initColDnD() {
-  const table = document.getElementById('mainTable');
-  if (!table) return;
-  const mat = gm();
-
-  mat.weeks.forEach((w, wi) => {
-    const cols = mat.cols[w] || [];
-    if (cols.length < 2) return;
-
-    let offset = 0;
-    for (let i = 0; i < wi; i++) offset += (mat.cols[mat.weeks[i]] || []).length + 1;
-
-    const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
-    const weekThs = cols.map((_, ci) => row2ths[offset + ci]).filter(Boolean);
-
-    weekThs.forEach((th, ci) => {
-      th.classList.add('dnd-col');
-      th.setAttribute('draggable', 'true');
-
-      th.addEventListener('dragstart', e => {
-        if (e.target.classList.contains('col-resizer')) { e.preventDefault(); return; }
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', JSON.stringify({ w, ci }));
-        th.classList.add('dnd-dragging');
-      });
-      th.addEventListener('dragend', () => {
-        th.classList.remove('dnd-dragging', 'dnd-over');
-        table.querySelectorAll('th.dnd-over').forEach(el => el.classList.remove('dnd-over'));
-      });
-      th.addEventListener('dragover', e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        weekThs.forEach(t => t.classList.remove('dnd-over'));
-        th.classList.add('dnd-over');
-      });
-      th.addEventListener('dragleave', () => th.classList.remove('dnd-over'));
-      th.addEventListener('drop', e => {
-        e.preventDefault();
-        th.classList.remove('dnd-over');
-        try {
-          const { w: srcW, ci: srcCi } = JSON.parse(e.dataTransfer.getData('text/plain'));
-          if (srcW !== w || srcCi === ci) return;
-          const cols2 = gm().cols[w];
-          const [moved] = cols2.splice(srcCi, 1);
-          cols2.splice(ci, 0, moved);
-          render();
-          saveData();
-          toast('✔ Columna reordenada', '#16a34a');
-        } catch(err) {}
-      });
-    });
-  });
-}
-
-function initRowDnD() {
-  const rows = document.querySelectorAll('#tb tr');
-  rows.forEach((tr, fromIdx) => {
-    const ic = tr.querySelector('td.ic');
-    if (!ic) return;
-    ic.classList.add('dnd-row');
-    tr.setAttribute('draggable', 'true');
-
-    tr.addEventListener('dragstart', e => {
-      if (!e.target.closest('td.ic')) { e.preventDefault(); return; }
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', String(fromIdx));
-      tr.classList.add('dnd-row-dragging');
-    });
-    tr.addEventListener('dragend', () => {
-      tr.classList.remove('dnd-row-dragging');
-      document.querySelectorAll('tr.dnd-row-over').forEach(r => r.classList.remove('dnd-row-over'));
-    });
-    tr.addEventListener('dragover', e => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      document.querySelectorAll('tr.dnd-row-over').forEach(r => r.classList.remove('dnd-row-over'));
-      tr.classList.add('dnd-row-over');
-    });
-    tr.addEventListener('dragleave', () => tr.classList.remove('dnd-row-over'));
-    tr.addEventListener('drop', e => {
-      e.preventDefault();
-      tr.classList.remove('dnd-row-over');
-      const srcIdx = parseInt(e.dataTransfer.getData('text/plain'));
-      if (isNaN(srcIdx) || srcIdx === fromIdx) return;
-
-      const sorted = getSortedIndices();
-      const realSrc = sorted[srcIdx];
-      const realDst = sorted[fromIdx];
-
-      const [name] = S.students.splice(realSrc, 1);
-      S.students.splice(realDst, 0, name);
-
-      getMats().forEach(m => {
-        const mat = S.mats[m];
-        if (!mat) return;
-        const oldG = mat.grades;
-        const reordered = {};
-        const entries = [];
-        for (let i = 0; i < S.students.length; i++) entries.push(oldG[i] || {});
-        const [movedG] = entries.splice(realSrc, 1);
-        entries.splice(realDst, 0, movedG);
-        entries.forEach((g, i) => { reordered[i] = g; });
-        mat.grades = reordered;
-      });
-
-      render();
-      saveData();
-      toast('✔ Estudiante reordenado', '#16a34a');
-    });
-  });
 }
 
 function initBottomScrollbar() {
@@ -3947,9 +2622,6 @@ function initBottomScrollbar() {
   new ResizeObserver(syncWidth).observe(tw);
 }
 
-// ══════════════════════════════════════════════════════
-//  VISIBILIDAD (COLUMNAS / FILAS)
-// ══════════════════════════════════════════════════════
 function applyColVisibility() {
   const table = document.getElementById('mainTable');
   if (!table) return;
@@ -4006,9 +2678,9 @@ function refreshVisPanel() {
   const mat = gm();
   const mName = curMatName();
 
-  let html = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Haz clic para alternar visibilidad:</div>`;
+  let html = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Alternar visibilidad:</div>`;
 
-  mat.weeks.forEach((w, wi) => {
+  mat.weeks.forEach((w) => {
     const cols = mat.cols[w] || [];
     html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:8px 0 4px">${escHTML(w)}</div>`;
     cols.forEach(col => {
@@ -4037,78 +2709,7 @@ function showAllVis() { S.hiddenCols = {}; S.hiddenRows = {}; saveData(); applyC
 function hideAllRows() { S.students.forEach(n => S.hiddenRows[n] = true); saveData(); applyRowVisibility(); refreshVisPanel(); }
 
 // ══════════════════════════════════════════════════════
-//  MENÚ CONTEXTUAL (CLIC DERECHO EN NOTA)
-// ══════════════════════════════════════════════════════
-let _ctxInp = null, _ctxTd = null;
-
-function showCtxMenu(e, inp, td) {
-  e.preventDefault();
-  _ctxInp = inp; _ctxTd = td;
-
-  let html = `<div style="font-weight:700;color:var(--primary);font-size:0.75rem;padding:6px 12px;border-bottom:1px solid var(--border-color)">Estado de Calificación</div>`;
-  SPECIAL.forEach(s => {
-    html += `<div class="ctx-item" onclick="ctxSet('${s.val}')">
-      <span class="ctx-dot" style="background:${s.color};border:1.5px solid ${s.border}"></span>
-      <span style="flex:1">${s.icon} ${s.label}</span>
-      <kbd style="font-size:0.65rem;background:var(--bg-card-subtle);border:1px solid var(--border-color);padding:1px 4px;border-radius:3px">${s.val}</kbd>
-    </div>`;
-  });
-
-  html += `<div class="ctx-sep"></div>
-    <div class="ctx-item" onclick="ctxSet('clear')">
-      <span class="ctx-dot" style="background:#f1f5f9;border:1px solid #94a3b8"></span>
-      <span style="flex:1">⬜ Limpiar Celda</span>
-    </div>`;
-
-  const menu = document.getElementById('ctxMenu');
-  menu.innerHTML = html;
-  menu.style.display = 'block';
-
-  let x = e.clientX, y = e.clientY;
-  const mw = 210, mh = menu.offsetHeight || 220;
-  if (x + mw > window.innerWidth)  x = window.innerWidth - mw - 8;
-  if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
-  menu.style.left = x + 'px';
-  menu.style.top  = y + 'px';
-}
-
-function ctxSet(val) {
-  closeCtxMenu();
-  if (!_ctxInp || !_ctxTd) return;
-  const oc = _ctxInp.getAttribute('onchange') || '';
-  const m  = oc.match(/upd\((\d+),'([^']+)','([^']+)'/);
-  if (!m) return;
-  const si = parseInt(m[1]), week = m[2], col = m[3];
-
-  if (val === 'clear') {
-    upd(si, week, col, '');
-    applySpecial(_ctxTd, _ctxInp, null);
-  } else {
-    upd(si, week, col, val);
-    applySpecial(_ctxTd, _ctxInp, val);
-  }
-}
-
-function closeCtxMenu() {
-  document.getElementById('ctxMenu').style.display = 'none';
-  _ctxInp = null; _ctxTd = null;
-}
-
-document.addEventListener('click', () => closeCtxMenu());
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtxMenu(); });
-
-document.addEventListener('contextmenu', e => {
-  const inp = e.target.closest('input.gi');
-  if (inp) { showCtxMenu(e, inp, inp.parentElement); return; }
-  const td = e.target.closest('td');
-  if (td && !td.classList.contains('ic') && !td.classList.contains('nc') && !td.classList.contains('ac') && !td.classList.contains('prom-c') && !td.classList.contains('prom-wk')) {
-    const i = td.querySelector('input.gi');
-    if (i) showCtxMenu(e, i, td);
-  }
-});
-
-// ══════════════════════════════════════════════════════
-//  CONFIGURACIÓN MODO OSCURO & TAMAÑO DE FUENTE
+//  MODO OSCURO & TAMAÑO DE FUENTE
 // ══════════════════════════════════════════════════════
 function toggleDark() {
   const dark = document.body.classList.toggle('dark');
@@ -4139,7 +2740,7 @@ function changeFontSize(delta, absolute) {
 }
 
 // ══════════════════════════════════════════════════════
-//  FIREBASE & AUTENTICACIÓN
+//  FIREBASE & AUTH
 // ══════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyDJYqrndXMm_c8uapKeJMDbLElJR3ls3S8",
@@ -4169,9 +2770,7 @@ function signInGoogle() {
   });
 }
 
-function signOutUser() {
-  auth.signOut();
-}
+function signOutUser() { auth.signOut(); }
 
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -4191,7 +2790,7 @@ function showLogin() {
 
 function continueOfflineMode() {
   _currentUser = null;
-  const localUser = { displayName: 'Docente (Modo Local)', email: 'docente@modo.local' };
+  const localUser = { displayName: 'Docente Séptimo de Básica', email: 'docente@modo.local' };
   showApp(localUser);
   initS();
   render();
@@ -4219,12 +2818,9 @@ async function loadFromFirestore() {
   setSyncStatus('⏳ Cargando datos...', 'syncing');
   try {
     const doc = await db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado').get();
-    if (doc.exists) {
-      const data = doc.data();
-      if (data && data.state) {
-        S = data.state;
-        ensureMats();
-      }
+    if (doc.exists && doc.data()?.state) {
+      S = doc.data().state;
+      ensureMats();
     } else {
       initS();
       await saveToFirestore();
@@ -4232,10 +2828,7 @@ async function loadFromFirestore() {
     render();
     setSyncStatus('🟢 En la nube', 'online');
   } catch(e) {
-    console.warn('Error fetching Firestore doc, fallback to local', e);
-    initS();
-    render();
-    setSyncStatus('🟡 Modo Local', 'offline');
+    initS(); render(); setSyncStatus('🟡 Modo Local', 'offline');
   }
 }
 
@@ -4248,21 +2841,15 @@ async function saveToFirestore() {
     });
     setSyncStatus('🟢 En la nube', 'online');
   } catch(e) {
-    console.warn('Error saving Firestore', e);
     setSyncStatus('🟡 Guardado local', 'offline');
   }
 }
 
-window.addEventListener('online', () => {
-  setSyncStatus('🟢 Reconectado', 'online');
-  saveToFirestore();
-});
-window.addEventListener('offline', () => {
-  setSyncStatus('🟡 Sin conexión', 'offline');
-});
+window.addEventListener('online', () => { setSyncStatus('🟢 Reconectado', 'online'); saveToFirestore(); });
+window.addEventListener('offline', () => { setSyncStatus('🟡 Sin conexión', 'offline'); });
 
 // ══════════════════════════════════════════════════════
-//  INICIALIZACIÓN AL ABRIR LA PÁGINA
+//  INIT
 // ══════════════════════════════════════════════════════
 loadDark();
 applyFontSize();
