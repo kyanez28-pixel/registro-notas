@@ -362,10 +362,18 @@ th {
   position: sticky; top: 0; z-index: 3; border-right: 1px solid rgba(255,255,255,0.15);
   border-bottom: 1px solid rgba(255,255,255,0.15); user-select: none; font-weight: 700;
 }
-th.wh { cursor: pointer; transition: filter .15s ease; }
+th.wh { position: sticky; top: 0; z-index: 5; cursor: pointer; transition: filter .15s ease; }
 th.wh:hover { filter: brightness(1.12); }
-th.sh { font-size: 0.7rem; cursor: pointer; position: sticky; top: 30px; font-weight: 600; }
+th.sh { font-size: 0.7rem; cursor: pointer; position: sticky; top: 26px; z-index: 4; font-weight: 600; padding: 3px 4px; }
 th.sh:hover { filter: brightness(1.1); }
+
+.col-del-btn {
+  position: absolute; top: -2px; right: -2px; background: rgba(0,0,0,0.4); color: #ffffff;
+  border: none; border-radius: 50%; width: 15px; height: 15px; font-size: 0.55rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0.65; transition: opacity .15s ease, transform .15s ease, background .15s ease; z-index: 10;
+}
+.col-del-btn:hover { opacity: 1; transform: scale(1.2); background: #dc2626; }
 
 /* Sticky Left Columns */
 th.fxl { position: sticky; left: 0; z-index: 6; background: #1e3a8a; }
@@ -1489,9 +1497,11 @@ function renderTable() {
         const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
         const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
         r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar · '✕' para borrar"
-          style="background:${bg};border-color:${bg};min-width:46px;position:relative">
-          <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.35);color:#fff;border:none;border-radius:50%;width:14px;height:14px;font-size:0.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
-          ${lbl}${typeBadge}
+          style="background:${bg};border-color:${bg};min-width:48px">
+          <div style="position:relative;width:100%;padding:2px 0">
+            <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn">✕</button>
+            ${lbl}${typeBadge}
+          </div>
         </th>`;
       });
     }
