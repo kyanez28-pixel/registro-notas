@@ -743,6 +743,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
     ➕ Actividad
   </button>
+  <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
+    🗑 Actividad
+  </button>
   <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
     🗑 Semana
   </button>
@@ -1485,8 +1488,11 @@ function renderTable() {
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
         const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
         const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
-        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar"
-          style="background:${bg};border-color:${bg};min-width:46px">${lbl}${typeBadge}</th>`;
+        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar · '✕' para borrar"
+          style="background:${bg};border-color:${bg};min-width:46px;position:relative">
+          <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.35);color:#fff;border:none;border-radius:50%;width:14px;height:14px;font-size:0.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+          ${lbl}${typeBadge}
+        </th>`;
       });
     }
     r2 += `<th class="sh" style="background:${wc.h};border-color:${wc.h};font-weight:700">PROM</th>`;
@@ -2361,6 +2367,66 @@ function editColName(wi, ci) {
   showColModal(w, gm().cols[w][ci], true, wi, ci);
 }
 
+function delCol(wi, ci) {
+  const mat = gm();
+  const w = mat.weeks[wi];
+  if (!mat || !mat.cols[w] || !mat.cols[w][ci]) return;
+  const col = mat.cols[w][ci];
+
+  confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.name)}</strong> (${escHTML(w)}) y todas sus calificaciones?`, () => {
+    const deletedColName = col.name;
+    mat.cols[w].splice(ci, 1);
+
+    const key = w + '||' + deletedColName;
+    S.students.forEach((_, si) => {
+      if (mat.grades[si]) {
+        delete mat.grades[si][key];
+      }
+    });
+
+    closeModal();
+    render();
+    saveData();
+    toast(`🗑 Actividad "${deletedColName}" eliminada`, '#dc2626');
+  });
+}
+
+function openDelColModal() {
+  const mat = gm();
+  const allCols = [];
+  mat.weeks.forEach((w, wi) => {
+    (mat.cols[w] || []).forEach((c, ci) => {
+      allCols.push({ w, wi, ci, name: c.name, type: c.type });
+    });
+  });
+
+  if (!allCols.length) {
+    toast('⚠️ No hay actividades para eliminar en esta materia', '#d97706');
+    return;
+  }
+
+  const opts = allCols.map(c => 
+    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} → ${escHTML(c.name)} (${actType(c.type).label})</option>`
+  ).join('');
+
+  showModal(
+    '🗑 Eliminar Actividad Evaluativa',
+    `
+    <label>Selecciona la Actividad a Eliminar</label>
+    <select id="mDelColSel">${opts}</select>
+    <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">Se eliminará la columna y las calificaciones asociadas en esta materia.</div>
+    `,
+    'Eliminar Actividad',
+    () => {
+      const val = document.getElementById('mDelColSel').value;
+      const [wiStr, ciStr] = val.split('||');
+      closeModal();
+      delCol(parseInt(wiStr), parseInt(ciStr));
+    },
+    'btn-danger'
+  );
+}
+
 function showColModal(selWeek, col, isEdit, wi, ci) {
   const mat = gm();
   const weekOpts = mat.weeks.map(w => `<option value="${escVal(w)}" ${w===selWeek?'selected':''}>${escHTML(w)}</option>`).join('');
@@ -2369,6 +2435,8 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
   }).join('');
 
+  const delBtnHTML = isEdit ? `<button type="button" class="btn btn-danger" onclick="closeModal();delCol(${wi},${ci})" style="margin-top:12px;width:100%;justify-content:center">🗑 Eliminar esta Actividad</button>` : '';
+
   showModal(
     isEdit ? '✎ Editar Actividad' : '➕ Nueva Actividad Evaluativa',
     `
@@ -2376,6 +2444,7 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     <label>Código / Nombre</label><input type="text" id="mColName" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, PI, Examen"/>
     <label>Tipo Ministerial</label><select id="mColType">${typeOpts}</select>
     <label>Fecha (Opcional)</label><input type="date" id="mColDate" value="${col&&col.date?escVal(col.date):''}"/>
+    ${delBtnHTML}
     `,
     'Guardar',
     () => {
