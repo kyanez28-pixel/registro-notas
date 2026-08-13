@@ -1562,6 +1562,7 @@ function renderTable() {
     </th>`;
 
   // Fila 1: Semanas y Bloques Ponderados
+  // Fila 1: Semanas y Bloques Ponderados
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
     const wTitle = getWeekTitle(w);
@@ -1575,15 +1576,10 @@ function renderTable() {
       ondrop="handleWeekDrop(event, ${wi})"
       ondragend="handleWeekDragEnd(event)"
       ondblclick="editWeekName(${wi})"
-      title="Arrastra para mover la semana · Doble clic para editar · ◀ ▶ para reordenar"
-      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:6px 8px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-        <button class="week-move-btn" onclick="event.stopPropagation();moveWeekStep(${wi},-1)" title="Mover semana a la izquierda" ${wi===0?'style="opacity:0.3;pointer-events:none"':''}>◀</button>
-        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px">
-          ${escHTML(wTitle)}
-        </div>
-        <button class="week-move-btn" onclick="event.stopPropagation();moveWeekStep(${wi},1)" title="Mover semana a la derecha" ${wi===mat.weeks.length-1?'style="opacity:0.3;pointer-events:none"':''}>▶</button>
-      </div>
+      oncontextmenu="openWeekContextMenu(event, ${wi})"
+      title="${escHTML(wTitle)} · Arrastra para mover semana · Doble clic para editar · Clic derecho para opciones"
+      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:grab;text-align:center">
+      ${escHTML(wTitle)}
     </th>`;
   });
 
@@ -1608,7 +1604,8 @@ function renderTable() {
         ondragover="handleColDragOver(event)"
         ondragleave="handleColDragLeave(event)"
         ondrop="handleColDrop(event, '${esc(wName)}', 0)"
-        title="Doble clic para agregar actividad · Suelta una actividad aquí para moverla a esta semana"
+        oncontextmenu="openWeekContextMenu(event, ${wi})"
+        title="Doble clic para agregar actividad · Arrastra y suelta aquí para mover a esta semana"
         style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer">+ act</th>`;
     } else {
       c.forEach((col, ci) => {
@@ -1616,11 +1613,11 @@ function renderTable() {
         const bg = col.color || at.color;
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
 
-        // Mostrar la descripción (o nombre si no tiene) como texto principal en grande
+        // Mostrar la descripción (o nombre si no tiene) como texto principal en grande y limpio
         const displayName = col.desc || col.name;
-        const actNameHTML = `<div style="font-size:0.82rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal">${escHTML(displayName)}</div>`;
-        const dateHTML = col.date ? `<div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
-        const typeHTML = `<div style="font-size:0.60rem;font-weight:600;color:rgba(255,255,255,0.80);line-height:1.2">${escHTML(at.label)}${catBadge}</div>`;
+        const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal">${escHTML(displayName)}</div>`;
+        const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
+        const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2">${escHTML(at.label)}${catBadge}</div>`;
 
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
@@ -1631,20 +1628,13 @@ function renderTable() {
           ondrop="handleColDrop(event, '${esc(wName)}', ${ci})"
           ondragend="handleColDragEnd(event)"
           ondblclick="editColName(${wi},${ci})"
-          title="${fullTitle} · Arrastra para mover columna · ◀ ▶ para reordenar · Doble clic para editar · 📋 copiar · ✕ borrar"
-          style="background:${bg};border-color:${bg};min-width:125px;padding:6px 8px;vertical-align:top">
-          <div style="position:relative;width:100%">
-            <div style="position:absolute;top:-2px;right:-4px;display:flex;gap:2px;z-index:2">
-              <button onclick="event.stopPropagation();moveColStep(${wi},${ci},-1)" title="Mover actividad a la izquierda" class="col-move-btn">◀</button>
-              <button onclick="event.stopPropagation();moveColStep(${wi},${ci},1)" title="Mover actividad a la derecha" class="col-move-btn">▶</button>
-              <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(wName)}','${esc(col.name)}')" title="Copiar columna para Excel/Word" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">📋</button>
-              <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">✕</button>
-            </div>
-            <div style="padding-right:56px">
-              ${actNameHTML}
-              ${dateHTML}
-              ${typeHTML}
-            </div>
+          oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
+          title="${fullTitle} · Arrastra para mover · Doble clic para editar · Clic derecho para opciones"
+          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:grab">
+          <div style="width:100%;text-align:center">
+            ${actNameHTML}
+            ${dateHTML}
+            ${typeHTML}
           </div>
         </th>`;
       });
@@ -2927,6 +2917,111 @@ function openManageColumns() {
   );
 }
 
+function openColContextMenu(e, wi, ci, weekName, colName) {
+  e.preventDefault();
+  e.stopPropagation();
+  const mat = gm();
+  if (!mat) return;
+  const col = mat.cols[weekName] && mat.cols[weekName][ci];
+  if (!col) return;
+  const displayName = col.desc || col.name;
+
+  const menu = document.getElementById('ctxMenu');
+  if (!menu) return;
+
+  menu.innerHTML = `
+    <div style="padding:8px 14px;font-size:0.78rem;font-weight:800;color:var(--text-main);border-bottom:1px solid var(--border-color);background:var(--bg-card-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">
+      📌 ${escHTML(displayName)}
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('activity','${esc(weekName)}','${esc(colName)}')">
+      📋 Copiar Columna (Excel/Word)
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="closeCtxMenu();moveColStep(${wi},${ci},-1)">
+      ◀ Mover a la Izquierda
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();moveColStep(${wi},${ci},1)">
+      ▶ Mover a la Derecha
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();openManageColumns()">
+      ⇄ Organizar todas las columnas...
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="closeCtxMenu();editColName(${wi},${ci})">
+      ✎ Editar Detalles y Nombre
+    </div>
+    <div class="ctx-item" style="color:#dc2626" onclick="closeCtxMenu();delCol(${wi},${ci})">
+      🗑 Eliminar Actividad
+    </div>
+  `;
+
+  menu.style.display = 'block';
+  const menuWidth = 240;
+  const menuHeight = 250;
+  let left = e.clientX;
+  let top = e.clientY;
+  if (left + menuWidth > window.innerWidth) left = window.innerWidth - menuWidth - 10;
+  if (top + menuHeight > window.innerHeight) top = window.innerHeight - menuHeight - 10;
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+
+function openWeekContextMenu(e, wi) {
+  e.preventDefault();
+  e.stopPropagation();
+  const mat = gm();
+  if (!mat) return;
+  const w = mat.weeks[wi];
+  if (!w) return;
+  const wTitle = getWeekTitle(w);
+  const wName = getWeekName(w);
+
+  const menu = document.getElementById('ctxMenu');
+  if (!menu) return;
+
+  menu.innerHTML = `
+    <div style="padding:8px 14px;font-size:0.78rem;font-weight:800;color:var(--text-main);border-bottom:1px solid var(--border-color);background:var(--bg-card-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">
+      📅 ${escHTML(wTitle)}
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();moveWeekStep(${wi},-1)">
+      ◀ Mover Semana a la Izquierda
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();moveWeekStep(${wi},1)">
+      ▶ Mover Semana a la Derecha
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')">
+      📋 Copiar Promedios de Semana
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="closeCtxMenu();addColToWeek('${esc(wName)}')">
+      ➕ Agregar Actividad a esta Semana
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();editWeekName(${wi})">
+      ✎ Editar Tema y Destreza
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" style="color:#dc2626" onclick="closeCtxMenu();openDelWeek()">
+      🗑 Eliminar Semana...
+    </div>
+  `;
+
+  menu.style.display = 'block';
+  const menuWidth = 240;
+  const menuHeight = 240;
+  let left = e.clientX;
+  let top = e.clientY;
+  if (left + menuWidth > window.innerWidth) left = window.innerWidth - menuWidth - 10;
+  if (top + menuHeight > window.innerHeight) top = window.innerHeight - menuHeight - 10;
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+
+function closeCtxMenu() {
+  const menu = document.getElementById('ctxMenu');
+  if (menu) menu.style.display = 'none';
+}
+document.addEventListener('click', closeCtxMenu);
+
 function showColModal(selWeek, col, isEdit, wi, ci) {
   const mat = gm();
   const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
@@ -2935,7 +3030,17 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
   }).join('');
 
-  const delBtnHTML = isEdit ? `<button type="button" class="btn btn-danger" onclick="closeModal();delCol(${wi},${ci})" style="margin-top:12px;width:100%;justify-content:center">🗑 Eliminar esta Actividad</button>` : '';
+  const actionsHTML = isEdit ? `
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color)">
+      <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-bottom:8px">Acciones Rápidas:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},-1)" title="Mover a la izquierda">◀ Mover Izq</button>
+        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},1)" title="Mover a la derecha">Mover Der ▶</button>
+        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();copyMainColumn('activity','${esc(selWeek)}','${esc(col.name)}')" title="Copiar notas para Excel">📋 Copiar</button>
+        <button type="button" class="btn btn-danger" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();delCol(${wi},${ci})" title="Eliminar actividad">🗑 Eliminar</button>
+      </div>
+    </div>
+  ` : '';
 
   // Valor mostrado: si tiene desc usa esa, sino usa name (retrocompatibilidad)
   const descVal = col ? escVal(col.desc || col.name || '') : '';
@@ -2951,7 +3056,7 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
       style="font-size:1rem;font-weight:700;padding:10px 12px;letter-spacing:0.2px;border:2px solid var(--primary)"/>
     <label>Tipo Ministerial</label><select id="mColType">${typeOpts}</select>
     <label>Fecha (Opcional)</label><input type="date" id="mColDate" value="${col&&col.date?escVal(col.date):''}"/>
-    ${delBtnHTML}
+    ${actionsHTML}
     `,
     'Guardar',
     () => {
