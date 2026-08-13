@@ -6049,176 +6049,244 @@ function formatPhoneWhatsApp(phoneStr) {
   return intl;
 }
 
+// ── Definición de columnas de la Matriz ──────────────────────────────────
+const MATRIX_COLS_DEF = [
+  { id:'cedula',       label:'Cédula',                group:'est',  bg:'#2563eb', minW:95  },
+  { id:'fecha_nac',    label:'Fecha Nac.',             group:'est',  bg:'#2563eb', minW:90  },
+  { id:'edad',         label:'Edad',                   group:'est',  bg:'#2563eb', minW:130 },
+  { id:'nnee',         label:'NN.EE.',                 group:'est',  bg:'#2563eb', minW:65  },
+  { id:'enfermedad',   label:'Enfermedad / Alergia',   group:'est',  bg:'#2563eb', minW:120 },
+  { id:'hermanos',     label:'Hermanos Inst.',          group:'est',  bg:'#2563eb', minW:115 },
+  { id:'rep_nombre',   label:'Nombre Representante',   group:'rep',  bg:'#16a34a', minW:175 },
+  { id:'rep_cedula',   label:'Cédula Rep.',            group:'rep',  bg:'#16a34a', minW:95  },
+  { id:'rep_telefono', label:'Teléfono / WhatsApp',    group:'rep',  bg:'#16a34a', minW:130 },
+  { id:'direccion',    label:'Dirección Domiciliaria', group:'rep',  bg:'#16a34a', minW:180 },
+  { id:'rep_email',    label:'Correo Electrónico',     group:'rep',  bg:'#16a34a', minW:155 },
+  { id:'tel_emerg',    label:'Tel. Emergencia',        group:'rep',  bg:'#16a34a', minW:125 },
+  { id:'madre_nombre', label:'Nombre Madre',           group:'madre',bg:'#9333ea', minW:175 },
+  { id:'madre_cedula', label:'Cédula Madre',           group:'madre',bg:'#9333ea', minW:95  },
+  { id:'madre_tel',    label:'Teléfono Madre',         group:'madre',bg:'#9333ea', minW:115 },
+  { id:'padre_nombre', label:'Nombre Padre',           group:'padre',bg:'#ea580c', minW:175 },
+  { id:'padre_cedula', label:'Cédula Padre',           group:'padre',bg:'#ea580c', minW:95  },
+  { id:'padre_tel',    label:'Teléfono Padre',         group:'padre',bg:'#ea580c', minW:115 },
+];
+
+function getMatrixColOrder() {
+  if (!S.matrixColOrder || S.matrixColOrder.length !== MATRIX_COLS_DEF.length) {
+    S.matrixColOrder = MATRIX_COLS_DEF.map(c => c.id);
+  }
+  return S.matrixColOrder;
+}
+
+function getOrderedMatrixCols() {
+  const order = getMatrixColOrder();
+  return order.map(id => MATRIX_COLS_DEF.find(c => c.id === id)).filter(Boolean);
+}
+
+function getCellValue(p, colId, si) {
+  const name = p.nombre || `Estudiante ${si+1}`;
+  switch(colId) {
+    case 'cedula':       return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.cedula||'—')}</span>`;
+    case 'fecha_nac':    return `<span style="font-size:0.75rem">${escHTML(p.fecha_nacimiento||'—')}</span>`;
+    case 'edad':         return `<span style="font-size:0.72rem;color:var(--text-muted)">${escHTML(calculateAgeFromBirthDate(p.fecha_nacimiento)||p.edad||'—')}</span>`;
+    case 'nnee': {
+      const si2 = (p.nnee||'').trim().toUpperCase().startsWith('S');
+      return si2
+        ? `<span style="background:#fef3c7;color:#b45309;padding:2px 6px;border-radius:4px;font-weight:800;font-size:0.7rem;border:1px solid #fcd34d">SI</span>`
+        : `<span style="color:var(--text-light);font-size:0.7rem">NO</span>`;
+    }
+    case 'enfermedad':   return `<span title="${escVal(p.enfermedad)}" style="font-size:0.72rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(p.enfermedad||'—')}</span>`;
+    case 'hermanos':     return `<span title="${escVal(p.hermanos_inst)}" style="font-size:0.72rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(p.hermanos_inst||'—')}</span>`;
+    case 'rep_nombre':   return `<span style="font-weight:600;font-size:0.78rem">${escHTML(p.rep_nombre||'—')}</span>`;
+    case 'rep_cedula':   return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.rep_cedula||'—')}</span>`;
+    case 'rep_telefono': {
+      const wa = formatPhoneWhatsApp(p.rep_telefono);
+      return p.rep_telefono
+        ? `<div style="display:flex;align-items:center;justify-content:center;gap:4px"><span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:600">${escHTML(p.rep_telefono)}</span>${wa?`<a href="https://wa.me/${wa}" target="_blank" style="text-decoration:none;font-size:0.82rem">💬</a>`:''}</div>`
+        : '<span style="color:var(--text-light)">—</span>';
+    }
+    case 'direccion':    return `<span title="${escVal(p.direccion)}" style="font-size:0.72rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(p.direccion||'—')}</span>`;
+    case 'rep_email':    return `<span title="${escVal(p.rep_email)}" style="font-size:0.72rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(p.rep_email||'—')}</span>`;
+    case 'tel_emerg':    return `<span title="${escVal(p.tel_emergencia)}" style="font-size:0.72rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(p.tel_emergencia||'—')}</span>`;
+    case 'madre_nombre': return `<span style="font-size:0.75rem">${escHTML(p.madre_nombre||'—')}</span>`;
+    case 'madre_cedula': return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.madre_cedula||'—')}</span>`;
+    case 'madre_tel': {
+      const wa = formatPhoneWhatsApp(p.madre_telefono);
+      return p.madre_telefono
+        ? `<div style="display:flex;align-items:center;justify-content:center;gap:4px"><span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.madre_telefono)}</span>${wa?`<a href="https://wa.me/${wa}" target="_blank" style="text-decoration:none;font-size:0.78rem">💬</a>`:''}</div>`
+        : '<span style="color:var(--text-light)">—</span>';
+    }
+    case 'padre_nombre': return `<span style="font-size:0.75rem">${escHTML(p.padre_nombre||'—')}</span>`;
+    case 'padre_cedula': return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.padre_cedula||'—')}</span>`;
+    case 'padre_tel': {
+      const wa = formatPhoneWhatsApp(p.padre_telefono);
+      return p.padre_telefono
+        ? `<div style="display:flex;align-items:center;justify-content:center;gap:4px"><span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.padre_telefono)}</span>${wa?`<a href="https://wa.me/${wa}" target="_blank" style="text-decoration:none;font-size:0.78rem">💬</a>`:''}</div>`
+        : '<span style="color:var(--text-light)">—</span>';
+    }
+    default: return '—';
+  }
+}
+
+// Drag state for matrix columns
+let _mxDragCol = null;
+
 function renderStudentsMatrix() {
   ensureStudentProfiles();
   const tb = document.getElementById('stMatrixTb');
-  const th = document.getElementById('stMatrixTh');
+  const thEl = document.getElementById('stMatrixTh');
   const statsDiv = document.getElementById('stMatrixStats');
-  if (!tb || !th) return;
+  if (!tb || !thEl) return;
 
-  // Estadísticas del Módulo
+  // ── Estadísticas ──────────────────────────────────────────────────────────
   const total = S.studentProfiles.length;
-  const withNnee = S.studentProfiles.filter(p => p.nnee && p.nnee.trim().toUpperCase().startsWith('S')).length;
-  const withEnf = S.studentProfiles.filter(p => p.enfermedad && p.enfermedad.trim().toUpperCase() !== 'NO' && p.enfermedad.trim().toUpperCase() !== 'NINGUNA' && p.enfermedad.trim().toUpperCase() !== 'NINGÚNA' && p.enfermedad.trim() !== '').length;
-  const withRepTel = S.studentProfiles.filter(p => p.rep_telefono && p.rep_telefono.trim().length > 5).length;
+  const withNnee  = S.studentProfiles.filter(p => p.nnee && p.nnee.trim().toUpperCase().startsWith('S')).length;
+  const withEnf   = S.studentProfiles.filter(p => p.enfermedad && !['NO','NINGUNA','NINGÚNA',''].includes((p.enfermedad||'').trim().toUpperCase())).length;
+  const withRepTel= S.studentProfiles.filter(p => p.rep_telefono && p.rep_telefono.trim().length > 5).length;
 
-  if (statsDiv) {
-    statsDiv.innerHTML = `
-      <div class="stat-card" style="border-left:4px solid #2563eb;padding:10px 14px">
-        <div class="stat-card-title">TOTAL MATRICULADOS</div>
-        <div class="stat-card-val" style="color:#2563eb">${total}</div>
-        <div class="stat-card-sub">Nómina General</div>
-      </div>
-      <div class="stat-card" style="border-left:4px solid #f97316;padding:10px 14px">
-        <div class="stat-card-title">CON NN.EE. / DISCAPACIDAD</div>
-        <div class="stat-card-val" style="color:#f97316">${withNnee}</div>
-        <div class="stat-card-sub">Atención Específica</div>
-      </div>
-      <div class="stat-card" style="border-left:4px solid #dc2626;padding:10px 14px">
-        <div class="stat-card-title">CONDICIÓN MÉDICA / ALERGIAS</div>
-        <div class="stat-card-val" style="color:#dc2626">${withEnf}</div>
-        <div class="stat-card-sub">Salud y Cuidado</div>
-      </div>
-      <div class="stat-card" style="border-left:4px solid #16a34a;padding:10px 14px">
-        <div class="stat-card-title">CONTACTOS CON WHATSAPP</div>
-        <div class="stat-card-val" style="color:#16a34a">${withRepTel} / ${total}</div>
-        <div class="stat-card-sub">Comunicación Directa</div>
-      </div>
-    `;
-  }
+  if (statsDiv) statsDiv.innerHTML = `
+    <div class="stat-card" style="border-left:4px solid #2563eb;padding:10px 14px">
+      <div class="stat-card-title">TOTAL MATRICULADOS</div>
+      <div class="stat-card-val" style="color:#2563eb">${total}</div>
+      <div class="stat-card-sub">Nómina General</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #f97316;padding:10px 14px">
+      <div class="stat-card-title">CON NN.EE. / DISCAPACIDAD</div>
+      <div class="stat-card-val" style="color:#f97316">${withNnee}</div>
+      <div class="stat-card-sub">Atención Específica</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #dc2626;padding:10px 14px">
+      <div class="stat-card-title">CONDICIÓN MÉDICA / ALERGIAS</div>
+      <div class="stat-card-val" style="color:#dc2626">${withEnf}</div>
+      <div class="stat-card-sub">Salud y Cuidado</div>
+    </div>
+    <div class="stat-card" style="border-left:4px solid #16a34a;padding:10px 14px">
+      <div class="stat-card-title">CONTACTOS CON WHATSAPP</div>
+      <div class="stat-card-val" style="color:#16a34a">${withRepTel} / ${total}</div>
+      <div class="stat-card-sub">Comunicación Directa</div>
+    </div>`;
 
-  // Encabezados agrupados
-  th.innerHTML = `
+  // ── Construir encabezado con columnas ordenadas ───────────────────────────
+  const orderedCols = getOrderedMatrixCols();
+
+  // Agrupar para fila 1
+  const groups = [];
+  let lastGroup = null;
+  orderedCols.forEach(col => {
+    if (col.group !== lastGroup) {
+      groups.push({ group: col.group, count: 1, bg: col.bg });
+      lastGroup = col.group;
+    } else {
+      groups[groups.length - 1].count++;
+    }
+  });
+  const groupLabels = { est:'DATOS DEL ESTUDIANTE', rep:'REPRESENTANTE LEGAL', madre:'DATOS DE LA MADRE', padre:'DATOS DEL PADRE' };
+  const groupBgs    = { est:'#1e40af', rep:'#15803d', madre:'#7e22ce', padre:'#c2410c' };
+
+  const row1Groups = groups.map(g =>
+    `<th colspan="${g.count}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">${groupLabels[g.group]||''}</th>`
+  ).join('');
+
+  const row2Ths = orderedCols.map((col, ci) => {
+    const w = S.colWidths[`matrix||${col.id}`] || col.minW;
+    return `<th data-mx-col="${col.id}" data-mx-ci="${ci}"
+      draggable="true"
+      title="⇄ Arrastra para mover · Borde derecho para redimensionar"
+      style="background:${col.bg};min-width:${w}px;width:${w}px;position:relative;cursor:grab;user-select:none;white-space:nowrap"
+      ondragstart="_mxColDragStart(event,'${col.id}')"
+      ondragover="_mxColDragOver(event)"
+      ondragleave="_mxColDragLeave(event)"
+      ondrop="_mxColDrop(event,'${col.id}')"
+      ondragend="_mxColDragEnd(event)"
+    >${escHTML(col.label)}<div class="col-resizer" data-mx-resize="${col.id}"></div></th>`;
+  }).join('');
+
+  thEl.innerHTML = `
     <tr>
       <th rowspan="2" class="fxl" style="width:34px;min-width:34px;background:#1e3a8a">#</th>
       <th rowspan="2" class="fxn" style="min-width:210px;text-align:left;padding-left:12px;background:#1e3a8a">NÓMINA DE ESTUDIANTES</th>
-      <th colspan="6" style="background:#1e40af;font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">DATOS DEL ESTUDIANTE</th>
-      <th colspan="6" style="background:#15803d;font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">REPRESENTANTE LEGAL</th>
-      <th colspan="3" style="background:#7e22ce;font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">DATOS DE LA MADRE</th>
-      <th colspan="3" style="background:#c2410c;font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">DATOS DEL PADRE</th>
+      ${row1Groups}
       <th rowspan="2" style="width:70px;min-width:70px;background:#0f172a">Ficha</th>
     </tr>
-    <tr>
-      <th style="background:#2563eb;min-width:95px">Cédula</th>
-      <th style="background:#2563eb;min-width:90px">Fecha Nac.</th>
-      <th style="background:#2563eb;min-width:130px">Edad</th>
-      <th style="background:#2563eb;min-width:65px">NN.EE.</th>
-      <th style="background:#2563eb;min-width:110px">Enfermedad / Alergia</th>
-      <th style="background:#2563eb;min-width:110px">Hermanos Inst.</th>
+    <tr>${row2Ths}</tr>`;
 
-      <th style="background:#16a34a;min-width:170px">Nombre Representante</th>
-      <th style="background:#16a34a;min-width:95px">Cédula Rep.</th>
-      <th style="background:#16a34a;min-width:125px">Teléfono / WhatsApp</th>
-      <th style="background:#16a34a;min-width:180px">Dirección Domiciliaria</th>
-      <th style="background:#16a34a;min-width:150px">Correo Electrónico</th>
-      <th style="background:#16a34a;min-width:125px">Tel. Emergencia</th>
+  // ── Inicializar resizers ───────────────────────────────────────────────────
+  thEl.querySelectorAll('.col-resizer[data-mx-resize]').forEach(handle => {
+    handle.setAttribute('draggable', 'false');
+    handle.addEventListener('dragstart', e => { e.preventDefault(); e.stopPropagation(); });
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const colId = handle.getAttribute('data-mx-resize');
+      const th = handle.parentElement;
+      const table = document.getElementById('stMatrixTable');
+      const startX = e.clientX;
+      const startW = th.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      const colDef = MATRIX_COLS_DEF.find(c => c.id === colId);
+      const minW   = colDef ? colDef.minW : 50;
 
-      <th style="background:#9333ea;min-width:170px">Nombre Madre</th>
-      <th style="background:#9333ea;min-width:95px">Cédula Madre</th>
-      <th style="background:#9333ea;min-width:115px">Teléfono Madre</th>
+      function onMove(ev) {
+        const w = Math.max(minW, startW + ev.clientX - startX);
+        th.style.width = w + 'px'; th.style.minWidth = w + 'px';
+        // Aplicar a todas las celdas de esa columna (nth-child relativo al ci+3)
+        const ci = parseInt(th.getAttribute('data-mx-ci'));
+        if (!isNaN(ci)) {
+          table && table.querySelectorAll(`tbody tr td:nth-child(${ci + 3})`).forEach(td => {
+            td.style.width = w + 'px'; td.style.minWidth = w + 'px';
+          });
+        }
+        if (!S.colWidths) S.colWidths = {};
+        S.colWidths[`matrix||${colId}`] = w;
+      }
+      function onUp() {
+        handle.classList.remove('dragging');
+        saveData();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  });
 
-      <th style="background:#ea580c;min-width:170px">Nombre Padre</th>
-      <th style="background:#ea580c;min-width:95px">Cédula Padre</th>
-      <th style="background:#ea580c;min-width:115px">Teléfono Padre</th>
-    </tr>
-  `;
-
+  // ── Filas de datos ────────────────────────────────────────────────────────
   const filterNnee = document.getElementById('stMatrixFilterNnee')?.value || 'all';
   const query = (document.getElementById('stMatrixSearch')?.value || '').trim().toLowerCase();
 
   const rowsHTML = S.studentProfiles.map((p, si) => {
-    // Sincronizar nombre con S.students si existe
-    if (S.students[si] && S.students[si] !== p.nombre) {
-      p.nombre = S.students[si];
-    }
+    if (S.students[si] && S.students[si] !== p.nombre) p.nombre = S.students[si];
     const name = p.nombre || `Estudiante ${si+1}`;
 
-    // Filtros
-    if (filterNnee === 'nnee-si' && (!p.nnee || !p.nnee.trim().toUpperCase().startsWith('S'))) return '';
-    if (filterNnee === 'enf-si' && (!p.enfermedad || p.enfermedad.trim().toUpperCase() === 'NO' || p.enfermedad.trim().toUpperCase() === 'NINGUNA' || p.enfermedad.trim().toUpperCase() === 'NINGÚNA' || p.enfermedad.trim() === '')) return '';
-    if (filterNnee === 'hermanos-si' && (!p.hermanos_inst || p.hermanos_inst.trim().toUpperCase() === 'NO' || p.hermanos_inst.trim() === '')) return '';
+    if (filterNnee === 'nnee-si'    && !(p.nnee||'').trim().toUpperCase().startsWith('S')) return '';
+    if (filterNnee === 'enf-si'     && ['NO','NINGUNA','NINGÚNA',''].includes((p.enfermedad||'').trim().toUpperCase())) return '';
+    if (filterNnee === 'hermanos-si'&& ['NO',''].includes((p.hermanos_inst||'').trim().toUpperCase())) return '';
 
     if (query) {
-      const matchName = name.toLowerCase().includes(query);
-      const matchCed = (p.cedula || '').toLowerCase().includes(query);
-      const matchRep = (p.rep_nombre || '').toLowerCase().includes(query);
-      const matchTel = (p.rep_telefono || '').toLowerCase().includes(query);
-      const matchDir = (p.direccion || '').toLowerCase().includes(query);
-      if (!matchName && !matchCed && !matchRep && !matchTel && !matchDir) return '';
+      const fields = [name, p.cedula, p.rep_nombre, p.rep_telefono, p.direccion, p.rep_email].map(v => (v||'').toLowerCase());
+      if (!fields.some(f => f.includes(query))) return '';
     }
 
-    const nneeBadge = (p.nnee && p.nnee.trim().toUpperCase().startsWith('S'))
-      ? `<span style="background:#fef3c7;color:#b45309;padding:2px 6px;border-radius:4px;font-weight:800;font-size:0.7rem;border:1px solid #fcd34d">SI</span>`
-      : `<span style="color:var(--text-light);font-size:0.7rem">NO</span>`;
+    const cellsHTML = orderedCols.map((col, ci) => {
+      const w = S.colWidths[`matrix||${col.id}`] || col.minW;
+      return `<td style="width:${w}px;min-width:${w}px;vertical-align:middle">${getCellValue(p, col.id, si)}</td>`;
+    }).join('');
 
-    // Teléfonos con enlace directo a WhatsApp
-    const repWa = formatPhoneWhatsApp(p.rep_telefono);
-    const repTelHTML = p.rep_telefono ? `
-      <div style="display:flex;align-items:center;justify-content:center;gap:4px">
-        <span style="font-family:var(--font-mono);font-size:0.75rem;font-weight:600">${escHTML(p.rep_telefono)}</span>
-        ${repWa ? `<a href="https://wa.me/${repWa}" target="_blank" title="Enviar WhatsApp a ${escHTML(p.rep_nombre || name)}" style="text-decoration:none;font-size:0.82rem;line-height:1">💬</a>` : ''}
-      </div>
-    ` : '<span style="color:var(--text-light)">—</span>';
-
-    const madreWa = formatPhoneWhatsApp(p.madre_telefono);
-    const madreTelHTML = p.madre_telefono ? `
-      <div style="display:flex;align-items:center;justify-content:center;gap:4px">
-        <span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.madre_telefono)}</span>
-        ${madreWa ? `<a href="https://wa.me/${madreWa}" target="_blank" title="WhatsApp Madre" style="text-decoration:none;font-size:0.78rem">💬</a>` : ''}
-      </div>
-    ` : '<span style="color:var(--text-light)">—</span>';
-
-    const padreWa = formatPhoneWhatsApp(p.padre_telefono);
-    const padreTelHTML = p.padre_telefono ? `
-      <div style="display:flex;align-items:center;justify-content:center;gap:4px">
-        <span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.padre_telefono)}</span>
-        ${padreWa ? `<a href="https://wa.me/${padreWa}" target="_blank" title="WhatsApp Padre" style="text-decoration:none;font-size:0.78rem">💬</a>` : ''}
-      </div>
-    ` : '<span style="color:var(--text-light)">—</span>';
-
-    const calculatedAge = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad || '—';
+    const avatarHTML = p.foto
+      ? `<img src="${p.foto}" style="width:32px;height:38px;object-fit:cover;border-radius:4px;border:1.5px solid #2563eb;flex-shrink:0"/>`
+      : `<div style="width:32px;height:38px;border-radius:4px;border:1.5px dashed var(--border-color);background:var(--bg-card-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:var(--text-light)">👤</div>`;
 
     return `
       <tr style="cursor:pointer" ondblclick="openStudentProfileModal(${si})" title="Doble clic para ver/editar ficha completa">
         <td class="ic">${si + 1}</td>
         <td class="nc" style="font-weight:700" onclick="openStudentProfileModal(${si})">
-          <div style="display:flex;align-items:center;gap:7px">
-            ${p.foto
-              ? `<img src="${p.foto}" style="width:32px;height:38px;object-fit:cover;border-radius:4px;border:1.5px solid #2563eb;flex-shrink:0"/>`
-              : `<div style="width:32px;height:38px;border-radius:4px;border:1.5px dashed var(--border-color);background:var(--bg-card-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:var(--text-light)">👤</div>`
-            }
-            <span>${escHTML(name)}</span>
-          </div>
+          <div style="display:flex;align-items:center;gap:7px">${avatarHTML}<span>${escHTML(name)}</span></div>
         </td>
-        <td style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.cedula || '—')}</td>
-        <td style="font-size:0.75rem">${escHTML(p.fecha_nacimiento || '—')}</td>
-        <td style="font-size:0.72rem;color:var(--text-muted)">${escHTML(calculatedAge)}</td>
-        <td style="text-align:center">${nneeBadge}</td>
-        <td style="font-size:0.72rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escVal(p.enfermedad)}">${escHTML(p.enfermedad || '—')}</td>
-        <td style="font-size:0.72rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escVal(p.hermanos_inst)}">${escHTML(p.hermanos_inst || '—')}</td>
-
-        <td style="font-weight:600;font-size:0.78rem;text-align:left;padding-left:6px">${escHTML(p.rep_nombre || '—')}</td>
-        <td style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.rep_cedula || '—')}</td>
-        <td>${repTelHTML}</td>
-        <td style="font-size:0.72rem;text-align:left;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escVal(p.direccion)}">${escHTML(p.direccion || '—')}</td>
-        <td style="font-size:0.72rem;text-align:left;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escVal(p.rep_email)}">${escHTML(p.rep_email || '—')}</td>
-        <td style="font-size:0.72rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escVal(p.tel_emergencia)}">${escHTML(p.tel_emergencia || '—')}</td>
-
-        <td style="font-size:0.75rem;text-align:left;padding-left:6px">${escHTML(p.madre_nombre || '—')}</td>
-        <td style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.madre_cedula || '—')}</td>
-        <td>${madreTelHTML}</td>
-
-        <td style="font-size:0.75rem;text-align:left;padding-left:6px">${escHTML(p.padre_nombre || '—')}</td>
-        <td style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.padre_cedula || '—')}</td>
-        <td>${padreTelHTML}</td>
-
+        ${cellsHTML}
         <td style="text-align:center">
-          <button class="btn btn-teal" style="padding:2px 8px;font-size:0.72rem;font-weight:700" onclick="event.stopPropagation();openStudentProfileModal(${si})" title="Abrir ficha completa del estudiante">
-            ✎ Ficha
-          </button>
+          <button class="btn btn-teal" style="padding:2px 8px;font-size:0.72rem;font-weight:700"
+            onclick="event.stopPropagation();openStudentProfileModal(${si})" title="Abrir ficha completa">✎ Ficha</button>
         </td>
-      </tr>
-    `;
+      </tr>`;
   }).join('');
 
   tb.innerHTML = rowsHTML;
@@ -6230,9 +6298,61 @@ function renderStudentsMatrix() {
   }
 }
 
-function filterStudentsMatrix(query) {
+// ── Drag & Drop de columnas de la Matriz ─────────────────────────────────
+function _mxColDragStart(e, colId) {
+  _mxDragCol = colId;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', colId);
+  e.currentTarget.style.opacity = '0.5';
+}
+function _mxColDragOver(e) {
+  if (!_mxDragCol) return;
+  e.preventDefault(); e.stopPropagation();
+  e.dataTransfer.dropEffect = 'move';
+  const th = e.currentTarget;
+  const rect = th.getBoundingClientRect();
+  const isRight = e.clientX - rect.left > rect.width / 2;
+  th.style.boxShadow = isRight ? 'inset -3px 0 0 #60a5fa' : 'inset 3px 0 0 #60a5fa';
+}
+function _mxColDragLeave(e) {
+  e.currentTarget.style.boxShadow = '';
+}
+function _mxColDrop(e, targetId) {
+  e.preventDefault(); e.stopPropagation();
+  e.currentTarget.style.boxShadow = '';
+  e.currentTarget.style.opacity  = '';
+  if (!_mxDragCol || _mxDragCol === targetId) { _mxDragCol = null; return; }
+
+  const order = getMatrixColOrder();
+  const fromIdx = order.indexOf(_mxDragCol);
+  let   toIdx   = order.indexOf(targetId);
+  if (fromIdx < 0 || toIdx < 0) { _mxDragCol = null; return; }
+
+  const rect = e.currentTarget.getBoundingClientRect();
+  const isRight = e.clientX - rect.left > rect.width / 2;
+  if (isRight && toIdx >= fromIdx) toIdx++;
+  else if (!isRight && toIdx <= fromIdx) toIdx--;
+
+  order.splice(fromIdx, 1);
+  const insertAt = Math.max(0, Math.min(order.length, isRight ? toIdx : toIdx));
+  order.splice(insertAt, 0, _mxDragCol);
+  S.matrixColOrder = order;
+  _mxDragCol = null;
+  saveData();
+  renderStudentsMatrix();
+  toast('↔ Columna movida', '#2563eb');
+}
+function _mxColDragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  e.currentTarget.style.boxShadow = '';
+  _mxDragCol = null;
+}
+
+function filterStudentsMatrix() {
   renderStudentsMatrix();
 }
+
+
 
 function openStudentProfileModal(si) {
   ensureStudentProfiles();
