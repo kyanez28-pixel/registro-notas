@@ -6019,7 +6019,10 @@ function calculateAgeFromBirthDate(birthDateStr) {
     months += 12;
   }
   if (years < 0) return '';
-  return `${years} años, ${months} meses, ${days} días`;
+  const strY = years === 1 ? '1 año' : `${years} años`;
+  const strM = months === 1 ? '1 mes' : `${months} meses`;
+  const strD = days === 1 ? '1 día' : `${days} días`;
+  return `${strY}, ${strM}, ${strD}`;
 }
 
 function ensureStudentProfiles() {
@@ -6112,7 +6115,10 @@ function getCellValue(p, colId, si) {
   switch(colId) {
     case 'cedula':       return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.cedula||'—')}</span>`;
     case 'fecha_nac':    return `<span style="font-size:0.75rem">${escHTML(p.fecha_nacimiento||'—')}</span>`;
-    case 'edad':         return `<span style="font-size:0.72rem;color:var(--text-muted)">${escHTML(calculateAgeFromBirthDate(p.fecha_nacimiento)||p.edad||'—')}</span>`;
+    case 'edad': {
+      const ageVal = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad || '—';
+      return `<span title="Calculado automáticamente a la fecha de hoy" style="font-size:0.75rem;font-weight:600;color:var(--text-main);white-space:nowrap">${escHTML(ageVal)}</span>`;
+    }
     case 'nnee': {
       const si2 = (p.nnee||'').trim().toUpperCase().startsWith('S');
       return si2
