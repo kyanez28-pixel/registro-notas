@@ -2584,12 +2584,18 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
 
   const delBtnHTML = isEdit ? `<button type="button" class="btn btn-danger" onclick="closeModal();delCol(${wi},${ci})" style="margin-top:12px;width:100%;justify-content:center">🗑 Eliminar esta Actividad</button>` : '';
 
+  // Valor mostrado: si tiene desc usa esa, sino usa name (retrocompatibilidad)
+  const descVal = col ? escVal(col.desc || col.name || '') : '';
+
   showModal(
     isEdit ? '✎ Editar Actividad' : '➕ Nueva Actividad Evaluativa',
     `
     <label>Semana</label><select id="mColWeek">${weekOpts}</select>
-    <label>Código / Abreviatura (Columna)</label><input type="text" id="mColName" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, I.LL.3.1.1., PI, Examen"/>
-    <label>Nombre / Descripción de la Actividad</label><input type="text" id="mColDesc" value="${col&&col.desc?escVal(col.desc):''}" placeholder="Ej: Escribo artículos informativos pág 168-170, Lección de multiplicaciones, etc."/>
+    <label style="font-size:0.85rem;font-weight:700;margin-bottom:4px;display:block">Nombre / Descripción de la Actividad</label>
+    <input type="text" id="mColDesc"
+      value="${descVal}"
+      placeholder="Ej: Escribo artículos informativos pág 168-170, Lección de multiplicaciones…"
+      style="font-size:1rem;font-weight:700;padding:10px 12px;letter-spacing:0.2px;border:2px solid var(--primary)"/>
     <label>Tipo Ministerial</label><select id="mColType">${typeOpts}</select>
     <label>Fecha (Opcional)</label><input type="date" id="mColDate" value="${col&&col.date?escVal(col.date):''}"/>
     ${delBtnHTML}
@@ -2597,14 +2603,16 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     'Guardar',
     () => {
       const w    = document.getElementById('mColWeek').value;
-      const nv   = document.getElementById('mColName').value.trim().toUpperCase();
-      const desc = document.getElementById('mColDesc')?.value.trim() || '';
+      const desc = document.getElementById('mColDesc').value.trim();
       const type = document.getElementById('mColType').value;
       const date = document.getElementById('mColDate').value;
-      if (!nv) return;
+      if (!desc) { toast('⚠️ Por favor ingresa el nombre de la actividad', '#d97706'); return; }
+
+      // Usamos la descripción completa como identificador interno también
+      const nv = desc.toUpperCase();
 
       if (!mat.cols[w]) mat.cols[w] = [];
-      const newObj = { name:nv, desc, type, date, color: actType(type).color };
+      const newObj = { name: nv, desc: desc.toUpperCase(), type, date, color: actType(type).color };
 
       if (isEdit) {
         const oldObj = mat.cols[w][ci];
