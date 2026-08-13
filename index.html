@@ -1552,14 +1552,19 @@ function renderTable() {
         const at = actType(col.type);
         const bg = col.color || at.color;
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
+        const descSub = col.desc ? `<span style="display:block;font-size:0.55rem;opacity:.9;white-space:normal;line-height:1.1;max-width:85px;font-weight:400" title="${escHTML(col.desc)}">${escHTML(col.desc.length > 25 ? col.desc.substring(0, 22) + '...' : col.desc)}</span>` : '';
         const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
         const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
-        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
-          style="background:${bg};border-color:${bg};min-width:48px">
+        const fullTitle = `${escHTML(col.name)}${col.desc ? ' — ' + escHTML(col.desc) : ''} (${escHTML(at.label)})`;
+
+        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${fullTitle} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
+          style="background:${bg};border-color:${bg};min-width:54px">
           <div style="position:relative;width:100%;padding:2px 0">
             <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(w)}','${esc(col.name)}')" title="Copiar columna ${escVal(col.name)} para Excel o Word" class="col-del-btn" style="right:18px">📋</button>
             <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn">✕</button>
-            ${lbl}${typeBadge}
+            ${lbl}
+            ${descSub}
+            ${typeBadge}
           </div>
         </th>`;
       });
@@ -2527,7 +2532,8 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     isEdit ? '✎ Editar Actividad' : '➕ Nueva Actividad Evaluativa',
     `
     <label>Semana</label><select id="mColWeek">${weekOpts}</select>
-    <label>Código / Nombre</label><input type="text" id="mColName" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, PI, Examen"/>
+    <label>Código / Abreviatura (Columna)</label><input type="text" id="mColName" value="${col?escVal(col.name):''}" placeholder="Ej: A1, T2, I.LL.3.1.1., PI, Examen"/>
+    <label>Nombre / Descripción de la Actividad</label><input type="text" id="mColDesc" value="${col&&col.desc?escVal(col.desc):''}" placeholder="Ej: Escribo artículos informativos pág 168-170, Lección de multiplicaciones, etc."/>
     <label>Tipo Ministerial</label><select id="mColType">${typeOpts}</select>
     <label>Fecha (Opcional)</label><input type="date" id="mColDate" value="${col&&col.date?escVal(col.date):''}"/>
     ${delBtnHTML}
@@ -2536,15 +2542,30 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     () => {
       const w    = document.getElementById('mColWeek').value;
       const nv   = document.getElementById('mColName').value.trim().toUpperCase();
+      const desc = document.getElementById('mColDesc')?.value.trim() || '';
       const type = document.getElementById('mColType').value;
       const date = document.getElementById('mColDate').value;
       if (!nv) return;
 
       if (!mat.cols[w]) mat.cols[w] = [];
-      const newObj = { name:nv, type, date, color: actType(type).color };
+      const newObj = { name:nv, desc, type, date, color: actType(type).color };
 
-      if (isEdit) mat.cols[w][ci] = newObj;
-      else mat.cols[w].push(newObj);
+      if (isEdit) {
+        const oldObj = mat.cols[w][ci];
+        if (oldObj && oldObj.name !== nv) {
+          const oldKey = w + '||' + oldObj.name;
+          const newKey = w + '||' + nv;
+          S.students.forEach((_, si) => {
+            if (mat.grades[si] && mat.grades[si][oldKey] !== undefined) {
+              mat.grades[si][newKey] = mat.grades[si][oldKey];
+              delete mat.grades[si][oldKey];
+            }
+          });
+        }
+        mat.cols[w][ci] = newObj;
+      } else {
+        mat.cols[w].push(newObj);
+      }
 
       closeModal(); render(); saveData();
     }
