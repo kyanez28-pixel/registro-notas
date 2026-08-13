@@ -421,7 +421,7 @@ td.ic {
   position: sticky; left: 0; background: var(--bg-card); z-index: 2; border-right: 1px solid var(--border-color);
 }
 td.nc {
-  text-align: left; padding-left: 10px; min-width: 200px; max-width: 200px; font-weight: 600;
+  text-align: left; padding-left: 10px; min-width: 140px; font-weight: 600;
   color: var(--text-main); position: sticky; left: 32px; background: var(--bg-card); z-index: 2;
   cursor: pointer; overflow: hidden; text-overflow: ellipsis; box-shadow: 2px 0 5px rgba(0,0,0,0.03);
 }
@@ -6201,16 +6201,54 @@ function renderStudentsMatrix() {
     >${escHTML(col.label)}<div class="col-resizer" data-mx-resize="${col.id}"></div></th>`;
   }).join('');
 
+  const nomW = S.colWidths && S.colWidths['matrix||nombres'] ? S.colWidths['matrix||nombres'] : 210;
   thEl.innerHTML = `
     <tr>
       <th rowspan="2" class="fxl" style="width:34px;min-width:34px;background:#1e3a8a">#</th>
-      <th rowspan="2" class="fxn" style="min-width:210px;text-align:left;padding-left:12px;background:#1e3a8a">NÓMINA DE ESTUDIANTES</th>
+      <th rowspan="2" class="fxn" id="stMatrixThNombres" style="min-width:${nomW}px;width:${nomW}px;max-width:${nomW}px;text-align:left;padding-left:12px;background:#1e3a8a;position:relative">
+        NÓMINA DE ESTUDIANTES
+        <div class="col-resizer" id="stMatrixNombresResizer"></div>
+      </th>
       ${row1Groups}
       <th rowspan="2" style="width:70px;min-width:70px;background:#0f172a">Ficha</th>
     </tr>
     <tr>${row2Ths}</tr>`;
 
-  // ── Inicializar resizers ───────────────────────────────────────────────────
+
+  // ── Resizer para columna de Nombres (fxn) ────────────────────────────────
+  const nombresResizer = document.getElementById('stMatrixNombresResizer');
+  if (nombresResizer) {
+    nombresResizer.setAttribute('draggable', 'false');
+    nombresResizer.addEventListener('dragstart', e => { e.preventDefault(); e.stopPropagation(); });
+    nombresResizer.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const thN = document.getElementById('stMatrixThNombres');
+      const table = document.getElementById('stMatrixTable');
+      const startX = e.clientX;
+      const startW = thN.getBoundingClientRect().width;
+      nombresResizer.classList.add('dragging');
+      function onMove(ev) {
+        const w = Math.max(140, startW + ev.clientX - startX);
+        thN.style.width = w + 'px'; thN.style.minWidth = w + 'px'; thN.style.maxWidth = w + 'px';
+        // Actualizar todas las td.nc de la tabla
+        table && table.querySelectorAll('tbody tr td.nc').forEach(td => {
+          td.style.width = w + 'px'; td.style.minWidth = w + 'px'; td.style.maxWidth = w + 'px';
+        });
+        if (!S.colWidths) S.colWidths = {};
+        S.colWidths['matrix||nombres'] = w;
+      }
+      function onUp() {
+        nombresResizer.classList.remove('dragging');
+        saveData();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+
+
   thEl.querySelectorAll('.col-resizer[data-mx-resize]').forEach(handle => {
     handle.setAttribute('draggable', 'false');
     handle.addEventListener('dragstart', e => { e.preventDefault(); e.stopPropagation(); });
@@ -6278,8 +6316,8 @@ function renderStudentsMatrix() {
     return `
       <tr style="cursor:pointer" ondblclick="openStudentProfileModal(${si})" title="Doble clic para ver/editar ficha completa">
         <td class="ic">${si + 1}</td>
-        <td class="nc" style="font-weight:700" onclick="openStudentProfileModal(${si})">
-          <div style="display:flex;align-items:center;gap:7px">${avatarHTML}<span>${escHTML(name)}</span></div>
+        <td class="nc" style="width:${nomW}px;min-width:${nomW}px;max-width:${nomW}px;font-weight:700" onclick="openStudentProfileModal(${si})">
+          <div style="display:flex;align-items:center;gap:7px">${avatarHTML}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span></div>
         </td>
         ${cellsHTML}
         <td style="text-align:center">
