@@ -6184,15 +6184,15 @@ function renderStudentsMatrix() {
   const groupBgs    = { est:'#1e40af', rep:'#15803d', madre:'#7e22ce', padre:'#c2410c' };
 
   const row1Groups = groups.map(g =>
-    `<th colspan="${g.count}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px">${groupLabels[g.group]||''}</th>`
+    `<th colspan="${g.count}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px;position:sticky;top:0;z-index:4;border-bottom:1px solid rgba(255,255,255,0.2)">${groupLabels[g.group]||''}</th>`
   ).join('');
 
   const row2Ths = orderedCols.map((col, ci) => {
     const w = S.colWidths[`matrix||${col.id}`] || col.minW;
-    return `<th data-mx-col="${col.id}" data-mx-ci="${ci}"
+    return `<th class="sh" data-mx-col="${col.id}" data-mx-ci="${ci}"
       draggable="true"
       title="⇄ Arrastra para mover · Borde derecho para redimensionar"
-      style="background:${col.bg};min-width:${w}px;width:${w}px;position:relative;cursor:grab;user-select:none;white-space:nowrap"
+      style="background:${col.bg};min-width:${w}px;width:${w}px;position:sticky;top:29px;z-index:3;cursor:grab;user-select:none;white-space:nowrap;font-size:0.75rem"
       ondragstart="_mxColDragStart(event,'${col.id}')"
       ondragover="_mxColDragOver(event)"
       ondragleave="_mxColDragLeave(event)"
@@ -6204,13 +6204,13 @@ function renderStudentsMatrix() {
   const nomW = S.colWidths && S.colWidths['matrix||nombres'] ? S.colWidths['matrix||nombres'] : 210;
   thEl.innerHTML = `
     <tr>
-      <th rowspan="2" class="fxl" style="width:34px;min-width:34px;background:#1e3a8a">#</th>
-      <th rowspan="2" class="fxn" id="stMatrixThNombres" style="min-width:${nomW}px;width:${nomW}px;max-width:${nomW}px;text-align:left;padding-left:12px;background:#1e3a8a;position:relative">
+      <th rowspan="2" class="fxl" style="width:32px;min-width:32px;max-width:32px;background:#1e3a8a;position:sticky;left:0;top:0;z-index:7">#</th>
+      <th rowspan="2" class="fxn" id="stMatrixThNombres" style="min-width:${nomW}px;width:${nomW}px;max-width:${nomW}px;text-align:left;padding-left:12px;background:#1e3a8a;position:sticky;left:32px;top:0;z-index:7">
         NÓMINA DE ESTUDIANTES
         <div class="col-resizer" id="stMatrixNombresResizer"></div>
       </th>
       ${row1Groups}
-      <th rowspan="2" style="width:70px;min-width:70px;background:#0f172a">Ficha</th>
+      <th rowspan="2" style="width:70px;min-width:70px;background:#0f172a;position:sticky;top:0;z-index:4">Ficha</th>
     </tr>
     <tr>${row2Ths}</tr>`;
 
