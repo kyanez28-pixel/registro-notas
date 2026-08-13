@@ -776,6 +776,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
   <div class="toolbar-sep"></div>
 
+  <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
+    📋 Copiar Columna
+  </button>
   <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
     👁 Columnas
   </button>
@@ -963,6 +966,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" style="background:rgba(255,255,255,0.25);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="syncPiToSubjects()" data-tip="Pasar automáticamente las notas del PI a la columna PI (30% Sumativo) de cada materia">⚡ Sincronizar a Asignaturas (30%)</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openCopyColumnModal()">📋 Copiar Columna</button>
       <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openPiConfig()">⚙ Configurar Proyecto</button>
       <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="exportPiXLSX()">📊 Excel PI</button>
     </div>
@@ -1526,11 +1530,11 @@ function renderTable() {
   });
 
   if (!isQual) {
-    r1 += `<th class="th-form" rowspan="2" style="min-width:56px">70%<br><span style="font-size:0.58rem;font-weight:400">FORMATIVO</span></th>
-           <th class="th-sum"  rowspan="2" style="min-width:56px">30%<br><span style="font-size:0.58rem;font-weight:400">SUMATIVO</span></th>
-           <th class="th-trim" rowspan="2" style="min-width:60px">NOTA<br><span style="font-size:0.58rem;font-weight:400">TRIMESTRE</span></th>`;
+    r1 += `<th class="th-form" rowspan="2" onclick="copyMainColumn('form','','70% FORMATIVO')" title="Clic para copiar la columna 70% Formativo para Excel/Word" style="min-width:56px;cursor:pointer">70% 📋<br><span style="font-size:0.58rem;font-weight:400">FORMATIVO</span></th>
+           <th class="th-sum"  rowspan="2" onclick="copyMainColumn('sum','','30% SUMATIVO')" title="Clic para copiar la columna 30% Sumativo para Excel/Word" style="min-width:56px;cursor:pointer">30% 📋<br><span style="font-size:0.58rem;font-weight:400">SUMATIVO</span></th>
+           <th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','NOTA TRIMESTRE')" title="Clic para copiar la columna Nota Trimestre para Excel/Word" style="min-width:60px;cursor:pointer">NOTA 📋<br><span style="font-size:0.58rem;font-weight:400">TRIMESTRE</span></th>`;
   } else {
-    r1 += `<th class="th-trim" rowspan="2" style="min-width:60px">EVALUACIÓN<br><span style="font-size:0.58rem;font-weight:400">CUALITATIVA</span></th>`;
+    r1 += `<th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','EVALUACIÓN CUALITATIVA')" title="Clic para copiar la columna Evaluación Cualitativa para Excel/Word" style="min-width:60px;cursor:pointer">EVALUACIÓN 📋<br><span style="font-size:0.58rem;font-weight:400">CUALITATIVA</span></th>`;
   }
 
   r1 += `<th rowspan="2" class="ath" style="min-width:48px;width:48px">Acc.</th></tr>`;
@@ -1550,16 +1554,17 @@ function renderTable() {
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
         const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
         const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
-        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar · '✕' para borrar"
+        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${escHTML(at.label)} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
           style="background:${bg};border-color:${bg};min-width:48px">
           <div style="position:relative;width:100%;padding:2px 0">
+            <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(w)}','${esc(col.name)}')" title="Copiar columna ${escVal(col.name)} para Excel o Word" class="col-del-btn" style="right:18px">📋</button>
             <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn">✕</button>
             ${lbl}${typeBadge}
           </div>
         </th>`;
       });
     }
-    r2 += `<th class="sh" style="background:${wc.h};border-color:${wc.h};font-weight:700">PROM</th>`;
+    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(w)}','PROM ${esc(w)}')" title="Clic para copiar los promedios de ${escHTML(w)} para Excel o Word" style="background:${wc.h};border-color:${wc.h};font-weight:700;cursor:pointer">PROM 📋</th>`;
   });
   r2 += '</tr>';
 
@@ -2918,6 +2923,165 @@ function expGenerateBookmarklet() {
   })();`;
   document.getElementById('bookmarkletLink').href = 'javascript:' + encodeURIComponent(script);
   document.getElementById('expAutoPanel').style.display = 'block';
+}
+
+// ── COPIAR COLUMNAS COMPLETAS PARA EXCEL / WORD ──
+function copyMainColumn(colType, weekName, colName) {
+  const mName = curMatName();
+  const sorted = getSortedIndices();
+  const values = [];
+
+  sorted.forEach(si => {
+    const calc = getStudentTrimestreCalc(si, mName);
+    let val = '';
+    if (colType === 'activity') {
+      const mat = S.mats[mName];
+      const gKey = weekName + '||' + colName;
+      val = (mat && mat.grades && mat.grades[si] && mat.grades[si][gKey] !== undefined) ? mat.grades[si][gKey] : '';
+    } else if (colType === 'weekProm') {
+      val = (calc.weekProms && calc.weekProms[weekName] !== undefined) ? calc.weekProms[weekName] : '';
+    } else if (colType === 'form') {
+      val = calc.formWeighted !== '—' ? calc.formWeighted : '';
+    } else if (colType === 'sum') {
+      val = calc.sumWeighted !== '—' ? calc.sumWeighted : '';
+    } else if (colType === 'trim') {
+      val = calc.isQual ? calc.qualVal : (calc.trimAvg !== '—' ? calc.trimAvg : '');
+    }
+    values.push(val === null || val === undefined ? '' : String(val));
+  });
+
+  const textToCopy = values.join('\n');
+  const title = colName || colType;
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = textToCopy;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+  });
+}
+
+function copyPiColumn(mName, indId) {
+  ensurePi();
+  const sorted = getSortedIndices();
+  const values = [];
+
+  sorted.forEach(si => {
+    let val = '';
+    if (indId === '_final_pi') {
+      const matNotas = [];
+      S.pi.mats.forEach(mSub => {
+        const subMg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
+        if (subMg._direct !== undefined && subMg._direct !== '') {
+          matNotas.push(parseFloat(subMg._direct));
+        } else {
+          const indVals = [];
+          S.pi.config.indicadores.forEach(ind => {
+            const v = parseFloat(subMg[ind.id]);
+            if (!isNaN(v)) indVals.push(v);
+          });
+          if (indVals.length > 0) matNotas.push(indVals.reduce((a,b)=>a+b,0)/indVals.length);
+        }
+      });
+      if (matNotas.length > 0) val = trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length);
+    } else {
+      const mg = (S.pi.grades[mName] && S.pi.grades[mName][si]) ? S.pi.grades[mName][si] : {};
+      if (indId === '_direct' || indId === '_mat_nota') {
+        if (mg._direct !== undefined && mg._direct !== '') {
+          val = mg._direct;
+        } else {
+          const indVals = [];
+          S.pi.config.indicadores.forEach(ind => {
+            const v = parseFloat(mg[ind.id]);
+            if (!isNaN(v)) indVals.push(v);
+          });
+          if (indVals.length > 0) val = trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length);
+        }
+      } else {
+        val = mg[indId] !== undefined ? mg[indId] : '';
+      }
+    }
+    values.push(val === null || val === undefined ? '' : String(val));
+  });
+
+  const title = indId === '_final_pi' ? 'NOTA PI PROMEDIO' : (indId === '_direct' || indId === '_mat_nota' ? `NOTA ${mName}` : `${mName} - ${indId}`);
+  const textToCopy = values.join('\n');
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = textToCopy;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+  });
+}
+
+function openCopyColumnModal() {
+  const isPiView = document.getElementById('piPanel')?.style.display !== 'none';
+  let optsHtml = '';
+
+  if (isPiView) {
+    ensurePi();
+    const mats = S.pi.mats;
+    const inds = S.pi.config.indicadores;
+    mats.forEach(m => {
+      inds.forEach(ind => {
+        optsHtml += `<option value="pi||${escVal(m)}||${escVal(ind.id)}">[PI] ${escHTML(m)} — Indicador ${escHTML(ind.id)} (${escHTML(ind.nombre)})</option>`;
+      });
+      optsHtml += `<option value="pi||${escVal(m)}||_mat_nota">[PI] ${escHTML(m)} — NOTA FINAL ASIGNATURA</option>`;
+    });
+    optsHtml += `<option value="pi||all||_final_pi">[PI] PROMEDIO GENERAL (NOTA PI PROMEDIO)</option>`;
+  } else {
+    const mName = curMatName();
+    const mat = S.mats[mName];
+    if (mat) {
+      Object.keys(mat.cols).forEach(w => {
+        (mat.cols[w] || []).forEach(c => {
+          optsHtml += `<option value="main||${escVal(w)}||${escVal(c.name)}">[${escHTML(mName)}] Actividad: ${escHTML(c.name)} (${escHTML(w)})</option>`;
+        });
+        optsHtml += `<option value="main_prom||${escVal(w)}||prom">[${escHTML(mName)}] Promedio de semana: ${escHTML(w)}</option>`;
+      });
+      optsHtml += `<option value="main_calc||form||70%">[${escHTML(mName)}] Columna 70% FORMATIVO</option>`;
+      optsHtml += `<option value="main_calc||sum||30%">[${escHTML(mName)}] Columna 30% SUMATIVO</option>`;
+      optsHtml += `<option value="main_calc||trim||nota">[${escHTML(mName)}] Columna NOTA TRIMESTRE / CUALITATIVA</option>`;
+    }
+  }
+
+  showModal(
+    '📋 Copiar Columna Entera para Excel / Word',
+    `
+    <label>Selecciona la columna que deseas copiar:</label>
+    <select id="copyColSel" style="font-weight:700;font-size:0.85rem;margin-bottom:12px;width:100%">
+      ${optsHtml}
+    </select>
+    <div style="background:var(--bg-card-subtle);padding:10px;border-radius:6px;border:1px solid var(--border-color);font-size:0.78rem;color:var(--text-muted)">
+      💡 Al hacer clic en <strong>Copiar para Excel / Word</strong>, todas las notas de esa columna se copiarán en orden vertical. Luego abre tu archivo de Excel o Word y presiona <strong>Ctrl + V</strong> para pegarlas directamente.
+    </div>
+    `,
+    '📋 Copiar para Excel / Word',
+    () => {
+      const selVal = document.getElementById('copyColSel')?.value;
+      if (!selVal) return;
+      const parts = selVal.split('||');
+      if (parts[0] === 'pi') {
+        copyPiColumn(parts[1], parts[2]);
+      } else if (parts[0] === 'main') {
+        copyMainColumn('activity', parts[1], parts[2]);
+      } else if (parts[0] === 'main_prom') {
+        copyMainColumn('weekProm', parts[1], parts[2]);
+      } else if (parts[0] === 'main_calc') {
+        copyMainColumn(parts[1], '', parts[2]);
+      }
+      closeModal();
+    }
+  );
 }
 
 // ── BACKUP & EXCEL NATIVO (.XLSX) ──
