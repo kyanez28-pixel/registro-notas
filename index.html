@@ -634,6 +634,225 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 .rp-row:hover { background: var(--bg-card-subtle); transform: translateX(3px); }
 .rp-row-name { flex: 1; font-weight: 600; color: var(--text-main); }
 
+/* ══════════════════════════════════════════════════════
+   MOBILE & RESPONSIVE DESIGN (OPTIMIZACIÓN CELULAR)
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* ── Header Móvil ── */
+  header {
+    padding: 8px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .hdr-brand {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .hdr-title-area h1 {
+    font-size: 1.05rem;
+    gap: 6px;
+  }
+  .hdr-period-tag {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+  }
+  .normative-pill {
+    display: none; /* Ocultar píldora redundante en celular para ahorrar espacio */
+  }
+  .hi {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .hi-input-group {
+    width: 100%;
+    padding: 2px 6px;
+  }
+  .hi input[type="text"] {
+    width: 100% !important;
+    font-size: 0.78rem;
+    padding: 3px 4px;
+  }
+  #infoGrado, #infoAnio { width: 100% !important; }
+  .font-controller { display: none; /* Teclado táctil en móvil controla zoom */ }
+
+  /* ── Barra de Usuario ── */
+  #userBar {
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #userBar > div { gap: 4px; }
+
+  /* ── Toolbar Móvil (Deslizable horizontalmente) ── */
+  .toolbar {
+    padding: 6px 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 5px;
+  }
+  .toolbar::-webkit-scrollbar { display: none; }
+  .toolbar .btn {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 0.74rem;
+    border-radius: 6px;
+  }
+  .toolbar-sep { display: none; }
+
+  /* ── Pestañas de Materias y Barra de Vistas Móvil ── */
+  .tabs-container {
+    padding: 4px 10px 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs-container::-webkit-scrollbar { display: none; }
+  .tabs-scroll {
+    flex-shrink: 0;
+    gap: 3px;
+  }
+  .tab {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 0.74rem;
+  }
+  .tab-action-btn {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    font-size: 0.68rem;
+  }
+
+  .view-bar {
+    padding: 4px 10px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 4px;
+  }
+  .view-bar::-webkit-scrollbar { display: none; }
+  .view-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  /* ── Contenido y Tarjetas de Estadísticas ── */
+  .content { padding: 8px 10px; }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .stat-card {
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+  .stat-label, .stat-card-title {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.2px;
+  }
+  .stat-val, .stat-card-val {
+    font-size: 1.05rem !important;
+  }
+  .stat-sub, .stat-card-sub {
+    font-size: 0.55rem !important;
+  }
+
+  /* ── Buscador y Filtros Móvil ── */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .search-wrapper {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .search-input {
+    padding: 8px 12px 8px 32px;
+    font-size: 0.8rem;
+  }
+  .sort-select {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+  }
+
+  /* ── Contenedor de Tabla Móvil ── */
+  .tw {
+    max-height: calc(100dvh - 190px) !important;
+    max-height: calc(100vh - 190px) !important;
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { font-size: 0.72rem; }
+  th, td { padding: 3px 5px; }
+
+  /* ── Modales en Celular (Adaptación táctil cómoda) ── */
+  .mo {
+    padding: 6px;
+    align-items: flex-end;
+  }
+  .md {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 90dvh !important;
+    max-height: 90vh !important;
+    border-radius: 16px 16px 8px 8px !important;
+    padding: 14px 12px !important;
+    margin: 0 !important;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.3) !important;
+  }
+  .md h3 {
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+  }
+  .md input, .md select, .md textarea {
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+  }
+  .ma {
+    flex-direction: column-reverse;
+    gap: 6px;
+    padding-top: 10px;
+  }
+  .ma .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 9px 12px;
+    font-size: 0.84rem;
+  }
+
+  /* ── Matriz de Estudiantes en Celular ── */
+  #studentsMatrixPanel .stat-card {
+    padding: 8px 10px;
+  }
+  #mProfFotoZone {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hdr-brand { gap: 8px; }
+  .hdr-logo { width: 32px; height: 32px; font-size: 1.1rem; }
+  .hdr-title-area h1 { font-size: 0.95rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
 @media print {
   header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
