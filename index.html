@@ -362,10 +362,34 @@ th {
   position: sticky; top: 0; z-index: 3; border-right: 1px solid rgba(255,255,255,0.15);
   border-bottom: 1px solid rgba(255,255,255,0.15); user-select: none; font-weight: 700;
 }
-th.wh { position: sticky; top: 0; z-index: 5; cursor: pointer; transition: filter .15s ease; }
+th.wh { position: sticky; top: 0; z-index: 5; cursor: pointer; transition: filter .15s ease; user-select: none; }
 th.wh:hover { filter: brightness(1.12); }
-th.sh { font-size: 0.7rem; cursor: pointer; position: sticky; top: 26px; z-index: 4; font-weight: 600; padding: 3px 4px; }
+th.sh { font-size: 0.7rem; cursor: pointer; position: sticky; top: 26px; z-index: 4; font-weight: 600; padding: 3px 4px; user-select: none; }
 th.sh:hover { filter: brightness(1.1); }
+
+/* Drag & Drop & Move Columns */
+th.sh[draggable="true"], th.wh[draggable="true"] { cursor: grab; }
+th.sh[draggable="true"]:active, th.wh[draggable="true"]:active { cursor: grabbing; }
+th.col-dragging, th.week-dragging { opacity: 0.45 !important; transform: scale(0.98); }
+th.drag-over-left { border-left: 4px solid #60a5fa !important; box-shadow: -3px 0 8px rgba(96, 165, 250, 0.6) !important; }
+th.drag-over-right { border-right: 4px solid #60a5fa !important; box-shadow: 3px 0 8px rgba(96, 165, 250, 0.6) !important; }
+th.drag-over-week { box-shadow: inset 0 0 0 3px #60a5fa !important; filter: brightness(1.2) !important; }
+
+.col-move-btn {
+  background: rgba(0,0,0,0.4); color: #ffffff; border: none; border-radius: 3px;
+  padding: 1px 4px; font-size: 0.62rem; font-weight: bold; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  opacity: 0.75; transition: all .15s ease; line-height: 1;
+}
+.col-move-btn:hover { opacity: 1; background: #2563eb; transform: scale(1.15); }
+
+.week-move-btn {
+  background: rgba(255,255,255,0.22); color: #ffffff; border: none; border-radius: 4px;
+  padding: 2px 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all .15s ease; line-height: 1;
+}
+.week-move-btn:hover { background: rgba(255,255,255,0.45); transform: scale(1.15); }
 
 .col-del-btn {
   position: absolute; top: -2px; right: -2px; background: rgba(0,0,0,0.4); color: #ffffff;
@@ -759,6 +783,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
   <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
     🗑 Semana
+  </button>
+  <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
+    ⇄ Mover Columnas
   </button>
   <div class="toolbar-sep"></div>
 
@@ -1541,9 +1568,22 @@ function renderTable() {
     const c = mat.cols[wName] || [];
     const span = (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, wName, wi);
-    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para editar Tema y Destreza · ${escHTML(wTitle)}"
-      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">
-      ${escHTML(wTitle)}
+    r1 += `<th class="wh" colspan="${span}" draggable="true"
+      ondragstart="handleWeekDragStart(event, ${wi})"
+      ondragover="handleWeekDragOver(event)"
+      ondragleave="handleWeekDragLeave(event)"
+      ondrop="handleWeekDrop(event, ${wi})"
+      ondragend="handleWeekDragEnd(event)"
+      ondblclick="editWeekName(${wi})"
+      title="Arrastra para mover la semana · Doble clic para editar · ◀ ▶ para reordenar"
+      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:6px 8px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+        <button class="week-move-btn" onclick="event.stopPropagation();moveWeekStep(${wi},-1)" title="Mover semana a la izquierda" ${wi===0?'style="opacity:0.3;pointer-events:none"':''}>◀</button>
+        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px">
+          ${escHTML(wTitle)}
+        </div>
+        <button class="week-move-btn" onclick="event.stopPropagation();moveWeekStep(${wi},1)" title="Mover semana a la derecha" ${wi===mat.weeks.length-1?'style="opacity:0.3;pointer-events:none"':''}>▶</button>
+      </div>
     </th>`;
   });
 
@@ -1564,8 +1604,12 @@ function renderTable() {
     const c = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
     if (!c.length) {
-      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(wName)}')" title="Doble clic para agregar actividad"
-        style="background:${wc.s};border-color:${wc.h};min-width:100px">+ act</th>`;
+      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(wName)}')"
+        ondragover="handleColDragOver(event)"
+        ondragleave="handleColDragLeave(event)"
+        ondrop="handleColDrop(event, '${esc(wName)}', 0)"
+        title="Doble clic para agregar actividad · Suelta una actividad aquí para moverla a esta semana"
+        style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer">+ act</th>`;
     } else {
       c.forEach((col, ci) => {
         const at = actType(col.type);
@@ -1580,14 +1624,23 @@ function renderTable() {
 
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
-        r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${fullTitle} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
-          style="background:${bg};border-color:${bg};min-width:120px;padding:6px 8px;vertical-align:top">
+        r2 += `<th class="sh" draggable="true"
+          ondragstart="handleColDragStart(event, '${esc(wName)}', ${ci})"
+          ondragover="handleColDragOver(event)"
+          ondragleave="handleColDragLeave(event)"
+          ondrop="handleColDrop(event, '${esc(wName)}', ${ci})"
+          ondragend="handleColDragEnd(event)"
+          ondblclick="editColName(${wi},${ci})"
+          title="${fullTitle} · Arrastra para mover columna · ◀ ▶ para reordenar · Doble clic para editar · 📋 copiar · ✕ borrar"
+          style="background:${bg};border-color:${bg};min-width:125px;padding:6px 8px;vertical-align:top">
           <div style="position:relative;width:100%">
             <div style="position:absolute;top:-2px;right:-4px;display:flex;gap:2px;z-index:2">
+              <button onclick="event.stopPropagation();moveColStep(${wi},${ci},-1)" title="Mover actividad a la izquierda" class="col-move-btn">◀</button>
+              <button onclick="event.stopPropagation();moveColStep(${wi},${ci},1)" title="Mover actividad a la derecha" class="col-move-btn">▶</button>
               <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(wName)}','${esc(col.name)}')" title="Copiar columna para Excel/Word" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">📋</button>
               <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">✕</button>
             </div>
-            <div style="padding-right:34px">
+            <div style="padding-right:56px">
               ${actNameHTML}
               ${dateHTML}
               ${typeHTML}
@@ -2574,6 +2627,306 @@ function openDelColModal() {
   );
 }
 
+function moveColInMat(fromWeekName, fromColIdx, toWeekName, toColIdx) {
+  const mat = gm();
+  if (!mat || !mat.cols[fromWeekName] || !mat.cols[fromWeekName][fromColIdx]) return;
+  const mName = curMatName();
+  const [colObj] = mat.cols[fromWeekName].splice(fromColIdx, 1);
+  if (!mat.cols[toWeekName]) mat.cols[toWeekName] = [];
+
+  if (toColIdx === null || toColIdx === undefined || toColIdx >= mat.cols[toWeekName].length) {
+    mat.cols[toWeekName].push(colObj);
+  } else if (toColIdx < 0) {
+    mat.cols[toWeekName].unshift(colObj);
+  } else {
+    mat.cols[toWeekName].splice(toColIdx, 0, colObj);
+  }
+
+  // Si cambió de semana, migrar las notas de los estudiantes y mejoras
+  if (fromWeekName !== toWeekName) {
+    const actName = colObj.name;
+    const oldKey = fromWeekName + '||' + actName;
+    const newKey = toWeekName + '||' + actName;
+
+    S.students.forEach((_, si) => {
+      if (mat.grades[si] && mat.grades[si][oldKey] !== undefined) {
+        mat.grades[si][newKey] = mat.grades[si][oldKey];
+        delete mat.grades[si][oldKey];
+      }
+      const oldRk = mName + '||' + si + '||' + fromWeekName + '||' + actName;
+      const newRk = mName + '||' + si + '||' + toWeekName + '||' + actName;
+      if (S.recovered && S.recovered[oldRk]) {
+        S.recovered[newRk] = true;
+        delete S.recovered[oldRk];
+      }
+    });
+    toast(`↔ Actividad "${colObj.desc || colObj.name}" movida a ${toWeekName}`, '#2563eb');
+  } else {
+    toast(`↔ Actividad "${colObj.desc || colObj.name}" reordenada`, '#2563eb');
+  }
+
+  render();
+  saveData();
+}
+
+function moveColStep(wi, ci, direction) {
+  const mat = gm();
+  if (!mat) return;
+  const currentWeek = mat.weeks[wi];
+  const wName = getWeekName(currentWeek);
+  const cols = mat.cols[wName] || [];
+  if (!cols[ci]) return;
+
+  const targetCi = ci + direction;
+  if (targetCi >= 0 && targetCi < cols.length) {
+    moveColInMat(wName, ci, wName, targetCi);
+  } else if (direction === -1 && wi > 0) {
+    const prevWeekName = getWeekName(mat.weeks[wi - 1]);
+    const prevCols = mat.cols[prevWeekName] || [];
+    moveColInMat(wName, ci, prevWeekName, prevCols.length);
+  } else if (direction === 1 && wi < mat.weeks.length - 1) {
+    const nextWeekName = getWeekName(mat.weeks[wi + 1]);
+    moveColInMat(wName, ci, nextWeekName, 0);
+  } else {
+    toast('⚠️ No se puede mover más en esa dirección', '#d97706');
+  }
+}
+
+function moveWeekStep(wi, direction) {
+  const mat = gm();
+  if (!mat) return;
+  const targetWi = wi + direction;
+  if (targetWi < 0 || targetWi >= mat.weeks.length) {
+    toast('⚠️ No se puede mover más la semana', '#d97706');
+    return;
+  }
+  const [wObj] = mat.weeks.splice(wi, 1);
+  mat.weeks.splice(targetWi, 0, wObj);
+  render();
+  saveData();
+  toast(`↔ Semana "${getWeekTitle(wObj)}" movida`, '#2563eb');
+}
+
+// Drag & Drop Handlers
+let _dragColData = null;
+let _dragWeekData = null;
+
+function handleColDragStart(e, weekName, colIdx) {
+  _dragColData = { weekName, colIdx };
+  _dragWeekData = null;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', JSON.stringify(_dragColData));
+  e.currentTarget.classList.add('col-dragging');
+}
+
+function handleColDragOver(e) {
+  if (!_dragColData) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect = 'move';
+
+  const th = e.currentTarget;
+  const rect = th.getBoundingClientRect();
+  const relX = e.clientX - rect.left;
+  const isRight = relX > rect.width / 2;
+
+  th.classList.remove('drag-over-left', 'drag-over-right', 'drag-over-week');
+  if (th.classList.contains('wh')) {
+    th.classList.add('drag-over-week');
+  } else if (isRight) {
+    th.classList.add('drag-over-right');
+  } else {
+    th.classList.add('drag-over-left');
+  }
+}
+
+function handleColDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over-left', 'drag-over-right', 'drag-over-week');
+}
+
+function handleColDrop(e, targetWeekName, targetColIdx) {
+  e.preventDefault();
+  e.stopPropagation();
+  const th = e.currentTarget;
+  const rect = th.getBoundingClientRect();
+  const relX = e.clientX - rect.left;
+  const isRight = relX > rect.width / 2;
+
+  th.classList.remove('drag-over-left', 'drag-over-right', 'drag-over-week');
+
+  if (!_dragColData) return;
+  const { weekName: fromWeek, colIdx: fromIdx } = _dragColData;
+  _dragColData = null;
+
+  let insertIdx = targetColIdx;
+  if (fromWeek === targetWeekName) {
+    if (fromIdx === targetColIdx) return;
+    if (isRight && fromIdx > targetColIdx) insertIdx = targetColIdx + 1;
+    if (!isRight && fromIdx < targetColIdx) insertIdx = targetColIdx;
+  } else {
+    if (isRight) insertIdx = targetColIdx + 1;
+  }
+
+  moveColInMat(fromWeek, fromIdx, targetWeekName, insertIdx);
+}
+
+function handleColDragEnd(e) {
+  _dragColData = null;
+  document.querySelectorAll('.col-dragging, .drag-over-left, .drag-over-right, .drag-over-week').forEach(el => {
+    el.classList.remove('col-dragging', 'drag-over-left', 'drag-over-right', 'drag-over-week');
+  });
+}
+
+function handleWeekDragStart(e, weekIdx) {
+  _dragWeekData = { weekIdx };
+  _dragColData = null;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(weekIdx));
+  e.currentTarget.classList.add('week-dragging');
+}
+
+function handleWeekDragOver(e) {
+  if (!_dragWeekData) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect = 'move';
+  const th = e.currentTarget;
+  const rect = th.getBoundingClientRect();
+  const isRight = (e.clientX - rect.left) > rect.width / 2;
+  th.classList.remove('drag-over-left', 'drag-over-right');
+  if (isRight) th.classList.add('drag-over-right');
+  else th.classList.add('drag-over-left');
+}
+
+function handleWeekDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over-left', 'drag-over-right');
+}
+
+function handleWeekDrop(e, targetWeekIdx) {
+  e.preventDefault();
+  e.stopPropagation();
+  const th = e.currentTarget;
+  const rect = th.getBoundingClientRect();
+  const isRight = (e.clientX - rect.left) > rect.width / 2;
+  th.classList.remove('drag-over-left', 'drag-over-right');
+
+  if (!_dragWeekData) return;
+  const fromWi = _dragWeekData.weekIdx;
+  _dragWeekData = null;
+
+  if (fromWi === targetWeekIdx) return;
+  let targetIdx = targetWeekIdx;
+  if (isRight && fromWi > targetWeekIdx) targetIdx = targetWeekIdx + 1;
+  if (!isRight && fromWi < targetWeekIdx) targetIdx = targetWeekIdx;
+
+  const mat = gm();
+  if (!mat) return;
+  const [wObj] = mat.weeks.splice(fromWi, 1);
+  if (targetIdx >= mat.weeks.length) mat.weeks.push(wObj);
+  else mat.weeks.splice(targetIdx, 0, wObj);
+
+  render();
+  saveData();
+  toast(`↔ Semana "${getWeekTitle(wObj)}" reordenada`, '#2563eb');
+}
+
+function handleWeekDragEnd(e) {
+  _dragWeekData = null;
+  document.querySelectorAll('.week-dragging, .drag-over-left, .drag-over-right').forEach(el => {
+    el.classList.remove('week-dragging', 'drag-over-left', 'drag-over-right');
+  });
+}
+
+function openManageColumns() {
+  const mat = gm();
+  if (!mat) return;
+  const mName = curMatName();
+
+  let html = `
+    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px">
+      Puedes arrastrar las columnas directamente en la tabla o usar este panel para mover, ordenar y transferir actividades entre semanas con 1 solo clic.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:6px">
+  `;
+
+  mat.weeks.forEach((w, wi) => {
+    const wName = getWeekName(w);
+    const wTitle = getWeekTitle(w);
+    const cols = mat.cols[wName] || [];
+    const wc = weekColor(mName, wName, wi);
+
+    html += `
+      <div style="border:1.5px solid ${wc.h};border-radius:var(--radius-md);overflow:hidden;background:var(--bg-card)">
+        <div style="background:${wc.h};color:#fff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div style="font-weight:800;font-size:0.88rem;display:flex;align-items:center;gap:6px">
+            <span>📅 ${escHTML(wTitle)}</span>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button class="btn btn-outline" style="padding:2px 7px;font-size:0.75rem;color:#fff;border-color:rgba(255,255,255,0.4)"
+              onclick="moveWeekStep(${wi}, -1);openManageColumns()" title="Mover semana a la izquierda" ${wi===0?'disabled':''}>◀ Izq</button>
+            <button class="btn btn-outline" style="padding:2px 7px;font-size:0.75rem;color:#fff;border-color:rgba(255,255,255,0.4)"
+              onclick="moveWeekStep(${wi}, 1);openManageColumns()" title="Mover semana a la derecha" ${wi===mat.weeks.length-1?'disabled':''}>Der ▶</button>
+            <button class="btn btn-outline" style="padding:2px 7px;font-size:0.75rem;color:#fff;border-color:rgba(255,255,255,0.4)"
+              onclick="closeModal();editWeekName(${wi})" title="Editar semana">✎</button>
+          </div>
+        </div>
+
+        <div style="padding:10px;display:flex;flex-direction:column;gap:6px">
+    `;
+
+    if (!cols.length) {
+      html += `
+        <div style="font-size:0.78rem;color:var(--text-light);font-style:italic;padding:6px;display:flex;justify-content:space-between;align-items:center">
+          <span>Sin actividades en esta semana</span>
+          <button class="btn btn-primary" style="padding:2px 8px;font-size:0.72rem" onclick="closeModal();addColToWeek('${esc(wName)}')">➕ Agregar Actividad</button>
+        </div>
+      `;
+    } else {
+      cols.forEach((col, ci) => {
+        const at = actType(col.type);
+        const displayName = col.desc || col.name;
+        const otherWeeksOpts = mat.weeks.map(otherW => {
+          const own = getWeekName(otherW);
+          return `<option value="${escVal(own)}" ${own===wName?'selected':''}>${escHTML(getWeekTitle(otherW))}</option>`;
+        }).join('');
+
+        html += `
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg-card-subtle);border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+            <div style="width:10px;height:10px;border-radius:50%;background:${col.color||at.color};flex-shrink:0"></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:0.82rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHTML(displayName)}</div>
+              <div style="font-size:0.68rem;color:var(--text-muted)">${escHTML(at.label)} ${col.date ? '· ' + escHTML(col.date) : ''}</div>
+            </div>
+            
+            <div style="display:flex;align-items:center;gap:4px">
+              <select onchange="moveColInMat('${esc(wName)}', ${ci}, this.value, null);openManageColumns()" title="Mover a otra semana" style="padding:3px 6px;font-size:0.72rem;border-radius:4px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-main)">
+                ${otherWeeksOpts}
+              </select>
+              <button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="moveColStep(${wi}, ${ci}, -1);openManageColumns()" title="Mover hacia arriba / izquierda">▲</button>
+              <button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="moveColStep(${wi}, ${ci}, 1);openManageColumns()" title="Mover hacia abajo / derecha">▼</button>
+              <button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="closeModal();editColName(${wi}, ${ci})" title="Editar">✎</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  showModal(
+    '⇄ Mover y Organizar Columnas y Semanas',
+    html,
+    'Listo',
+    closeModal
+  );
+}
+
 function showColModal(selWeek, col, isEdit, wi, ci) {
   const mat = gm();
   const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
@@ -2615,18 +2968,48 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
       const newObj = { name: nv, desc: desc.toUpperCase(), type, date, color: actType(type).color };
 
       if (isEdit) {
-        const oldObj = mat.cols[w][ci];
-        if (oldObj && oldObj.name !== nv) {
-          const oldKey = w + '||' + oldObj.name;
+        const oldObj = (mat.cols[selWeek] && mat.cols[selWeek][ci]) ? mat.cols[selWeek][ci] : col;
+        const oldName = oldObj ? oldObj.name : nv;
+
+        if (selWeek !== w) {
+          if (mat.cols[selWeek]) {
+            mat.cols[selWeek].splice(ci, 1);
+          }
+          mat.cols[w].push(newObj);
+
+          const oldKey = selWeek + '||' + oldName;
           const newKey = w + '||' + nv;
           S.students.forEach((_, si) => {
             if (mat.grades[si] && mat.grades[si][oldKey] !== undefined) {
               mat.grades[si][newKey] = mat.grades[si][oldKey];
               delete mat.grades[si][oldKey];
             }
+            const oldRk = curMatName() + '||' + si + '||' + selWeek + '||' + oldName;
+            const newRk = curMatName() + '||' + si + '||' + w + '||' + nv;
+            if (S.recovered && S.recovered[oldRk]) {
+              S.recovered[newRk] = true;
+              delete S.recovered[oldRk];
+            }
           });
+        } else {
+          if (oldName !== nv) {
+            const oldKey = w + '||' + oldName;
+            const newKey = w + '||' + nv;
+            S.students.forEach((_, si) => {
+              if (mat.grades[si] && mat.grades[si][oldKey] !== undefined) {
+                mat.grades[si][newKey] = mat.grades[si][oldKey];
+                delete mat.grades[si][oldKey];
+              }
+              const oldRk = curMatName() + '||' + si + '||' + w + '||' + oldName;
+              const newRk = curMatName() + '||' + si + '||' + w + '||' + nv;
+              if (S.recovered && S.recovered[oldRk]) {
+                S.recovered[newRk] = true;
+                delete S.recovered[oldRk];
+              }
+            });
+          }
+          mat.cols[w][ci] = newObj;
         }
-        mat.cols[w][ci] = newObj;
       } else {
         mat.cols[w].push(newObj);
       }

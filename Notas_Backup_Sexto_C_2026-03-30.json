@@ -1,0 +1,1392 @@
+{
+  "version": 2,
+  "exportedAt": "2026-03-31T22:50:30.368Z",
+  "grado": "Sexto C",
+  "anio": "2025-2026",
+  "state": {
+    "students": [
+      "ALCIVAR MENDOZA AMY SOFIA",
+      "ALMEIDA ANZATUÑA EMILY ANAHI",
+      "ALMEIDA TACUAMAN DOMINIC JHARET",
+      "ANDINO ORTIZ ERICK JACOBO",
+      "ANTE SUAMBRA MELISA BRIGITH",
+      "CAMPOS ESPINOSA JUSTER KAIL",
+      "CASTILLO ROJAS DOMINICK JAZIEL",
+      "CEDEÑO PINANJOTA ARLETH SALOME",
+      "CHILENO MEDINA CRISTOFER ALEJANDRO",
+      "CHONTA LLUMITAXI ALISSON ESTEFANIA",
+      "CISNEROS MORAN ALEJANDRO PAVEL",
+      "ENCARNACION INFANTE TIFANY ESTHER",
+      "FLORES ACERO CAMILA NOEMI",
+      "GAGUY CABAY TAMIA MAYTE",
+      "GODOY CEDEÑO SAMANTHA AITANA",
+      "GUALOTO DIAZ SAMANTHA ESTEFANIA",
+      "GUANOTASIG SANTIAK JAYDEEN JAACE",
+      "GUAYANAY VINUEZA JHON ALEX",
+      "GUERRON ROLDAN ANGEL SEBASTIAN",
+      "HEREDIA TITUAÑA JHAIR ALEJANDRO",
+      "IÑIGUEZ MORALES DEMY VALENTINA",
+      "JARAMILLO ERAZO YERLIS NAHOMI",
+      "LOYATO CEPEDA EITHAN SEBASTIAN",
+      "MALES NARVAEZ DANDY FERNEY",
+      "MERA POZO VALERIA MONSERRATH",
+      "MORALES TULCANAZO DANDELAY MIA",
+      "MUSGO MORALES SCARLETT ISABEL",
+      "NOLIVIOS LANAS BRYANA MAITE",
+      "PALACIOS PIZARRO DOSTIN MIGUEL",
+      "PERALTA ANRANGO ALEXANDER JAVIER",
+      "QUIÑONEZ GARCIA DYLAN JESNER",
+      "QUISPE ANTE ALAN JOSUE",
+      "ROBLES CARRION ANGELINE ISABELA",
+      "ROSALES LOPEZ ISAAC ANDRES",
+      "ROSERO LITARDO CRISTIAN DANIEL",
+      "SANGUCHO AGUIRRE JHOAN SEBASTIAN",
+      "SARZOSA CONTRERAS TYLER LEONEL",
+      "SUAREZ GOMEZ VALESKA MALLERLY",
+      "VELASCO RAMOS ESTEBAN ALEXANDER",
+      "QUISPE OSCAR PATRICIO"
+    ],
+    "grado": "Sexto C",
+    "recovered": {
+      "Lengua||39||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": true,
+      "Lengua||28||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": true,
+      "Lengua||39||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": true,
+      "Lengua||28||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": true,
+      "Lengua||39||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": true
+    },
+    "anio": "2025-2026",
+    "weekColors": {
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS": {
+        "c": "rgba(44,62,80,0.07)",
+        "s": "#405264",
+        "h": "#2c3e50"
+      },
+      "EESS||EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA": {
+        "s": "#2e8250",
+        "c": "rgba(26,110,60,0.07)",
+        "h": "#1a6e3c"
+      },
+      "Lectura||UN LIBRO DE CIENCIA FICCIÓN": {
+        "h": "#0d47a1",
+        "s": "#215bb5",
+        "c": "rgba(13,71,161,0.07)"
+      },
+      "Artística||GUARDIANES DE LA VÍA": {
+        "c": "rgba(181,69,27,0.07)",
+        "s": "#c9592f",
+        "h": "#b5451b"
+      },
+      "Lectura||SEMANA 2": {
+        "h": "#1a4a8a",
+        "c": "rgba(46,109,164,0.07)",
+        "s": "#2e6da4"
+      },
+      "Acompañamiento Integral||SEMANA 2": {
+        "c": "rgba(46,109,164,0.07)",
+        "s": "#2e6da4",
+        "h": "#1a4a8a"
+      },
+      "EESS||SEMANA 2": {
+        "c": "rgba(46,109,164,0.07)",
+        "s": "#2e6da4",
+        "h": "#1a4a8a"
+      },
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD": {
+        "h": "#1a7a7a",
+        "c": "rgba(26,122,122,0.07)",
+        "s": "#2e8e8e"
+      },
+      "Lengua||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL": {
+        "s": "#2e8250",
+        "c": "rgba(26,110,60,0.07)",
+        "h": "#1a6e3c"
+      },
+      "CCNN||SEMANA 2": {
+        "s": "#2e6da4",
+        "c": "rgba(46,109,164,0.07)",
+        "h": "#1a4a8a"
+      },
+      "Lengua||LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS": {
+        "h": "#5d4037",
+        "s": "#71544b",
+        "c": "rgba(93,64,55,0.07)"
+      },
+      "Artística||SEMANA 2": {
+        "h": "#1a4a8a",
+        "s": "#2e6da4",
+        "c": "rgba(46,109,164,0.07)"
+      },
+      "Acompañamiento Integral||¿QUIÉN TIENE EL PODER EN EL PAÍS?”": {
+        "h": "#7a6a00",
+        "c": "rgba(122,106,0,0.07)",
+        "s": "#8e7e14"
+      },
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS": {
+        "h": "#5d4037",
+        "s": "#71544b",
+        "c": "rgba(93,64,55,0.07)"
+      }
+    },
+    "mats": {
+      "EESS": {
+        "weeks": [
+          "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA",
+          "SEMANA 2"
+        ],
+        "grades": {
+          "0": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "2",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "ST",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "ST"
+          },
+          "1": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "2": {},
+          "3": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "9",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "8",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "SC"
+          },
+          "4": {},
+          "5": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "1"
+          },
+          "6": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "5",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "9"
+          },
+          "7": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "8": {},
+          "9": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "8",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "1"
+          },
+          "10": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "8",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "11": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10"
+          },
+          "12": {},
+          "13": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "1",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "14": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "1"
+          },
+          "15": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10"
+          },
+          "16": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "SC",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "SC",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "ST"
+          },
+          "17": {},
+          "18": {},
+          "19": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "8"
+          },
+          "20": {},
+          "21": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "9"
+          },
+          "22": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "9",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "23": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10"
+          },
+          "24": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "25": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10"
+          },
+          "26": {},
+          "27": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "1"
+          },
+          "28": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "1",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "9",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "9"
+          },
+          "29": {},
+          "30": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "31": {},
+          "32": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "33": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "9",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "34": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "8",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "9"
+          },
+          "35": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "8",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "7",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "36": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "1",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "37": {
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||MAPA CONCEPTUAL": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||RESPONDER PREGUNTAS": "10",
+            "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA||PAG 121": "10"
+          },
+          "38": {},
+          "39": {}
+        },
+        "cols": {
+          "SEMANA 2": [
+            {
+              "color": null,
+              "type": "AC",
+              "name": "A2",
+              "date": ""
+            },
+            {
+              "name": "T2",
+              "color": null,
+              "type": "T",
+              "date": ""
+            },
+            {
+              "name": "L2",
+              "type": "L",
+              "color": null,
+              "date": ""
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "TG",
+              "name": "TG2"
+            }
+          ],
+          "EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA": [
+            {
+              "name": "MAPA CONCEPTUAL",
+              "type": "AC",
+              "date": "2026-03-24",
+              "color": null
+            },
+            {
+              "name": "RESPONDER PREGUNTAS",
+              "type": "T",
+              "date": "2026-03-26",
+              "color": "#b5451b"
+            },
+            {
+              "name": "PAG 121",
+              "type": "AC",
+              "date": "",
+              "color": "#6a1fa0"
+            }
+          ]
+        }
+      },
+      "Lengua": {
+        "cols": {
+          "LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS": [
+            {
+              "name": "DIBUJOS HEROES",
+              "type": "AC",
+              "date": "2026-03-31",
+              "color": null
+            },
+            {
+              "name": "PAG 150-151-155",
+              "type": "AC",
+              "date": "",
+              "color": "#6a1fa0"
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "L",
+              "name": "L2"
+            },
+            {
+              "name": "TG2",
+              "type": "TG",
+              "color": null,
+              "date": ""
+            }
+          ],
+          "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL": [
+            {
+              "date": "2026-03-24",
+              "type": "AC",
+              "color": null,
+              "name": "PAG 143"
+            },
+            {
+              "date": "2026-03-24",
+              "name": "PAG 144",
+              "type": "T",
+              "color": null
+            },
+            {
+              "date": "2026-03-25",
+              "name": "PAGS 145-146-147",
+              "color": null,
+              "type": "AC"
+            },
+            {
+              "date": "2026-03-30",
+              "name": "PAG 148",
+              "color": "#b5451b",
+              "type": "AC"
+            },
+            {
+              "name": "MATERIA",
+              "color": null,
+              "type": "AC",
+              "date": ""
+            }
+          ]
+        },
+        "weeks": [
+          "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL",
+          "LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS"
+        ],
+        "grades": {
+          "0": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10"
+          },
+          "1": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "2": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8"
+          },
+          "3": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8"
+          },
+          "4": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8"
+          },
+          "5": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8"
+          },
+          "6": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8"
+          },
+          "7": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "8": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "7"
+          },
+          "9": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "6",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "10": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "11": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "12": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "6",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "13": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8"
+          },
+          "14": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "6",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "15": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "16": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8"
+          },
+          "17": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "18": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "19": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8"
+          },
+          "20": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10"
+          },
+          "21": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "22": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "23": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "24": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "25": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "26": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10"
+          },
+          "27": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "28": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "6",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "29": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "6",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "7"
+          },
+          "30": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9"
+          },
+          "31": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8"
+          },
+          "32": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10"
+          },
+          "33": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "34": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "35": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "F",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9"
+          },
+          "36": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "10"
+          },
+          "37": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "10",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "9",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "10"
+          },
+          "38": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "6"
+          },
+          "39": {
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 144": "8",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||MATERIA": "1",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 148": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAGS 145-146-147": "7",
+            "PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 143": "7"
+          }
+        }
+      },
+      "Artística": {
+        "cols": {
+          "SEMANA 2": [
+            {
+              "date": "",
+              "name": "A2",
+              "type": "AC",
+              "color": null
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "T",
+              "name": "T2"
+            },
+            {
+              "color": null,
+              "type": "L",
+              "name": "L2",
+              "date": ""
+            },
+            {
+              "color": null,
+              "type": "TG",
+              "name": "TG2",
+              "date": ""
+            }
+          ],
+          "GUARDIANES DE LA VÍA": [
+            {
+              "name": "A1",
+              "type": "AC",
+              "color": null,
+              "date": ""
+            }
+          ]
+        },
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "GUARDIANES DE LA VÍA",
+          "SEMANA 2"
+        ]
+      },
+      "CCNN": {
+        "weeks": [
+          "MATERIA: SUSTANCIAS PURAS Y MEZCLAS",
+          "SEMANA 2"
+        ],
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "cols": {
+          "MATERIA: SUSTANCIAS PURAS Y MEZCLAS": [
+            {
+              "name": "A1",
+              "color": null,
+              "type": "AC",
+              "date": ""
+            },
+            {
+              "name": "T1",
+              "type": "T",
+              "color": null,
+              "date": ""
+            },
+            {
+              "name": "L1",
+              "type": "L",
+              "color": null,
+              "date": ""
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "color": null,
+              "name": "A2",
+              "date": ""
+            },
+            {
+              "date": "",
+              "type": "T",
+              "color": null,
+              "name": "T2"
+            },
+            {
+              "date": "",
+              "type": "L",
+              "color": null,
+              "name": "L2"
+            },
+            {
+              "date": "",
+              "name": "TG2",
+              "color": null,
+              "type": "TG"
+            }
+          ]
+        }
+      },
+      "Acompañamiento Integral": {
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "¿QUIÉN TIENE EL PODER EN EL PAÍS?”",
+          "SEMANA 2"
+        ],
+        "cols": {
+          "¿QUIÉN TIENE EL PODER EN EL PAÍS?”": [
+            {
+              "date": "",
+              "type": "AC",
+              "color": null,
+              "name": "A1"
+            },
+            {
+              "name": "T1",
+              "color": null,
+              "type": "T",
+              "date": ""
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "L",
+              "name": "L1"
+            },
+            {
+              "name": "TG1",
+              "type": "TG",
+              "color": null,
+              "date": ""
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "date": "",
+              "color": null,
+              "type": "AC",
+              "name": "A2"
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "T",
+              "name": "T2"
+            },
+            {
+              "date": "",
+              "name": "L2",
+              "color": null,
+              "type": "L"
+            },
+            {
+              "date": "",
+              "name": "TG2",
+              "type": "TG",
+              "color": null
+            }
+          ]
+        }
+      },
+      "Lectura": {
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "UN LIBRO DE CIENCIA FICCIÓN",
+          "SEMANA 2"
+        ],
+        "cols": {
+          "UN LIBRO DE CIENCIA FICCIÓN": [
+            {
+              "date": "",
+              "color": null,
+              "type": "AC",
+              "name": "A1"
+            },
+            {
+              "type": "T",
+              "color": null,
+              "name": "T1",
+              "date": ""
+            },
+            {
+              "name": "L1",
+              "color": null,
+              "type": "L",
+              "date": ""
+            },
+            {
+              "date": "",
+              "color": null,
+              "type": "TG",
+              "name": "TG1"
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "name": "A2",
+              "type": "AC",
+              "color": null,
+              "date": ""
+            },
+            {
+              "type": "T",
+              "color": null,
+              "name": "T2",
+              "date": ""
+            },
+            {
+              "name": "L2",
+              "type": "L",
+              "color": null,
+              "date": ""
+            },
+            {
+              "date": "",
+              "name": "TG2",
+              "type": "TG",
+              "color": null
+            }
+          ]
+        }
+      },
+      "Matemáticas": {
+        "weeks": [
+          "CRITERIOS DE DIVISIBILIDAD",
+          "NUMEROS PRIMOS Y COMPUESTOS"
+        ],
+        "grades": {
+          "0": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "8",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "8",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "1": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10"
+          },
+          "2": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "8",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "7",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7"
+          },
+          "3": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9"
+          },
+          "4": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "2",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F"
+          },
+          "5": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "7",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "7",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7"
+          },
+          "6": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "7",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "8"
+          },
+          "7": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7"
+          },
+          "8": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "7",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "1",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "9": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "8",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9"
+          },
+          "10": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "6",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "8"
+          },
+          "11": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9"
+          },
+          "12": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F"
+          },
+          "13": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9"
+          },
+          "14": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "6",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9"
+          },
+          "15": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "16": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "6",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9"
+          },
+          "17": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10"
+          },
+          "18": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "19": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9"
+          },
+          "20": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "8",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10"
+          },
+          "21": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10"
+          },
+          "22": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10"
+          },
+          "23": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "8"
+          },
+          "24": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10"
+          },
+          "25": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "26": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10"
+          },
+          "27": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9"
+          },
+          "28": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "5"
+          },
+          "29": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7"
+          },
+          "30": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F"
+          },
+          "31": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "4",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F"
+          },
+          "32": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9"
+          },
+          "33": {
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9"
+          },
+          "34": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "7",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "9",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9"
+          },
+          "35": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "8",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F"
+          },
+          "36": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "9",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10"
+          },
+          "37": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "10",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "8",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "9"
+          },
+          "38": {
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "F",
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "F",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "F",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "F"
+          },
+          "39": {
+            "CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": "10",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 68": "9",
+            "CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": "8",
+            "CRITERIOS DE DIVISIBILIDAD||PAG 69": "3"
+          }
+        },
+        "cols": {
+          "CRITERIOS DE DIVISIBILIDAD": [
+            {
+              "color": "#b5451b",
+              "type": "T",
+              "name": "PAG 68",
+              "date": "2026-03-24"
+            },
+            {
+              "name": "PAG 69",
+              "type": "AC",
+              "color": null,
+              "date": "2026-03-25"
+            },
+            {
+              "name": "LECCIÓN1",
+              "type": "L",
+              "color": "#6a1fa0",
+              "date": "2026-03-27"
+            },
+            {
+              "name": "EJERCICIOS DE REFUERZO",
+              "color": null,
+              "type": "AC",
+              "date": "2026-03-30"
+            }
+          ],
+          "NUMEROS PRIMOS Y COMPUESTOS": [
+            {
+              "date": "",
+              "color": null,
+              "type": "AC",
+              "name": "A2"
+            },
+            {
+              "name": "T2",
+              "color": null,
+              "type": "T",
+              "date": ""
+            },
+            {
+              "name": "L2",
+              "color": null,
+              "type": "L",
+              "date": ""
+            },
+            {
+              "type": "TG",
+              "color": null,
+              "name": "TG2",
+              "date": ""
+            }
+          ]
+        }
+      }
+    },
+    "am": 3
+  },
+  "resize": {
+    "cols": {
+      "0": 67.33333587646484,
+      "1": 64,
+      "2": 58,
+      "3": 138.76388549804688,
+      "4": 54,
+      "5": 94,
+      "6": 54,
+      "7": 76,
+      "8": 136,
+      "9": 67.0694580078125,
+      "names": 266,
+      "prom-total": 90
+    },
+    "rows": {},
+    "hiddenCols": {},
+    "hiddenRows": {}
+  }
+}
