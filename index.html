@@ -1175,6 +1175,20 @@ let S = {
   asistencia: {}
 };
 
+function getWeekName(w) {
+  if (typeof w === 'object' && w !== null) return w.name || '';
+  return String(w || '');
+}
+function getWeekDestreza(w) {
+  if (typeof w === 'object' && w !== null) return w.destreza || '';
+  return '';
+}
+function getWeekTitle(w) {
+  const name = getWeekName(w);
+  const dest = getWeekDestreza(w);
+  return dest ? `${name} ${dest}` : name;
+}
+
 function getMats() {
   if (!S.matsList || !S.matsList.length) {
     S.matsList = DEFAULT_MATS.map(m => m.name);
@@ -1385,8 +1399,9 @@ function getStudentTrimestreCalc(si, mName) {
   const rfVals   = [];
 
   mat.weeks.forEach(w => {
-    (mat.cols[w] || []).forEach(col => {
-      const v = g[w + '||' + col.name];
+    const wName = getWeekName(w);
+    (mat.cols[wName] || []).forEach(col => {
+      const v = g[wName + '||' + col.name];
       if (v === undefined || v === '') return;
       const n = parseFloat(v);
       if (isNaN(n)) return;
@@ -1519,13 +1534,16 @@ function renderTable() {
       <span style="font-size:0.58rem;opacity:.7;display:block;font-weight:400">✎ doble clic para editar</span>
     </th>`;
 
+  // Fila 1: Semanas y Bloques Ponderados
   mat.weeks.forEach((w, wi) => {
-    const c = mat.cols[w] || [];
+    const wName = getWeekName(w);
+    const wTitle = getWeekTitle(w);
+    const c = mat.cols[wName] || [];
     const span = (c.length || 1) + 1; // +1 por columna PROM
-    const wc = weekColor(mName, w, wi);
-    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para renombrar · ${escHTML(w)}"
-      style="background:${wc.h};border-color:${wc.h}">
-      ${escHTML(w)}
+    const wc = weekColor(mName, wName, wi);
+    r1 += `<th class="wh" colspan="${span}" ondblclick="editWeekName(${wi})" title="Doble clic para editar Tema y Destreza · ${escHTML(wTitle)}"
+      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">
+      ${escHTML(wTitle)}
     </th>`;
   });
 
@@ -1539,37 +1557,46 @@ function renderTable() {
 
   r1 += `<th rowspan="2" class="ath" style="min-width:48px;width:48px">Acc.</th></tr>`;
 
-  // Fila 2: Subcolumnas
+  // Fila 2: Subcolumnas (Actividad en GRANDE -> Fecha -> De qué se trata)
   let r2 = '<tr>';
   mat.weeks.forEach((w, wi) => {
-    const c = mat.cols[w] || [];
-    const wc = weekColor(mName, w, wi);
+    const wName = getWeekName(w);
+    const c = mat.cols[wName] || [];
+    const wc = weekColor(mName, wName, wi);
     if (!c.length) {
-      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(w)}')" title="Doble clic para agregar actividad"
-        style="background:${wc.s};border-color:${wc.h}">+ act</th>`;
+      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(wName)}')" title="Doble clic para agregar actividad"
+        style="background:${wc.s};border-color:${wc.h};min-width:100px">+ act</th>`;
     } else {
       c.forEach((col, ci) => {
         const at = actType(col.type);
         const bg = col.color || at.color;
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
-        const descSub = col.desc ? `<span style="display:block;font-size:0.55rem;opacity:.9;white-space:normal;line-height:1.1;max-width:85px;font-weight:400" title="${escHTML(col.desc)}">${escHTML(col.desc.length > 25 ? col.desc.substring(0, 22) + '...' : col.desc)}</span>` : '';
-        const lbl = col.date ? `${escHTML(col.name)}<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(col.date)}</span>` : escHTML(col.name);
-        const typeBadge = `<span style="display:block;font-size:0.55rem;opacity:.85;font-weight:400">${escHTML(at.label)}${catBadge}</span>`;
-        const fullTitle = `${escHTML(col.name)}${col.desc ? ' — ' + escHTML(col.desc) : ''} (${escHTML(at.label)})`;
+
+        const actNameHTML = `<div style="font-size:0.85rem;font-weight:900;letter-spacing:0.3px;color:#ffffff;line-height:1.25;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px">${escHTML(col.name)}</div>`;
+        const dateHTML = col.date ? `<div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:3px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
+        const descText = col.desc ? escHTML(col.desc) : `${escHTML(at.label)}${catBadge}`;
+        const descHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.88);line-height:1.2;white-space:normal;max-width:130px;margin:0 auto">${descText}</div>`;
+
+        const fullTitle = `${escHTML(col.name)}${col.desc ? ' — ' + escHTML(col.desc) : ''} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${fullTitle} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
-          style="background:${bg};border-color:${bg};min-width:54px">
-          <div style="position:relative;width:100%;padding:2px 0">
-            <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(w)}','${esc(col.name)}')" title="Copiar columna ${escVal(col.name)} para Excel o Word" class="col-del-btn" style="right:18px">📋</button>
-            <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn">✕</button>
-            ${lbl}
-            ${descSub}
-            ${typeBadge}
+          style="background:${bg};border-color:${bg};min-width:115px;padding:6px 8px;vertical-align:top">
+          <div style="position:relative;width:100%">
+            <div style="position:absolute;top:-2px;right:-4px;display:flex;gap:2px;z-index:2">
+              <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(wName)}','${esc(col.name)}')" title="Copiar columna ${escVal(col.name)} para Excel/Word" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">📋</button>
+              <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">✕</button>
+            </div>
+            
+            <div style="padding-right:32px">
+              ${actNameHTML}
+              ${dateHTML}
+              ${descHTML}
+            </div>
           </div>
         </th>`;
       });
     }
-    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(w)}','PROM ${esc(w)}')" title="Clic para copiar los promedios de ${escHTML(w)} para Excel o Word" style="background:${wc.h};border-color:${wc.h};font-weight:700;cursor:pointer">PROM 📋</th>`;
+    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')" title="Clic para copiar los promedios de ${escHTML(wName)} para Excel o Word" style="background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.85rem;cursor:pointer;vertical-align:middle">PROM 📋</th>`;
   });
   r2 += '</tr>';
 
@@ -1582,12 +1609,13 @@ function renderTable() {
     const g = mat.grades[si] || {};
 
     const cells = mat.weeks.map((w, wi) => {
-      const c = mat.cols[w] || [];
-      const wc = weekColor(mName, w, wi);
+      const wName = getWeekName(w);
+      const c = mat.cols[wName] || [];
+      const wc = weekColor(mName, wName, wi);
 
       // Promedio semanal
       const weekVals = c.map(col => {
-        const v = g[w + '||' + col.name];
+        const v = g[wName + '||' + col.name];
         if (v === undefined || v === '') return NaN;
         return parseFloat(v);
       }).filter(n => !isNaN(n));
@@ -1604,7 +1632,7 @@ function renderTable() {
       const inputs = c.map(col => {
         const at = actType(col.type);
         const cellBg = col.color ? hexToRgba(col.color, 0.08) : at.cell;
-        const k = w + '||' + col.name;
+        const k = wName + '||' + col.name;
         const v = g[k] !== undefined ? g[k] : '';
 
         if (isQual) {
@@ -1612,27 +1640,27 @@ function renderTable() {
           const qVal = v ? String(v).toUpperCase() : 'NE';
           const qObj = QUAL_SCALE.find(q => q.val === qVal) || QUAL_SCALE[3];
           return `<td style="background:${cellBg}">
-            <span class="badge-qual ${qObj.cls}" onclick="cycleQual(${si},'${esc(w)}','${esc(col.name)}')">${qObj.val}</span>
+            <span class="badge-qual ${qObj.cls}" onclick="cycleQual(${si},'${esc(wName)}','${esc(col.name)}')">${qObj.val}</span>
           </td>`;
         }
 
         const n = parseFloat(v);
         const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
         const specCls = specialCls(v);
-        const tdCls = specCls ? specCls : (v !== '' && !isNaN(n) ? (n < 7 ? 'cell-low' : (isRecovered(si, w, col.name) ? 'cell-rec' : '')) : '');
+        const tdCls = specCls ? specCls : (v !== '' && !isNaN(n) ? (n < 7 ? 'cell-low' : (isRecovered(si, wName, col.name) ? 'cell-rec' : '')) : '');
         const tdBg = tdCls ? '' : cellBg;
 
         return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="background:${tdBg}">
           <input class="gi ${specCls ? '' : cls}" type="text" inputmode="decimal"
             value="${escVal(v)}"
-            onchange="upd(${si},'${esc(w)}','${esc(col.name)}',this.value)"
+            onchange="upd(${si},'${esc(wName)}','${esc(col.name)}',this.value)"
             oninput="clr(this)"
             onfocus="this.select()"
             onkeydown="nav(event,this)"/>
         </td>`;
       }).join('');
 
-      return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(w)}" style="background:${wc.c}">${wAvgDisp}</td>`;
+      return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(wName)}" style="background:${wc.c}">${wAvgDisp}</td>`;
     }).join('');
 
     const calc = getStudentTrimestreCalc(si, mName);
@@ -2407,14 +2435,22 @@ function openManageNomina() {
 function openAddWeek() {
   const mat = gm();
   showModal(
-    '➕ Agregar Semana',
-    `<label>Nombre de la Semana</label><input type="text" id="mWeekInp" value="SEMANA ${(mat.weeks.length||0)+1}"/>`,
+    '➕ Agregar Tema y Destreza de la Semana',
+    `
+    <label>Tema / Nombre de la Semana</label>
+    <input type="text" id="mWeekInp" value="SEMANA ${(mat.weeks.length||0)+1}" placeholder="Ej: ESCRIBIR POESÍAS, SEMANA 1"/>
+    <label>Destreza / Criterio de Evaluación (Al lado)</label>
+    <input type="text" id="mWeekDest" value="" placeholder="Ej: I.LL.3.1.1."/>
+    `,
     'Agregar',
     () => {
       const nv = document.getElementById('mWeekInp').value.trim().toUpperCase();
-      if (!nv || mat.weeks.includes(nv)) return;
-      mat.weeks.push(nv);
-      mat.cols[nv] = [];
+      const dest = document.getElementById('mWeekDest')?.value.trim().toUpperCase() || '';
+      if (!nv) return;
+
+      const newWeekObj = { name: nv, destreza: dest };
+      mat.weeks.push(newWeekObj);
+      if (!mat.cols[nv]) mat.cols[nv] = [];
       closeModal(); render(); saveData();
     }
   );
@@ -2422,17 +2458,32 @@ function openAddWeek() {
 
 function editWeekName(wi) {
   const mat = gm();
-  const old = mat.weeks[wi];
+  const oldW = mat.weeks[wi];
+  const oldName = getWeekName(oldW);
+  const oldDest = getWeekDestreza(oldW);
+
   showModal(
-    '✎ Editar Semana',
-    `<label>Nombre</label><input type="text" id="mWeekEdit" value="${escVal(old)}"/>`,
+    '✎ Editar Tema y Destreza de la Semana',
+    `
+    <label>Tema / Nombre de la Semana</label>
+    <input type="text" id="mWeekEdit" value="${escVal(oldName)}" placeholder="Ej: ESCRIBIR POESÍAS, SEMANA 1"/>
+    <label>Destreza / Criterio de Evaluación (Al lado)</label>
+    <input type="text" id="mWeekDestEdit" value="${escVal(oldDest)}" placeholder="Ej: I.LL.3.1.1."/>
+    `,
     'Guardar',
     () => {
       const nv = document.getElementById('mWeekEdit').value.trim().toUpperCase();
-      if (!nv || nv === old) { closeModal(); return; }
-      mat.weeks[wi] = nv;
-      mat.cols[nv] = mat.cols[old] || [];
-      delete mat.cols[old];
+      const dest = document.getElementById('mWeekDestEdit')?.value.trim().toUpperCase() || '';
+      if (!nv) return;
+
+      const newWeekObj = { name: nv, destreza: dest };
+      mat.weeks[wi] = newWeekObj;
+
+      if (oldName !== nv) {
+        mat.cols[nv] = mat.cols[oldName] || [];
+        delete mat.cols[oldName];
+      }
+
       closeModal(); render(); saveData();
     }
   );
@@ -2440,35 +2491,39 @@ function editWeekName(wi) {
 
 function openDelWeek() {
   const mat = gm();
-  const opts = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
+  const opts = mat.weeks.map((w, wi) => `<option value="${wi}">${escHTML(getWeekTitle(w))}</option>`).join('');
   showModal('🗑 Eliminar Semana', `<label>Semana:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar', () => {
-    const target = document.getElementById('mDelWeekSel').value;
-    mat.weeks = mat.weeks.filter(w => w !== target);
-    delete mat.cols[target];
+    const wi = parseInt(document.getElementById('mDelWeekSel').value);
+    const targetW = mat.weeks[wi];
+    const targetName = getWeekName(targetW);
+    mat.weeks.splice(wi, 1);
+    delete mat.cols[targetName];
     closeModal(); render(); saveData();
   }, 'btn-danger');
 }
 
 function openAddCol() {
-  showColModal(gm().weeks[0] || 'SEMANA 1', null, false);
+  showColModal(getWeekName(gm().weeks[0]) || 'SEMANA 1', null, false);
 }
-function addColToWeek(w) { showColModal(w, null, false); }
+function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 function editColName(wi, ci) {
   const w = gm().weeks[wi];
-  showColModal(w, gm().cols[w][ci], true, wi, ci);
+  const wName = getWeekName(w);
+  showColModal(wName, gm().cols[wName][ci], true, wi, ci);
 }
 
 function delCol(wi, ci) {
   const mat = gm();
   const w = mat.weeks[wi];
-  if (!mat || !mat.cols[w] || !mat.cols[w][ci]) return;
-  const col = mat.cols[w][ci];
+  const wName = getWeekName(w);
+  if (!mat || !mat.cols[wName] || !mat.cols[wName][ci]) return;
+  const col = mat.cols[wName][ci];
 
-  confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.name)}</strong> (${escHTML(w)}) y todas sus calificaciones?`, () => {
+  confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.name)}</strong> (${escHTML(wName)}) y todas sus calificaciones?`, () => {
     const deletedColName = col.name;
-    mat.cols[w].splice(ci, 1);
+    mat.cols[wName].splice(ci, 1);
 
-    const key = w + '||' + deletedColName;
+    const key = wName + '||' + deletedColName;
     S.students.forEach((_, si) => {
       if (mat.grades[si]) {
         delete mat.grades[si][key];
@@ -2486,8 +2541,9 @@ function openDelColModal() {
   const mat = gm();
   const allCols = [];
   mat.weeks.forEach((w, wi) => {
-    (mat.cols[w] || []).forEach((c, ci) => {
-      allCols.push({ w, wi, ci, name: c.name, type: c.type });
+    const wName = getWeekName(w);
+    (mat.cols[wName] || []).forEach((c, ci) => {
+      allCols.push({ w: wName, wi, ci, name: c.name, type: c.type });
     });
   });
 
@@ -2496,7 +2552,7 @@ function openDelColModal() {
     return;
   }
 
-  const opts = allCols.map(c => 
+  const opts = allCols.map(c =>
     `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} → ${escHTML(c.name)} (${actType(c.type).label})</option>`
   ).join('');
 
@@ -2520,7 +2576,7 @@ function openDelColModal() {
 
 function showColModal(selWeek, col, isEdit, wi, ci) {
   const mat = gm();
-  const weekOpts = mat.weeks.map(w => `<option value="${escVal(w)}" ${w===selWeek?'selected':''}>${escHTML(w)}</option>`).join('');
+  const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
   const typeOpts = ACT_TYPES.map(t => {
     const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
     return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
@@ -3137,8 +3193,10 @@ function exportCSV() {
       [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }]
     ];
     mat.weeks.forEach(w => {
-      (mat.cols[w]||[]).forEach(c => rows[2].push({ v:`${w}\n${c.name}`, t:'s', s:'hdr_col' }));
-      rows[2].push({ v:`PROM\n${w}`, t:'s', s:'hdr_prom' });
+      const wName = getWeekName(w);
+      const wTitle = getWeekTitle(w);
+      (mat.cols[wName]||[]).forEach(c => rows[2].push({ v:`${wTitle}\n${c.name}`, t:'s', s:'hdr_col' }));
+      rows[2].push({ v:`PROM\n${wTitle}`, t:'s', s:'hdr_prom' });
     });
     if (!isQual) {
       rows[2].push({ v:'70% FORM.', t:'s', s:'hdr_prom' }, { v:'30% SUM.', t:'s', s:'hdr_prom' }, { v:'NOTA TRIM.', t:'s', s:'hdr_prom' });
@@ -3152,13 +3210,14 @@ function exportCSV() {
       const row = [{ v:pos+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
 
       mat.weeks.forEach(w => {
-        (mat.cols[w]||[]).forEach(c => {
-          const v = g[w+'||'+c.name];
+        const wName = getWeekName(w);
+        (mat.cols[wName]||[]).forEach(c => {
+          const v = g[wName+'||'+c.name];
           const n = parseFloat(v);
           if (v && !isNaN(n)) row.push({ v:n, t:'n', s:n<7?'low':'ok' });
           else row.push({ v:v||'', t:'s', s:'empty' });
         });
-        const nums = (mat.cols[w]||[]).map(c=>parseFloat(g[w+'||'+c.name])).filter(num=>!isNaN(num));
+        const nums = (mat.cols[wName]||[]).map(c=>parseFloat(g[wName+'||'+c.name])).filter(num=>!isNaN(num));
         const wAvg = nums.length ? parseFloat(trunc2(nums.reduce((a,b)=>a+b,0)/nums.length)) : null;
         row.push(wAvg!==null ? { v:wAvg, t:'n', s:wAvg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
       });
