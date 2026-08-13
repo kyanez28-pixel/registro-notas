@@ -1040,8 +1040,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
 // Asignaturas oficiales de Séptimo de Básica (Cuantitativas y Cualitativas)
 const DEFAULT_MATS = [
-  { name:'Lengua y Literatura', qual:false },
   { name:'Matemáticas',         qual:false },
+  { name:'Lengua y Literatura', qual:false },
   { name:'Ciencias Naturales',  qual:false },
   { name:'Estudios Sociales',   qual:false },
   { name:'Educación Artística', qual:false },
@@ -1212,6 +1212,16 @@ function initS() {
 function ensureMats() {
   if (!S.mats) S.mats = {};
   if (!S.matsList) S.matsList = DEFAULT_MATS.map(m => m.name);
+
+  // Asegurar que Lengua esté en 2do lugar (inmediatamente después de Matemáticas)
+  const matIdx = S.matsList.findIndex(m => (m||'').toLowerCase().includes('matemátic') || (m||'').toLowerCase().includes('matematic'));
+  const lenIdx = S.matsList.findIndex(m => (m||'').toLowerCase().includes('lengua'));
+  if (matIdx !== -1 && lenIdx !== -1 && lenIdx !== matIdx + 1) {
+    const lenItem = S.matsList.splice(lenIdx, 1)[0];
+    const newMatIdx = S.matsList.findIndex(m => (m||'').toLowerCase().includes('matemátic') || (m||'').toLowerCase().includes('matematic'));
+    S.matsList.splice(newMatIdx + 1, 0, lenItem);
+  }
+
   if (!S.matsMeta) {
     S.matsMeta = S.matsList.map(m => ({ name: m, qual: isQualitativeMat(m) }));
   }
@@ -2065,7 +2075,11 @@ function openManageMats() {
         <span style="font-weight:700;font-size:0.85rem">${escHTML(m)}</span>
         <span style="font-size:0.7rem;color:var(--text-muted);display:block">${isQual ? 'Evaluación Cualitativa (A, EP, I, NE)' : 'Ponderada 70% Formativo + 30% Sumativo'}</span>
       </div>
-      <button class="bt btd" onclick="delMat(${i})">✕</button>
+      <div style="display:flex;gap:4px">
+        <button class="bt" onclick="moveMat(${i}, -1)" ${i===0?'disabled':''} title="Mover arriba">▲</button>
+        <button class="bt" onclick="moveMat(${i}, 1)" ${i===mats.length-1?'disabled':''} title="Mover abajo">▼</button>
+        <button class="bt btd" onclick="delMat(${i})" title="Eliminar">✕</button>
+      </div>
     </div>`;
   }).join('');
 
@@ -2121,6 +2135,19 @@ function delMat(i) {
     if (S.am >= mats.length) S.am = 0;
     closeModal(); render(); saveData();
   });
+}
+
+function moveMat(i, dir) {
+  const mats = getMats();
+  const targetIndex = i + dir;
+  if (targetIndex < 0 || targetIndex >= mats.length) return;
+  const temp = mats[i];
+  mats[i] = mats[targetIndex];
+  mats[targetIndex] = temp;
+  S.matsList = mats;
+  openManageMats();
+  renderTabs();
+  saveData();
 }
 
 // ══════════════════════════════════════════════════════
@@ -3514,11 +3541,10 @@ const PI_DEFAULT_CONFIG = {
 function ensurePi() {
   if (!S.pi) S.pi = {};
   if (!S.pi.config) S.pi.config = JSON.parse(JSON.stringify(PI_DEFAULT_CONFIG));
-  // Asignaturas activas en el PI (por defecto todas las cuantitativas)
+  if (!S.pi.config.syncMode) S.pi.config.syncMode = 'subject';
   if (!S.pi.mats) {
     S.pi.mats = getMats().filter(m => !isQualitativeMat(m));
   }
-  // grades[materia][si][indicadorId] = nota
   if (!S.pi.grades) S.pi.grades = {};
   S.pi.mats.forEach(m => {
     if (!S.pi.grades[m]) S.pi.grades[m] = {};
@@ -3536,6 +3562,77 @@ function piGradeColor(n) {
   if (v >= 7) return '#dbeafe';
   if (v >= 5) return '#fef9c3';
   return '#fee2e2';
+}
+
+function handlePiPaste(e, startSi, startMat, startIndId) {
+  const clipboardData = e.clipboardData || window.clipboardData;
+  if (!clipboardData) return;
+  const text = clipboardData.getData('text');
+  if (!text) return;
+
+  const lines = text.trim().split(/\r?\n/).map(line => line.split('\t'));
+  if (lines.length > 1 || (lines[0] && lines[0].length > 1)) {
+    e.preventDefault();
+    ensurePi();
+    const sorted = getSortedIndices();
+    const startRowInSorted = sorted.indexOf(startSi);
+    if (startRowInSorted === -1) return;
+
+    const mats = S.pi.mats;
+    const inds = S.pi.config.indicadores;
+    const matIdx = mats.indexOf(startMat);
+    if (matIdx === -1) return;
+
+    let count = 0;
+
+    lines.forEach((rowVals, rOffset) => {
+      const targetRowPos = startRowInSorted + rOffset;
+      if (targetRowPos >= sorted.length) return;
+      const targetSi = sorted[targetRowPos];
+
+      rowVals.forEach((valStr, cOffset) => {
+        let cleanVal = valStr.trim().replace(',', '.');
+        if (cleanVal === '') return;
+        let n = parseFloat(cleanVal);
+        if (isNaN(n)) return;
+        if (n > 10) n = 10;
+        if (n < 1) n = 1;
+        const formatted = String(trunc2(n));
+
+        if (startIndId === '_direct') {
+          const currentMatIdx = matIdx + cOffset;
+          if (currentMatIdx < mats.length) {
+            const mName = mats[currentMatIdx];
+            if (!S.pi.grades[mName]) S.pi.grades[mName] = {};
+            if (!S.pi.grades[mName][targetSi]) S.pi.grades[mName][targetSi] = {};
+            S.pi.grades[mName][targetSi]._direct = formatted;
+            count++;
+          }
+        } else {
+          const indIdx = inds.findIndex(ind => ind.id === startIndId);
+          if (indIdx !== -1) {
+            const totalIndsPerMat = inds.length;
+            const currentTotalIndIdx = (matIdx * totalIndsPerMat + indIdx) + cOffset;
+            const targetMatIdx = Math.floor(currentTotalIndIdx / totalIndsPerMat);
+            const targetIndIdx = currentTotalIndIdx % totalIndsPerMat;
+
+            if (targetMatIdx < mats.length && targetIndIdx < inds.length) {
+              const mName = mats[targetMatIdx];
+              const indId = inds[targetIndIdx].id;
+              if (!S.pi.grades[mName]) S.pi.grades[mName] = {};
+              if (!S.pi.grades[mName][targetSi]) S.pi.grades[mName][targetSi] = {};
+              S.pi.grades[mName][targetSi][indId] = formatted;
+              count++;
+            }
+          }
+        }
+      });
+    });
+
+    saveData();
+    renderPi();
+    toast(`📋 ¡Se pegaron ${count} calificaciones en el Proyecto Interdisciplinario!`, '#16a34a');
+  }
 }
 
 function renderPi() {
@@ -3557,7 +3654,6 @@ function renderPi() {
   }
 
   // Build table headers
-  // Row 1: #, Nombre, then per-mat cols (span = inds.length + 1 for NOTA MAT), then NOTA PI FINAL
   let r1 = `<tr>
     <th class="fxl" rowspan="2" style="min-width:30px;width:30px">#</th>
     <th class="fxn" rowspan="2" style="min-width:200px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
@@ -3587,7 +3683,7 @@ function renderPi() {
         </div>
       </th>`;
     });
-    r2 += `<th class="sh" style="background:${matBg};border-color:${matBg};font-weight:700;min-width:52px">NOTA<br><span style="font-size:0.52rem">ASIGNATURA</span></th>`;
+    r2 += `<th class="sh" style="background:${matBg};border-color:${matBg};font-weight:700;min-width:56px" title="Nota final de la asignatura en el PI. Puedes digitar/pegar directamente aquí si no llenas indicadores.">NOTA<br><span style="font-size:0.52rem">ASIGNATURA</span></th>`;
   });
   r2 += `</tr>`;
 
@@ -3613,6 +3709,7 @@ function renderPi() {
         cells += `<td style="background:${bg||''}">
           <input class="gi ${cls}" type="text" inputmode="decimal"
             value="${escVal(v)}"
+            onpaste="handlePiPaste(event, ${si}, '${esc(m)}', '${esc(ind.id)}')"
             onchange="updPi(${si},'${esc(m)}','${esc(ind.id)}',this.value)"
             onfocus="this.select()"
             onkeydown="navPi(event,this,${si},'${esc(m)}','${esc(ind.id)}')"/>
@@ -3620,9 +3717,11 @@ function renderPi() {
         if (v !== '' && !isNaN(n)) indVals.push(n);
       });
 
-      // NOTA ASIGNATURA = weighted average of ind vals (each peso/100 weight)
+      // NOTA ASIGNATURA calculation or direct override
       let matNota = null;
-      if (indVals.length === inds.length) {
+      if (mGrades._direct !== undefined && mGrades._direct !== '') {
+        matNota = trunc2(parseFloat(mGrades._direct));
+      } else if (indVals.length === inds.length && inds.length > 0) {
         let weightedSum = 0;
         let weightTotal = 0;
         inds.forEach((ind, ii) => {
@@ -3636,9 +3735,26 @@ function renderPi() {
 
       const matBgColors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
       const matBg = matBgColors[mi % matBgColors.length];
-      const notaDisp = matNota !== null ? matNota : '—';
-      const notaCls  = matNota !== null && parseFloat(matNota) < 7 ? 'glo' : (matNota !== null ? 'ghi' : '');
-      cells += `<td class="prom-wk ${notaCls}" style="background:${piGradeColor(matNota)||'var(--bg-card)'};font-weight:700">${notaDisp}</td>`;
+      const notaCls = matNota !== null && parseFloat(matNota) < 7 ? 'glo' : (matNota !== null ? 'ghi' : '');
+      const bgNota  = piGradeColor(matNota) || 'var(--bg-card)';
+
+      if (indVals.length === 0) {
+        // Editable/pastable cell when indicators are empty
+        cells += `<td class="prom-wk" style="background:${bgNota}">
+          <input class="gi ${notaCls}" type="text" inputmode="decimal"
+            style="font-weight:800;text-align:center"
+            placeholder="—"
+            value="${escVal(mGrades._direct !== undefined ? mGrades._direct : (matNota !== null ? matNota : ''))}"
+            onpaste="handlePiPaste(event, ${si}, '${esc(m)}', '_direct')"
+            onchange="updPiDirect(${si},'${esc(m)}',this.value)"
+            onfocus="this.select()"
+            onkeydown="navPi(event,this,${si},'${esc(m)}','_direct')"/>
+        </td>`;
+      } else {
+        const notaDisp = matNota !== null ? matNota : '—';
+        cells += `<td class="prom-wk ${notaCls}" style="background:${bgNota};font-weight:800;text-align:center">${notaDisp}</td>`;
+      }
+
       if (matNota !== null) matNotas.push(parseFloat(matNota));
     });
 
@@ -3659,6 +3775,25 @@ function renderPi() {
   }).join('');
 
   document.getElementById('piTb').innerHTML = bodyHtml;
+}
+
+function updPiDirect(si, mat, val) {
+  ensurePi();
+  if (!S.pi.grades[mat]) S.pi.grades[mat] = {};
+  if (!S.pi.grades[mat][si]) S.pi.grades[mat][si] = {};
+
+  let v = val.trim().replace(',', '.');
+  if (v === '') {
+    delete S.pi.grades[mat][si]._direct;
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) { toast('⚠️ Ingresa una nota válida de 1.00 a 10.00', '#dc2626'); renderPi(); return; }
+    if (n > 10) { n = 10; toast('⚠️ Ajustado al máximo (10.00)', '#d97706'); }
+    else if (n < 1) { n = 1; toast('⚠️ Ajustado al mínimo (1.00)', '#d97706'); }
+    S.pi.grades[mat][si]._direct = String(trunc2(n));
+  }
+  saveData();
+  renderPi();
 }
 
 function updPi(si, mat, indId, val) {
@@ -3685,24 +3820,11 @@ function navPi(e, inp, si, mat, indId) {
     e.preventDefault();
     const allInputs = Array.from(document.querySelectorAll('#piTb input.gi'));
     const idx = allInputs.indexOf(inp);
-    // Move down (next student, same column)
-    const colCount = (S.pi.mats.length * (S.pi.config.indicadores.length + 1));
-    const totalRows = S.students.length;
-    const col = idx % (S.pi.config.indicadores.length * S.pi.mats.length + S.pi.mats.length);
-    const grid = [];
-    const rows = Array.from(document.querySelectorAll('#piTb tr'));
-    rows.forEach(tr => { grid.push(Array.from(tr.querySelectorAll('input.gi'))); });
-    let ri = -1, ci = -1;
-    for (let r = 0; r < grid.length; r++) {
-      const c = grid[r].indexOf(inp);
-      if (c >= 0) { ri = r; ci = c; break; }
-    }
-    if (ri === -1) return;
+    if (idx === -1) return;
     if (e.shiftKey) {
-      if (ri > 0 && grid[ri-1][ci]) { grid[ri-1][ci].focus(); setTimeout(() => grid[ri-1][ci].select(), 10); }
+      if (idx > 0) { allInputs[idx-1].focus(); setTimeout(() => allInputs[idx-1].select(), 10); }
     } else {
-      if (ri < grid.length - 1 && grid[ri+1][ci]) { grid[ri+1][ci].focus(); setTimeout(() => grid[ri+1][ci].select(), 10); }
-      else if (grid[0][ci+1]) { grid[0][ci+1].focus(); setTimeout(() => grid[0][ci+1].select(), 10); }
+      if (idx < allInputs.length - 1) { allInputs[idx+1].focus(); setTimeout(() => allInputs[idx+1].select(), 10); }
     }
   }
 }
@@ -3712,9 +3834,11 @@ function saveCurrentPiConfigDraft() {
   const titleEl = document.getElementById('piTitulo');
   const temaEl  = document.getElementById('piTema');
   const fechaEl = document.getElementById('piFecha');
+  const syncModeEl = document.getElementById('piSyncMode');
   if (titleEl) cfg.titulo = titleEl.value.trim().toUpperCase() || cfg.titulo;
   if (temaEl)  cfg.tema   = temaEl.value.trim();
   if (fechaEl) cfg.fecha  = fechaEl.value;
+  if (syncModeEl) cfg.syncMode = syncModeEl.value;
 
   const checkboxes = document.querySelectorAll('#piConfigForm input[type="checkbox"]');
   if (checkboxes.length) {
@@ -3729,6 +3853,28 @@ function saveCurrentPiConfigDraft() {
     if (nomEl)  ind.nombre = nomEl.value.trim() || ind.nombre;
     if (pesoEl) ind.peso   = parseInt(pesoEl.value) || 0;
   });
+}
+
+function quickAddMatToPi() {
+  const inp = document.getElementById('piQuickMatInp');
+  const name = inp?.value.trim();
+  if (!name) return;
+  saveCurrentPiConfigDraft();
+  const mats = getMats();
+  if (!mats.includes(name)) {
+    mats.push(name);
+    S.matsList = mats;
+    if (!S.matsMeta) S.matsMeta = [];
+    S.matsMeta.push({ name, qual: isQualitativeMat(name) });
+    S.mats[name] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
+    S.students.forEach((_, i) => { S.mats[name].grades[i] = {}; });
+  }
+  if (!S.pi.mats.includes(name)) {
+    S.pi.mats.push(name);
+  }
+  renderTabs();
+  openPiConfig();
+  toast(`✔ Asignatura ${name} añadida al sistema y al PI`, '#16a34a');
 }
 
 function addPiIndicator() {
@@ -3770,11 +3916,16 @@ function distributePiWeights() {
 function openPiConfig() {
   ensurePi();
   const cfg = S.pi.config;
-  const matsOpts = getMats().filter(m => !isQualitativeMat(m)).map(m =>
-    `<label style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:0.8rem;margin-bottom:4px">
-      <input type="checkbox" value="${escVal(m)}" ${S.pi.mats.includes(m)?'checked':''}> ${escHTML(m)}
-    </label>`
-  ).join('');
+  const allMats = getMats();
+  const matsOpts = allMats.map(m => {
+    const isQual = isQualitativeMat(m);
+    const checked = S.pi.mats.includes(m) ? 'checked' : '';
+    return `<label style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:0.8rem;margin-bottom:4px;background:var(--bg-card-subtle);padding:4px 8px;border-radius:4px">
+      <input type="checkbox" value="${escVal(m)}" ${checked}>
+      <span>${escHTML(m)}</span>
+      <span style="font-size:0.68rem;color:var(--text-muted);margin-left:4px">(${isQual ? 'Cualitativa' : 'Cuantitativa'})</span>
+    </label>`;
+  }).join('');
 
   const indsHtml = cfg.indicadores.map((ind, i) =>
     `<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
@@ -3792,19 +3943,40 @@ function openPiConfig() {
     <div id="piConfigForm">
       <label>Título del Proyecto</label>
       <input type="text" id="piTitulo" value="${escVal(cfg.titulo)}" placeholder="PROYECTO INTERDISCIPLINARIO — TRIMESTRE I"/>
-      <label>Tema Generador</label>
-      <input type="text" id="piTema" value="${escVal(cfg.tema)}" placeholder="Ej: La biodiversidad del Ecuador"/>
-      <label>Fecha de Entrega</label>
-      <input type="date" id="piFecha" value="${escVal(cfg.fecha)}"/>
       
-      <label style="margin-top:8px">Asignaturas Participantes</label>
-      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 12px;max-height:120px;overflow-y:auto">${matsOpts}</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1">
+          <label>Tema Generador</label>
+          <input type="text" id="piTema" value="${escVal(cfg.tema)}" placeholder="Ej: La biodiversidad del Ecuador"/>
+        </div>
+        <div style="width:140px">
+          <label>Fecha de Entrega</label>
+          <input type="date" id="piFecha" value="${escVal(cfg.fecha)}"/>
+        </div>
+      </div>
+
+      <label style="margin-top:8px">Modo de Sincronización a Calificaciones (30% Sumativo)</label>
+      <select id="piSyncMode" style="margin-bottom:10px;font-size:0.82rem;font-weight:600">
+        <option value="subject" ${cfg.syncMode !== 'total' ? 'selected' : ''}>Nota individual por Asignatura (Nota de cada materia en el PI)</option>
+        <option value="total" ${cfg.syncMode === 'total' ? 'selected' : ''}>Promedio Total del Proyecto PI (Igual promedio general para todas las materias)</option>
+      </select>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;margin-bottom:4px">
+        <label style="margin:0">Asignaturas Participantes en el PI</label>
+      </div>
+      
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input type="text" id="piQuickMatInp" placeholder="Añadir materia rápida (Ej: Inglés, EEFF)" style="margin-bottom:0;font-size:0.8rem"/>
+        <button type="button" class="btn btn-primary" style="font-size:0.75rem;padding:4px 10px;white-space:nowrap" onclick="quickAddMatToPi()">➕ Añadir Asignatura</button>
+      </div>
+
+      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 12px;max-height:140px;overflow-y:auto;margin-bottom:12px">${matsOpts}</div>
       
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:4px">
         <label style="margin:0">Indicadores de Evaluación de la Rúbrica</label>
         <button type="button" class="btn btn-teal" style="font-size:0.7rem;padding:3px 8px" onclick="saveCurrentPiConfigDraft();distributePiWeights();openPiConfig()">⚖️ Pesos % Iguales</button>
       </div>
-      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 10px;max-height:220px;overflow-y:auto">
+      <div style="border:1px solid var(--border-color);border-radius:6px;padding:8px 10px;max-height:180px;overflow-y:auto">
         ${indsHtml}
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
@@ -3829,11 +4001,16 @@ function syncPiToSubjects() {
   ensurePi();
   const mats = S.pi.mats;
   const inds = S.pi.config.indicadores;
+  const syncMode = S.pi.config.syncMode || 'subject';
   let count = 0;
 
   mats.forEach(m => {
+    if (!S.mats[m]) {
+      if (!S.matsList.includes(m)) S.matsList.push(m);
+      S.mats[m] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
+      S.students.forEach((_, i) => { S.mats[m].grades[i] = {}; });
+    }
     const mat = S.mats[m];
-    if (!mat) return;
 
     let piWeek = null;
     let piColName = null;
@@ -3847,25 +4024,62 @@ function syncPiToSubjects() {
       });
     });
 
-    if (!piWeek || !piColName) return;
+    if (!piWeek || !piColName) {
+      const sumWeek = mat.weeks.find(w => w.toUpperCase().includes('SUMATIV')) || mat.weeks[mat.weeks.length - 1] || 'EVALUACIÓN SUMATIVA';
+      if (!mat.cols[sumWeek]) mat.cols[sumWeek] = [];
+      const newCol = { name: 'PROYECTO PI', type: 'PI', date: '', color: '#d97706' };
+      mat.cols[sumWeek].push(newCol);
+      piWeek = sumWeek;
+      piColName = newCol.name;
+    }
 
     S.students.forEach((_, si) => {
-      const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
-      let weightedSum = 0;
-      let weightTotal = 0;
+      let syncNota = null;
 
-      inds.forEach(ind => {
-        const v = parseFloat(mGrades[ind.id]);
-        if (!isNaN(v)) {
-          weightedSum += v * (ind.peso / 100);
-          weightTotal += ind.peso / 100;
+      if (syncMode === 'total') {
+        const matNotas = [];
+        mats.forEach(mSub => {
+          const mg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
+          if (mg._direct !== undefined && mg._direct !== '') {
+            matNotas.push(parseFloat(mg._direct));
+          } else {
+            const indVals = [];
+            inds.forEach(ind => {
+              const v = parseFloat(mg[ind.id]);
+              if (!isNaN(v)) indVals.push(v);
+            });
+            if (indVals.length > 0) {
+              const weighted = indVals.reduce((a,b) => a+b, 0) / indVals.length;
+              matNotas.push(weighted);
+            }
+          }
+        });
+        if (matNotas.length > 0) {
+          syncNota = trunc2(matNotas.reduce((a,b) => a+b, 0) / matNotas.length);
         }
-      });
+      } else {
+        const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
+        if (mGrades._direct !== undefined && mGrades._direct !== '') {
+          syncNota = trunc2(parseFloat(mGrades._direct));
+        } else {
+          let weightedSum = 0;
+          let weightTotal = 0;
+          inds.forEach(ind => {
+            const v = parseFloat(mGrades[ind.id]);
+            if (!isNaN(v)) {
+              weightedSum += v * (ind.peso / 100);
+              weightTotal += ind.peso / 100;
+            }
+          });
+          if (weightTotal > 0) {
+            syncNota = trunc2(weightedSum / weightTotal);
+          }
+        }
+      }
 
-      if (weightTotal > 0) {
-        const notaMat = trunc2(weightedSum / weightTotal);
+      if (syncNota !== null && !isNaN(parseFloat(syncNota))) {
         if (!mat.grades[si]) mat.grades[si] = {};
-        mat.grades[si][piWeek + '||' + piColName] = String(notaMat);
+        mat.grades[si][piWeek + '||' + piColName] = String(syncNota);
         count++;
       }
     });
@@ -3873,7 +4087,7 @@ function syncPiToSubjects() {
 
   saveData();
   render();
-  toast(`⚡ Sincronizadas ${count} notas de PI hacia las asignaturas`, '#16a34a');
+  toast(`⚡ ¡Sincronizadas ${count} calificaciones de PI hacia la pestaña Calificaciones (70/30)!`, '#16a34a');
 }
 
 function exportPiXLSX() {
@@ -3904,7 +4118,7 @@ function exportPiXLSX() {
         row.push(v !== '' ? parseFloat(v) : '');
         if (v !== '') indVals.push(parseFloat(v));
       });
-      const nota = indVals.length > 0 ? trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length) : '';
+      const nota = mg._direct !== undefined && mg._direct !== '' ? trunc2(parseFloat(mg._direct)) : (indVals.length > 0 ? trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length) : '');
       row.push(nota);
       if (nota !== '') matNotas.push(parseFloat(nota));
     });
