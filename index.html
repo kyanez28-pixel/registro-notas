@@ -1572,25 +1572,25 @@ function renderTable() {
         const bg = col.color || at.color;
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
 
-        const actNameHTML = `<div style="font-size:0.85rem;font-weight:900;letter-spacing:0.3px;color:#ffffff;line-height:1.25;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px">${escHTML(col.name)}</div>`;
-        const dateHTML = col.date ? `<div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:3px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
-        const descText = col.desc ? escHTML(col.desc) : `${escHTML(at.label)}${catBadge}`;
-        const descHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.88);line-height:1.2;white-space:normal;max-width:130px;margin:0 auto">${descText}</div>`;
+        // Mostrar la descripción (o nombre si no tiene) como texto principal en grande
+        const displayName = col.desc || col.name;
+        const actNameHTML = `<div style="font-size:0.82rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal">${escHTML(displayName)}</div>`;
+        const dateHTML = col.date ? `<div style="font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
+        const typeHTML = `<div style="font-size:0.60rem;font-weight:600;color:rgba(255,255,255,0.80);line-height:1.2">${escHTML(at.label)}${catBadge}</div>`;
 
-        const fullTitle = `${escHTML(col.name)}${col.desc ? ' — ' + escHTML(col.desc) : ''} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
+        const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh" ondblclick="editColName(${wi},${ci})" title="${fullTitle} · Doble clic para editar · '📋' para copiar columna · '✕' para borrar"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:6px 8px;vertical-align:top">
+          style="background:${bg};border-color:${bg};min-width:120px;padding:6px 8px;vertical-align:top">
           <div style="position:relative;width:100%">
             <div style="position:absolute;top:-2px;right:-4px;display:flex;gap:2px;z-index:2">
-              <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(wName)}','${esc(col.name)}')" title="Copiar columna ${escVal(col.name)} para Excel/Word" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">📋</button>
-              <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad ${escVal(col.name)}" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">✕</button>
+              <button onclick="event.stopPropagation();copyMainColumn('activity','${esc(wName)}','${esc(col.name)}')" title="Copiar columna para Excel/Word" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">📋</button>
+              <button onclick="event.stopPropagation();delCol(${wi},${ci})" title="Eliminar actividad" class="col-del-btn" style="position:static;padding:1px 4px;font-size:0.65rem">✕</button>
             </div>
-            
-            <div style="padding-right:32px">
+            <div style="padding-right:34px">
               ${actNameHTML}
               ${dateHTML}
-              ${descHTML}
+              ${typeHTML}
             </div>
           </div>
         </th>`;
