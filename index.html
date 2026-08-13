@@ -5983,6 +5983,45 @@ const DEFAULT_STUDENT_PROFILES = [
   }
 ];
 
+function parseBirthDateLocal(birthDateStr) {
+  if (!birthDateStr) return null;
+  const s = String(birthDateStr).trim();
+  // Formatos YYYY-MM-DD o YYYY/MM/DD
+  const mIso = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (mIso) {
+    return new Date(parseInt(mIso[1], 10), parseInt(mIso[2], 10) - 1, parseInt(mIso[3], 10));
+  }
+  // Formatos DD/MM/YYYY o DD-MM-YYYY
+  const mLat = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+  if (mLat) {
+    return new Date(parseInt(mLat[3], 10), parseInt(mLat[2], 10) - 1, parseInt(mLat[1], 10));
+  }
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function calculateAgeFromBirthDate(birthDateStr) {
+  const d = parseBirthDateLocal(birthDateStr);
+  if (!d) return '';
+  const now = new Date();
+  let years = now.getFullYear() - d.getFullYear();
+  let months = now.getMonth() - d.getMonth();
+  let days = now.getDate() - d.getDate();
+
+  if (days < 0) {
+    months--;
+    // Días del mes anterior
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  if (years < 0) return '';
+  return `${years} años, ${months} meses, ${days} días`;
+}
+
 function ensureStudentProfiles() {
   if (!S.studentProfiles || !Array.isArray(S.studentProfiles) || !S.studentProfiles.length) {
     S.studentProfiles = JSON.parse(JSON.stringify(DEFAULT_STUDENT_PROFILES));
@@ -6015,28 +6054,13 @@ function ensureStudentProfiles() {
       });
     }
   }
-}
-
-function calculateAgeFromBirthDate(birthDateStr) {
-  if (!birthDateStr) return '';
-  const d = new Date(birthDateStr);
-  if (isNaN(d.getTime())) return '';
-  const now = new Date();
-  let years = now.getFullYear() - d.getFullYear();
-  let months = now.getMonth() - d.getMonth();
-  let days = now.getDate() - d.getDate();
-
-  if (days < 0) {
-    months--;
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-  }
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-  if (years < 0) return '';
-  return years + ' años, ' + months + ' meses, ' + days + ' días';
+  // Actualizar edad dinámica diaria para todos los estudiantes
+  S.studentProfiles.forEach(p => {
+    if (p.fecha_nacimiento) {
+      const calc = calculateAgeFromBirthDate(p.fecha_nacimiento);
+      if (calc) p.edad = calc;
+    }
+  });
 }
 
 function formatPhoneWhatsApp(phoneStr) {
@@ -6450,8 +6474,8 @@ function openStudentProfileModal(si) {
             <input type="date" id="mProfFechaNac" value="${escVal(p.fecha_nacimiento||'')}" onchange="document.getElementById('mProfEdad').value = calculateAgeFromBirthDate(this.value)"/>
           </div>
           <div>
-            <label>Edad</label>
-            <input type="text" id="mProfEdad" value="${escVal(p.edad||calculateAgeFromBirthDate(p.fecha_nacimiento)||'')}" placeholder="Ej: 10 años, 5 meses, 26 días"/>
+            <label>Edad (Actualizada automáticamente)</label>
+            <input type="text" id="mProfEdad" value="${escVal(calculateAgeFromBirthDate(p.fecha_nacimiento)||p.edad||'')}" readonly style="background:var(--bg-card);font-weight:700;color:#2563eb" placeholder="Se calcula con la fecha de nacimiento"/>
           </div>
           <div>
             <label>¿Tiene NN.EE. asociada o no a discapacidad?</label>
