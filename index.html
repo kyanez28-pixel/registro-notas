@@ -1447,6 +1447,15 @@ const QUAL_SCALE = [
   { val:'NE', label:'No Evaluado / No Evid.', cls:'qual-NE', desc:'No se dispone de evidencias suficientes',                  color:'#64748b' }
 ];
 
+// Convierte nota numérica (1-10) → escala cualitativa ministerial
+function numToQual(n) {
+  if (isNaN(n) || n === null || n === undefined) return 'NE';
+  if (n >= 9.00) return 'A';
+  if (n >= 7.00) return 'EP';
+  if (n >  4.00) return 'I';
+  return 'NE';
+}
+
 const DEFAULT_COLS = {
   'SEMANA 1': [
     { name:'A1', type:'AC', date:'', color:null },
@@ -1748,13 +1757,28 @@ function getStudentTrimestreCalc(si, mName) {
   const g = mat.grades[si];
 
   if (isQual) {
-    // Materia cualitativa: calcula la moda o valor predominante
-    const vals = Object.values(g).filter(v => v && ['A','EP','I','NE'].includes(String(v).toUpperCase()));
-    if (!vals.length) return { isQual:true, qualVal:'NE' };
+    // Materia cualitativa: promediar notas numéricas y convertir a escala
+    const numVals = [];
+    const legacyVals = [];
+    Object.values(g).forEach(v => {
+      if (v === undefined || v === '') return;
+      const n = parseFloat(v);
+      if (!isNaN(n)) {
+        numVals.push(n);
+      } else if (['A','EP','I','NE'].includes(String(v).toUpperCase())) {
+        legacyVals.push(String(v).toUpperCase());
+      }
+    });
+    if (numVals.length) {
+      const avg = numVals.reduce((a,b)=>a+b,0) / numVals.length;
+      const qualVal = numToQual(avg);
+      return { isQual:true, qualVal, numAvg: trunc2(avg) };
+    }
+    if (!legacyVals.length) return { isQual:true, qualVal:'NE', numAvg:null };
     const counts = {};
-    vals.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+    legacyVals.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
     const top = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
-    return { isQual:true, qualVal: top || 'NE' };
+    return { isQual:true, qualVal: top || 'NE', numAvg:null };
   }
 
   // Materia cuantitativa (Ponderación 70% Formativo / 30% Sumativo)
@@ -2001,13 +2025,22 @@ function renderTable() {
       }).filter(n => !isNaN(n));
 
       const weekAvg  = weekVals.length ? trunc2(weekVals.reduce((a,b)=>a+b,0) / weekVals.length) : null;
-      const wAvgDisp = weekAvg !== null ? weekAvg : '—';
-      const wAvgCls  = weekAvg !== null && parseFloat(weekAvg) < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
+      let wAvgDisp, wAvgCls;
+      if (isQual && weekAvg !== null) {
+        const qv = numToQual(parseFloat(weekAvg));
+        const qObj = QUAL_SCALE.find(q => q.val === qv) || QUAL_SCALE[3];
+        wAvgDisp = `<span class="badge-qual ${qObj.cls}" style="font-size:0.7rem;padding:1px 5px">${qv}</span><div style="font-size:0.68rem;color:var(--text-muted)">${weekAvg}</div>`;
+        wAvgCls = '';
+      } else {
+        wAvgDisp = weekAvg !== null ? weekAvg : '—';
+        wAvgCls  = weekAvg !== null && parseFloat(weekAvg) < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
+      }
 
       if (!c.length) {
         return `<td style="color:var(--text-light);background:${wc.c}">—</td>
                 <td class="prom-wk ${wAvgCls}" style="background:${wc.c}">${wAvgDisp}</td>`;
       }
+
 
       const inputs = c.map(col => {
         const at = actType(col.type);
@@ -2016,13 +2049,25 @@ function renderTable() {
         const v = g[k] !== undefined ? g[k] : '';
 
         if (isQual) {
-          // Input o Botón Cualitativo
-          const qVal = v ? String(v).toUpperCase() : 'NE';
+          // Input numérico con conversión automática a escala cualitativa
+          const numV = parseFloat(v);
+          const dispNum = !isNaN(numV) ? v : '';
+          const qVal = !isNaN(numV) ? numToQual(numV) : (v && ['A','EP','I','NE'].includes(String(v).toUpperCase()) ? String(v).toUpperCase() : 'NE');
           const qObj = QUAL_SCALE.find(q => q.val === qVal) || QUAL_SCALE[3];
-          return `<td style="background:${cellBg}">
-            <span class="badge-qual ${qObj.cls}" onclick="cycleQual(${si},'${esc(wName)}','${esc(col.name)}')">${qObj.val}</span>
+          return `<td style="background:${cellBg};padding:2px 4px">
+            <div style="display:flex;align-items:center;gap:4px">
+              <input class="gi" type="text" inputmode="decimal" placeholder="—"
+                value="${escVal(dispNum)}"
+                onchange="updQual(${si},'${esc(wName)}','${esc(col.name)}',this.value)"
+                oninput="previewQual(this)"
+                onfocus="this.select()"
+                onkeydown="nav(event,this)"
+                style="width:48px;text-align:center"/>
+              <span class="badge-qual ${qObj.cls}" style="font-size:0.7rem;padding:1px 5px">${qObj.val}</span>
+            </div>
           </td>`;
         }
+
 
         const n = parseFloat(v);
         const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
@@ -2055,7 +2100,8 @@ function renderTable() {
       `;
     } else {
       const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
-      summaryCells = `<td class="td-trim"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span></td>`;
+      const numDisp = calc.numAvg ? `<span style="font-size:0.75rem;color:var(--text-muted);margin-left:4px">(${calc.numAvg})</span>` : '';
+      summaryCells = `<td class="td-trim"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span>${numDisp}</td>`;
     }
 
     return `<tr data-name="${escVal(name.toLowerCase())}">
@@ -2085,6 +2131,55 @@ function cycleQual(si, w, colName) {
   saveData();
   render();
 }
+
+// Guardar nota numérica en materia cualitativa y convertir automáticamente
+function updQual(si, week, col, val) {
+  const mat = gm();
+  if (!mat.grades[si]) mat.grades[si] = {};
+  const key = week + '||' + col;
+  let v = val.trim().replace(',', '.');
+  if (v === '') {
+    delete mat.grades[si][key];
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) {
+      toast('⚠️ Ingresa una nota numérica del 1 al 10 para la asignatura cualitativa', '#dc2626');
+      render();
+      return;
+    }
+    if (n > 10) { n = 10; toast('⚠️ Nota ajustada al máximo (10)', '#d97706'); }
+    if (n < 1)  { n = 1;  toast('⚠️ Nota ajustada al mínimo (1)', '#d97706'); }
+    v = trunc2(n);
+    mat.grades[si][key] = v;
+    const qv = numToQual(n);
+    const qObj = QUAL_SCALE.find(q => q.val === qv) || QUAL_SCALE[3];
+    toast(`✅ ${S.students[si].split(' ')[0]} → ${v} = ${qv} (${qObj.label})`, qObj.color || '#16a34a');
+  }
+  saveData();
+  render();
+}
+
+// Actualizar badge en tiempo real mientras el usuario escribe
+function previewQual(inp) {
+  const v = inp.value.trim().replace(',', '.');
+  const n = parseFloat(v);
+  const badge = inp.parentElement?.querySelector('.badge-qual');
+  if (!badge) return;
+  if (isNaN(n) || v === '') {
+    badge.className = 'badge-qual qual-NE';
+    badge.style.fontSize = '0.7rem';
+    badge.style.padding = '1px 5px';
+    badge.textContent = 'NE';
+    return;
+  }
+  const qv = numToQual(n);
+  const qObj = QUAL_SCALE.find(q => q.val === qv) || QUAL_SCALE[3];
+  badge.className = `badge-qual ${qObj.cls}`;
+  badge.style.fontSize = '0.7rem';
+  badge.style.padding = '1px 5px';
+  badge.textContent = qv;
+}
+
 
 // ══════════════════════════════════════════════════════
 //  ESTADÍSTICAS (NORMATIVA 70/30)
