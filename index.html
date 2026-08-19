@@ -7441,10 +7441,7 @@ function exportStudentsMatrixXLSX() {
 }
 
 
-loadDark();
-applyFontSize();
-initS();
-render();
+
 
 // ══════════════════════════════════════════════════════════════
 //  CALENDARIO DEL TRIMESTRE & DÍAS SIN CLASE
@@ -7771,6 +7768,11 @@ function printAttReport() {
   setTimeout(() => { printZone.innerHTML = ''; }, 1500);
 }
 
+loadDark();
+applyFontSize();
+initS();
+render();
+</script>
 
 <!-- ══ MODAL: CONFIGURAR CALENDARIO DEL TRIMESTRE ══ -->
 <div id="calendarModal" class="mo" onclick="if(event.target===this)closeCalendarModal()">
