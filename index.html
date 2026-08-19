@@ -596,6 +596,62 @@ th.th-rf { background: #15803d !important; font-size: 0.74rem; }
 }
 .att-absence-badge.warn { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
 
+/* ══ REPORTE DE ASISTENCIA (SEMANAS / MESES / TRIMESTRE) ══ */
+.att-report-wrap { overflow: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); background: var(--bg-card); }
+.att-report-table { border-collapse: collapse; white-space: nowrap; width: 100%; font-size: 0.78rem; }
+.att-report-table th { background: #1e3a8a; color: #fff; padding: 5px 7px; font-weight: 800; text-align: center; border: 1px solid rgba(255,255,255,0.15); position: sticky; top:0; z-index:3; font-size:0.72rem; }
+.att-report-table th.ar-name { min-width: 160px; text-align: left; position: sticky; left:0; z-index:4; background:#1e3a8a; }
+.att-report-table td { padding: 4px 5px; text-align: center; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.74rem; }
+.att-report-table td.ar-name { text-align: left; padding-left: 10px; font-weight: 700; position: sticky; left:0; background:var(--bg-card); z-index:2; border-right:2px solid #cbd5e1; }
+.att-report-table td.ar-num  { color: var(--text-muted); font-size:0.7rem; width:30px; }
+.ar-P  { background: #bbf7d0 !important; color: #14532d !important; }
+.ar-F  { background: #fecaca !important; color: #7f1d1d !important; }
+.ar-T  { background: #fef08a !important; color: #713f12 !important; }
+.ar-J  { background: #bfdbfe !important; color: #1e3a8a !important; }
+.ar-NC { background: #e2e8f0 !important; color: #475569 !important; font-style: italic; font-size: 0.65rem; }
+.ar-WE { background: #f1f5f9 !important; color: #94a3b8 !important; }
+.ar-sum-P  { background: #16a34a !important; color: #fff !important; font-weight: 900; }
+.ar-sum-F  { background: #dc2626 !important; color: #fff !important; font-weight: 900; }
+.ar-sum-T  { background: #d97706 !important; color: #fff !important; font-weight: 900; }
+.ar-sum-J  { background: #2563eb !important; color: #fff !important; font-weight: 900; }
+.ar-sum-pct-ok  { background: #15803d !important; color: #fff !important; font-weight: 900; }
+.ar-sum-pct-bad { background: #b91c1c !important; color: #fff !important; font-weight: 900; }
+.ar-noclass-col th { background: #94a3b8 !important; }
+.ar-legend { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; align-items: center; }
+.ar-legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 700; }
+.ar-legend-dot { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+
+/* ── Botones del Reporte ── */
+.att-report-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer; border: 2px solid transparent; transition: all .15s ease; }
+.att-report-btn.week  { background:#eff6ff; color:#1d4ed8; border-color:#93c5fd; }
+.att-report-btn.month { background:#f0fdf4; color:#15803d; border-color:#86efac; }
+.att-report-btn.trim  { background:#fdf4ff; color:#7e22ce; border-color:#d8b4fe; }
+.att-report-btn:hover { filter: brightness(0.94); transform: translateY(-1px); }
+
+/* Días sin clase — indicador en el selector de fecha */
+.noclass-badge { display:inline-flex; align-items:center; gap:5px; background:#fef3c7; color:#92400e; border:1px solid #fde047; border-radius:20px; padding:3px 10px; font-size:0.74rem; font-weight:800; }
+
+/* ── ESTILOS DE IMPRESIÓN CON COLORES ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  body > *:not(#attReportPrint) { display: none !important; }
+  #attReportPrint { display: block !important; }
+  .ar-P  { background: #bbf7d0 !important; color: #14532d !important; -webkit-print-color-adjust: exact; }
+  .ar-F  { background: #fecaca !important; color: #7f1d1d !important; -webkit-print-color-adjust: exact; }
+  .ar-T  { background: #fef08a !important; color: #713f12 !important; -webkit-print-color-adjust: exact; }
+  .ar-J  { background: #bfdbfe !important; color: #1e3a8a !important; -webkit-print-color-adjust: exact; }
+  .ar-NC { background: #e2e8f0 !important; color: #475569 !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-P  { background: #16a34a !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-F  { background: #dc2626 !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-T  { background: #d97706 !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-J  { background: #2563eb !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-pct-ok  { background: #15803d !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .ar-sum-pct-bad { background: #b91c1c !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .att-report-table th { background: #1e3a8a !important; color:#fff !important; -webkit-print-color-adjust: exact; }
+  .att-report-table th.ar-name { background: #1e3a8a !important; -webkit-print-color-adjust: exact; }
+}
+#attReportPrint { display: none; }
+
 /* Promedios Semanales */
 td.prom-wk {
   font-weight: 800; font-family: var(--font-mono); font-size: var(--fs);
@@ -1169,9 +1225,17 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar toda la nómina como Presentes">✔ Todos Presentes</button>
       <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
-      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Exportar Asistencia Excel</button>
+      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel</button>
+      <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre y días sin clase" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
     </div>
-    <div class="search-wrapper" style="max-width:280px;margin-left:auto">
+    <!-- Reportes -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-left:2px solid var(--border-color);padding-left:12px">
+      <span style="font-size:0.74rem;font-weight:800;color:var(--text-muted);white-space:nowrap">📋 Reporte:</span>
+      <button class="att-report-btn week"  onclick="openAttReport('week')" >📅 Semanal</button>
+      <button class="att-report-btn month" onclick="openAttReport('month')">📆 Mensual</button>
+      <button class="att-report-btn trim"  onclick="openAttReport('trim')" >📊 Trimestral</button>
+    </div>
+    <div class="search-wrapper" style="max-width:250px;margin-left:auto">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="attSearchInp" class="search-input" placeholder="Buscar estudiante..." oninput="renderAttendance()" style="padding:7px 12px 7px 34px;font-size:0.82rem"/>
     </div>
@@ -1550,7 +1614,12 @@ let S = {
   colWidths: {},
   hiddenCols: {},
   hiddenRows: {},
-  asistencia: {}
+  asistencia: {},
+  calendar: {
+    trimStart: '',
+    trimEnd: '',
+    noclassDays: []    /* 'YYYY-MM-DD' strings */
+  }
 };
 
 function getWeekName(w) {
@@ -7376,6 +7445,408 @@ loadDark();
 applyFontSize();
 initS();
 render();
-</script>
+
+// ══════════════════════════════════════════════════════════════
+//  CALENDARIO DEL TRIMESTRE & DÍAS SIN CLASE
+// ══════════════════════════════════════════════════════════════
+
+function ensureCalendar() {
+  if (!S.calendar) S.calendar = { trimStart: '', trimEnd: '', noclassDays: [] };
+  if (!Array.isArray(S.calendar.noclassDays)) S.calendar.noclassDays = [];
+}
+
+function openCalendarModal() {
+  ensureCalendar();
+  const m = document.getElementById('calendarModal');
+  document.getElementById('calTrimStart').value = S.calendar.trimStart || '';
+  document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '';
+  document.getElementById('calNoclassDate').value  = getTodayDateStr();
+  document.getElementById('calNoclassLabel').value = '';
+  renderNoclassList();
+  m.classList.add('open');
+}
+
+function closeCalendarModal() {
+  document.getElementById('calendarModal').classList.remove('open');
+}
+
+function renderNoclassList() {
+  ensureCalendar();
+  const el = document.getElementById('calNoclassList');
+  if (!el) return;
+  if (!S.calendar.noclassDays.length) {
+    el.innerHTML = '<em style="font-size:0.8rem;color:var(--text-light)">No hay días sin clases registrados.</em>';
+    return;
+  }
+  const sorted = [...S.calendar.noclassDays].sort((a, b) => a.date.localeCompare(b.date));
+  el.innerHTML = sorted.map((d, idx) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:5px">
+      <span style="font-size:0.82rem;font-weight:700">
+        <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;margin-right:8px">${formatDate(d.date)}</span>
+        ${escHTML(d.label || 'Sin clase')}
+      </span>
+      <button onclick="removeNoclassDay(${idx})" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:4px;padding:2px 7px;font-size:0.75rem;cursor:pointer;font-weight:800">✕</button>
+    </div>
+  `).join('');
+}
+
+function addNoclassDay() {
+  ensureCalendar();
+  const dateVal  = document.getElementById('calNoclassDate').value;
+  const labelVal = document.getElementById('calNoclassLabel').value.trim();
+  if (!dateVal) { toast('⚠️ Selecciona una fecha', '#dc2626'); return; }
+  if (S.calendar.noclassDays.some(d => d.date === dateVal)) {
+    toast('⚠️ Ese día ya está en la lista', '#d97706'); return;
+  }
+  S.calendar.noclassDays.push({ date: dateVal, label: labelVal || 'Sin clase' });
+  document.getElementById('calNoclassLabel').value = '';
+  renderNoclassList();
+}
+
+function removeNoclassDay(idx) {
+  ensureCalendar();
+  const sorted = [...S.calendar.noclassDays].sort((a, b) => a.date.localeCompare(b.date));
+  const dateToRemove = sorted[idx].date;
+  S.calendar.noclassDays = S.calendar.noclassDays.filter(d => d.date !== dateToRemove);
+  renderNoclassList();
+}
+
+function saveCalendarConfig() {
+  ensureCalendar();
+  const s = document.getElementById('calTrimStart').value;
+  const e = document.getElementById('calTrimEnd').value;
+  if (s && e && s > e) { toast('⚠️ La fecha de inicio debe ser anterior al fin', '#dc2626'); return; }
+  S.calendar.trimStart = s;
+  S.calendar.trimEnd   = e;
+  saveData();
+  closeCalendarModal();
+  toast(`✅ Período guardado: ${formatDate(s)} → ${formatDate(e)} · ${S.calendar.noclassDays.length} días sin clase`, '#16a34a');
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${day} ${MESES[parseInt(m)-1]} ${y}`;
+}
+
+function getDayName(dateStr) {
+  const DAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const d = new Date(dateStr + 'T12:00:00');
+  return DAYS[d.getDay()];
+}
+
+function isWeekend(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.getDay() === 0 || d.getDay() === 6;
+}
+
+function isNoclassDay(dateStr) {
+  ensureCalendar();
+  return S.calendar.noclassDays.some(d => d.date === dateStr);
+}
+
+function getNoclassLabel(dateStr) {
+  ensureCalendar();
+  const nd = S.calendar.noclassDays.find(d => d.date === dateStr);
+  return nd ? nd.label : '';
+}
+
+// Genera array de fechas entre start y end (inclusive), lunes-viernes
+function getWorkingDays(startStr, endStr) {
+  const days = [];
+  let cur = new Date(startStr + 'T12:00:00');
+  const end = new Date(endStr + 'T12:00:00');
+  while (cur <= end) {
+    const ds = cur.toISOString().slice(0, 10);
+    if (!isWeekend(ds)) days.push(ds);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  REPORTES DE ASISTENCIA (SEMANAL / MENSUAL / TRIMESTRAL)
+// ══════════════════════════════════════════════════════════════
+
+let _attReportPeriod = 'week';
+
+function getWeekRange(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay(); // 0=Dom,1=Lun...
+  const diffToMon = (day === 0) ? -6 : 1 - day;
+  const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
+  const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+  return {
+    from: mon.toISOString().slice(0, 10),
+    to:   fri.toISOString().slice(0, 10)
+  };
+}
+
+function getMonthRange(dateStr) {
+  const [y, m] = dateStr.split('-');
+  const lastDay = new Date(parseInt(y), parseInt(m), 0).getDate();
+  return { from: `${y}-${m}-01`, to: `${y}-${m}-${String(lastDay).padStart(2,'0')}` };
+}
+
+function openAttReport(period) {
+  _attReportPeriod = period;
+  const today = getTodayDateStr();
+  let from, to;
+  const titles = { week: '📅 Reporte Semanal de Asistencia', month: '📆 Reporte Mensual de Asistencia', trim: '📊 Reporte Trimestral de Asistencia' };
+  document.getElementById('attReportTitle').textContent = titles[period] || '📋 Reporte de Asistencia';
+
+  ensureCalendar();
+  if (period === 'week') {
+    const r = getWeekRange(today);
+    from = r.from; to = r.to;
+  } else if (period === 'month') {
+    const r = getMonthRange(today);
+    from = r.from; to = r.to;
+  } else { // trim
+    from = S.calendar.trimStart || today.slice(0,8)+'01';
+    to   = S.calendar.trimEnd   || today;
+    if (!from) from = today.slice(0,8)+'01';
+  }
+
+  document.getElementById('repFrom').value = from;
+  document.getElementById('repTo').value   = to;
+  document.getElementById('attReportModal').classList.add('open');
+  refreshAttReport();
+}
+
+function closeAttReport() {
+  document.getElementById('attReportModal').classList.remove('open');
+}
+
+function refreshAttReport() {
+  const from = document.getElementById('repFrom').value;
+  const to   = document.getElementById('repTo').value;
+  if (!from || !to || from > to) {
+    document.getElementById('attReportContent').innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-muted)">⚠️ Selecciona un rango de fechas válido.</div>';
+    return;
+  }
+  const html = buildAttReportTable(from, to);
+  document.getElementById('attReportContent').innerHTML = html;
+}
+
+function buildAttReportTable(from, to) {
+  ensureCalendar();
+  if (!S.asistencia) S.asistencia = {};
+
+  // Obtener todos los días hábiles en el rango
+  const allDays = getWorkingDays(from, to);
+  if (!allDays.length) return '<div style="padding:30px;text-align:center;color:var(--text-muted)">No hay días hábiles en el rango seleccionado.</div>';
+
+  const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+
+  // Encabezado: meses + fechas
+  let monthRow = '<tr>';
+  let dateRow  = '<tr>';
+  monthRow += `<th class="ar-name" rowspan="2" style="vertical-align:bottom">Nómina de Estudiantes</th>`;
+  monthRow += `<th rowspan="2" style="min-width:30px">#</th>`;
+
+  // Agrupar días por mes
+  const monthGroups = {};
+  allDays.forEach(d => {
+    const m = d.slice(0,7);
+    if (!monthGroups[m]) monthGroups[m] = [];
+    monthGroups[m].push(d);
+  });
+
+  Object.entries(monthGroups).forEach(([ym, days]) => {
+    const [y, m] = ym.split('-');
+    monthRow += `<th colspan="${days.length}" style="background:#1e40af;text-align:center">${MESES[parseInt(m)-1]} ${y}</th>`;
+    days.forEach(d => {
+      const isNC = isNoclassDay(d);
+      const label = isNC ? getNoclassLabel(d) : '';
+      const ncStyle = isNC ? 'background:#94a3b8 !important;' : '';
+      const title = isNC ? ` title="Sin clase: ${label}"` : ` title="${getDayName(d)} ${formatDate(d)}"`;
+      dateRow += `<th style="${ncStyle}padding:3px 4px;font-size:0.65rem"${title}><div style="font-weight:900">${d.slice(8)}</div><div style="font-weight:500;opacity:0.85">${getDayName(d)}</div>${isNC?`<div style="font-size:0.6rem;opacity:0.9">NC</div>`:''}</th>`;
+    });
+  });
+
+  // Columnas resumen
+  const sumHeaders = ['✅ P','❌ F','⏰ T','📋 J','%'];
+  sumHeaders.forEach(h => {
+    monthRow += `<th style="background:#059669;min-width:36px">${h}</th>`;
+  });
+
+  monthRow += '</tr>';
+  dateRow  += '</tr>';
+
+  // Filas de estudiantes
+  let bodyRows = '';
+  S.students.forEach((name, si) => {
+    let cells = '';
+    let cntP = 0, cntF = 0, cntT = 0, cntJ = 0, cntDays = 0;
+
+    allDays.forEach(d => {
+      const isNC = isNoclassDay(d);
+      if (isNC) {
+        cells += `<td class="ar-NC" title="${getNoclassLabel(d)||'Sin clase'}">NC</td>`;
+        return;
+      }
+      cntDays++;
+      const val = (S.asistencia[d] || {})[si];
+      if (!val || val === 'P') { cntP++; cells += `<td class="ar-P">P</td>`; }
+      else if (val === 'F')    { cntF++; cells += `<td class="ar-F">F</td>`; }
+      else if (val === 'T')    { cntT++; cells += `<td class="ar-T">T</td>`; }
+      else if (val === 'J')    { cntJ++; cells += `<td class="ar-J">J</td>`; }
+    });
+
+    const pct = cntDays > 0 ? Math.round(((cntP + cntJ) / cntDays) * 100) : 100;
+    const pctCls = pct >= 75 ? 'ar-sum-pct-ok' : 'ar-sum-pct-bad';
+
+    bodyRows += `<tr>
+      <td class="ar-name">${escHTML(name)}</td>
+      <td class="ar-num">${si + 1}</td>
+      ${cells}
+      <td class="ar-sum-P">${cntP}</td>
+      <td class="ar-sum-F">${cntF}</td>
+      <td class="ar-sum-T">${cntT}</td>
+      <td class="ar-sum-J">${cntJ}</td>
+      <td class="${pctCls}">${pct}%</td>
+    </tr>`;
+  });
+
+  // Fila de totales
+  let totalCells = '';
+  let totP = 0, totF = 0, totT = 0, totJ = 0;
+  allDays.forEach(d => {
+    if (isNoclassDay(d)) { totalCells += '<td class="ar-NC">—</td>'; return; }
+    let dayP=0, dayF=0, dayT=0, dayJ=0;
+    S.students.forEach((_, si) => {
+      const v = (S.asistencia[d]||{})[si];
+      if (!v||v==='P') dayP++; else if(v==='F') dayF++; else if(v==='T') dayT++; else if(v==='J') dayJ++;
+    });
+    totP+=dayP; totF+=dayF; totT+=dayT; totJ+=dayJ;
+    totalCells += `<td style="font-size:0.65rem;background:#e8f4fd;font-weight:800;color:#1e40af;border:1px solid #bfdbfe"><div class="ar-P" style="font-size:0.6rem;padding:0">${dayP}</div><div class="ar-F" style="font-size:0.6rem;padding:0">${dayF>0?dayF:''}</div></td>`;
+  });
+
+  bodyRows += `<tr style="border-top:2px solid #1e3a8a">
+    <td class="ar-name" style="font-weight:900;color:#1e3a8a">TOTALES</td>
+    <td></td>
+    ${totalCells}
+    <td class="ar-sum-P">${totP}</td>
+    <td class="ar-sum-F">${totF}</td>
+    <td class="ar-sum-T">${totT}</td>
+    <td class="ar-sum-J">${totJ}</td>
+    <td style="background:#1e3a8a;color:#fff;font-weight:900">${S.students.length}</td>
+  </tr>`;
+
+  return `<table class="att-report-table">
+    <thead>${monthRow}${dateRow}</thead>
+    <tbody>${bodyRows}</tbody>
+  </table>`;
+}
+
+function printAttReport() {
+  const from = document.getElementById('repFrom').value;
+  const to   = document.getElementById('repTo').value;
+  const title = document.getElementById('attReportTitle').textContent;
+  const tableHTML = buildAttReportTable(from, to);
+
+  const printZone = document.getElementById('attReportPrint');
+  const info = `${S.grado} · ${S.periodo} · Docente: ${S.docente || '—'} · ${formatDate(from)} al ${formatDate(to)}`;
+
+  printZone.innerHTML = `
+    <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;padding:16px">
+      <div style="text-align:center;margin-bottom:14px;border-bottom:3px solid #1e3a8a;padding-bottom:10px">
+        <h2 style="font-size:1.1rem;font-weight:900;color:#1e3a8a;margin:0">${title}</h2>
+        <p style="font-size:0.82rem;color:#334155;margin:4px 0 0">${escHTML(info)}</p>
+        <div style="display:flex;gap:14px;justify-content:center;margin-top:8px;flex-wrap:wrap">
+          <span style="background:#bbf7d0;color:#14532d;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:800;border:1px solid #4ade80">✅ P Presente</span>
+          <span style="background:#fecaca;color:#7f1d1d;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:800;border:1px solid #f87171">❌ F Falta</span>
+          <span style="background:#fef08a;color:#713f12;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:800;border:1px solid #eab308">⏰ T Tardanza</span>
+          <span style="background:#bfdbfe;color:#1e3a8a;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:800;border:1px solid #60a5fa">📋 J Justificada</span>
+          <span style="background:#e2e8f0;color:#475569;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:800;border:1px solid #94a3b8">🚫 NC Sin Clase</span>
+        </div>
+      </div>
+      ${tableHTML}
+    </div>`;
+
+  window.print();
+
+  setTimeout(() => { printZone.innerHTML = ''; }, 1500);
+}
+
+
+<!-- ══ MODAL: CONFIGURAR CALENDARIO DEL TRIMESTRE ══ -->
+<div id="calendarModal" class="mo" onclick="if(event.target===this)closeCalendarModal()">
+  <div class="mc" style="max-width:580px;width:100%">
+    <div class="mh"><span>📆 Configurar Período del Trimestre</span><button class="mc-close" onclick="closeCalendarModal()">✕</button></div>
+    <div class="mb" style="padding:20px">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px">Define el rango de fechas del trimestre y registra los días que <strong>no hubo clases</strong> (feriados, eventos, etc.). Estos días se excluyen del conteo de asistencia.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+        <div>
+          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Inicio del Trimestre</label>
+          <input type="date" id="calTrimStart" style="width:100%;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
+        </div>
+        <div>
+          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Fin del Trimestre</label>
+          <input type="date" id="calTrimEnd" style="width:100%;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:6px">🚫 Agregar Día Sin Clases</label>
+        <div style="display:flex;gap:8px">
+          <input type="date" id="calNoclassDate" style="flex:1;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
+          <input type="text" id="calNoclassLabel" placeholder="Motivo (opcional)" style="flex:2;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
+          <button class="btn btn-primary" onclick="addNoclassDay()" style="white-space:nowrap">➕ Agregar</button>
+        </div>
+      </div>
+      <div id="calNoclassList" style="max-height:200px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px;background:var(--bg-card-subtle)">
+        <em style="font-size:0.8rem;color:var(--text-light)">No hay días sin clases registrados.</em>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-color)">
+        <button class="btn btn-outline" onclick="closeCalendarModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveCalendarConfig()">💾 Guardar Configuración</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: REPORTE DE ASISTENCIA ══ -->
+<div id="attReportModal" class="mo" onclick="if(event.target===this)closeAttReport()">
+  <div class="mc" style="max-width:98vw;width:100%;max-height:92vh;display:flex;flex-direction:column">
+    <div class="mh" style="flex-shrink:0">
+      <span id="attReportTitle">📋 Reporte de Asistencia</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-primary" onclick="printAttReport()" style="padding:5px 12px;font-size:0.8rem">🖨️ Imprimir</button>
+        <button class="mc-close" onclick="closeAttReport()">✕</button>
+      </div>
+    </div>
+    <div class="mb" style="padding:16px;flex:1;overflow:auto;display:flex;flex-direction:column;gap:12px">
+      <!-- Filtros de rango -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--bg-card-subtle);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted)">Desde:</label>
+          <input type="date" id="repFrom" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.85rem;background:var(--bg-card);color:var(--text-main)" onchange="refreshAttReport()"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted)">Hasta:</label>
+          <input type="date" id="repTo" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.85rem;background:var(--bg-card);color:var(--text-main)" onchange="refreshAttReport()"/>
+        </div>
+        <div class="ar-legend">
+          <span style="font-size:0.8rem;font-weight:800;color:var(--text-muted)">Leyenda:</span>
+          <span class="ar-legend-item"><span class="ar-legend-dot" style="background:#bbf7d0;border:1px solid #4ade80"></span>P Presente</span>
+          <span class="ar-legend-item"><span class="ar-legend-dot" style="background:#fecaca;border:1px solid #f87171"></span>F Falta</span>
+          <span class="ar-legend-item"><span class="ar-legend-dot" style="background:#fef08a;border:1px solid #eab308"></span>T Tardanza</span>
+          <span class="ar-legend-item"><span class="ar-legend-dot" style="background:#bfdbfe;border:1px solid #60a5fa"></span>J Justificada</span>
+          <span class="ar-legend-item"><span class="ar-legend-dot" style="background:#e2e8f0;border:1px solid #94a3b8"></span>NC Sin Clase</span>
+        </div>
+      </div>
+      <!-- Tabla del Reporte -->
+      <div id="attReportContent" class="att-report-wrap" style="flex:1;min-height:300px">
+        <div style="padding:40px;text-align:center;color:var(--text-muted)">Cargando...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ZONA OCULTA PARA IMPRESIÓN CON COLORES ══ -->
+<div id="attReportPrint" aria-hidden="true"></div>
+
 </body>
 </html>
