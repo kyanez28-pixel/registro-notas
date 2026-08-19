@@ -1247,13 +1247,16 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-xs)">
     <div>
       <label style="font-size:0.75rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:3px">📅 Fecha de Registro</label>
-      <input type="date" id="attDate" style="padding:7px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.88rem;font-family:var(--font-main);font-weight:600;outline:none" onchange="renderAttendance()"/>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="date" id="attDate" style="padding:7px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.88rem;font-family:var(--font-main);font-weight:600;outline:none" onchange="renderAttendance()"/>
+        <button class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:7px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2">🗑️ Borrar Día</button>
+      </div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar toda la nómina como Presentes">✔ Todos Presentes</button>
       <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
       <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel</button>
-      <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre y días sin clase" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
+      <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre, días sin clase y gestionar fechas" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
     </div>
     <!-- Reportes -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-left:2px solid var(--border-color);padding-left:12px">
@@ -3774,21 +3777,72 @@ function toggleAttAbsBar() {
   renderAttendance();
 }
 
+function deleteCurrentAttDate() {
+  const dateInp = document.getElementById('attDate');
+  const dateStr = dateInp ? dateInp.value : '';
+  if (!dateStr || !S.asistencia || !S.asistencia[dateStr]) {
+    toast('⚠️ No hay registro guardado para la fecha seleccionada', '#d97706');
+    return;
+  }
+  if (confirm(`¿Eliminar el registro de asistencia del ${formatDate(dateStr)}?`)) {
+    delete S.asistencia[dateStr];
+    saveData();
+    renderAttendance();
+    toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado correctamente`, '#16a34a');
+  }
+}
+
+function deleteAttDate(dateStr) {
+  if (!dateStr || !S.asistencia || !S.asistencia[dateStr]) return;
+  if (confirm(`¿Eliminar el registro de asistencia del ${formatDate(dateStr)}?`)) {
+    delete S.asistencia[dateStr];
+    saveData();
+    renderAttendance();
+    renderRecordedDatesList();
+    toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado`, '#16a34a');
+  }
+}
+
+function cleanAttBefore(limitDate = '2026-09-03') {
+  if (!S.asistencia) return;
+  const keys = Object.keys(S.asistencia);
+  const toDelete = keys.filter(d => d < limitDate || Object.keys(S.asistencia[d] || {}).length === 0);
+  if (!toDelete.length) {
+    toast(`No hay registros anteriores al ${formatDate(limitDate)}`, '#3b82f6');
+    return;
+  }
+  if (confirm(`¿Eliminar ${toDelete.length} días de prueba registrados antes del ${formatDate(limitDate)}?`)) {
+    toDelete.forEach(d => { delete S.asistencia[d]; });
+    saveData();
+    renderAttendance();
+    renderRecordedDatesList();
+    toast(`🧹 Se eliminaron ${toDelete.length} días de prueba anteriores al ${formatDate(limitDate)}`, '#16a34a');
+  }
+}
+
 function renderAttendance() {
   const dateInp = document.getElementById('attDate');
   if (!dateInp) return;
-  if (!dateInp.value) dateInp.value = getTodayDateStr();
+  if (!dateInp.value) {
+    // Si la fecha actual es anterior a septiembre 2026, sugerir inicio de clases o fecha actual
+    dateInp.value = S.calendar?.trimStart || getTodayDateStr();
+  }
   const dateStr = dateInp.value;
 
   if (!S.asistencia) S.asistencia = {};
-  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
-  const dayAtt = S.asistencia[dateStr];
+  const dayAtt = S.asistencia[dateStr] || {};
 
   // Configuración de período de inasistencias (Semana / Mes / Trimestre)
   if (!S.attAbsPeriod) S.attAbsPeriod = 'trim';
   const isVisible = S.attAbsVisible !== false;
 
-  let relevantDates = Object.keys(S.asistencia);
+  // Filtrar solo fechas que tengan registros reales y respeten el inicio del trimestre
+  const trimStartDate = S.calendar?.trimStart || '';
+  let relevantDates = Object.keys(S.asistencia).filter(d => {
+    if (Object.keys(S.asistencia[d] || {}).length === 0) return false;
+    if (trimStartDate && d < trimStartDate) return false;
+    return true;
+  });
   let periodLabel = 'Todo el Trimestre';
 
   if (S.attAbsPeriod === 'week') {
@@ -7541,16 +7595,37 @@ function ensureCalendar() {
 function openCalendarModal() {
   ensureCalendar();
   const m = document.getElementById('calendarModal');
-  document.getElementById('calTrimStart').value = S.calendar.trimStart || '';
-  document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '';
+  document.getElementById('calTrimStart').value = S.calendar.trimStart || '2026-09-03';
+  document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '2026-11-30';
   document.getElementById('calNoclassDate').value  = getTodayDateStr();
   document.getElementById('calNoclassLabel').value = '';
   renderNoclassList();
+  renderRecordedDatesList();
   m.classList.add('open');
 }
 
 function closeCalendarModal() {
   document.getElementById('calendarModal').classList.remove('open');
+}
+
+function renderRecordedDatesList() {
+  const el = document.getElementById('calRecordedDatesList');
+  if (!el) return;
+  if (!S.asistencia) S.asistencia = {};
+  const dates = Object.keys(S.asistencia).filter(d => Object.keys(S.asistencia[d] || {}).length > 0).sort();
+  if (!dates.length) {
+    el.innerHTML = '<em style="font-size:0.8rem;color:var(--text-light)">No hay días de asistencia guardados aún.</em>';
+    return;
+  }
+  el.innerHTML = dates.map(d => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:6px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:4px">
+      <span style="font-size:0.82rem;font-weight:700">
+        <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;margin-right:6px">📅 ${formatDate(d)}</span>
+        <span style="font-size:0.75rem;color:var(--text-muted)">(${Object.keys(S.asistencia[d]||{}).length} registros)</span>
+      </span>
+      <button onclick="deleteAttDate('${d}')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:4px;padding:2px 7px;font-size:0.72rem;cursor:pointer;font-weight:800" title="Eliminar registro de esta fecha">🗑️ Borrar</button>
+    </div>
+  `).join('');
 }
 
 function renderNoclassList() {
@@ -8025,6 +8100,15 @@ render();
       </div>
       <div id="calNoclassList" style="max-height:200px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px;background:var(--bg-card-subtle)">
         <em style="font-size:0.8rem;color:var(--text-light)">No hay días sin clases registrados.</em>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted)">📋 Días con Asistencia Guardada</label>
+          <button class="btn btn-outline" onclick="cleanAttBefore('2026-09-03')" style="padding:3px 8px;font-size:0.72rem;color:#b91c1c;border-color:#fca5a5;background:#fee2e2" title="Eliminar automáticamente días registrados antes del 3 de Septiembre">🧹 Limpiar antes del 03/Sep</button>
+        </div>
+        <div id="calRecordedDatesList" style="max-height:130px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;background:var(--bg-card-subtle)">
+          <em style="font-size:0.8rem;color:var(--text-light)">Cargando registros...</em>
+        </div>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-color)">
         <button class="btn btn-outline" onclick="closeCalendarModal()">Cancelar</button>
