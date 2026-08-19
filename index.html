@@ -586,13 +586,24 @@ th.th-rf { background: #15803d !important; font-size: 0.74rem; }
 
 .att-absence-bar {
   background: var(--bg-card-subtle); border: 1px solid var(--border-color);
-  border-radius: var(--radius-md); padding: 12px 18px; margin-bottom: 14px;
-  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 14px;
+  display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-xs);
+  transition: all .2s ease;
+}
+.abs-filter-btn {
+  background: transparent; border: none; padding: 3px 11px; border-radius: 14px;
+  font-size: 0.75rem; font-weight: 700; color: var(--text-muted); cursor: pointer;
+  transition: all .12s ease; font-family: var(--font-main);
+}
+.abs-filter-btn:hover { color: var(--primary); background: var(--primary-light); }
+.abs-filter-btn.active {
+  background: var(--primary); color: #ffffff; font-weight: 800;
+  box-shadow: 0 1px 3px rgba(37,99,235,0.3);
 }
 .att-absence-badge {
   font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;
   background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-xs); display: inline-flex; align-items: center; gap: 4px;
 }
 .att-absence-badge.warn { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
 
@@ -3751,6 +3762,18 @@ function getTodayDateStr() {
   return `${year}-${month}-${day}`;
 }
 
+function setAttAbsPeriod(period) {
+  S.attAbsPeriod = period;
+  saveData();
+  renderAttendance();
+}
+
+function toggleAttAbsBar() {
+  S.attAbsVisible = !(S.attAbsVisible !== false);
+  saveData();
+  renderAttendance();
+}
+
 function renderAttendance() {
   const dateInp = document.getElementById('attDate');
   if (!dateInp) return;
@@ -3761,11 +3784,30 @@ function renderAttendance() {
   if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
   const dayAtt = S.asistencia[dateStr];
 
-  const totalDays = Object.keys(S.asistencia).length || 1;
+  // Configuración de período de inasistencias (Semana / Mes / Trimestre)
+  if (!S.attAbsPeriod) S.attAbsPeriod = 'trim';
+  const isVisible = S.attAbsVisible !== false;
+
+  let relevantDates = Object.keys(S.asistencia);
+  let periodLabel = 'Todo el Trimestre';
+
+  if (S.attAbsPeriod === 'week') {
+    const r = getWeekRange(dateStr);
+    relevantDates = relevantDates.filter(d => d >= r.from && d <= r.to);
+    periodLabel = 'Esta Semana';
+  } else if (S.attAbsPeriod === 'month') {
+    const mPrefix = dateStr.slice(0, 7);
+    relevantDates = relevantDates.filter(d => d.startsWith(mPrefix));
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const mNum = parseInt(dateStr.split('-')[1]);
+    periodLabel = MESES[mNum - 1] || 'Este Mes';
+  }
+
+  const totalDays = relevantDates.length || 1;
   const absStats = {};
   S.students.forEach((_, si) => {
     let countF = 0, countT = 0, countJ = 0;
-    Object.keys(S.asistencia).forEach(dt => {
+    relevantDates.forEach(dt => {
       const val = S.asistencia[dt][si];
       if (val === 'F') countF++;
       if (val === 'T') countT++;
@@ -3774,23 +3816,51 @@ function renderAttendance() {
     absStats[si] = { F: countF, T: countT, J: countJ, pct: Math.round((countF / totalDays) * 100) };
   });
 
-  let absBarHTML = `<div style="font-weight:800;font-size:0.85rem;color:var(--text-main);margin-right:auto;display:flex;align-items:center;gap:6px"><span>📊 Inasistencias Acumuladas:</span> <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem">${totalDays} días</span></div>`;
-  let hasWarnings = false;
-  S.students.forEach((name, si) => {
-    const st = absStats[si];
-    if (st.F > 0 || st.T > 0) {
-      hasWarnings = true;
-      const isWarn = st.pct >= 25;
-      absBarHTML += `<span class="att-absence-badge ${isWarn?'warn':''}">
-        <strong>${escHTML(name)}</strong>: ${st.F} Faltas (${st.pct}%) ${st.T>0?'· '+st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
-      </span>`;
-    }
-  });
-  if (!hasWarnings) {
-    absBarHTML += `<span style="font-size:0.78rem;color:var(--text-light);font-weight:600">No hay inasistencias registradas aún.</span>`;
-  }
   const absBarEl = document.getElementById('attAbsBar');
-  if (absBarEl) absBarEl.innerHTML = absBarHTML;
+  if (absBarEl) {
+    if (!isVisible) {
+      absBarEl.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+          <span style="font-size:0.8rem;font-weight:700;color:var(--text-muted)">📊 Barra de Inasistencias Oculta</span>
+          <button class="btn btn-outline" onclick="toggleAttAbsBar()" style="padding:3px 10px;font-size:0.75rem;font-weight:800">👁️ Mostrar Inasistencias</button>
+        </div>
+      `;
+    } else {
+      let badgesHTML = '';
+      let hasWarnings = false;
+      S.students.forEach((name, si) => {
+        const st = absStats[si];
+        if (st.F > 0 || st.T > 0) {
+          hasWarnings = true;
+          const isWarn = st.pct >= 25;
+          badgesHTML += `<span class="att-absence-badge ${isWarn?'warn':''}">
+            <strong>${escHTML(name)}</strong>: ${st.F} Faltas (${st.pct}%) ${st.T>0?'· '+st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
+          </span>`;
+        }
+      });
+      if (!hasWarnings) {
+        badgesHTML = `<span style="font-size:0.78rem;color:var(--text-light);font-weight:600">No hay inasistencias registradas en ${periodLabel.toLowerCase()}.</span>`;
+      }
+
+      absBarEl.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border-color);padding-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">📊 Inasistencias:</span>
+            <div style="display:inline-flex;background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:2px;gap:2px">
+              <button onclick="setAttAbsPeriod('week')" class="abs-filter-btn ${S.attAbsPeriod==='week'?'active':''}">Semana</button>
+              <button onclick="setAttAbsPeriod('month')" class="abs-filter-btn ${S.attAbsPeriod==='month'?'active':''}">Mes</button>
+              <button onclick="setAttAbsPeriod('trim')" class="abs-filter-btn ${S.attAbsPeriod==='trim'?'active':''}">Trimestre</button>
+            </div>
+            <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:800">${relevantDates.length} días registrados (${periodLabel})</span>
+          </div>
+          <button onclick="toggleAttAbsBar()" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:0.76rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px" title="Ocultar esta barra">✕ Quitar / Ocultar</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%">
+          ${badgesHTML}
+        </div>
+      `;
+    }
+  }
 
   const searchVal = (document.getElementById('attSearchInp')?.value || '').toLowerCase().trim();
 
