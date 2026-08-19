@@ -857,127 +857,346 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 .rp-row-name { flex: 1; font-weight: 700; color: var(--text-main); font-size: 0.9rem; }
 
 /* ══════════════════════════════════════════════════════
-   MOBILE & RESPONSIVE DESIGN (OPTIMIZACIÓN CELULAR)
+   MOBILE & RESPONSIVE DESIGN (EXPERIENCIA PROFESIONAL CELULAR)
    ══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+  /* Touch global feel */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-size: 14px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  /* ── Header Móvil Compacto & Elegante ── */
   header {
     padding: 10px 14px;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
   }
+
   .hdr-brand {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
   }
-  .hdr-title-area h1 {
-    font-size: 1.1rem;
-    gap: 6px;
+
+  .hdr-logo {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
+    border-radius: 9px;
   }
+
+  .hdr-title-area h1 {
+    font-size: 1.05rem;
+    gap: 6px;
+    letter-spacing: -0.01em;
+  }
+
   .hdr-period-tag {
     font-size: 0.72rem;
-    padding: 2px 8px;
+    padding: 2px 7px;
+    border-radius: 6px;
   }
+
   .normative-pill {
     display: none;
   }
+
+  /* Barra de Metadatos (Curso, Año, Docente) */
   .hi {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    backdrop-filter: blur(4px);
   }
+
   .hi-input-group {
     width: 100%;
-    padding: 3px 6px;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
   }
+
+  .hi-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
   .hi input[type="text"] {
     width: 100% !important;
     font-size: 0.82rem;
-    padding: 3px 4px;
+    padding: 2px 0;
+    color: #ffffff;
+    font-weight: 700;
   }
+
   #infoGrado, #infoAnio { width: 100% !important; }
   .font-controller { display: none; }
 
+  /* Barra de usuario */
   #userBar {
-    padding: 5px 12px;
-    font-size: 0.76rem;
+    padding: 6px 12px;
+    font-size: 0.75rem;
     flex-wrap: wrap;
     gap: 6px;
   }
 
+  /* ── Toolbar Táctil Horizontal (Carrusel de Acciones) ── */
   .toolbar {
-    padding: 7px 12px;
+    padding: 8px 12px;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 5px;
+    gap: 6px;
+    background: var(--bg-toolbar);
+    border-bottom: 1px solid var(--border-color);
   }
   .toolbar::-webkit-scrollbar { display: none; }
+
   .toolbar .btn {
     flex-shrink: 0;
-    padding: 7px 11px;
-    font-size: 0.78rem;
-    border-radius: 6px;
+    padding: 8px 13px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: var(--shadow-xs);
+  }
+  .toolbar .btn:active {
+    transform: scale(0.96);
   }
   .toolbar-sep { display: none; }
 
+  /* ── Pestañas de Materias Táctiles ── */
   .tabs-container {
-    padding: 5px 12px 0;
+    padding: 6px 12px 0;
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    border-bottom: 1px solid var(--border-color);
   }
   .tabs-container::-webkit-scrollbar { display: none; }
-  .tabs-scroll { flex-shrink: 0; gap: 4px; }
-  .tab { flex-shrink: 0; padding: 7px 12px; font-size: 0.78rem; }
-  .tab-action-btn { flex-shrink: 0; padding: 4px 10px; font-size: 0.72rem; }
+  .tabs-scroll { flex-shrink: 0; gap: 5px; }
 
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 13px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 8px 8px 0 0;
+  }
+  .tab.active {
+    box-shadow: 0 -2px 8px rgba(37, 99, 235, 0.25);
+  }
+  .tab-action-btn {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+  }
+
+  /* ── Barra de Vistas (Calificaciones, Asistencia, Matriz, etc.) ── */
   .view-bar {
-    padding: 5px 12px;
+    padding: 6px 12px;
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 4px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
   }
   .view-bar::-webkit-scrollbar { display: none; }
-  .view-btn { flex-shrink: 0; padding: 7px 13px; font-size: 0.78rem; white-space: nowrap; }
 
-  .content { padding: 10px 12px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; margin-bottom: 10px; }
-  .stat-card { padding: 9px 12px; border-radius: 8px; }
-  .stat-label, .stat-card-title { font-size: 0.68rem !important; }
-  .stat-val, .stat-card-val { font-size: 1.15rem !important; }
-  .stat-sub, .stat-card-sub { font-size: 0.62rem !important; }
-
-  .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 10px; }
-  .search-wrapper { max-width: 100% !important; width: 100% !important; }
-  .search-input { padding: 9px 14px 9px 34px; font-size: 0.84rem; }
-  .sort-select { width: 100%; padding: 8px 12px; font-size: 0.82rem; }
-
-  .tw { max-height: calc(100vh - 200px) !important; border-radius: 8px; -webkit-overflow-scrolling: touch; }
-  table { font-size: 0.78rem; }
-  th, td { padding: 4px 6px; }
-
-  .mo { padding: 8px; align-items: flex-end; }
-  .md {
-    width: 100% !important; max-width: 100% !important; max-height: 90vh !important;
-    border-radius: 16px 16px 8px 8px !important; padding: 16px 14px !important; margin: 0 !important;
+  .view-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 8px;
+    white-space: nowrap;
   }
-  .md h3 { font-size: 1rem; margin-bottom: 12px; }
-  .md input, .md select, .md textarea { padding: 9px 11px; font-size: 0.86rem; margin-bottom: 10px; }
-  .ma { flex-direction: column-reverse; gap: 8px; padding-top: 12px; }
-  .ma .btn { width: 100%; justify-content: center; padding: 10px 14px; font-size: 0.88rem; }
+
+  /* Contenedor Principal */
+  .content { padding: 10px 12px; }
+
+  /* Tarjetas Estadísticas en Móvil (2 Columnas) */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .stat-card {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .stat-label, .stat-card-title { font-size: 0.7rem !important; }
+  .stat-val, .stat-card-val { font-size: 1.25rem !important; }
+  .stat-sub, .stat-card-sub { font-size: 0.68rem !important; }
+
+  /* Buscador y Filtro */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .search-wrapper { max-width: 100% !important; width: 100% !important; }
+  .search-input { padding: 9px 14px 9px 36px; font-size: 0.86rem; }
+  .sort-select { width: 100%; padding: 8px 12px; font-size: 0.84rem; }
+
+  /* ── Tabla de Calificaciones en Celular (Sticky Columns Suaves) ── */
+  .tw {
+    max-height: calc(100vh - 220px) !important;
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: var(--shadow-sm);
+  }
+  table { font-size: 0.82rem; }
+  th, td { padding: 5px 6px; }
+
+  /* Input de Notas en Celular: tamaño adecuado para toque */
+  input.gi {
+    font-size: 0.88rem !important;
+    min-width: 34px;
+    padding: 5px 2px;
+    border-radius: 4px;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     MÓDULO DE ASISTENCIA EN CELULAR (100% ERGONÓMICO)
+     ══════════════════════════════════════════════════════ */
+  .att-panel { padding: 10px 6px; }
+
+  .att-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+
+  .att-row {
+    padding: 10px 12px;
+    border-radius: 10px;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+  }
+
+  .att-student-info {
+    gap: 8px;
+  }
+
+  .att-num {
+    width: 26px;
+    height: 26px;
+    font-size: 0.76rem;
+    border-radius: 6px;
+  }
+
+  .att-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  /* Botones P / F / T / J táctiles amplios y cómodos */
+  .att-btn-group {
+    gap: 3px;
+    padding: 2px;
+    border-radius: 8px;
+  }
+
+  .att-btn {
+    padding: 7px 11px;
+    font-size: 0.84rem;
+    font-weight: 900;
+    min-width: 34px;
+    min-height: 34px;
+    border-radius: 6px;
+  }
+  .att-btn:active {
+    transform: scale(0.92);
+  }
+
+  /* Barra de inasistencias en móvil */
+  .att-absence-bar {
+    padding: 10px 12px;
+    border-radius: 10px;
+    gap: 8px;
+  }
+
+  /* ── Modales Tipo Bottom-Sheet en Celular ── */
+  .mo {
+    padding: 0;
+    align-items: flex-end;
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .mc, .md {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    margin: 0 !important;
+    animation: slideUp .22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    border: none !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .mh {
+    padding: 14px 18px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .mb {
+    padding: 16px !important;
+  }
+
+  .ma {
+    flex-direction: column-reverse;
+    gap: 8px;
+    padding-top: 12px;
+  }
+  .ma .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  /* Toast en móvil: fijado arriba o abajo con ancho completo */
+  #toast {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 16px !important;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    padding: 10px 14px;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {
-  .hdr-brand { gap: 10px; }
-  .hdr-logo { width: 36px; height: 36px; font-size: 1.2rem; }
-  .hdr-title-area h1 { font-size: 1rem; }
+  .hdr-logo { width: 32px; height: 32px; font-size: 1.1rem; }
+  .hdr-title-area h1 { font-size: 0.96rem; }
   .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .att-btn { min-width: 32px; min-height: 32px; padding: 6px 9px; font-size: 0.8rem; }
 }
 
 /* ── ENCABEZADO INSTITUCIONAL DE IMPRESIÓN (SOLO EN IMPRESIÓN) ── */
