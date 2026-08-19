@@ -491,19 +491,104 @@ td.td-rf input.gi { color: #15803d !important; font-weight: 900; }
 td.td-rf::before { content: '📚'; position: absolute; top: 0; left: 1px; font-size: 0.55rem; }
 th.th-rf { background: #15803d !important; font-size: 0.74rem; }
 
-/* Módulo de Asistencia */
-.att-panel { padding: 18px 20px; }
-.att-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; }
-.att-row { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 12px; box-shadow: var(--shadow-xs); }
-.att-name { flex: 1; font-weight: 600; font-size: 0.86rem; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.att-btn { padding: 4px 8px; border-radius: 5px; border: 1.5px solid transparent; font-weight: 800; font-size: 0.76rem; cursor: pointer; transition: all .1s; }
-.att-btn.P { background: #dcfce7; color: #15803d; border-color: #86efac; }
-.att-btn.F { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
-.att-btn.T { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
-.att-btn.J { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
-.att-btn.active { box-shadow: 0 0 0 2.5px rgba(0,0,0,0.3); transform: scale(1.12); }
-.att-absence-bar { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.att-absence-badge { font-size: 0.76rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+/* ══════════════════════════════════════════════════════
+   MÓDULO DE ASISTENCIA (NOMBRES Y APELLIDOS COMPLETOS)
+   ══════════════════════════════════════════════════════ */
+.att-panel { padding: 18px 22px; }
+.att-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.att-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-xs);
+  transition: all .15s ease;
+}
+.att-row:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.att-student-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.att-num {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-light);
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.att-name {
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: var(--text-main);
+  line-height: 1.35;
+  word-break: break-word;
+  white-space: normal;
+}
+.att-btn-group {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  background: var(--bg-card-subtle);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+.att-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1.5px solid transparent;
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all .12s ease;
+  user-select: none;
+  min-width: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.att-btn.P { background: transparent; color: #16a34a; }
+.att-btn.P.active { background: #dcfce7; color: #15803d; border-color: #86efac; box-shadow: 0 1px 3px rgba(22,163,74,0.3); font-weight: 900; }
+.att-btn.F { background: transparent; color: #dc2626; }
+.att-btn.F.active { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; box-shadow: 0 1px 3px rgba(220,38,38,0.3); font-weight: 900; }
+.att-btn.T { background: transparent; color: #d97706; }
+.att-btn.T.active { background: #fef3c7; color: #b45309; border-color: #fcd34d; box-shadow: 0 1px 3px rgba(217,119,6,0.3); font-weight: 900; }
+.att-btn.J { background: transparent; color: #2563eb; }
+.att-btn.J.active { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; box-shadow: 0 1px 3px rgba(37,99,235,0.3); font-weight: 900; }
+
+.att-absence-bar {
+  background: var(--bg-card-subtle); border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); padding: 12px 18px; margin-bottom: 14px;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.att-absence-badge {
+  font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;
+  background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+}
 .att-absence-badge.warn { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
 
 /* Promedios Semanales */
@@ -1070,21 +1155,27 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
 <!-- ── VISTA: ASISTENCIA ── -->
 <div id="attendancePanel" style="display:none" class="att-panel">
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-xs)">
     <div>
-      <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:3px">Fecha de Registro</label>
-      <input type="date" id="attDate" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.85rem;font-family:inherit" onchange="renderAttendance()"/>
+      <label style="font-size:0.75rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:3px">📅 Fecha de Registro</label>
+      <input type="date" id="attDate" style="padding:7px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.88rem;font-family:var(--font-main);font-weight:600;outline:none" onchange="renderAttendance()"/>
     </div>
-    <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar todos como Presentes">✔ Todos Presentes</button>
-    <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar todos como Falta">✗ Todos Falta</button>
-    <button class="btn btn-teal"    onclick="exportAttendanceXLSX()">📊 Exportar Asistencia Excel</button>
-    <span id="attSummary" style="font-size:0.8rem;font-weight:700;color:var(--text-muted)"></span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar toda la nómina como Presentes">✔ Todos Presentes</button>
+      <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
+      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Exportar Asistencia Excel</button>
+    </div>
+    <div class="search-wrapper" style="max-width:280px;margin-left:auto">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="attSearchInp" class="search-input" placeholder="Buscar estudiante..." oninput="renderAttendance()" style="padding:7px 12px 7px 34px;font-size:0.82rem"/>
+    </div>
+    <div id="attSummary" style="width:100%;font-size:0.84rem;font-weight:700;color:var(--text-muted);padding-top:6px;border-top:1px solid var(--border-color);display:flex;gap:12px;flex-wrap:wrap"></div>
   </div>
 
   <!-- Contadores de inasistencias por estudiante -->
   <div id="attAbsBar" class="att-absence-bar"></div>
 
-  <!-- Grilla de registro diario -->
+  <!-- Grilla de registro diario con nombres completos -->
   <div id="attGrid"></div>
 </div>
 
@@ -3469,29 +3560,41 @@ function renderAttendance() {
     absStats[si] = { F: countF, T: countT, J: countJ, pct: Math.round((countF / totalDays) * 100) };
   });
 
-  let absBarHTML = `<div style="font-weight:700;font-size:0.8rem;color:var(--text-main);margin-right:auto">📊 Días Registrados: ${totalDays}</div>`;
+  let absBarHTML = `<div style="font-weight:800;font-size:0.85rem;color:var(--text-main);margin-right:auto;display:flex;align-items:center;gap:6px"><span>📊 Inasistencias Acumuladas:</span> <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem">${totalDays} días</span></div>`;
+  let hasWarnings = false;
   S.students.forEach((name, si) => {
     const st = absStats[si];
     if (st.F > 0 || st.T > 0) {
+      hasWarnings = true;
       const isWarn = st.pct >= 25;
       absBarHTML += `<span class="att-absence-badge ${isWarn?'warn':''}">
-        ${escHTML(name)}: ${st.F} Faltas (${st.pct}%) ${st.T>0?st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
+        <strong>${escHTML(name)}</strong>: ${st.F} Faltas (${st.pct}%) ${st.T>0?'· '+st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
       </span>`;
     }
   });
+  if (!hasWarnings) {
+    absBarHTML += `<span style="font-size:0.78rem;color:var(--text-light);font-weight:600">No hay inasistencias registradas aún.</span>`;
+  }
   const absBarEl = document.getElementById('attAbsBar');
   if (absBarEl) absBarEl.innerHTML = absBarHTML;
 
+  const searchVal = (document.getElementById('attSearchInp')?.value || '').toLowerCase().trim();
+
   let gridHTML = '<div class="att-grid">';
   S.students.forEach((name, si) => {
+    if (searchVal && !name.toLowerCase().includes(searchVal)) return;
     const currentVal = dayAtt[si] || 'P';
-    gridHTML += `<div class="att-row">
-      <span class="att-name" title="${escVal(name)}">${si+1}. ${escHTML(name)}</span>
-      <div style="display:flex;gap:3px">
-        <button class="att-btn P ${currentVal==='P'?'active':''}" onclick="setAttState(${si}, 'P')">P</button>
-        <button class="att-btn F ${currentVal==='F'?'active':''}" onclick="setAttState(${si}, 'F')">F</button>
-        <button class="att-btn T ${currentVal==='T'?'active':''}" onclick="setAttState(${si}, 'T')">T</button>
-        <button class="att-btn J ${currentVal==='J'?'active':''}" onclick="setAttState(${si}, 'J')">J</button>
+    const borderAccent = currentVal === 'P' ? 'border-left: 4px solid #16a34a;' : (currentVal === 'F' ? 'border-left: 4px solid #dc2626;' : (currentVal === 'T' ? 'border-left: 4px solid #d97706;' : 'border-left: 4px solid #2563eb;'));
+    gridHTML += `<div class="att-row" style="${borderAccent}">
+      <div class="att-student-info">
+        <div class="att-num">${si+1}</div>
+        <div class="att-name" title="${escVal(name)}">${escHTML(name)}</div>
+      </div>
+      <div class="att-btn-group">
+        <button class="att-btn P ${currentVal==='P'?'active':''}" onclick="setAttState(${si}, 'P')" title="Presente">P</button>
+        <button class="att-btn F ${currentVal==='F'?'active':''}" onclick="setAttState(${si}, 'F')" title="Falta">F</button>
+        <button class="att-btn T ${currentVal==='T'?'active':''}" onclick="setAttState(${si}, 'T')" title="Tardanza">T</button>
+        <button class="att-btn J ${currentVal==='J'?'active':''}" onclick="setAttState(${si}, 'J')" title="Justificada">J</button>
       </div>
     </div>`;
   });
@@ -3508,7 +3611,14 @@ function renderAttendance() {
     if (v==='J') jCount++;
   });
   const sumEl = document.getElementById('attSummary');
-  if (sumEl) sumEl.textContent = `Presentes: ${pCount} | Faltas: ${fCount} | Tardanzas: ${tCount} | Justificadas: ${jCount}`;
+  if (sumEl) {
+    sumEl.innerHTML = `
+      <span style="color:#16a34a;font-weight:800">🟢 Presentes: ${pCount}</span> &nbsp;|&nbsp; 
+      <span style="color:#dc2626;font-weight:800">🔴 Faltas: ${fCount}</span> &nbsp;|&nbsp; 
+      <span style="color:#d97706;font-weight:800">🟡 Tardanzas: ${tCount}</span> &nbsp;|&nbsp; 
+      <span style="color:#2563eb;font-weight:800">🔵 Justificadas: ${jCount}</span>
+    `;
+  }
 }
 
 function setAttState(si, state) {
