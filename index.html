@@ -1867,6 +1867,9 @@ function studentGeneralAvg(si) {
 // ══════════════════════════════════════════════════════
 //  RENDERIZADO
 // ══════════════════════════════════════════════════════
+// Posición de foco pendiente a restaurar después del siguiente render()
+let _navTarget = null;
+
 function render() {
   ensureTrimestres();
   renderHeaderInfo();
@@ -1882,6 +1885,17 @@ function render() {
     applyColVisibility();
     applyRowVisibility();
     initBottomScrollbar();
+    // Restaurar foco de navegación si el usuario estaba ingresando notas
+    if (_navTarget !== null) {
+      const { ri, ci } = _navTarget;
+      _navTarget = null;
+      const grid = getVisibleInputGrid();
+      const target = grid[ri]?.[ci];
+      if (target) {
+        target.focus();
+        setTimeout(() => { try { target.select(); } catch(err){} }, 20);
+      }
+    }
   });
 }
 
@@ -2363,30 +2377,44 @@ function nav(e, inp) {
     setTimeout(() => { try { targetInp.select(); } catch(err){} }, 10);
   };
 
+  // Navegar con TARGET guardado para sobrevivir re-render()
+  const moveToPos = (targetRi, targetCi) => {
+    // Si hay un valor que guardar, el onchange de blur lo hará y render()
+    // restaurará el foco gracias a _navTarget
+    _navTarget = { ri: targetRi, ci: targetCi };
+    const targetInp = grid[targetRi]?.[targetCi];
+    if (targetInp) {
+      // Disparar el guardado del input actual mediante blur
+      // El blur activa onchange, que llama upd() -> render() -> restoreNavFocus()
+      inp.blur();
+      // Si el DOM no se reconstruyó (nota sin cambios), el _navTarget sigue vigente
+      // y tenemos que mover el foco manualmente
+      requestAnimationFrame(() => {
+        if (_navTarget) {
+          _navTarget = null;
+          focusAndSelect(targetInp);
+        }
+      });
+    }
+  };
+
   if (e.key === 'Tab' || e.key === 'Enter') {
     e.preventDefault();
     if (e.shiftKey) {
-      // Shift + Tab / Shift + Enter -> Mover hacia ARRIBA (estudiante anterior)
-      if (ri > 0) {
-        focusAndSelect(grid[ri - 1][ci]);
-      } else if (ci > 0) {
-        focusAndSelect(grid[grid.length - 1][ci - 1]);
-      }
+      // Shift+Tab / Shift+Enter → estudiante ANTERIOR
+      if (ri > 0)            moveToPos(ri - 1, ci);
+      else if (ci > 0)       moveToPos(grid.length - 1, ci - 1);
     } else {
-      // Tab / Enter -> Mover hacia ABAJO (siguiente estudiante en la misma columna)
-      if (ri < grid.length - 1) {
-        focusAndSelect(grid[ri + 1][ci]);
-      } else if (ci < grid[ri].length - 1) {
-        // Al llegar al último estudiante, saltar al primer estudiante de la siguiente columna
-        focusAndSelect(grid[0][ci + 1]);
-      }
+      // Tab / Enter → estudiante SIGUIENTE (misma columna)
+      if (ri < grid.length - 1)         moveToPos(ri + 1, ci);
+      else if (ci < grid[ri].length - 1) moveToPos(0, ci + 1);
     }
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
-    if (ri < grid.length - 1) focusAndSelect(grid[ri + 1][ci]);
+    if (ri < grid.length - 1) moveToPos(ri + 1, ci);
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    if (ri > 0) focusAndSelect(grid[ri - 1][ci]);
+    if (ri > 0) moveToPos(ri - 1, ci);
   } else if (e.key === 'ArrowRight') {
     if (inp.selectionEnd === inp.value.length && ci < grid[ri].length - 1) {
       focusAndSelect(grid[ri][ci + 1]);
