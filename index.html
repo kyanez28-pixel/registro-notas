@@ -1200,7 +1200,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   .search-input { padding: 9px 14px 9px 36px; font-size: 0.86rem; }
   .sort-select { width: 100%; padding: 8px 12px; font-size: 0.84rem; }
 
-  /* ── Tabla de Calificaciones en Celular (Sticky Columns Suaves) ── */
+  /* ── Tabla de Calificaciones en Celular (Sticky Columns Compactas & Espacio para Notas) ── */
   .tw {
     max-height: calc(100vh - 290px) !important;
     border-radius: 0 0 10px 10px;
@@ -1208,21 +1208,89 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     box-shadow: var(--shadow-sm);
     scroll-snap-type: x proximity;
     border-top: none;
+    overflow-x: auto !important;
   }
   .tw-hint {
     border-radius: 10px 10px 0 0;
     border: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
   }
-  table { font-size: 0.82rem; }
-  th, td { padding: 5px 6px; }
+  table { font-size: 0.8rem; }
+  
+  /* ── Columnas Fijas en Celular (Compactas para dejar más del 60% de pantalla visible para notas) ── */
+  th.fxl, td.ic {
+    position: sticky !important;
+    left: 0 !important;
+    width: 22px !important;
+    min-width: 22px !important;
+    max-width: 22px !important;
+    font-size: 0.72rem !important;
+    padding: 4px 1px !important;
+    text-align: center !important;
+    z-index: 6 !important;
+  }
+  th.fxn {
+    position: sticky !important;
+    left: 22px !important;
+    width: 118px !important;
+    min-width: 100px !important;
+    max-width: 125px !important;
+    font-size: 0.74rem !important;
+    padding: 5px 6px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    z-index: 6 !important;
+  }
+  td.nc {
+    position: sticky !important;
+    left: 22px !important;
+    width: 118px !important;
+    min-width: 100px !important;
+    max-width: 125px !important;
+    font-size: 0.75rem !important;
+    padding: 5px 6px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.2 !important;
+    z-index: 2 !important;
+  }
+
+  /* Modo de nombres no fijos (desplazamiento libre total) */
+  .free-scroll th.fxl, .free-scroll td.ic,
+  .free-scroll th.fxn, .free-scroll td.nc {
+    position: static !important;
+    max-width: none !important;
+    width: auto !important;
+    min-width: 140px !important;
+    box-shadow: none !important;
+  }
+
+  /* Reducir padding de cabeceras de actividades y semanas en móvil para mostrar más columnas */
+  th.sh {
+    font-size: 0.72rem !important;
+    padding: 3px 4px !important;
+    min-width: 44px !important;
+  }
+  th.wh {
+    font-size: 0.78rem !important;
+    padding: 4px 6px !important;
+  }
+  td {
+    padding: 3px 3px !important;
+  }
 
   /* Input de Notas en Celular: tamaño adecuado para toque */
   input.gi {
-    font-size: 0.9rem !important;
-    min-width: 36px;
-    min-height: 32px;
-    padding: 5px 2px;
+    font-size: 0.88rem !important;
+    min-width: 34px;
+    min-height: 30px;
+    padding: 4px 2px;
     border-radius: 4px;
   }
 
@@ -1654,9 +1722,14 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 
   <div class="tw-hint" id="twHint">
-    <span>👆 Desliza horizontalmente</span>
-    <span class="tw-hint-arrow">→ → →</span>
-    <span>para ver más columnas</span>
+    <div style="display:flex;align-items:center;gap:6px;flex:1">
+      <span>👆 Desliza horizontalmente</span>
+      <span class="tw-hint-arrow">→ → →</span>
+      <span style="opacity:0.85">para ver notas</span>
+    </div>
+    <button id="btnToggleSticky" class="btn btn-outline" onclick="toggleStickyNames()" style="padding:3px 9px;font-size:0.7rem;border-radius:12px;white-space:nowrap" title="Alternar entre fijar la columna de nombres o desplazar libremente toda la tabla">
+      📌 Nombres: Fijos
+    </button>
   </div>
   <div class="tw">
     <table id="mainTable">
@@ -2460,8 +2533,8 @@ function renderTable() {
 
   // Fila 1: Semanas y Bloques Ponderados
   let r1 = `<tr>
-    <th class="fxl" rowspan="2" style="min-width:32px;width:32px">#</th>
-    <th id="th-nombres" class="fxn" rowspan="2" style="min-width:200px;text-align:left;padding-left:10px">
+    <th class="fxl" rowspan="2">#</th>
+    <th id="th-nombres" class="fxn" rowspan="2">
       NÓMINA DE ESTUDIANTES
       <span style="font-size:0.58rem;opacity:.7;display:block;font-weight:400">✎ doble clic para editar</span>
     </th>`;
@@ -2650,7 +2723,7 @@ function renderTable() {
 
     return `<tr data-name="${escVal(name.toLowerCase())}">
       <td class="ic">${rowPos+1}</td>
-      <td class="nc" ondblclick="editStudentName(${si})" title="Doble clic para editar">${escHTML(name)}</td>
+      <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}</td>
       ${cells}
       ${summaryCells}
       <td class="ac" style="white-space:nowrap">
@@ -2662,6 +2735,24 @@ function renderTable() {
       </td>
     </tr>`;
   }).join('');
+}
+
+function handleStudentNameTap(td, si) {
+  if (window.innerWidth <= 768) {
+    const fullName = S.students[si] || '';
+    toast(`👤 #${si+1}: ${fullName}`, '#1e3a8a');
+  }
+}
+
+function toggleStickyNames() {
+  const tw = document.querySelector('.tw');
+  const btn = document.getElementById('btnToggleSticky');
+  if (!tw || !btn) return;
+  tw.classList.toggle('free-scroll');
+  const isFree = tw.classList.contains('free-scroll');
+  btn.textContent = isFree ? '↔ Todo Libre' : '📌 Nombres: Fijos';
+  btn.className = isFree ? 'btn btn-teal' : 'btn btn-outline';
+  toast(isFree ? '↔ Desplazamiento libre activado (pantalla completa para ver notas)' : '📌 Nombres fijados a la izquierda', '#3b82f6');
 }
 
 function cycleQual(si, w, colName) {
