@@ -170,11 +170,23 @@ body.dark ::-webkit-scrollbar-thumb:hover { background: #475569; background-clip
   display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px;
   border-radius: var(--radius-full); font-size: 0.76rem; font-weight: 700;
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  transition: all .2s ease;
+  transition: all .2s ease; cursor: pointer; user-select: none;
 }
+.sync-badge:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.sync-badge:active { transform: scale(0.96); }
 .sync-badge.online { color: #86efac; border-color: rgba(134,239,172,0.35); background: rgba(22,163,74,0.18); }
 .sync-badge.offline { color: #fde047; border-color: rgba(253,224,71,0.35); background: rgba(202,138,4,0.18); }
 .sync-badge.syncing { color: #93c5fd; border-color: rgba(147,197,253,0.35); background: rgba(37,99,235,0.18); }
+.sync-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+  display: inline-block; box-shadow: 0 0 8px currentColor;
+}
+.pulse-sync { animation: pulseSyncGlow 0.8s ease-in-out; }
+@keyframes pulseSyncGlow {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
 
 /* ══════════════════════════════════════════════════════
    HEADER (BANNER MODERNO & CRISTALINO)
@@ -1453,6 +1465,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
           1er Trimestre ✎
         </span>
         <span class="normative-pill">70% Form. + 30% Sum.</span>
+        <span class="sync-badge online" id="hdrSyncBadge" onclick="openSyncModal()" data-tip="Clic para vincular celular o configurar sincronización en tiempo real">
+          <span class="sync-dot"></span> <span id="syncText">⚡ En Vivo</span>
+        </span>
       </h1>
       <div class="hdr-sub">Subnivel Media · Promedios con 2 decimales truncados · Asignaturas cuantitativas y cualitativas</div>
     </div>
@@ -1500,6 +1515,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
   <button class="btn btn-purple" onclick="openManageTrimestres()" data-tip="Cambiar, crear o gestionar Trimestres (1er, 2do, 3er Trimestre)">
     📅 Trimestres
+  </button>
+  <button class="btn btn-teal" onclick="openSyncModal()" data-tip="Vincular celular o computadora mediante código QR o código de aula para sincronización en tiempo real">
+    📱 Vincular Celular / En Vivo
   </button>
   <div class="toolbar-sep"></div>
 
@@ -2158,11 +2176,12 @@ function ensureMats() {
 }
 
 // ══════════════════════════════════════════════════════
-//  PERSISTENCIA
+//  PERSISTENCIA & SINCRONIZACIÓN EN TIEMPO REAL
 // ══════════════════════════════════════════════════════
 let _saveTimeout = null;
 
 function saveData(manual) {
+  if (_isRemoteSyncing) return;
   try {
     localStorage.setItem('notas_cache_v7', JSON.stringify(S));
   } catch(e) {}
@@ -2176,11 +2195,11 @@ function saveData(manual) {
 
   if (manual) {
     saveToFirestore();
-    toast('💾 Datos respaldados en la nube', '#16a34a');
+    toast('💾 Datos respaldados y sincronizados en la nube', '#16a34a');
   } else {
-    setSyncStatus('⏳ Guardando...', 'syncing');
+    setSyncStatus('⏳ Sincronizando...', 'syncing');
     clearTimeout(_saveTimeout);
-    _saveTimeout = setTimeout(saveToFirestore, 1500);
+    _saveTimeout = setTimeout(saveToFirestore, 400); // 400ms para sync instantáneo entre móvil y web
   }
 }
 
@@ -5261,7 +5280,7 @@ function changeFontSize(delta, absolute) {
 }
 
 // ══════════════════════════════════════════════════════
-//  FIREBASE & AUTH
+//  FIREBASE & AUTH & SINCRONIZACIÓN BIDIRECCIONAL EN TIEMPO REAL (WEB <-> MÓVIL)
 // ══════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyDJYqrndXMm_c8uapKeJMDbLElJR3ls3S8",
@@ -5276,7 +5295,124 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+// Identificador único de este cliente/dispositivo para evitar ecos
+const _clientId = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 let _currentUser = null;
+let _unsubscribeSnapshot = null;
+let _isRemoteSyncing = false;
+let _lastLocalSaveTime = 0;
+let _syncRoomId = localStorage.getItem('notas_sync_room') || 'septimo_c';
+
+// Multi-Tab BroadcastChannel para sincronización instantánea en el mismo navegador
+let _broadcastChannel = null;
+try {
+  _broadcastChannel = new BroadcastChannel('notas_realtime_channel');
+  _broadcastChannel.onmessage = (event) => {
+    if (event.data && event.data.state && event.data.senderId !== _clientId) {
+      applyRemoteState(event.data.state, event.data.updatedAt, 'Pestaña local');
+    }
+  };
+} catch(e) {}
+
+// Detectar parámetro ?sync=CODIGO o ?room=CODIGO en URL
+(function checkUrlSyncParam() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const syncParam = params.get('sync') || params.get('room');
+    if (syncParam) {
+      const clean = syncParam.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+      _syncRoomId = clean;
+      localStorage.setItem('notas_sync_room', clean);
+      console.log('[Sync Realtime] Sala conectada desde URL:', clean);
+    }
+  } catch(e) {}
+})();
+
+function getActiveSyncDocRef() {
+  if (_currentUser) {
+    return db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
+  }
+  const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  return db.collection('aulas_sincronizadas').doc(cleanRoom);
+}
+
+function applyRemoteState(newState, updatedAt, source) {
+  if (!newState || typeof newState !== 'object') return;
+  _isRemoteSyncing = true;
+  
+  S = newState;
+  ensureMats();
+  try {
+    localStorage.setItem('notas_cache_v7', JSON.stringify(S));
+  } catch(e) {}
+
+  // Actualizar metadatos de cabecera si cambiaron
+  if (document.getElementById('infoGrado') && S.grado !== undefined)     document.getElementById('infoGrado').value   = S.grado;
+  if (document.getElementById('infoAnio') && S.anio !== undefined)       document.getElementById('infoAnio').value    = S.anio;
+  if (document.getElementById('infoDocente') && S.docente !== undefined) document.getElementById('infoDocente').value = S.docente;
+  if (document.getElementById('infoTutor') && S.tutor !== undefined)     document.getElementById('infoTutor').value   = S.tutor;
+  if (document.getElementById('hdrPeriodBadge')) document.getElementById('hdrPeriodBadge').textContent = (S.periodo || '1er Trimestre') + ' ✎';
+
+  // Recordar foco si el usuario está tipeando activamente
+  const activeEl = document.activeElement;
+  const isInputFocused = activeEl && activeEl.tagName === 'INPUT';
+  const activeInputId = activeEl?.id;
+  const activeInputVal = activeEl?.value;
+
+  render();
+
+  if (document.getElementById('attendancePanel')?.style.display !== 'none' && typeof renderAttendance === 'function') {
+    renderAttendance();
+  }
+  if (document.getElementById('piPanel')?.style.display !== 'none' && typeof renderPi === 'function') {
+    renderPi();
+  }
+
+  setSyncStatus('⚡ En Vivo', 'online');
+  const badge = document.getElementById('hdrSyncBadge');
+  if (badge) {
+    badge.classList.add('pulse-sync');
+    setTimeout(() => badge.classList.remove('pulse-sync'), 1200);
+  }
+
+  _isRemoteSyncing = false;
+}
+
+function startRealtimeSync() {
+  if (_unsubscribeSnapshot) {
+    _unsubscribeSnapshot();
+    _unsubscribeSnapshot = null;
+  }
+
+  const docRef = getActiveSyncDocRef();
+  if (!docRef) return;
+
+  setSyncStatus('⚡ Conectando en vivo...', 'syncing');
+
+  _unsubscribeSnapshot = docRef.onSnapshot({ includeMetadataChanges: true }, (doc) => {
+    if (doc.metadata.hasPendingWrites) {
+      return; // Ignorar escrituras locales antes de confirmación del servidor
+    }
+
+    if (doc.exists && doc.data()?.state) {
+      const data = doc.data();
+      if (data.senderId === _clientId) {
+        setSyncStatus('⚡ En Vivo', 'online');
+        return;
+      }
+      if (data.updatedAt && data.updatedAt <= _lastLocalSaveTime) {
+        return;
+      }
+      applyRemoteState(data.state, data.updatedAt, 'Nube');
+    } else {
+      // Documento aún no existe en la nube; guardamos el estado actual
+      saveToFirestore();
+    }
+  }, (err) => {
+    console.warn('[Sync] Firestore realtime listener warning:', err);
+    setSyncStatus('🟡 Modo Local', 'offline');
+  });
+}
 
 function signInGoogle() {
   const btn = document.getElementById('loginBtn');
@@ -5297,7 +5433,7 @@ auth.onAuthStateChanged(user => {
   if (user) {
     _currentUser = user;
     showApp(user);
-    loadFromFirestore();
+    startRealtimeSync();
   } else {
     _currentUser = null;
     showLogin();
@@ -5315,8 +5451,9 @@ function continueOfflineMode() {
   showApp(localUser);
   initS();
   render();
-  setSyncStatus('🟡 Modo Local', 'offline');
-  toast('💻 Modo Local activado (guardado en este equipo)', '#3b82f6');
+  startRealtimeSync(); // Conecta en tiempo real a la sala en la nube
+  setSyncStatus('⚡ En Vivo', 'online');
+  toast('⚡ Modo En Vivo activado (sincronizando con celulares vinculados)', '#10b981');
 }
 
 function showApp(user) {
@@ -5328,45 +5465,115 @@ function showApp(user) {
 }
 
 function setSyncStatus(msg, type) {
-  const el = document.getElementById('syncStatus');
-  if (!el) return;
-  el.textContent = msg;
-  el.className = `sync-badge ${type || 'online'}`;
-}
+  const syncTxt = document.getElementById('syncText');
+  if (syncTxt) syncTxt.textContent = msg;
 
-async function loadFromFirestore() {
-  if (!_currentUser) return;
-  setSyncStatus('⏳ Cargando datos...', 'syncing');
-  try {
-    const doc = await db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado').get();
-    if (doc.exists && doc.data()?.state) {
-      S = doc.data().state;
-      ensureMats();
-    } else {
-      initS();
-      await saveToFirestore();
-    }
-    render();
-    setSyncStatus('🟢 En la nube', 'online');
-  } catch(e) {
-    initS(); render(); setSyncStatus('🟡 Modo Local', 'offline');
+  const hdrBadge = document.getElementById('hdrSyncBadge');
+  if (hdrBadge) hdrBadge.className = `sync-badge ${type || 'online'}`;
+
+  const el = document.getElementById('syncStatus');
+  if (el) {
+    el.textContent = msg;
+    el.className = `sync-badge ${type || 'online'}`;
   }
 }
 
 async function saveToFirestore() {
-  if (!_currentUser) return;
+  if (_isRemoteSyncing) return;
+  const docRef = getActiveSyncDocRef();
+  if (!docRef) return;
+
+  const now = Date.now();
+  _lastLocalSaveTime = now;
+
+  const payload = {
+    state: S,
+    updatedAt: now,
+    senderId: _clientId,
+    timestamp: new Date().toISOString()
+  };
+
+  // Notificar a otras pestañas en la misma máquina
+  if (_broadcastChannel) {
+    try {
+      _broadcastChannel.postMessage(payload);
+    } catch(e) {}
+  }
+
   try {
-    await db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado').set({
-      state: S,
-      updatedAt: new Date().toISOString()
-    });
-    setSyncStatus('🟢 En la nube', 'online');
+    await docRef.set(payload);
+    setSyncStatus('⚡ En Vivo', 'online');
   } catch(e) {
-    setSyncStatus('🟡 Guardado local', 'offline');
+    console.warn('Error guardando en Firestore:', e);
+    setSyncStatus('🟡 Guardado Local', 'offline');
   }
 }
 
-window.addEventListener('online', () => { setSyncStatus('🟢 Reconectado', 'online'); saveToFirestore(); });
+// ══════════════════════════════════════════════════════
+//  MODAL Y UTILIDADES DE VINCULACIÓN EN TIEMPO REAL
+// ══════════════════════════════════════════════════════
+function openSyncModal() {
+  const modal = document.getElementById('syncModal');
+  if (!modal) return;
+
+  const room = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  const syncUrl = `${window.location.origin}${window.location.pathname}?sync=${encodeURIComponent(room)}`;
+
+  const roomInp = document.getElementById('syncRoomInput');
+  if (roomInp) roomInp.value = room;
+
+  const urlDisplay = document.getElementById('syncUrlDisplay');
+  if (urlDisplay) urlDisplay.value = syncUrl;
+
+  const qrImg = document.getElementById('syncQrImg');
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(syncUrl)}`;
+  }
+
+  const userInfoSpan = document.getElementById('syncModalUserInfo');
+  if (userInfoSpan) {
+    if (_currentUser) {
+      userInfoSpan.innerHTML = `🟢 Conectado con cuenta Google: <strong>${_currentUser.email}</strong><br><small style="color:var(--text-muted)">Todo cambio en PC o Celular se actualiza en vivo al instante.</small>`;
+    } else {
+      userInfoSpan.innerHTML = `⚡ Sala en vivo activa: <strong>${room.toUpperCase()}</strong><br><small style="color:var(--text-muted)">Escanea el QR o abre el enlace en tu celular para sincronizar en tiempo real sin cables ni descargas.</small>`;
+    }
+  }
+
+  modal.classList.add('open');
+}
+
+function copySyncLink() {
+  const urlInp = document.getElementById('syncUrlDisplay');
+  if (urlInp) {
+    urlInp.select();
+    navigator.clipboard.writeText(urlInp.value).then(() => {
+      toast('📋 Enlace copiado. Ábrelo en tu celular para sincronizar en tiempo real.', '#10b981');
+    }).catch(() => {
+      document.execCommand('copy');
+      toast('📋 Enlace copiado.', '#10b981');
+    });
+  }
+}
+
+function applyNewSyncRoom() {
+  const inp = document.getElementById('syncRoomInput');
+  if (!inp || !inp.value.trim()) return;
+  const newRoom = inp.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  _syncRoomId = newRoom;
+  localStorage.setItem('notas_sync_room', newRoom);
+
+  saveToFirestore();
+  startRealtimeSync();
+  closeSyncModal();
+  toast(`⚡ Conectado a la sala en vivo: ${newRoom.toUpperCase()}`, '#10b981');
+}
+
+function closeSyncModal() {
+  const modal = document.getElementById('syncModal');
+  if (modal) modal.classList.remove('open');
+}
+
+window.addEventListener('online', () => { setSyncStatus('⚡ Reconectado', 'online'); saveToFirestore(); startRealtimeSync(); });
 window.addEventListener('offline', () => { setSyncStatus('🟡 Sin conexión', 'offline'); });
 
 // ══════════════════════════════════════════════════════
@@ -8576,6 +8783,9 @@ render();
       <strong style="font-size:1rem;font-weight:800">⚡ Acciones Rápidas</strong>
     </div>
     <div class="mb" style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;max-height:55vh">
+      <button class="btn btn-magic" onclick="openSyncModal();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px;grid-column:1/-1">
+        ⚡<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">📱 Vincular Celular / En Vivo</span>
+      </button>
       <button class="btn btn-success" onclick="openAddSt();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
         ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Estudiante</span>
       </button>
@@ -8635,6 +8845,62 @@ render();
       <button class="btn btn-danger" onclick="doClearGrades();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
         🧹<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Limpiar</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL DE SINCRONIZACIÓN EN TIEMPO REAL (WEB <-> MÓVIL) ══ -->
+<div id="syncModal" class="mo" style="z-index:10002" onclick="if(event.target===this)closeSyncModal()">
+  <div class="md" style="max-width:480px;border-radius:16px;padding:22px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--border-color);padding-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.4rem">⚡</span>
+        <h3 style="margin:0;font-size:1.15rem;font-weight:800;border:none;padding:0">Sincronización en Tiempo Real</h3>
+      </div>
+      <button onclick="closeSyncModal()" class="btn btn-outline" style="padding:4px 8px;font-size:0.8rem">✕</button>
+    </div>
+
+    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;line-height:1.4">
+      Todo lo que escribas o modifiques en la computadora se actualizará <strong>en vivo</strong> en el celular y viceversa al instante.
+    </p>
+
+    <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:0.82rem" id="syncModalUserInfo">
+      ⚡ Estado: <strong>Sincronización activa</strong>
+    </div>
+
+    <!-- QR & Link directo -->
+    <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px;margin-bottom:14px">
+      <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:8px">
+        📷 Escanea este código QR con la cámara de tu celular:
+      </label>
+      <div style="display:flex;justify-content:center;margin:8px 0">
+        <img id="syncQrImg" src="" alt="QR Sincronización" width="160" height="160" style="border-radius:8px;border:1px solid var(--border-color);background:#fff;padding:6px;box-shadow:var(--shadow-sm)"/>
+      </div>
+      <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:block;margin-top:10px;margin-bottom:4px">
+        🔗 O comparte este enlace directo a tu celular:
+      </label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="syncUrlDisplay" readonly style="font-size:0.75rem;font-family:var(--font-mono);margin-bottom:0;padding:6px 10px;background:var(--bg-card-subtle)" onclick="this.select()"/>
+        <button class="btn btn-teal" onclick="copySyncLink()" style="padding:6px 12px;font-size:0.78rem">📋 Copiar</button>
+      </div>
+    </div>
+
+    <!-- Código de Sala Personalizado -->
+    <div style="border-top:1px solid var(--border-color);padding-top:12px;margin-top:12px">
+      <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">
+        🔑 Código de Aula / Sala en Vivo:
+      </label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="syncRoomInput" placeholder="Ej: septimo_c" style="margin-bottom:0;font-family:var(--font-mono);font-weight:700"/>
+        <button class="btn btn-primary" onclick="applyNewSyncRoom()" style="padding:7px 14px;white-space:nowrap">Conectar</button>
+      </div>
+      <small style="font-size:0.7rem;color:var(--text-light);display:block;margin-top:4px">
+        Cualquier dispositivo que tenga este mismo código se sincronizará automáticamente en tiempo real.
+      </small>
+    </div>
+
+    <div class="ma" style="margin-top:16px;border-top:1px solid var(--border-color);padding-top:12px">
+      <button class="btn btn-outline" onclick="closeSyncModal()">Cerrar</button>
     </div>
   </div>
 </div>
