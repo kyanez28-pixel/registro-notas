@@ -2,7 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Notas EGB">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon.svg">
 <title>Registro de Notas — EGB Media (Séptimo de Básica)</title>
 
 <!-- Google Fonts: Inter, Plus Jakarta Sans & JetBrains Mono para máxima claridad y nitidez -->
@@ -857,6 +864,111 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 .rp-row-name { flex: 1; font-weight: 700; color: var(--text-main); font-size: 0.9rem; }
 
 /* ══════════════════════════════════════════════════════
+   MOBILE NAV BAR (BOTTOM NAVIGATION — APP NATIVA)
+   ══════════════════════════════════════════════════════ */
+#mobileNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-toolbar);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+  z-index: 1000;
+  padding: 6px 4px;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+}
+.mob-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all .15s ease;
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-nav-btn:active { transform: scale(0.93); }
+.mob-nav-btn.active { color: var(--primary); }
+.mob-nav-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  transition: transform .15s ease;
+}
+.mob-nav-btn.active .mob-nav-icon { transform: scale(1.15); }
+.mob-nav-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.mob-nav-btn.active .mob-nav-label { color: var(--primary); font-weight: 900; }
+
+/* Indicador activo */
+.mob-nav-btn.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 3px 3px;
+}
+.mob-nav-btn { position: relative; }
+
+/* Scroll Fade en barras horizontales */
+.toolbar-wrap, .tabs-wrap, .view-wrap {
+  position: relative;
+}
+.toolbar-wrap::after, .tabs-wrap::after, .view-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  background: linear-gradient(to right, transparent, var(--bg-toolbar));
+  pointer-events: none;
+  z-index: 5;
+  display: none;
+}
+
+/* Hint de scroll horizontal en tabla */
+.tw-hint {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-card-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  user-select: none;
+}
+.tw-hint-arrow {
+  display: inline-flex;
+  gap: 2px;
+  animation: scrollHint 1.4s ease-in-out infinite;
+}
+@keyframes scrollHint {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(5px); opacity: 0.6; }
+}
+
+/* ══════════════════════════════════════════════════════
    MOBILE & RESPONSIVE DESIGN (EXPERIENCIA PROFESIONAL CELULAR)
    ══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -865,9 +977,15 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Mostrar nav bar inferior y fade en barras */
+  #mobileNav { display: grid; }
+  .toolbar-wrap::after, .tabs-wrap::after, .view-wrap::after { display: block; }
+  .tw-hint { display: flex; }
+
   body {
     font-size: 14px;
-    padding-bottom: env(safe-area-inset-bottom, 16px);
+    /* Espacio para nav bar inferior + safe area */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   }
 
   /* ── Header Móvil Compacto & Elegante ── */
@@ -1036,12 +1154,21 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   /* Contenedor Principal */
   .content { padding: 10px 12px; }
 
-  /* Tarjetas Estadísticas en Móvil (2 Columnas) */
+  /* Tarjetas Estadísticas en Móvil (2 Columnas, impar = ancho completo) */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px;
     margin-bottom: 10px;
   }
+  /* Tarjeta impar solitaria ocupa fila completa */
+  .stats-grid .stat-card:nth-child(odd):last-child {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .stats-grid .stat-card:nth-child(odd):last-child .stat-label,
+  .stats-grid .stat-card:nth-child(odd):last-child .stat-card-title { margin-bottom: 0; flex: 1; }
   .stat-card {
     padding: 10px 12px;
     border-radius: 10px;
@@ -1063,18 +1190,26 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
   /* ── Tabla de Calificaciones en Celular (Sticky Columns Suaves) ── */
   .tw {
-    max-height: calc(100vh - 220px) !important;
-    border-radius: 10px;
+    max-height: calc(100vh - 290px) !important;
+    border-radius: 0 0 10px 10px;
     -webkit-overflow-scrolling: touch;
     box-shadow: var(--shadow-sm);
+    scroll-snap-type: x proximity;
+    border-top: none;
+  }
+  .tw-hint {
+    border-radius: 10px 10px 0 0;
+    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
   }
   table { font-size: 0.82rem; }
   th, td { padding: 5px 6px; }
 
   /* Input de Notas en Celular: tamaño adecuado para toque */
   input.gi {
-    font-size: 0.88rem !important;
-    min-width: 34px;
+    font-size: 0.9rem !important;
+    min-width: 36px;
+    min-height: 32px;
     padding: 5px 2px;
     border-radius: 4px;
   }
@@ -1184,11 +1319,32 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   #toast {
     left: 12px !important;
     right: 12px !important;
-    bottom: 16px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
     border-radius: 12px;
     font-size: 0.84rem;
     padding: 10px 14px;
     justify-content: center;
+  }
+
+  /* Contexto menu más grande en touch */
+  .ctx-item {
+    padding: 13px 18px;
+    font-size: 0.9rem;
+  }
+
+  /* Ocultar toolbar clásica en mobile (se usa el nav bar) */
+  .toolbar {
+    display: none;
+  }
+
+  /* Ocultar userBar en mobile (info ya en header) */
+  #userBar {
+    display: none !important;
+  }
+
+  /* Ocultar barra de vistas en mobile (se usa el nav bar) */
+  .view-bar {
+    display: none;
   }
 }
 
@@ -1196,7 +1352,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   .hdr-logo { width: 32px; height: 32px; font-size: 1.1rem; }
   .hdr-title-area h1 { font-size: 0.96rem; }
   .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .att-btn { min-width: 32px; min-height: 32px; padding: 6px 9px; font-size: 0.8rem; }
+  .att-btn { min-width: 34px; min-height: 34px; padding: 7px 10px; font-size: 0.82rem; }
+  .mob-nav-label { font-size: 0.6rem; }
+  .mob-nav-icon { font-size: 1.25rem; }
 }
 
 /* ── ENCABEZADO INSTITUCIONAL DE IMPRESIÓN (SOLO EN IMPRESIÓN) ── */
@@ -1410,6 +1568,30 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
 </div>
 
+<!-- ── BOTTOM NAVIGATION BAR (MÓVIL) ── -->
+<nav id="mobileNav" role="navigation" aria-label="Navegación principal">
+  <button class="mob-nav-btn active" id="mnNotas" onclick="mobileSwitchView('notas')">
+    <span class="mob-nav-icon">📋</span>
+    <span class="mob-nav-label">Notas</span>
+  </button>
+  <button class="mob-nav-btn" id="mnAsistencia" onclick="mobileSwitchView('asistencia')">
+    <span class="mob-nav-icon">📅</span>
+    <span class="mob-nav-label">Asistencia</span>
+  </button>
+  <button class="mob-nav-btn" id="mnAcciones" onclick="mobileSwitchView('acciones')">
+    <span class="mob-nav-icon">⚡</span>
+    <span class="mob-nav-label">Acciones</span>
+  </button>
+  <button class="mob-nav-btn" id="mnReporte" onclick="mobileSwitchView('reporte')">
+    <span class="mob-nav-icon">📊</span>
+    <span class="mob-nav-label">Reportes</span>
+  </button>
+  <button class="mob-nav-btn" id="mnMas" onclick="mobileSwitchView('mas')">
+    <span class="mob-nav-icon">⋯</span>
+    <span class="mob-nav-label">Más</span>
+  </button>
+</nav>
+
 <!-- ── BARRA DE VISTAS ── -->
 <div class="view-bar">
   <button id="viewNotas"       class="view-btn active" onclick="switchView('notas')">
@@ -1453,6 +1635,11 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     </div>
   </div>
 
+  <div class="tw-hint" id="twHint">
+    <span>👆 Desliza horizontalmente</span>
+    <span class="tw-hint-arrow">→ → →</span>
+    <span>para ver más columnas</span>
+  </div>
   <div class="tw">
     <table id="mainTable">
       <thead id="th"></thead>
@@ -8377,6 +8564,170 @@ render();
 
 <!-- ══ ZONA OCULTA PARA IMPRESIÓN CON COLORES ══ -->
 <div id="attReportPrint" aria-hidden="true"></div>
+
+<!-- ══ PANEL FLOTANTE DE ACCIONES RÁPIDAS (MÓVIL) ══ -->
+<div id="mobileActionsPanel" class="mo" style="z-index:10001" onclick="if(event.target===this)closeMobileActions()">
+  <div class="md" style="border-radius:20px 20px 0 0;max-height:70vh;padding:0;overflow:hidden">
+    <!-- Handle -->
+    <div style="display:flex;justify-content:center;padding:10px 0 0">
+      <div style="width:36px;height:4px;background:var(--border-color);border-radius:4px"></div>
+    </div>
+    <div class="mh" style="padding:12px 18px 10px;border-bottom:1px solid var(--border-color)">
+      <strong style="font-size:1rem;font-weight:800">⚡ Acciones Rápidas</strong>
+    </div>
+    <div class="mb" style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;max-height:55vh">
+      <button class="btn btn-success" onclick="openAddSt();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Estudiante</span>
+      </button>
+      <button class="btn btn-teal" onclick="openAddWeek();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Semana</span>
+      </button>
+      <button class="btn btn-primary" onclick="openAddCol();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Actividad</span>
+      </button>
+      <button class="btn btn-outline" onclick="saveData(true);closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        💾<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Guardar</span>
+      </button>
+      <button class="btn btn-warning" onclick="exportCSV();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        📊<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Excel</span>
+      </button>
+      <button class="btn btn-purple" onclick="openManageTrimestres();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        📅<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Trimestres</span>
+      </button>
+      <button class="btn btn-dark" onclick="exportBackup();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        ⬇<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Backup</span>
+      </button>
+      <button class="btn btn-outline" onclick="openManageNomina();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
+        ⚙<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Nómina</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL FLOTANTE MÁS OPCIONES (MÓVIL) ══ -->
+<div id="mobileMasPanel" class="mo" style="z-index:10001" onclick="if(event.target===this)closeMobileMas()">
+  <div class="md" style="border-radius:20px 20px 0 0;max-height:70vh;padding:0;overflow:hidden">
+    <div style="display:flex;justify-content:center;padding:10px 0 0">
+      <div style="width:36px;height:4px;background:var(--border-color);border-radius:4px"></div>
+    </div>
+    <div class="mh" style="padding:12px 18px 10px;border-bottom:1px solid var(--border-color)">
+      <strong style="font-size:1rem;font-weight:800">⋯ Más Opciones</strong>
+    </div>
+    <div class="mb" style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;max-height:55vh">
+      <button class="btn btn-magic" onclick="openNewYearWizard();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px;grid-column:1/-1">
+        ✨ Nuevo Año Lectivo
+      </button>
+      <button class="btn btn-purple" onclick="openCopyColumnModal();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        📋<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Copiar Col.</span>
+      </button>
+      <button class="btn btn-dark" onclick="openVisPanel();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        👁<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Columnas</span>
+      </button>
+      <button class="btn btn-outline" onclick="printTable();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        🖨<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Imprimir</span>
+      </button>
+      <button class="btn btn-outline" onclick="toggleDark();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        🌙<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Modo Oscuro</span>
+      </button>
+      <button class="btn btn-outline" onclick="document.getElementById('importFile').click();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        ⬆<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Restaurar</span>
+      </button>
+      <button class="btn btn-danger" onclick="doClearGrades();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
+        🧹<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Limpiar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ MOBILE BOTTOM NAV LOGIC ══ */
+function mobileSwitchView(view) {
+  const isMobile = window.innerWidth <= 768;
+  if (view === 'acciones') {
+    document.getElementById('mobileActionsPanel').classList.add('open');
+    return;
+  }
+  if (view === 'mas') {
+    document.getElementById('mobileMasPanel').classList.add('open');
+    return;
+  }
+  // Map mobile nav to existing views
+  const viewMap = {
+    'notas': 'notas',
+    'asistencia': 'asistencia',
+    'reporte': 'reporte'
+  };
+  const mapped = viewMap[view] || view;
+  if (typeof switchView === 'function') switchView(mapped);
+
+  // Update active state
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const btnMap = {
+    'notas': 'mnNotas',
+    'asistencia': 'mnAsistencia',
+    'reporte': 'mnReporte'
+  };
+  const btnId = btnMap[view];
+  if (btnId) document.getElementById(btnId)?.classList.add('active');
+}
+
+function closeMobileActions() {
+  document.getElementById('mobileActionsPanel').classList.remove('open');
+  // Return active state to whichever nav button was active before
+}
+
+function closeMobileMas() {
+  document.getElementById('mobileMasPanel').classList.remove('open');
+}
+
+/* ══ Sync Bottom Nav with view switches ══ */
+const _origSwitchView = typeof switchView !== 'undefined' ? switchView : null;
+
+/* Hook into switchView to keep mob nav in sync */
+document.addEventListener('DOMContentLoaded', function() {
+  const origFn = window.switchView;
+  if (origFn) {
+    window.switchView = function(v) {
+      origFn(v);
+      // Sync bottom nav
+      const navMap = {
+        'notas': 'mnNotas',
+        'asistencia': 'mnAsistencia',
+        'reporte': 'mnReporte',
+        'export': 'mnMas',
+        'estudiantes': 'mnMas',
+        'pi': 'mnMas'
+      };
+      document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+      const target = navMap[v];
+      if (target) document.getElementById(target)?.classList.add('active');
+    };
+  }
+
+  /* ══ Auto-hide scroll hint after first scroll ══ */
+  const tw = document.querySelector('.tw');
+  const hint = document.getElementById('twHint');
+  if (tw && hint) {
+    tw.addEventListener('scroll', function onScroll() {
+      if (tw.scrollLeft > 20) {
+        hint.style.display = 'none';
+        tw.removeEventListener('scroll', onScroll);
+      }
+    }, { passive: true });
+  }
+});
+
+/* ══ SERVICE WORKER REGISTRATION (PWA) ══ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      console.log('[PWA] Service Worker registrado:', reg.scope);
+    }).catch(function(err) {
+      console.warn('[PWA] Error al registrar SW:', err);
+    });
+  });
+}
+</script>
 
 </body>
 </html>

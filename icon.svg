@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="45%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="sheetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="dropGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Fondo redondeado con degradado azul ministerial -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <!-- Brillo superior de vidrio -->
+  <path d="M0,112 C0,50.1 50.1,0 112,0 L400,0 C461.9,0 512,50.1 512,112 L512,200 C340,160 170,220 0,160 Z" fill="#ffffff" opacity="0.08"/>
+
+  <!-- Libro / Cuaderno de Registro -->
+  <g filter="url(#dropGlow)">
+    <!-- Base del cuaderno -->
+    <rect x="96" y="96" width="320" height="320" rx="36" fill="url(#sheetGrad)"/>
+    
+    <!-- Lomo izquierdo azul del cuaderno -->
+    <path d="M96,132 C96,112 112,96 132,96 L154,96 L154,416 L132,416 C112,416 96,400 96,380 Z" fill="#1e3a8a"/>
+
+    <!-- Anillos dorados del cuaderno -->
+    <rect x="144" y="140" width="20" height="8" rx="4" fill="url(#goldGrad)"/>
+    <rect x="144" y="200" width="20" height="8" rx="4" fill="url(#goldGrad)"/>
+    <rect x="144" y="260" width="20" height="8" rx="4" fill="url(#goldGrad)"/>
+    <rect x="144" y="320" width="20" height="8" rx="4" fill="url(#goldGrad)"/>
+    <rect x="144" y="364" width="20" height="8" rx="4" fill="url(#goldGrad)"/>
+
+    <!-- Líneas de filas de calificaciones -->
+    <!-- Fila 1: Aprobado 10 -->
+    <rect x="186" y="148" width="130" height="14" rx="7" fill="#cbd5e1"/>
+    <circle cx="370" cy="155" r="15" fill="#dcfce7"/>
+    <path d="M363,155 L368,160 L378,149" fill="none" stroke="#15803d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Fila 2: Aprobado 9 -->
+    <rect x="186" y="196" width="150" height="14" rx="7" fill="#cbd5e1"/>
+    <circle cx="370" cy="203" r="15" fill="#dcfce7"/>
+    <path d="M363,203 L368,208 L378,197" fill="none" stroke="#15803d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Fila 3: Indicador de barra de progreso / Gráfico -->
+    <rect x="186" y="244" width="110" height="14" rx="7" fill="#cbd5e1"/>
+    <circle cx="370" cy="251" r="15" fill="#eff6ff"/>
+    <text x="370" y="256" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="12" font-weight="900" fill="#1d4ed8" text-anchor="middle">A</text>
+
+    <!-- Fila 4: Gráfico de Barras de Rendimiento -->
+    <g transform="translate(186, 290)">
+      <rect x="0" y="55" width="28" height="35" rx="6" fill="#3b82f6"/>
+      <rect x="40" y="30" width="28" height="60" rx="6" fill="#10b981"/>
+      <rect x="80" y="45" width="28" height="45" rx="6" fill="#8b5cf6"/>
+      <rect x="120" y="15" width="28" height="75" rx="6" fill="url(#goldGrad)"/>
+      <line x1="-6" y1="92" x2="160" y2="92" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Insignia Dorada Superior Derecha: Birrete / Estrella de Excelencia -->
+  <g filter="url(#dropGlow)" transform="translate(330, 60)">
+    <circle cx="50" cy="50" r="46" fill="url(#goldGrad)"/>
+    <circle cx="50" cy="50" r="40" fill="#ffffff" opacity="0.15"/>
+    <!-- Birrete Académico Blanco/Oro -->
+    <path d="M50,28 L76,40 L50,52 L24,40 Z" fill="#ffffff"/>
+    <path d="M34,46 L34,60 C34,66 66,66 66,60 L66,46" fill="#ffffff"/>
+    <path d="M72,42 L78,54 L74,54 L74,68 L70,68 L70,54 L68,54 Z" fill="#ffffff"/>
+  </g>
+
+  <!-- Borde decorativo exterior sutil -->
+  <rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="#ffffff" stroke-width="6" opacity="0.25"/>
+</svg>
