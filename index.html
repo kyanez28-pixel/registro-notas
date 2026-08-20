@@ -1422,9 +1422,26 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     display: none !important;
   }
 
-  /* Ocultar barra de vistas en mobile (se usa el nav bar) */
+  /* Barra de vistas en mobile: carrusel deslizable horizontal elegante */
   .view-bar {
-    display: none;
+    display: flex !important;
+    padding: 6px 10px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+  }
+  .view-bar::-webkit-scrollbar { display: none; }
+  .view-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    border-radius: 8px;
+    white-space: nowrap;
   }
 }
 
@@ -1660,21 +1677,21 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <span class="mob-nav-icon">📋</span>
     <span class="mob-nav-label">Notas</span>
   </button>
+  <button class="mob-nav-btn" id="mnEstudiantes" onclick="mobileSwitchView('estudiantes')">
+    <span class="mob-nav-icon">👥</span>
+    <span class="mob-nav-label">Matriz</span>
+  </button>
   <button class="mob-nav-btn" id="mnAsistencia" onclick="mobileSwitchView('asistencia')">
     <span class="mob-nav-icon">📅</span>
     <span class="mob-nav-label">Asistencia</span>
-  </button>
-  <button class="mob-nav-btn" id="mnAcciones" onclick="mobileSwitchView('acciones')">
-    <span class="mob-nav-icon">⚡</span>
-    <span class="mob-nav-label">Acciones</span>
   </button>
   <button class="mob-nav-btn" id="mnReporte" onclick="mobileSwitchView('reporte')">
     <span class="mob-nav-icon">📊</span>
     <span class="mob-nav-label">Reportes</span>
   </button>
-  <button class="mob-nav-btn" id="mnMas" onclick="mobileSwitchView('mas')">
-    <span class="mob-nav-icon">⋯</span>
-    <span class="mob-nav-label">Más</span>
+  <button class="mob-nav-btn" id="mnHerramientas" onclick="mobileSwitchView('herramientas')">
+    <span class="mob-nav-icon">⚡</span>
+    <span class="mob-nav-label">Menú</span>
   </button>
 </nav>
 
@@ -8863,79 +8880,109 @@ render();
 <!-- ══ ZONA OCULTA PARA IMPRESIÓN CON COLORES ══ -->
 <div id="attReportPrint" aria-hidden="true"></div>
 
-<!-- ══ PANEL FLOTANTE DE ACCIONES RÁPIDAS (MÓVIL) ══ -->
-<div id="mobileActionsPanel" class="mo" style="z-index:10001" onclick="if(event.target===this)closeMobileActions()">
-  <div class="md" style="border-radius:20px 20px 0 0;max-height:70vh;padding:0;overflow:hidden">
+<!-- ══ PANEL FLOTANTE DE HERRAMIENTAS UNIFICADO (MÓVIL) ══ -->
+<div id="mobileToolsPanel" class="mo" style="z-index:10001" onclick="if(event.target===this)closeMobileTools()">
+  <div class="md" style="border-radius:20px 20px 0 0;max-height:82vh;padding:0;overflow:hidden">
     <!-- Handle -->
     <div style="display:flex;justify-content:center;padding:10px 0 0">
-      <div style="width:36px;height:4px;background:var(--border-color);border-radius:4px"></div>
+      <div style="width:40px;height:5px;background:var(--border-color);border-radius:4px"></div>
     </div>
-    <div class="mh" style="padding:12px 18px 10px;border-bottom:1px solid var(--border-color)">
-      <strong style="font-size:1rem;font-weight:800">⚡ Acciones Rápidas</strong>
+    
+    <div class="mh" style="padding:12px 18px 10px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.2rem">⚡</span>
+        <strong style="font-size:1rem;font-weight:800">Menú y Herramientas</strong>
+      </div>
+      <button onclick="closeMobileTools()" class="btn btn-outline" style="padding:4px 8px;font-size:0.8rem">✕</button>
     </div>
-    <div class="mb" style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;max-height:55vh">
-      <button class="btn btn-magic" onclick="openSyncModal();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px;grid-column:1/-1">
-        ⚡<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">📱 Vincular Celular / En Vivo</span>
-      </button>
-      <button class="btn btn-success" onclick="openAddSt();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Estudiante</span>
-      </button>
-      <button class="btn btn-teal" onclick="openAddWeek();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Semana</span>
-      </button>
-      <button class="btn btn-primary" onclick="openAddCol();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        ➕<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Actividad</span>
-      </button>
-      <button class="btn btn-outline" onclick="saveData(true);closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        💾<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Guardar</span>
-      </button>
-      <button class="btn btn-warning" onclick="exportCSV();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        📊<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Excel</span>
-      </button>
-      <button class="btn btn-purple" onclick="openManageTrimestres();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        📅<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Trimestres</span>
-      </button>
-      <button class="btn btn-dark" onclick="exportBackup();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        ⬇<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Backup</span>
-      </button>
-      <button class="btn btn-outline" onclick="openManageNomina();closeMobileActions()" style="justify-content:center;padding:12px;border-radius:10px">
-        ⚙<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Nómina</span>
-      </button>
-    </div>
-  </div>
-</div>
 
-<!-- ══ PANEL FLOTANTE MÁS OPCIONES (MÓVIL) ══ -->
-<div id="mobileMasPanel" class="mo" style="z-index:10001" onclick="if(event.target===this)closeMobileMas()">
-  <div class="md" style="border-radius:20px 20px 0 0;max-height:70vh;padding:0;overflow:hidden">
-    <div style="display:flex;justify-content:center;padding:10px 0 0">
-      <div style="width:36px;height:4px;background:var(--border-color);border-radius:4px"></div>
-    </div>
-    <div class="mh" style="padding:12px 18px 10px;border-bottom:1px solid var(--border-color)">
-      <strong style="font-size:1rem;font-weight:800">⋯ Más Opciones</strong>
-    </div>
-    <div class="mb" style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;max-height:55vh">
-      <button class="btn btn-magic" onclick="openNewYearWizard();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px;grid-column:1/-1">
-        ✨ Nuevo Año Lectivo
-      </button>
-      <button class="btn btn-purple" onclick="openCopyColumnModal();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        📋<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Copiar Col.</span>
-      </button>
-      <button class="btn btn-dark" onclick="openVisPanel();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        👁<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Columnas</span>
-      </button>
-      <button class="btn btn-outline" onclick="printTable();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        🖨<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Imprimir</span>
-      </button>
-      <button class="btn btn-outline" onclick="toggleDark();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        🌙<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Modo Oscuro</span>
-      </button>
-      <button class="btn btn-outline" onclick="document.getElementById('importFile').click();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        ⬆<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Restaurar</span>
-      </button>
-      <button class="btn btn-danger" onclick="doClearGrades();closeMobileMas()" style="justify-content:center;padding:12px;border-radius:10px">
-        🧹<br><span style="font-size:0.75rem;font-weight:800;display:block;margin-top:4px">Limpiar</span>
-      </button>
+    <div class="mb" style="padding:14px;overflow-y:auto;max-height:68vh;display:flex;flex-direction:column;gap:14px">
+      
+      <!-- Sección 1: Sincronización en Vivo -->
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:12px;padding:12px">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--primary);text-transform:uppercase;margin-bottom:8px">
+          ⚡ Sincronización en Vivo (PC / Celular)
+        </div>
+        <button class="btn btn-magic" onclick="openSyncModal();closeMobileTools()" style="width:100%;justify-content:center;padding:11px;font-size:0.85rem;border-radius:10px">
+          📱 Vincular Celular con Código QR / Sala
+        </button>
+      </div>
+
+      <!-- Sección 2: Módulos del Sistema -->
+      <div>
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px">
+          📂 Módulos del Sistema
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-outline" onclick="switchView('estudiantes');closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem">
+            👥<br><span style="font-weight:800;margin-top:2px;display:block">Matriz Datos</span>
+          </button>
+          <button class="btn btn-outline" onclick="switchView('pi');closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem">
+            📚<br><span style="font-weight:800;margin-top:2px;display:block">Proy. Interdisc.</span>
+          </button>
+          <button class="btn btn-outline" onclick="switchView('export');closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem">
+            📤<br><span style="font-weight:800;margin-top:2px;display:block">Exportar</span>
+          </button>
+          <button class="btn btn-purple" onclick="openManageTrimestres();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem">
+            📅<br><span style="font-weight:800;margin-top:2px;display:block">Trimestres</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección 3: Acciones Rápidas de Calificaciones -->
+      <div>
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px">
+          ✏ Acciones de Calificaciones
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          <button class="btn btn-success" onclick="openAddSt();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            ➕ Estudiante
+          </button>
+          <button class="btn btn-teal" onclick="openAddWeek();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            ➕ Semana
+          </button>
+          <button class="btn btn-primary" onclick="openAddCol();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            ➕ Actividad
+          </button>
+          <button class="btn btn-teal" onclick="openManageNomina();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            ⚙ Nómina
+          </button>
+          <button class="btn btn-purple" onclick="openCopyColumnModal();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            📋 Copiar Col.
+          </button>
+          <button class="btn btn-dark" onclick="openVisPanel();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            👁 Columnas
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección 4: Utilidades & Respaldos -->
+      <div>
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px">
+          💾 Utilidades & Respaldos
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-warning" onclick="exportCSV();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            📊 Descargar Excel
+          </button>
+          <button class="btn btn-outline" onclick="saveData(true);closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            💾 Guardar en Nube
+          </button>
+          <button class="btn btn-dark" onclick="exportBackup();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            ⬇ Descargar Backup
+          </button>
+          <button class="btn btn-outline" onclick="document.getElementById('importFile').click();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            ⬆ Restaurar Backup
+          </button>
+          <button class="btn btn-outline" onclick="toggleDark();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            🌙 Modo Oscuro
+          </button>
+          <button class="btn btn-danger" onclick="doClearGrades();closeMobileTools()" style="justify-content:center;padding:10px;border-radius:8px;font-size:0.8rem">
+            🧹 Limpiar Notas
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -8999,28 +9046,19 @@ render();
 <script>
 /* ══ MOBILE BOTTOM NAV LOGIC ══ */
 function mobileSwitchView(view) {
-  const isMobile = window.innerWidth <= 768;
-  if (view === 'acciones') {
-    document.getElementById('mobileActionsPanel').classList.add('open');
+  if (view === 'herramientas') {
+    document.getElementById('mobileToolsPanel').classList.add('open');
     return;
   }
-  if (view === 'mas') {
-    document.getElementById('mobileMasPanel').classList.add('open');
-    return;
-  }
-  // Map mobile nav to existing views
-  const viewMap = {
-    'notas': 'notas',
-    'asistencia': 'asistencia',
-    'reporte': 'reporte'
-  };
-  const mapped = viewMap[view] || view;
-  if (typeof switchView === 'function') switchView(mapped);
 
-  // Update active state
+  // Cambiar vista activa
+  if (typeof switchView === 'function') switchView(view);
+
+  // Actualizar estado activo en la barra inferior
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
   const btnMap = {
     'notas': 'mnNotas',
+    'estudiantes': 'mnEstudiantes',
     'asistencia': 'mnAsistencia',
     'reporte': 'mnReporte'
   };
@@ -9028,19 +9066,12 @@ function mobileSwitchView(view) {
   if (btnId) document.getElementById(btnId)?.classList.add('active');
 }
 
-function closeMobileActions() {
-  document.getElementById('mobileActionsPanel').classList.remove('open');
-  // Return active state to whichever nav button was active before
-}
-
-function closeMobileMas() {
-  document.getElementById('mobileMasPanel').classList.remove('open');
+function closeMobileTools() {
+  const panel = document.getElementById('mobileToolsPanel');
+  if (panel) panel.classList.remove('open');
 }
 
 /* ══ Sync Bottom Nav with view switches ══ */
-const _origSwitchView = typeof switchView !== 'undefined' ? switchView : null;
-
-/* Hook into switchView to keep mob nav in sync */
 document.addEventListener('DOMContentLoaded', function() {
   const origFn = window.switchView;
   if (origFn) {
@@ -9049,11 +9080,11 @@ document.addEventListener('DOMContentLoaded', function() {
       // Sync bottom nav
       const navMap = {
         'notas': 'mnNotas',
+        'estudiantes': 'mnEstudiantes',
         'asistencia': 'mnAsistencia',
         'reporte': 'mnReporte',
-        'export': 'mnMas',
-        'estudiantes': 'mnMas',
-        'pi': 'mnMas'
+        'export': 'mnHerramientas',
+        'pi': 'mnHerramientas'
       };
       document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
       const target = navMap[v];
