@@ -1717,7 +1717,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Ecuador_coat_of_arms.svg/80px-Ecuador_coat_of_arms.svg.png" height="60" alt="Ecuador" onerror="this.style.display='none'"/>
       </td>
       <td>
-        <div class="ph-inst" id="phInstName">INSTITUCIÓN EDUCATIVA FISCAL</div>
+        <div class="ph-inst" id="phInstName">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
         <div style="text-align:center;font-size:9pt;font-weight:700;color:#334155;margin:2px 0">REGISTRO DE CALIFICACIONES — EVALUACIÓN FORMATIVA Y SUMATIVA</div>
         <div style="display:flex;justify-content:space-between;font-size:8pt;margin-top:4px">
           <span>Docente: <strong id="phDocente"></strong></span>
@@ -1750,7 +1750,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
           <span class="sync-dot"></span> <span id="syncText">⚡ En Vivo</span>
         </span>
       </h1>
-      <div class="hdr-sub">Subnivel Media · Promedios con 2 decimales truncados · Asignaturas cuantitativas y cualitativas</div>
+      <div class="hdr-sub">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Séptimo de Básica (EGB Media) · 70% Formativo + 30% Sumativo</div>
     </div>
   </div>
 
@@ -1819,6 +1819,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <button id="viewConfig" class="nav-tab-btn" onclick="switchView('config')">
     <span class="nav-tab-icon">⚙️</span>
     <span>Configuración & Respaldos</span>
+  </button>
+  <button class="nav-tab-btn" onclick="openCronogramaModal()" style="margin-left:auto;border-color:#f59e0b;background:rgba(245,158,11,0.1);color:#92400e;font-weight:800" title="Ver Cronograma de Actividades Pedagógicas y Calendario de 200 Días de la U.E.F. Calderón 2">
+    <span class="nav-tab-icon">🏛️</span>
+    <span>Cronograma Calderón 2</span>
   </button>
 </nav>
 
@@ -1972,6 +1976,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
       <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel Asistencia</button>
       <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre, días sin clase y gestionar fechas" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
+      <button class="btn btn-outline" onclick="openCronogramaModal()" title="Ver distribución de 200 días laborables y fases pedagógicas de la U.E.F. Calderón 2" style="border-color:#3b82f6;color:#1d4ed8;background:#eff6ff;font-weight:700">🏛️ Cronograma 200 Días</button>
     </div>
     <!-- Reportes -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-left:2px solid var(--border-color);padding-left:12px">
@@ -2156,6 +2161,20 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)"/>
       </div>
     </div>
+
+    <!-- Tarjeta 5: Cronograma Oficial Calderón 2 -->
+    <div class="config-card" style="border-left:4px solid #f59e0b;background:linear-gradient(135deg,rgba(254,243,199,0.2) 0%,var(--bg-card) 100%)">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#fef3c7;color:#b45309">🏛️</div>
+        <div>
+          <div class="config-card-title">Cronograma Oficial U.E.F. Calderón 2</div>
+          <div class="config-card-desc">Consulte el cronograma de actividades pedagógicas previas (11 al 31 de agosto), fases Conecta, Nivela y Crea, y el calendario oficial de 200 días laborables.</div>
+        </div>
+      </div>
+      <div class="config-card-actions">
+        <button class="btn btn-warning" onclick="openCronogramaModal()" style="font-weight:800">📅 Ver Cronograma Completo (200 Días)</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2250,6 +2269,537 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <thead id="stMatrixTh"></thead>
       <tbody id="stMatrixTb"></tbody>
     </table>
+  </div>
+</div>
+
+<!-- ══ MODAL DE CRONOGRAMA Y CALENDARIO INSTITUCIONAL (UEF CALDERÓN 2) ══ -->
+<div id="cronogramaModal" class="mo" style="z-index:10005" onclick="if(event.target===this)closeCronogramaModal()">
+  <div class="md" style="max-width:920px;width:96%;border-radius:18px;padding:24px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl)">
+    
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem">🏛️</div>
+        <div>
+          <h3 style="margin:0;font-size:1.15rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+            UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"
+          </h3>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">
+            Cronograma Institucional de Actividades Pedagógicas Previas y Calendario Oficial de 200 Días Laborables
+          </div>
+        </div>
+      </div>
+      <button onclick="closeCronogramaModal()" class="btn btn-outline" style="padding:4px 10px;font-size:0.85rem">✕</button>
+    </div>
+
+    <!-- Pestañas -->
+    <div style="display:flex;gap:6px;border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:14px;overflow-x:auto;flex-shrink:0">
+      <button id="cronoTabBtn1" class="btn btn-primary" onclick="switchCronogramaTab(1)" style="font-size:0.78rem;white-space:nowrap">
+        📅 1. Actividades Previas (11 al 31 Ago)
+      </button>
+      <button id="cronoTabBtn2" class="btn btn-outline" onclick="switchCronogramaTab(2)" style="font-size:0.78rem;white-space:nowrap">
+        📆 2. Calendario 200 Días (Trimestres)
+      </button>
+      <button id="cronoTabBtn3" class="btn btn-outline" onclick="switchCronogramaTab(3)" style="font-size:0.78rem;white-space:nowrap">
+        🎯 3. Fases Pedagógicas (Conecta/Nivela/Crea)
+      </button>
+      <button id="cronoTabBtn4" class="btn btn-outline" onclick="switchCronogramaTab(4)" style="font-size:0.78rem;white-space:nowrap">
+        🏁 4. Cierre de Año y Feriados
+      </button>
+    </div>
+
+    <!-- Contenedor de contenido -->
+    <div style="overflow-y:auto;flex:1;padding-right:4px">
+      
+      <!-- TAB 1: ACTIVIDADES PREVIAS -->
+      <div id="cronoView1">
+        <div style="background:var(--primary-light);border:1px solid var(--primary-border);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:0.82rem;color:var(--primary)">
+          <strong>📌 Jornada de Planificación Institucional:</strong> Del 11 al 31 de Agosto (Jornada 13:00 - 18:30). Organización de PCA, POA, DECE, Apelaciones y Planificación de Fases Conecta, Nivela y Crea.
+        </div>
+
+        <!-- Semana 1 -->
+        <div style="margin-bottom:16px">
+          <div style="background:#1e3a8a;color:#fff;padding:8px 14px;border-radius:8px 8px 0 0;font-weight:900;font-size:0.88rem;display:flex;justify-content:space-between">
+            <span>SEMANA 1 (11 al 14 de Agosto)</span>
+            <span style="font-size:0.75rem;opacity:.9">Inicio de actividades y elaboración de PCA</span>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--border-color);border-top:none;border-radius:0 0 8px 8px">
+            <table style="width:100%;font-size:0.78rem">
+              <thead>
+                <tr>
+                  <th style="width:110px">Fecha</th>
+                  <th style="width:100px">Hora</th>
+                  <th>Actividad</th>
+                  <th style="width:160px">Responsables</th>
+                  <th style="width:140px">Lugar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td rowspan="4" style="font-weight:800;background:var(--bg-card-subtle)">Martes 11 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 13:45</td>
+                  <td>Bienvenida institucional, presentación del personal, socialización del cronograma de trabajo y lineamientos generales para el inicio del año lectivo.</td>
+                  <td>Rectora y Vicerrector</td>
+                  <td>Sala de Uso Múltiple</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:45 - 14:30</td>
+                  <td>Entrega y socialización del distributivo académico (carga horaria, tutorías, comisiones institucionales y demás responsabilidades).</td>
+                  <td>Rectora y Vicerrector</td>
+                  <td>Sala de Uso Múltiple</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">14:30 - 16:30</td>
+                  <td>Entrega de aulas a tutores 26-27.</td>
+                  <td>Coordinadores de área y de año</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">16:30 - 18:30</td>
+                  <td>Reunión por áreas y años para la socialización de lineamientos curriculares, pedagógicos y metodológicos. Designación de secretario(a) y elaboración del acta.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:800;background:var(--bg-card-subtle)">Miércoles 12 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td>Elaboración de la Planificación Curricular Anual (PCA).</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Jueves 13 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Reunión de las comisiones institucionales para la elaboración de los Planes Operativos Anuales (POA).</td>
+                  <td>Coordinadores y Comisiones</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">15:30 - 18:30</td>
+                  <td>Continuación de la elaboración de la PCA.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Viernes 14 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Taller del DECE sobre convivencia escolar, bienestar socioemocional, protocolos de actuación y estrategias de acompañamiento estudiantil.</td>
+                  <td>DECE</td>
+                  <td>Sala de Uso Múltiple</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">15:30 - 18:30</td>
+                  <td>Ajustes y consolidación de la PCA.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Semana 2 -->
+        <div style="margin-bottom:16px">
+          <div style="background:#2563eb;color:#fff;padding:8px 14px;border-radius:8px 8px 0 0;font-weight:900;font-size:0.88rem;display:flex;justify-content:space-between">
+            <span>SEMANA 2 (17 al 21 de Agosto)</span>
+            <span style="font-size:0.75rem;opacity:.9">Revisión PCA, PCI, Apelaciones y Fase CONECTA</span>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--border-color);border-top:none;border-radius:0 0 8px 8px">
+            <table style="width:100%;font-size:0.78rem">
+              <thead>
+                <tr>
+                  <th style="width:110px">Fecha</th>
+                  <th style="width:100px">Hora</th>
+                  <th>Actividad</th>
+                  <th style="width:160px">Responsables</th>
+                  <th style="width:140px">Lugar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td rowspan="3" style="font-weight:800;background:var(--bg-card-subtle)">Lunes 17 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 16:30</td>
+                  <td>Primera revisión de la PCA con coordinadores por año y área. Retroalimentación.</td>
+                  <td>Coordinadores y Docentes</td>
+                  <td>Coordinaciones Académicas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Revisión y actualización del Proyecto Curricular Institucional (PCI).</td>
+                  <td>Consejo Ejecutivo</td>
+                  <td>Rectorado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">16:30 - 18:30</td>
+                  <td>Incorporación de observaciones a la PCA.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Martes 18 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Revisión y actualización del Código de Convivencia Institucional.</td>
+                  <td>Consejo Ejecutivo y Comisión de Convivencia</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">15:30 - 18:30</td>
+                  <td>Revisión y aprobación de las PCA por coordinadores.</td>
+                  <td>Coordinadores y Docentes</td>
+                  <td>Coordinaciones Académicas</td>
+                </tr>
+                <tr>
+                  <td rowspan="3" style="font-weight:800;background:var(--bg-card-subtle)">Miércoles 19 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:00</td>
+                  <td>Recepción de solicitudes de apelación de pérdida de año por parte de representantes legales.</td>
+                  <td>Secretaría</td>
+                  <td>Secretaría</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">15:00 - 18:30</td>
+                  <td>Conformación de comisiones por asignatura para la revisión de expedientes de apelación.</td>
+                  <td>Rectora, Vicerrector y Junta Académica</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:00</td>
+                  <td>Reunión entre docentes del período anterior y del nuevo período para contextualización de grupos (rendimiento, convivencia, NEE, alertas y acompañamiento).</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Jueves 20 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Revisión técnica de expedientes de apelación: instrumentos de evaluación, evidencias, registros y procesos de refuerzo.</td>
+                  <td>Comisiones por asignatura</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td><strong>Planificación de la fase CONECTA:</strong> actividades de adaptación, integración y evaluación diagnóstica para la primera semana de clases.</td>
+                  <td>Coordinadores</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Viernes 21 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:30</td>
+                  <td>Elaboración de informes técnicos para la resolución de apelaciones.</td>
+                  <td>Comisiones</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td>Continuación planificación de la fase CONECTA (adaptación y diagnóstico).</td>
+                  <td>Coordinadores</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Semana 3 -->
+        <div style="margin-bottom:16px">
+          <div style="background:#7c3aed;color:#fff;padding:8px 14px;border-radius:8px 8px 0 0;font-weight:900;font-size:0.88rem;display:flex;justify-content:space-between">
+            <span>SEMANA 3 (24 al 31 de Agosto)</span>
+            <span style="font-size:0.75rem;opacity:.9">Fase NIVELA, Fase CREA y Entrega Final</span>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--border-color);border-top:none;border-radius:0 0 8px 8px">
+            <table style="width:100%;font-size:0.78rem">
+              <thead>
+                <tr>
+                  <th style="width:110px">Fecha</th>
+                  <th style="width:100px">Hora</th>
+                  <th>Actividad</th>
+                  <th style="width:160px">Responsables</th>
+                  <th style="width:140px">Lugar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Lunes 24 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td>Revisión del Sistema de Información para la Gestión Educativa (SIEE) y regularización de novedades en registros académicos.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td>Toma de exámenes a estudiantes (apelaciones).</td>
+                  <td>Docentes y Coordinadores</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Martes 25 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td>Revisión de las actividades de adaptación e instrumentos de diagnóstico. Ajustes a observaciones.</td>
+                  <td>Docentes, Coordinadores</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:00</td>
+                  <td>Juntas de curso (Apelaciones).</td>
+                  <td>Comisiones encargadas</td>
+                  <td>Rectorado</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:800;background:var(--bg-card-subtle)">Miércoles 26 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td><strong>Revisión y planificación de la fase NIVELA:</strong> actividades de fortalecimiento de habilidades y nivelación de aprendizajes para las semanas 2 y 3.</td>
+                  <td>Docentes</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:800;background:var(--bg-card-subtle)">Jueves 27 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 18:30</td>
+                  <td><strong>Planificación de la fase CREA:</strong> diseño del proyecto interdisciplinario para las semanas 4 y 5, incluyendo productos, cronograma y criterios de evaluación.</td>
+                  <td>Docentes por áreas</td>
+                  <td>Aulas asignadas</td>
+                </tr>
+                <tr>
+                  <td rowspan="2" style="font-weight:800;background:var(--bg-card-subtle)">Viernes 28 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 15:00</td>
+                  <td>Socialización de los Planes Operativos Anuales (POA) en Asamblea General.</td>
+                  <td>Rectora, Coordinadores y Comisiones</td>
+                  <td>Sala de Uso Múltiple</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">15:00 - 18:30</td>
+                  <td>Continuación de planificación de la fase CREA (diseño del proyecto interdisciplinario).</td>
+                  <td>Docentes</td>
+                  <td>Vicerrectorado</td>
+                </tr>
+                <tr>
+                  <td rowspan="3" style="font-weight:800;background:var(--bg-card-subtle)">Lunes 31 de agosto</td>
+                  <td style="font-family:var(--font-mono)">13:00 - 14:30</td>
+                  <td>Indicaciones generales por parte de Inspección General.</td>
+                  <td>Inspección General</td>
+                  <td>Sala de Uso Múltiple</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">14:30 - 16:00</td>
+                  <td>Entrega de las PCA definitivas y de las planificaciones de las fases Conecta y Crea a Vicerrectorado por Junta de Directores.</td>
+                  <td>Junta de Directores</td>
+                  <td>Vicerrectorado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono)">14:30 - 18:30</td>
+                  <td>Organización de aulas, recursos pedagógicos, material didáctico y revisión de ambientes de aprendizaje.</td>
+                  <td>Coordinadores de áreas e Inspección General</td>
+                  <td>Inspección General</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CALENDARIO 200 DÍAS -->
+      <div id="cronoView2" style="display:none">
+        
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:16px">
+          <div style="background:var(--bg-card);border:2px solid #2563eb;border-radius:12px;padding:14px">
+            <div style="font-size:0.75rem;font-weight:800;color:#2563eb;text-transform:uppercase">1er Trimestre</div>
+            <div style="font-size:1.4rem;font-weight:900;color:var(--text-main);margin:4px 0">63 Días Laborables</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">01 Sep 2026 → 01 Dic 2026</div>
+            <div style="font-size:0.72rem;color:var(--text-light);margin-top:4px">14 semanas de trabajo institucional (8 semanas en aula)</div>
+          </div>
+          <div style="background:var(--bg-card);border:2px solid #059669;border-radius:12px;padding:14px">
+            <div style="font-size:0.75rem;font-weight:800;color:#059669;text-transform:uppercase">2do Trimestre</div>
+            <div style="font-size:1.4rem;font-weight:900;color:var(--text-main);margin:4px 0">66 Días Laborables</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">02 Dic 2026 → 15 Mar 2027</div>
+            <div style="font-size:0.72rem;color:var(--text-light);margin-top:4px">15 semanas de trabajo institucional (14 semanas en aula)</div>
+          </div>
+          <div style="background:var(--bg-card);border:2px solid #7c3aed;border-radius:12px;padding:14px">
+            <div style="font-size:0.75rem;font-weight:800;color:#7c3aed;text-transform:uppercase">3er Trimestre</div>
+            <div style="font-size:1.4rem;font-weight:900;color:var(--text-main);margin:4px 0">71 Días Laborables</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">16 Mar 2027 → 25 Jun 2027</div>
+            <div style="font-size:0.72rem;color:var(--text-light);margin-top:4px">16 semanas de trabajo institucional (14 semanas en aula)</div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-radius:10px;padding:12px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-weight:900;font-size:1.05rem">TOTAL DEL AÑO: 200 DÍAS LABORABLES</div>
+            <div style="font-size:0.75rem;opacity:.9">36 Semanas de Clases en Aula · 45 Semanas de Trabajo en la Institución</div>
+          </div>
+          <span style="background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:800;font-size:0.85rem">Cumplimiento Ministerial 100%</span>
+        </div>
+
+        <div style="overflow-x:auto;border:1px solid var(--border-color);border-radius:10px">
+          <table style="width:100%;font-size:0.8rem">
+            <thead>
+              <tr>
+                <th>Trimestre</th>
+                <th>Rango de Fechas</th>
+                <th style="text-align:center">Días Laborables</th>
+                <th>Semanas / Fases Principales</th>
+                <th>Feriados y Días No Laborables</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:800;color:#2563eb">1er Trimestre</td>
+                <td>01 Sep 2026 — 01 Dic 2026</td>
+                <td style="text-align:center;font-weight:900;font-family:var(--font-mono)">63 Días</td>
+                <td>
+                  • Sem 1: Fase CONECTA (Diagnóstico)<br>
+                  • Sem 2-3: Fase NIVELA (Nivelación)<br>
+                  • Sem 4-5: Fase CREA (Proyecto Interdisciplinar)<br>
+                  • Sem 6-12: Abordaje Curricular<br>
+                  • Sem 13-14: Evaluación PI (30%)
+                </td>
+                <td>
+                  • 09 Oct: Indep. de Guayaquil<br>
+                  • 02 Nov: Día de los Difuntos<br>
+                  • 03 Nov: Indep. de Cuenca
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:800;color:#059669">2do Trimestre</td>
+                <td>02 Dic 2026 — 15 Mar 2027</td>
+                <td style="text-align:center;font-weight:900;font-family:var(--font-mono)">66 Días</td>
+                <td>
+                  • Sem 1-14: Abordaje Curricular<br>
+                  • Sem 15-16: Evaluación Proyecto Interdisciplinar (30%)
+                </td>
+                <td>
+                  • 25 Dic: Navidad<br>
+                  • 25 Dic al 01 Ene: Vacaciones Estudiantiles<br>
+                  • 01 Ene: Año Nuevo<br>
+                  • 08 y 09 Feb: Carnaval
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:800;color:#7c3aed">3er Trimestre</td>
+                <td>16 Mar 2027 — 25 Jun 2027</td>
+                <td style="text-align:center;font-weight:900;font-family:var(--font-mono)">71 Días</td>
+                <td>
+                  • Sem 1-14: Abordaje Curricular<br>
+                  • 19 y 23 Abr: Fiesta de la Lectura<br>
+                  • Sem 15: Evaluación PI (30%)<br>
+                  • Sem 16: Clases de Recuperación / Mejoramiento
+                </td>
+                <td>
+                  • 30 Abr: Viernes Santo<br>
+                  • 03 May: Día del Trabajo (Traslado)<br>
+                  • 24 May: Batalla de Pichincha
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: FASES PEDAGÓGICAS -->
+      <div id="cronoView3" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          
+          <div style="background:var(--bg-card);border-left:5px solid #2563eb;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <span style="font-weight:900;font-size:0.95rem;color:#2563eb">1. FASE CONECTA: Adaptación y Diagnóstico (Semana 1)</span>
+              <span style="font-size:0.75rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700">01 al 04 de Septiembre · 4 Días</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+              Actividades de bienvenida, integración socioemocional, diagnóstico pedagógico y aplicación de instrumentos de evaluación diagnóstica para conocer el punto de partida de cada estudiante.
+            </div>
+          </div>
+
+          <div style="background:var(--bg-card);border-left:5px solid #059669;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <span style="font-weight:900;font-size:0.95rem;color:#059669">2. FASE NIVELA: Nivelación de Habilidades (Semanas 2 y 3)</span>
+              <span style="font-size:0.75rem;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-weight:700">07 al 18 de Septiembre · 10 Días</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+              Fortalecimiento de destrezas indispensables y nivelación pedagógica personalizada para garantizar los prerrequisitos del nuevo grado escolar antes del abordaje curricular profundo.
+            </div>
+          </div>
+
+          <div style="background:var(--bg-card);border-left:5px solid #d97706;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <span style="font-weight:900;font-size:0.95rem;color:#d97706">3. FASE CREA: Implementación de Proyecto Interdisciplinar (Semanas 4 y 5)</span>
+              <span style="font-size:0.75rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-weight:700">21 de Septiembre al 02 de Octubre · 10 Días</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+              Diseño, desarrollo y ejecución del proyecto interdisciplinario integrador. Articulación de asignaturas, desarrollo de producto final y aplicación de rúbricas sumativas del 30%.
+            </div>
+          </div>
+
+          <div style="background:var(--bg-card);border-left:5px solid #7c3aed;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <span style="font-weight:900;font-size:0.95rem;color:#7c3aed">4. ABORDAJE CURRICULAR REGULAR & EVALUACIÓN SUMATIVA</span>
+              <span style="font-size:0.75rem;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:99px;font-weight:700">Semanas 6 en adelante</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
+              Desarrollo de destrezas con criterios de desempeño, actividades formativas individuales y grupales (70%), evaluaciones sumativas parciales y evaluación trimestral (30%).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: CIERRE DE AÑO Y VACACIONES -->
+      <div id="cronoView4" style="display:none">
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:16px;margin-bottom:14px">
+          <div style="font-weight:900;font-size:1rem;color:var(--text-main);margin-bottom:10px">
+            🏁 Cronograma de Cierre del Año Lectivo 2026-2027
+          </div>
+          
+          <div style="overflow-x:auto">
+            <table style="width:100%;font-size:0.8rem">
+              <thead>
+                <tr>
+                  <th>Fecha Desde</th>
+                  <th>Fecha Hasta</th>
+                  <th style="text-align:center">Nro. Días</th>
+                  <th>Actividades Relevantes de Fin de Año</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:var(--font-mono);font-weight:700">28.06.2027</td>
+                  <td style="font-family:var(--font-mono);font-weight:700">02.07.2027</td>
+                  <td style="text-align:center;font-weight:800;color:#2563eb">5 Días</td>
+                  <td><strong>Aplicación y calificación de evaluaciones supletorias</strong> (con 5 días de refuerzo pedagógico previo).</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono);font-weight:700">05.07.2027</td>
+                  <td style="font-family:var(--font-mono);font-weight:700">06.07.2027</td>
+                  <td style="text-align:center;font-weight:800;color:#2563eb">2 Días</td>
+                  <td><strong>Juntas de docentes de fin de curso</strong> y resoluciones académicas.</td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-mono);font-weight:700">07.07.2027</td>
+                  <td style="font-family:var(--font-mono);font-weight:700">09.07.2027</td>
+                  <td style="text-align:center;font-weight:800;color:#2563eb">3 Días</td>
+                  <td><strong>Entrega de información de cierre del año lectivo</strong> y carga de notas definitivas al sistema.</td>
+                </tr>
+                <tr style="background:#f0fdf4">
+                  <td style="font-family:var(--font-mono);font-weight:700;color:#16a34a">10.07.2027</td>
+                  <td style="font-family:var(--font-mono);font-weight:700;color:#16a34a">08.08.2027</td>
+                  <td style="text-align:center;font-weight:900;color:#16a34a">30 Días</td>
+                  <td><strong>🌴 Vacaciones docentes ininterrumpidas.</strong></td>
+                </tr>
+                <tr style="background:#eff6ff">
+                  <td style="font-family:var(--font-mono);font-weight:700;color:#1d4ed8">10.08.2027</td>
+                  <td style="font-family:var(--font-mono);font-weight:700;color:#1d4ed8">—</td>
+                  <td style="text-align:center;font-weight:800;color:#1d4ed8">—</td>
+                  <td><strong>🚀 Retorno de docentes</strong> para inicio del nuevo período lectivo.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pie -->
+    <div class="ma" style="margin-top:14px;border-top:1px solid var(--border-color);padding-top:12px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:0.72rem;color:var(--text-muted)">
+        Autoridades: Rectora, Vicerrector, Junta Académica e Inspección General
+      </div>
+      <button class="btn btn-primary" onclick="closeCronogramaModal()">Entendido</button>
+    </div>
   </div>
 </div>
 
@@ -8798,19 +9348,81 @@ function exportStudentsMatrixXLSX() {
 
 
 // ══════════════════════════════════════════════════════════════
+//  CRONOGRAMA & CALENDARIO INSTITUCIONAL (UEF CALDERÓN 2)
+// ══════════════════════════════════════════════════════════════
+
+const CALDERON2_FERIADOS = [
+  { date: '2026-10-09', label: 'Independencia de Guayaquil' },
+  { date: '2026-11-02', label: 'Día de los Difuntos' },
+  { date: '2026-11-03', label: 'Independencia de Cuenca' },
+  { date: '2026-12-25', label: 'Navidad' },
+  { date: '2026-12-28', label: 'Vacaciones Estudiantiles' },
+  { date: '2026-12-29', label: 'Vacaciones Estudiantiles' },
+  { date: '2026-12-30', label: 'Vacaciones Estudiantiles' },
+  { date: '2026-12-31', label: 'Vacaciones Estudiantiles' },
+  { date: '2027-01-01', label: 'Año Nuevo' },
+  { date: '2027-02-08', label: 'Carnaval' },
+  { date: '2027-02-09', label: 'Carnaval' },
+  { date: '2027-04-19', label: 'Fiesta de la Lectura' },
+  { date: '2027-04-23', label: 'Fiesta de la Lectura' },
+  { date: '2027-04-30', label: 'Viernes Santo' },
+  { date: '2027-05-03', label: 'Día del Trabajo (Traslado)' },
+  { date: '2027-05-24', label: 'Batalla de Pichincha' }
+];
+
+function openCronogramaModal() {
+  const m = document.getElementById('cronogramaModal');
+  if (m) {
+    switchCronogramaTab(1);
+    m.classList.add('open');
+  }
+}
+
+function closeCronogramaModal() {
+  const m = document.getElementById('cronogramaModal');
+  if (m) m.classList.remove('open');
+}
+
+function switchCronogramaTab(tabIdx) {
+  for (let i = 1; i <= 4; i++) {
+    const view = document.getElementById('cronoView' + i);
+    const btn = document.getElementById('cronoTabBtn' + i);
+    if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
+    if (btn) {
+      if (i === tabIdx) {
+        btn.className = 'btn btn-primary';
+      } else {
+        btn.className = 'btn btn-outline';
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 //  CALENDARIO DEL TRIMESTRE & DÍAS SIN CLASE
 // ══════════════════════════════════════════════════════════════
 
 function ensureCalendar() {
-  if (!S.calendar) S.calendar = { trimStart: '', trimEnd: '', noclassDays: [] };
-  if (!Array.isArray(S.calendar.noclassDays)) S.calendar.noclassDays = [];
+  if (!S.calendar) {
+    S.calendar = {
+      trimStart: '2026-09-01',
+      trimEnd: '2026-12-01',
+      noclassDays: [...CALDERON2_FERIADOS]
+    };
+  }
+  if (!S.calendar.trimStart) S.calendar.trimStart = '2026-09-01';
+  if (!S.calendar.trimEnd)   S.calendar.trimEnd   = '2026-12-01';
+  if (!Array.isArray(S.calendar.noclassDays)) S.calendar.noclassDays = [...CALDERON2_FERIADOS];
+  else if (S.calendar.noclassDays.length === 0) {
+    S.calendar.noclassDays = [...CALDERON2_FERIADOS];
+  }
 }
 
 function openCalendarModal() {
   ensureCalendar();
   const m = document.getElementById('calendarModal');
-  document.getElementById('calTrimStart').value = S.calendar.trimStart || '2026-09-03';
-  document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '2026-11-30';
+  document.getElementById('calTrimStart').value = S.calendar.trimStart || '2026-09-01';
+  document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '2026-12-01';
   document.getElementById('calNoclassDate').value  = getTodayDateStr();
   document.getElementById('calNoclassLabel').value = '';
   renderNoclassList();
