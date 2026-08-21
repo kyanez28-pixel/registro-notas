@@ -1447,58 +1447,295 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   gap: 8px;
   overflow-x: auto;
   border-bottom: 2px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  scrollbar-width: none;
-  align-items: center;
+/* ══════════════════════════════════════════════════════
+   BARRA LATERAL IZQUIERDA (SIDEBAR MODULAR)
+   ══════════════════════════════════════════════════════ */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background: var(--bg-body);
+}
+
+/* Sidebar */
+.app-sidebar {
+  width: 265px;
+  min-width: 265px;
+  background: var(--bg-card);
+  border-right: 1.5px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
   position: sticky;
   top: 0;
-  z-index: 100;
+  height: 100vh;
+  z-index: 1000;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
 }
-.main-nav-bar::-webkit-scrollbar { display: none; }
 
-.nav-tab-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card-subtle);
-  color: var(--text-muted);
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  display: inline-flex;
+/* Sidebar Header */
+.sidebar-header {
+  padding: 16px 14px;
+  border-bottom: 1.5px solid var(--border-color);
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  user-select: none;
-  text-decoration: none;
+  background: var(--bg-card-subtle);
+  flex-shrink: 0;
 }
-.nav-tab-btn:hover {
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
+}
+.sidebar-brand-text {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.sidebar-inst-title {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+.sidebar-inst-sub {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+.sidebar-collapse-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  transition: all .15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar-collapse-btn:hover {
   background: var(--primary-light);
   color: var(--primary);
   border-color: #93c5fd;
-  transform: translateY(-1px);
 }
-.nav-tab-btn.active {
+
+/* Nav Label & List */
+.sidebar-nav-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-light);
+  padding: 14px 18px 6px;
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.sidebar-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  user-select: none;
+}
+.sidebar-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateX(2px);
+}
+.sidebar-btn.active {
   background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
   color: #ffffff !important;
-  border-color: #1e40af;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
-.nav-tab-btn.active .nav-tab-icon {
-  transform: scale(1.15);
+.sidebar-btn-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease;
 }
-.nav-tab-badge {
-  font-size: 0.68rem;
+.sidebar-btn:hover .sidebar-btn-icon {
+  transform: scale(1.1);
+}
+.sidebar-btn-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.1px;
+}
+.sidebar-btn-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
   padding: 2px 7px;
-  border-radius: var(--radius-full);
-  background: rgba(0,0,0,0.08);
-  font-weight: 800;
+  border-radius: 99px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
 }
-.nav-tab-btn.active .nav-tab-badge {
-  background: rgba(255,255,255,0.25);
+.sidebar-btn.active .sidebar-btn-badge {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 12px 14px;
+  border-top: 1.5px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.sidebar-sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.sidebar-sync-bar:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #93c5fd;
+}
+
+.sidebar-util-row {
+  display: flex;
+  gap: 6px;
+}
+.sidebar-util-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.sidebar-util-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #93c5fd;
+}
+
+/* Collapsed Sidebar */
+.app-sidebar.collapsed {
+  width: 68px;
+  min-width: 68px;
+}
+.app-sidebar.collapsed .sidebar-brand-text,
+.app-sidebar.collapsed .sidebar-nav-title,
+.app-sidebar.collapsed .sidebar-btn-text,
+.app-sidebar.collapsed .sidebar-btn-badge,
+.app-sidebar.collapsed .sidebar-sync-bar span,
+.app-sidebar.collapsed .sidebar-util-btn span {
+  display: none;
+}
+.app-sidebar.collapsed .sidebar-btn {
+  justify-content: center;
+  padding: 10px;
+}
+.app-sidebar.collapsed .sidebar-btn-icon {
+  font-size: 1.3rem;
+}
+.app-sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  padding: 14px 6px;
+}
+
+/* Main Area */
+.app-main-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Sidebar Drawer */
+@media (max-width: 900px) {
+  .app-sidebar {
+    position: fixed;
+    left: -290px;
+    top: 0;
+    bottom: 0;
+    width: 265px;
+    z-index: 10000;
+  }
+  .app-sidebar.mobile-open {
+    left: 0;
+    box-shadow: var(--shadow-xl);
+  }
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+  }
+  .sidebar-backdrop.active {
+    display: block;
+  }
 }
 
 /* ── TOOLBAR CONTEXTUAL MODULAR ── */
@@ -1735,96 +1972,157 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </table>
 </div>
 
-<!-- ── HEADER ── -->
-<header>
-  <div class="hdr-brand">
-    <div class="hdr-logo">📊</div>
-    <div class="hdr-title-area">
-      <h1>
-        <span id="hdrTitleMain">Registro de Notas</span>
-        <span class="hdr-period-tag" id="hdrPeriodBadge" onclick="openEditPeriod()" data-tip="Clic para cambiar de trimestre">
-          1er Trimestre ✎
-        </span>
-        <span class="normative-pill">70% Form. + 30% Sum.</span>
-        <span class="sync-badge online" id="hdrSyncBadge" onclick="openSyncModal()" data-tip="Clic para vincular celular o configurar sincronización en tiempo real">
-          <span class="sync-dot"></span> <span id="syncText">⚡ En Vivo</span>
-        </span>
-      </h1>
-      <div class="hdr-sub">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Séptimo de Básica (EGB Media) · 70% Formativo + 30% Sumativo</div>
-    </div>
-  </div>
+<div class="app-container">
+  
+  <!-- Backdrop para el menú móvil -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
 
-  <div class="hi">
-    <div class="hi-input-group" data-tip="Grado, curso o paralelo" class="tip-down">
-      <span>Curso:</span>
-      <input type="text" id="infoGrado" placeholder="Ej: Séptimo C" oninput="saveHdr()"/>
-    </div>
-    <div class="hi-input-group" data-tip="Año lectivo actual" class="tip-down">
-      <span>Año:</span>
-      <input type="text" id="infoAnio" placeholder="2026-2027" oninput="saveHdr()"/>
-    </div>
-    <div class="hi-input-group" data-tip="Nombre del docente para encabezado" class="tip-down">
-      <span>Docente:</span>
-      <input type="text" id="infoDocente" placeholder="Mg. Luis Lema" oninput="saveHdr()" style="width:120px"/>
-    </div>
-    <div class="hi-input-group" data-tip="Nombre del tutor/a del aula" class="tip-down">
-      <span>Tutor/a:</span>
-      <input type="text" id="infoTutor" placeholder="Lcda. Ligia Jácome" oninput="saveHdr()" style="width:120px"/>
-    </div>
-    <span class="badge-saved" id="sv">✔ Guardado</span>
-
-    <div class="font-controller tip-down" data-tip="Ajustar tamaño de letra (clic en A- / A+ o deslizar)">
-      <button type="button" class="font-zoom-btn" onclick="changeFontSize(-1)" title="Reducir letra">A−</button>
-      <input type="range" id="fontSlider" min="11" max="22" value="14" step="1"
-        oninput="changeFontSize(0,+this.value)"
-        style="width:70px;accent-color:#60a5fa;cursor:pointer"/>
-      <button type="button" class="font-zoom-btn" onclick="changeFontSize(1)" title="Aumentar letra">A+</button>
-      <span id="fontSizeLabel" style="font-size:0.75rem;font-weight:800;opacity:.9;min-width:32px;text-align:center;font-family:var(--font-mono)">14px</span>
+  <!-- ══════════════════════════════════════════════════════
+       BARRA LATERAL IZQUIERDA (SIDEBAR MODULAR)
+       ══════════════════════════════════════════════════════ -->
+  <aside class="app-sidebar" id="appSidebar">
+    
+    <!-- Encabezado de la Barra Lateral -->
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">🏛️</div>
+        <div class="sidebar-brand-text">
+          <div class="sidebar-inst-title">U.E.F. CALDERÓN 2</div>
+          <div class="sidebar-inst-sub" id="sidebarInstSub">7mo "C" · 2026-2027</div>
+        </div>
+      </div>
+      <button class="sidebar-collapse-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Colapsar o expandir barra lateral">
+        ◀
+      </button>
     </div>
 
-    <button id="darkBtn" onclick="toggleDark()" data-tip="Alternar modo oscuro / claro" class="btn btn-outline tip-down"
-      style="padding:5px 11px;color:#fff;background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.3);font-size:1rem;border-radius:var(--radius-sm)">
-      🌙
-    </button>
-  </div>
-</header>
+    <!-- Título de Sección -->
+    <div class="sidebar-nav-title">Módulos del Sistema</div>
 
-<!-- ── BARRA DE NAVEGACIÓN PRINCIPAL MODULAR (7 MÓDULOS INTERCONECTADOS) ── -->
-<nav class="main-nav-bar" id="mainNavBar" role="navigation" aria-label="Módulos del Sistema">
-  <button id="viewNotas" class="nav-tab-btn active" onclick="switchView('notas')">
-    <span class="nav-tab-icon">📋</span>
-    <span>Notas (70/30)</span>
-    <span class="nav-tab-badge">EGB Media</span>
-  </button>
-  <button id="viewEstudiantes" class="nav-tab-btn" onclick="switchView('estudiantes')">
-    <span class="nav-tab-icon">👥</span>
-    <span>Matriz de Estudiantes</span>
-  </button>
-  <button id="viewAttendance" class="nav-tab-btn" onclick="switchView('asistencia')">
-    <span class="nav-tab-icon">📅</span>
-    <span>Asistencia Diaria</span>
-  </button>
-  <button id="viewPi" class="nav-tab-btn" onclick="switchView('pi')">
-    <span class="nav-tab-icon">📚</span>
-    <span>Proyecto Interdisciplinario</span>
-  </button>
-  <button id="viewReporte" class="nav-tab-btn" onclick="switchView('reporte')">
-    <span class="nav-tab-icon">📊</span>
-    <span>Libretas & WhatsApp</span>
-  </button>
-  <button id="viewExport" class="nav-tab-btn" onclick="switchView('export')">
-    <span class="nav-tab-icon">📤</span>
-    <span>Exportar al Sistema</span>
-  </button>
-  <button id="viewConfig" class="nav-tab-btn" onclick="switchView('config')">
-    <span class="nav-tab-icon">⚙️</span>
-    <span>Configuración & Respaldos</span>
-  </button>
-  <button class="nav-tab-btn" onclick="openCronogramaModal()" style="margin-left:auto;border-color:#f59e0b;background:rgba(245,158,11,0.1);color:#92400e;font-weight:800" title="Ver Cronograma de Actividades Pedagógicas y Calendario de 200 Días de la U.E.F. Calderón 2">
-    <span class="nav-tab-icon">🏛️</span>
-    <span>Cronograma Calderón 2</span>
-  </button>
-</nav>
+    <!-- Navegación de Secciones / Módulos -->
+    <nav class="sidebar-nav" role="navigation" aria-label="Módulos del Sistema">
+      
+      <button id="viewNotas" class="sidebar-btn active" onclick="switchView('notas')" title="Registro de Notas Formativas (70%) y Sumativas (30%)">
+        <span class="sidebar-btn-icon">📋</span>
+        <span class="sidebar-btn-text">Calificaciones</span>
+        <span class="sidebar-btn-badge">70/30</span>
+      </button>
+
+      <button id="viewEstudiantes" class="sidebar-btn" onclick="switchView('estudiantes')" title="Matriz general de datos de estudiantes, representantes y fichas">
+        <span class="sidebar-btn-icon">👥</span>
+        <span class="sidebar-btn-text">Matriz Estudiantes</span>
+        <span class="sidebar-btn-badge" id="sbStCountBadge">Nómina</span>
+      </button>
+
+      <button id="viewAttendance" class="sidebar-btn" onclick="switchView('asistencia')" title="Control de asistencia diaria, justificaciones y faltas">
+        <span class="sidebar-btn-icon">📅</span>
+        <span class="sidebar-btn-text">Control Asistencia</span>
+        <span class="sidebar-btn-badge">Diaria</span>
+      </button>
+
+      <button id="viewPi" class="sidebar-btn" onclick="switchView('pi')" title="Evaluación y rúbrica del Proyecto Interdisciplinario (30%)">
+        <span class="sidebar-btn-icon">📚</span>
+        <span class="sidebar-btn-text">Proyecto Interdisc.</span>
+        <span class="sidebar-btn-badge" style="background:#fef3c7;color:#92400e;border-color:#fcd34d">CREA 30%</span>
+      </button>
+
+      <button id="viewReporte" class="sidebar-btn" onclick="switchView('reporte')" title="Libretas individuales, cuadro de honor y alertas de refuerzo">
+        <span class="sidebar-btn-icon">📊</span>
+        <span class="sidebar-btn-text">Libretas & WhatsApp</span>
+      </button>
+
+      <button id="viewExport" class="sidebar-btn" onclick="switchView('export')" title="Exportar notas a sistemas ministeriales y Excel">
+        <span class="sidebar-btn-icon">📤</span>
+        <span class="sidebar-btn-text">Exportar al Sistema</span>
+      </button>
+
+      <button class="sidebar-btn" onclick="openCronogramaModal()" style="color:#b45309" title="Cronograma institucional de 200 días y actividades previas">
+        <span class="sidebar-btn-icon">🏛️</span>
+        <span class="sidebar-btn-text">Cronograma Oficial</span>
+        <span class="sidebar-btn-badge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">200 Días</span>
+      </button>
+
+      <button id="viewConfig" class="sidebar-btn" onclick="switchView('config')" title="Configuración de trimestres, materias y respaldos">
+        <span class="sidebar-btn-icon">⚙️</span>
+        <span class="sidebar-btn-text">Configuración</span>
+      </button>
+    </nav>
+
+    <!-- Footer de Sidebar con estado y utilidades -->
+    <div class="sidebar-footer">
+      <div class="sidebar-sync-bar" onclick="openSyncModal()" title="Sincronización en tiempo real con celular">
+        <div class="sync-dot"></div>
+        <span id="sbSyncText">⚡ En Vivo (PC/Móvil)</span>
+      </div>
+      <div class="sidebar-util-row">
+        <button class="sidebar-util-btn" onclick="openNewYearWizard()" title="Asistente de Nuevo Año">✨ <span>Nuevo</span></button>
+        <button class="sidebar-util-btn" onclick="toggleDark()" title="Alternar modo oscuro / claro">🌙 <span>Tema</span></button>
+        <button class="sidebar-util-btn" onclick="saveData(true)" title="Guardar todos los cambios">💾 <span>Guardar</span></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════
+       ÁREA PRINCIPAL (HEADER SUPERIOR & CONTENIDO)
+       ══════════════════════════════════════════════════════ -->
+  <div class="app-main-area" id="appMainArea">
+
+    <!-- ── HEADER SUPERIOR ── -->
+    <header>
+      <div class="hdr-brand">
+        <button class="btn btn-outline mobile-menu-btn" id="btnMobileSidebar" onclick="openMobileSidebar()" title="Abrir menú lateral" style="padding:6px 10px;font-size:1.1rem;display:none;align-items:center;justify-content:center">
+          ☰
+        </button>
+        <div class="hdr-logo">📊</div>
+        <div class="hdr-title-area">
+          <h1>
+            <span id="hdrTitleMain">Registro de Notas</span>
+            <span class="hdr-period-tag" id="hdrPeriodBadge" onclick="openEditPeriod()" data-tip="Clic para cambiar de trimestre">
+              1er Trimestre ✎
+            </span>
+            <span class="normative-pill">70% Form. + 30% Sum.</span>
+            <span class="sync-badge online" id="hdrSyncBadge" onclick="openSyncModal()" data-tip="Clic para vincular celular o configurar sincronización en tiempo real">
+              <span class="sync-dot"></span> <span id="syncText">⚡ En Vivo</span>
+            </span>
+          </h1>
+          <div class="hdr-sub">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Séptimo de Básica (EGB Media) · 70% Formativo + 30% Sumativo</div>
+        </div>
+      </div>
+
+      <div class="hi">
+        <div class="hi-input-group" data-tip="Grado, curso o paralelo" class="tip-down">
+          <span>Curso:</span>
+          <input type="text" id="infoGrado" placeholder="Ej: Séptimo C" oninput="saveHdr()"/>
+        </div>
+        <div class="hi-input-group" data-tip="Año lectivo actual" class="tip-down">
+          <span>Año:</span>
+          <input type="text" id="infoAnio" placeholder="2026-2027" oninput="saveHdr()"/>
+        </div>
+        <div class="hi-input-group" data-tip="Nombre del docente para encabezado" class="tip-down">
+          <span>Docente:</span>
+          <input type="text" id="infoDocente" placeholder="Mg. Luis Lema" oninput="saveHdr()" style="width:120px"/>
+        </div>
+        <div class="hi-input-group" data-tip="Nombre del tutor/a del aula" class="tip-down">
+          <span>Tutor/a:</span>
+          <input type="text" id="infoTutor" placeholder="Lcda. Ligia Jácome" oninput="saveHdr()" style="width:120px"/>
+        </div>
+        <span class="badge-saved" id="sv">✔ Guardado</span>
+
+        <div class="font-controller tip-down" data-tip="Ajustar tamaño de letra (clic en A- / A+ o deslizar)">
+          <button type="button" class="font-zoom-btn" onclick="changeFontSize(-1)" title="Reducir letra">A−</button>
+          <input type="range" id="fontSlider" min="11" max="22" value="14" step="1"
+            oninput="changeFontSize(0,+this.value)"
+            style="width:70px;accent-color:#60a5fa;cursor:pointer"/>
+          <button type="button" class="font-zoom-btn" onclick="changeFontSize(1)" title="Aumentar letra">A+</button>
+          <span id="fontSizeLabel" style="font-size:0.75rem;font-weight:800;opacity:.9;min-width:32px;text-align:center;font-family:var(--font-mono)">14px</span>
+        </div>
+
+        <button id="darkBtn" onclick="toggleDark()" data-tip="Alternar modo oscuro / claro" class="btn btn-outline tip-down"
+          style="padding:5px 11px;color:#fff;background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.3);font-size:1rem;border-radius:var(--radius-sm)">
+          🌙
+        </button>
+      </div>
+    </header>
 
 <!-- ── BOTTOM NAVIGATION BAR (MÓVIL) ── -->
 <nav id="mobileNav" role="navigation" aria-label="Navegación principal">
@@ -2271,6 +2569,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     </table>
   </div>
 </div>
+
+  </div> <!-- Fin .app-main-area -->
+</div> <!-- Fin .app-container -->
 
 <!-- ══ MODAL DE CRONOGRAMA Y CALENDARIO INSTITUCIONAL (UEF CALDERÓN 2) ══ -->
 <div id="cronogramaModal" class="mo" style="z-index:10005" onclick="if(event.target===this)closeCronogramaModal()">
@@ -3131,6 +3432,12 @@ function saveHdr() {
   if (document.getElementById('infoAnio'))    S.anio    = document.getElementById('infoAnio').value;
   if (document.getElementById('infoDocente')) S.docente = document.getElementById('infoDocente').value;
   if (document.getElementById('infoTutor'))   S.tutor   = document.getElementById('infoTutor').value;
+
+  const sbSub = document.getElementById('sidebarInstSub');
+  if (sbSub) {
+    sbSub.textContent = `${S.grado || '7mo C'} · ${S.anio || '2026-2027'}`;
+  }
+
   saveData();
 }
 
@@ -5111,11 +5418,45 @@ function switchView(v) {
     }
   });
 
+  // Actualizar contador de estudiantes en sidebar
+  const sbCount = document.getElementById('sbStCountBadge');
+  if (sbCount && S.students) {
+    sbCount.textContent = `${S.students.length} est.`;
+  }
+
+  // Cerrar cajón móvil si estuviera abierto
+  closeMobileSidebar();
+
   if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') rpShowAll();
   if (v === 'export') expInit();
   if (v === 'pi') renderPi();
   if (v === 'estudiantes') renderStudentsMatrix();
+}
+
+function toggleSidebarCollapse() {
+  const sb = document.getElementById('appSidebar');
+  if (sb) {
+    sb.classList.toggle('collapsed');
+    const isCol = sb.classList.contains('collapsed');
+    localStorage.setItem('sidebar_collapsed', isCol ? '1' : '0');
+    const btn = document.getElementById('sidebarToggleBtn');
+    if (btn) btn.textContent = isCol ? '▶' : '◀';
+  }
+}
+
+function openMobileSidebar() {
+  const sb = document.getElementById('appSidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.add('mobile-open');
+  if (bd) bd.classList.add('active');
+}
+
+function closeMobileSidebar() {
+  const sb = document.getElementById('appSidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if (sb) sb.classList.remove('mobile-open');
+  if (bd) bd.classList.remove('active');
 }
 
 function printTable() {
@@ -6503,6 +6844,11 @@ function applyRemoteState(newState, updatedAt, source) {
   if (document.getElementById('infoDocente') && S.docente !== undefined) document.getElementById('infoDocente').value = S.docente;
   if (document.getElementById('infoTutor') && S.tutor !== undefined)     document.getElementById('infoTutor').value   = S.tutor;
   if (document.getElementById('hdrPeriodBadge')) document.getElementById('hdrPeriodBadge').textContent = (S.periodo || '1er Trimestre') + ' ✎';
+  
+  const sbSub = document.getElementById('sidebarInstSub');
+  if (sbSub) sbSub.textContent = `${S.grado || '7mo C'} · ${S.anio || '2026-2027'}`;
+  const sbCount = document.getElementById('sbStCountBadge');
+  if (sbCount && S.students) sbCount.textContent = `${S.students.length} est.`;
 
   // Recordar foco si el usuario está tipeando activamente
   const activeEl = document.activeElement;
@@ -10196,6 +10542,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const target = navMap[v];
       if (target) document.getElementById(target)?.classList.add('active');
     };
+  }
+
+  /* ══ Restore sidebar collapse state ══ */
+  if (localStorage.getItem('sidebar_collapsed') === '1') {
+    const sb = document.getElementById('appSidebar');
+    if (sb) {
+      sb.classList.add('collapsed');
+      const btn = document.getElementById('sidebarToggleBtn');
+      if (btn) btn.textContent = '▶';
+    }
   }
 
   /* ══ Auto-hide scroll hint after first scroll ══ */
