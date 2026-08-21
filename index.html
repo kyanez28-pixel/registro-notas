@@ -1941,7 +1941,239 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 </div>
 
-<div class="app-container">
+<!-- ══════════════════════════════════════════════════════════════
+     PORTAL DEDICADO Y FORMULARIO PÚBLICO PARA PADRES DE FAMILIA
+     (ACCESO DIRECTO SIN LOGIN: ?padres=1 / ?ficha=1)
+     ══════════════════════════════════════════════════════════════ -->
+<div id="parentStandalonePortal" style="display:none;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#1e3a8a 100%);color:var(--text-main);padding:20px 14px;box-sizing:border-box">
+  <div style="max-width:760px;margin:0 auto">
+    
+    <!-- Encabezado Institucional -->
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow-xl);text-align:center;position:relative;overflow:hidden">
+      <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 12px;box-shadow:0 4px 14px rgba(37,99,235,0.35)">
+        🏛️
+      </div>
+      <h1 style="font-size:1.4rem;font-weight:900;color:var(--text-main);margin:0 0 4px 0;letter-spacing:-0.02em">
+        UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"
+      </h1>
+      <div style="font-size:0.95rem;font-weight:800;color:var(--primary);margin-bottom:4px">
+        FICHA DIGITAL DE ACTUALIZACIÓN DE DATOS DE MATRÍCULA
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);font-weight:600" id="psHeaderGrade">
+        Año Lectivo 2026-2027 · Jornada Vespertina (13:00 - 18:30)
+      </div>
+      <div style="display:inline-block;background:rgba(16,185,129,0.12);color:#15803d;border:1px solid #86efac;font-size:0.75rem;font-weight:800;padding:3px 12px;border-radius:99px;margin-top:8px">
+        ⚡ Sincronización Oficial en Tiempo Real
+      </div>
+    </div>
+
+    <!-- Banner de Bienvenida -->
+    <div style="background:linear-gradient(135deg,rgba(37,99,235,0.12) 0%,rgba(30,58,138,0.06) 100%);border:1.5px solid #93c5fd;border-radius:14px;padding:14px 18px;margin-bottom:16px;font-size:0.85rem;color:var(--text-main);line-height:1.5">
+      <strong>📌 Estimado/a Representante Legal:</strong> Seleccione a su representado/a en la lista inferior y revise o complete sus números telefónicos, celular de WhatsApp, dirección y ficha médica. La información se guardará automáticamente en el registro oficial del docente tutor.
+    </div>
+
+    <!-- PASO 1: Selector de Estudiante -->
+    <div style="background:var(--bg-card);border:2px solid var(--primary);border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow-md)">
+      <label style="font-weight:900;font-size:0.92rem;color:var(--primary);text-transform:uppercase;display:block;margin-bottom:6px">
+        1. SELECCIONE A SU REPRESENTADO/A (ESTUDIANTE):
+      </label>
+      <select id="psStudentSelect" onchange="onParentStandaloneSelectStudent(this.value)" style="width:100%;font-size:1.05rem;font-weight:800;padding:12px 14px;border-radius:10px;border:2px solid var(--primary);background:var(--bg-card);color:var(--text-main);cursor:pointer">
+        <option value="">-- Toque aquí para seleccionar el nombre de su hijo/a --</option>
+      </select>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px">
+        💡 Si no encuentra el nombre de su hijo/a, asegúrese de seleccionar el grado correcto o comuníquese con el tutor.
+      </div>
+    </div>
+
+    <!-- PASO 2: Formulario de Campos -->
+    <div id="psFormFieldsArea" style="display:none">
+
+      <!-- SECCIÓN A: DATOS DEL ESTUDIANTE -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:#1e40af;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span>👤 DATOS DEL ESTUDIANTE</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div style="grid-column:1/-1">
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Nombres y Apellidos Completos</label>
+            <input type="text" id="psEstNombre" readonly style="background:var(--bg-card-subtle);font-weight:900;font-size:1rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Cédula de Identidad (10 dígitos) *</label>
+            <input type="text" id="psEstCedula" placeholder="Ej: 1723456789" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')" style="font-family:var(--font-mono);font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Fecha de Nacimiento *</label>
+            <input type="date" id="psEstFechaNac" onchange="calcParentStandaloneAge()" style="font-size:0.95rem;padding:9px 12px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Edad Calculada</label>
+            <input type="text" id="psEstEdad" readonly placeholder="Calculado automáticamente" style="background:var(--bg-card-subtle);font-weight:800;font-size:0.88rem;padding:10px 14px"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN B: DATOS DEL REPRESENTANTE LEGAL -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:#15803d;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span>👨‍💼 DATOS DEL REPRESENTANTE LEGAL</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div style="grid-column:1/-1">
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Nombres y Apellidos del Representante *</label>
+            <input type="text" id="psRepNombre" placeholder="Ej: Rodríguez Gómez María Elena" style="font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">N° Cédula del Representante *</label>
+            <input type="text" id="psRepCedula" placeholder="10 dígitos" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')" style="font-family:var(--font-mono);font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Teléfono Celular (WhatsApp) *</label>
+            <input type="text" id="psRepTelefono" placeholder="Ej: 0991234567" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')" style="font-family:var(--font-mono);font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Teléfono de Emergencia / Convencional</label>
+            <input type="text" id="psRepTelEmergencia" placeholder="Ej: 022123456 / 0987654321" style="font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Correo Electrónico</label>
+            <input type="email" id="psRepEmail" placeholder="ejemplo@gmail.com" style="font-size:0.95rem;padding:10px 14px"/>
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-muted)">Dirección Domiciliaria Exacta (Barrio, Sector, Calles y N° Casa) *</label>
+            <input type="text" id="psRepDireccion" placeholder="Ej: Calderón, Barrio San José, Calle Principal y Pasaje A, Casa N° 45" style="font-size:0.95rem;padding:10px 14px"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN C: DATOS DE MADRE Y PADRE -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:#7e22ce;margin-bottom:12px">
+          👨‍👩‍👧 DATOS DE CONTACTO DE LA MADRE Y PADRE
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+          <div style="background:var(--bg-card-subtle);padding:14px;border-radius:12px;border:1px solid var(--border-color)">
+            <strong style="font-size:0.85rem;color:#7e22ce;display:block;margin-bottom:8px">DATOS DE LA MADRE</strong>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700">Nombres de la Madre</label>
+              <input type="text" id="psMadreNombre" placeholder="Nombres completos"/>
+            </div>
+            <div style="margin-top:6px">
+              <label style="font-size:0.75rem;font-weight:700">Celular de la Madre</label>
+              <input type="text" id="psMadreTelefono" placeholder="099..."/>
+            </div>
+          </div>
+          <div style="background:var(--bg-card-subtle);padding:14px;border-radius:12px;border:1px solid var(--border-color)">
+            <strong style="font-size:0.85rem;color:#7e22ce;display:block;margin-bottom:8px">DATOS DEL PADRE</strong>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700">Nombres del Padre</label>
+              <input type="text" id="psPadreNombre" placeholder="Nombres completos"/>
+            </div>
+            <div style="margin-top:6px">
+              <label style="font-size:0.75rem;font-weight:700">Celular del Padre</label>
+              <input type="text" id="psPadreTelefono" placeholder="099..."/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN D: FICHA MÉDICA, NN.EE. Y HERMANOS -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:#ea580c;margin-bottom:12px">
+          🏥 FICHA MÉDICA, NN.EE. Y HERMANOS EN EL PLANTEL
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div>
+            <label style="font-weight:800;font-size:0.8rem">¿Tiene Necesidad Educativa Especial (NN.EE.) o Discapacidad?</label>
+            <select id="psNneeSelect" onchange="togglePsNneeDetail(this.value)" style="padding:10px;font-size:0.9rem">
+              <option value="NO">NO</option>
+              <option value="SÍ">SÍ</option>
+            </select>
+          </div>
+          <div id="psNneeDetailBox" style="display:none">
+            <label style="font-weight:800;font-size:0.8rem">Especifique el diagnóstico o carnet:</label>
+            <input type="text" id="psNneeDetalle" placeholder="Ej: TDAH, Visual 30%..."/>
+          </div>
+          <div>
+            <label style="font-weight:800;font-size:0.8rem">¿Padece alguna Enfermedad, Alergia o toma Medicamentos?</label>
+            <select id="psEnfSelect" onchange="togglePsEnfDetail(this.value)" style="padding:10px;font-size:0.9rem">
+              <option value="NO">NO</option>
+              <option value="SÍ">SÍ</option>
+            </select>
+          </div>
+          <div id="psEnfDetailBox" style="display:none">
+            <label style="font-weight:800;font-size:0.8rem">Especifique enfermedad / medicamentos:</label>
+            <input type="text" id="psEnfDetalle" placeholder="Ej: Asma, Alergia a la penicilina..."/>
+          </div>
+          <div style="grid-column:1/-1">
+            <label style="font-weight:800;font-size:0.8rem">¿Tiene Hermanos estudiando en la U.E.F. "Calderón 2"?</label>
+            <select id="psHermanosSelect" onchange="togglePsHermanosDetail(this.value)" style="padding:10px;font-size:0.9rem">
+              <option value="NO">NO</option>
+              <option value="SÍ">SÍ</option>
+            </select>
+          </div>
+          <div id="psHermanosDetailBox" style="grid-column:1/-1;display:none">
+            <label style="font-weight:800;font-size:0.8rem">Nombres y Grados de los Hermanos:</label>
+            <input type="text" id="psHermanosDetalle" placeholder="Ej: Juan Pérez (3ro EGB A), Sofía Pérez (Bachillerato B)..."/>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN E: FOTO DEL ESTUDIANTE -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div id="psFotoPreviewBox" style="width:80px;height:95px;border-radius:10px;border:2px dashed var(--border-color);display:flex;align-items:center;justify-content:center;background:var(--bg-card-subtle);overflow:hidden;flex-shrink:0">
+          <span style="font-size:0.75rem;color:var(--text-muted);text-align:center">Sin foto</span>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-weight:900;font-size:0.88rem;color:var(--text-main);margin-bottom:4px">📷 Fotografía del Estudiante (Opcional)</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">Sube una foto clara tipo carné o tómala con la cámara del celular.</div>
+          <input type="file" id="psFotoInput" accept="image/*" onchange="handleParentStandaloneFoto(this)" style="display:none"/>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('psFotoInput').click()" style="font-size:0.82rem;padding:6px 14px">
+            📁 Subir Foto del Estudiante
+          </button>
+        </div>
+      </div>
+
+      <!-- Botón de Guardado Principal -->
+      <div style="margin-bottom:30px">
+        <button id="btnSaveStandaloneParent" onclick="saveParentStandaloneData()" class="btn btn-success" style="width:100%;font-size:1.05rem;padding:16px 20px;font-weight:900;border-radius:14px;box-shadow:0 6px 20px rgba(22,163,74,0.35);justify-content:center;letter-spacing:0.2px">
+          ✔ GUARDAR Y ACTUALIZAR FICHA OFICIAL
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Tarjeta de Confirmación de Envío Exitoso -->
+    <div id="psSuccessCard" style="display:none;background:var(--bg-card);border:2px solid #16a34a;border-radius:20px;padding:26px;text-align:center;box-shadow:var(--shadow-xl);margin-bottom:30px">
+      <div style="font-size:3.5rem;margin-bottom:12px">✅</div>
+      <h2 style="color:#15803d;font-size:1.3rem;font-weight:900;margin:0 0 8px 0">
+        ¡Ficha Actualizada Correctamente!
+      </h2>
+      <p style="font-size:0.88rem;color:var(--text-muted);margin:0 0 16px 0">
+        La información ya fue sincronizada en tiempo real con el registro institucional del docente tutor en la <strong>U.E.F. "Calderón 2"</strong>.
+      </p>
+      
+      <div id="psSuccessSummary" style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:12px;padding:14px;font-size:0.82rem;text-align:left;line-height:1.6;margin-bottom:16px"></div>
+
+      <div style="display:flex;gap:10px;flex-direction:column">
+        <button class="btn btn-success" id="psBtnSendWaConfirmation" onclick="sendParentConfirmationWa()" style="justify-content:center;padding:12px 18px;font-weight:800;font-size:0.88rem">
+          💬 Enviar Comprobante al WhatsApp del Docente
+        </button>
+        <button class="btn btn-outline" onclick="resetParentStandaloneForm()" style="justify-content:center;font-size:0.82rem">
+          🔄 Actualizar otro estudiante
+        </button>
+      </div>
+    </div>
+
+    <!-- Pie de Página Institucional -->
+    <div style="text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.7);padding-bottom:30px">
+      UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Sistema Integrado de Gestión Académica y Matrícula
+    </div>
+
+  </div>
+</div>
+
+<div class="app-container" id="mainAppContainer">
   
   <!-- Backdrop para el menú móvil -->
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
@@ -7653,6 +7885,24 @@ function applyRemoteState(newState, updatedAt, source) {
     updateCronoProgressStats();
   }
 
+  const psPortal = document.getElementById('parentStandalonePortal');
+  if (psPortal && psPortal.style.display !== 'none') {
+    const sel = document.getElementById('psStudentSelect');
+    if (sel) {
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">-- Toque aquí para seleccionar el nombre de su hijo/a --</option>';
+      if (S.studentProfiles) {
+        S.studentProfiles.forEach((p, idx) => {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = `${idx + 1}. ${p.nombre || S.students[idx] || ('Estudiante ' + (idx + 1))}`;
+          sel.appendChild(opt);
+        });
+      }
+      if (currentVal) sel.value = currentVal;
+    }
+  }
+
   setSyncStatus('⚡ En Vivo', 'online');
   const badge = document.getElementById('hdrSyncBadge');
   if (badge) {
@@ -7715,6 +7965,18 @@ function signInGoogle() {
 function signOutUser() { auth.signOut(); }
 
 auth.onAuthStateChanged(user => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isParentMode = urlParams.get('padres') === '1' || urlParams.get('ficha') === '1';
+
+  if (isParentMode) {
+    const loginSc = document.getElementById('loginScreen');
+    if (loginSc) loginSc.style.display = 'none';
+    const stParam = urlParams.get('st');
+    const stIdx = (stParam !== null && stParam !== undefined && !isNaN(parseInt(stParam, 10))) ? parseInt(stParam, 10) : null;
+    initParentStandaloneMode(stIdx);
+    return;
+  }
+
   if (user) {
     _currentUser = user;
     showApp(user);
@@ -7726,8 +7988,12 @@ auth.onAuthStateChanged(user => {
 });
 
 function showLogin() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('userBar').style.display     = 'none';
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('padres') === '1' || urlParams.get('ficha') === '1') return;
+  const loginSc = document.getElementById('loginScreen');
+  if (loginSc) loginSc.style.display = 'flex';
+  const userB = document.getElementById('userBar');
+  if (userB) userB.style.display = 'none';
 }
 
 function continueOfflineMode() {
@@ -10903,6 +11169,296 @@ function saveParentPortalData() {
     'Cerrar',
     () => { closeModal(); }
   );
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LÓGICA DEL PORTAL DEDICADO PARA PADRES (?padres=1 / ?ficha=1)
+// ══════════════════════════════════════════════════════════════
+
+let _parentStandaloneFotoData = null;
+let _lastSavedParentStudentIndex = null;
+
+function initParentStandaloneMode(stIndex = null) {
+  // 1. Ocultar interfaz de docente y pantalla de login
+  const loginSc = document.getElementById('loginScreen');
+  if (loginSc) loginSc.style.display = 'none';
+  const mainApp = document.getElementById('mainAppContainer');
+  if (mainApp) mainApp.style.display = 'none';
+  const userBar = document.getElementById('userBar');
+  if (userBar) userBar.style.display = 'none';
+  const mobNav  = document.querySelector('.mob-bottom-nav');
+  if (mobNav) mobNav.style.display = 'none';
+
+  // 2. Mostrar portal dedicado de padres
+  const portal = document.getElementById('parentStandalonePortal');
+  if (portal) portal.style.display = 'block';
+
+  // 3. Inicializar datos y perfiles
+  initS();
+  ensureStudentProfiles();
+
+  // 4. Actualizar título con grado y año
+  const hdrGrade = document.getElementById('psHeaderGrade');
+  if (hdrGrade) {
+    hdrGrade.textContent = `${S.grado || '7mo EGB C'} · Año Lectivo ${S.anio || '2026-2027'} · Tutor: ${S.docente || 'Docente Tutor'}`;
+  }
+
+  // 5. Iniciar sincronización en tiempo real con Firebase
+  startRealtimeSync();
+
+  // 6. Llenar el selector de estudiantes
+  const sel = document.getElementById('psStudentSelect');
+  if (sel) {
+    sel.innerHTML = '<option value="">-- Toque aquí para seleccionar el nombre de su hijo/a --</option>';
+    S.studentProfiles.forEach((p, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = `${idx + 1}. ${p.nombre || S.students[idx] || ('Estudiante ' + (idx + 1))}`;
+      sel.appendChild(opt);
+    });
+
+    if (stIndex !== null && stIndex >= 0 && stIndex < S.studentProfiles.length) {
+      sel.value = stIndex;
+      onParentStandaloneSelectStudent(stIndex);
+    } else {
+      const fArea = document.getElementById('psFormFieldsArea');
+      if (fArea) fArea.style.display = 'none';
+      const sCard = document.getElementById('psSuccessCard');
+      if (sCard) sCard.style.display = 'none';
+    }
+  }
+}
+
+function onParentStandaloneSelectStudent(val) {
+  const fieldsArea = document.getElementById('psFormFieldsArea');
+  const successCard = document.getElementById('psSuccessCard');
+  if (successCard) successCard.style.display = 'none';
+
+  if (!val && val !== 0 && val !== '0') {
+    if (fieldsArea) fieldsArea.style.display = 'none';
+    return;
+  }
+
+  const si = parseInt(val, 10);
+  ensureStudentProfiles();
+  const p = S.studentProfiles[si];
+  if (!p) return;
+
+  if (fieldsArea) fieldsArea.style.display = 'block';
+
+  // Cargar datos
+  document.getElementById('psEstNombre').value        = p.nombre || S.students[si] || '';
+  document.getElementById('psEstCedula').value        = p.cedula || '';
+  document.getElementById('psEstFechaNac').value      = p.fecha_nacimiento || '';
+  document.getElementById('psEstEdad').value          = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad || '';
+  
+  document.getElementById('psRepNombre').value        = p.rep_nombre || '';
+  document.getElementById('psRepCedula').value        = p.rep_cedula || '';
+  document.getElementById('psRepTelefono').value      = p.rep_telefono || '';
+  document.getElementById('psRepTelEmergencia').value  = p.tel_emergencia || '';
+  document.getElementById('psRepEmail').value          = p.rep_email || '';
+  document.getElementById('psRepDireccion').value      = p.direccion || '';
+
+  document.getElementById('psMadreNombre').value      = p.madre_nombre || '';
+  document.getElementById('psMadreTelefono').value    = p.madre_telefono || '';
+  document.getElementById('psPadreNombre').value      = p.padre_nombre || '';
+  document.getElementById('psPadreTelefono').value    = p.padre_telefono || '';
+
+  // NN.EE.
+  const hasNnee = p.nnee && !['NO', 'NINGUNA', ''].includes(p.nnee.trim().toUpperCase());
+  document.getElementById('psNneeSelect').value = hasNnee ? 'SÍ' : 'NO';
+  document.getElementById('psNneeDetailBox').style.display = hasNnee ? 'block' : 'none';
+  document.getElementById('psNneeDetalle').value = hasNnee ? (p.nnee === 'SÍ' ? '' : p.nnee) : '';
+
+  // Enfermedad
+  const hasEnf = p.enfermedad && !['NO', 'NINGUNA', 'NINGÚNA', ''].includes(p.enfermedad.trim().toUpperCase());
+  document.getElementById('psEnfSelect').value = hasEnf ? 'SÍ' : 'NO';
+  document.getElementById('psEnfDetailBox').style.display = hasEnf ? 'block' : 'none';
+  document.getElementById('psEnfDetalle').value = hasEnf ? (p.enfermedad === 'SÍ' ? '' : p.enfermedad) : '';
+
+  // Hermanos
+  const hasHnos = p.hermanos_inst && !['NO', 'NINGUNO', ''].includes(p.hermanos_inst.trim().toUpperCase());
+  document.getElementById('psHermanosSelect').value = hasHnos ? 'SÍ' : 'NO';
+  document.getElementById('psHermanosDetailBox').style.display = hasHnos ? 'block' : 'none';
+  document.getElementById('psHermanosDetalle').value = hasHnos ? (p.hermanos_inst === 'SÍ' ? '' : p.hermanos_inst) : '';
+
+  // Foto
+  _parentStandaloneFotoData = p.foto || null;
+  const fotoBox = document.getElementById('psFotoPreviewBox');
+  if (fotoBox) {
+    if (_parentStandaloneFotoData) {
+      fotoBox.innerHTML = `<img src="${_parentStandaloneFotoData}" style="width:100%;height:100%;object-fit:cover"/>`;
+    } else {
+      fotoBox.innerHTML = '<span style="font-size:0.75rem;color:var(--text-muted);text-align:center">Sin foto</span>';
+    }
+  }
+
+  // Scroll suave al formulario
+  fieldsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function calcParentStandaloneAge() {
+  const val = document.getElementById('psEstFechaNac').value;
+  const age = calculateAgeFromBirthDate(val);
+  document.getElementById('psEstEdad').value = age;
+}
+
+function togglePsNneeDetail(val) {
+  document.getElementById('psNneeDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function togglePsEnfDetail(val) {
+  document.getElementById('psEnfDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function togglePsHermanosDetail(val) {
+  document.getElementById('psHermanosDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function handleParentStandaloneFoto(input) {
+  const file = input.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _parentStandaloneFotoData = e.target.result;
+    const fotoBox = document.getElementById('psFotoPreviewBox');
+    if (fotoBox) {
+      fotoBox.innerHTML = `<img src="${_parentStandaloneFotoData}" style="width:100%;height:100%;object-fit:cover"/>`;
+    }
+    toast('📷 Fotografía cargada con éxito', '#2563eb');
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveParentStandaloneData() {
+  const sel = document.getElementById('psStudentSelect');
+  if (!sel || sel.value === '') {
+    toast('⚠️ Por favor seleccione el nombre de su hijo/a en la lista', '#d97706');
+    sel.focus();
+    return;
+  }
+
+  const si = parseInt(sel.value, 10);
+  ensureStudentProfiles();
+  const p = S.studentProfiles[si];
+  if (!p) return;
+
+  const repNombre = document.getElementById('psRepNombre').value.trim();
+  const repTel    = document.getElementById('psRepTelefono').value.trim();
+  const direccion = document.getElementById('psRepDireccion').value.trim();
+
+  if (!repNombre) {
+    toast('⚠️ Ingrese los nombres y apellidos del representante legal', '#d97706');
+    document.getElementById('psRepNombre').focus();
+    return;
+  }
+  if (!repTel || repTel.length < 9) {
+    toast('⚠️ Ingrese un número de celular de WhatsApp válido (mínimo 9 o 10 dígitos)', '#d97706');
+    document.getElementById('psRepTelefono').focus();
+    return;
+  }
+  if (!direccion) {
+    toast('⚠️ Ingrese la dirección domiciliaria exacta', '#d97706');
+    document.getElementById('psRepDireccion').focus();
+    return;
+  }
+
+  // Guardar datos
+  p.cedula           = document.getElementById('psEstCedula').value.trim();
+  p.fecha_nacimiento = document.getElementById('psEstFechaNac').value.trim();
+  p.edad             = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad;
+
+  p.rep_nombre       = repNombre;
+  p.rep_cedula       = document.getElementById('psRepCedula').value.trim();
+  p.rep_telefono     = repTel;
+  p.tel_emergencia   = document.getElementById('psRepTelEmergencia').value.trim();
+  p.rep_email        = document.getElementById('psRepEmail').value.trim();
+  p.direccion        = direccion;
+
+  p.madre_nombre     = document.getElementById('psMadreNombre').value.trim();
+  p.madre_telefono   = document.getElementById('psMadreTelefono').value.trim();
+  p.padre_nombre     = document.getElementById('psPadreNombre').value.trim();
+  p.padre_telefono   = document.getElementById('psPadreTelefono').value.trim();
+
+  // NN.EE.
+  const isNnee = document.getElementById('psNneeSelect').value === 'SÍ';
+  p.nnee = isNnee ? (document.getElementById('psNneeDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Enfermedad
+  const isEnf = document.getElementById('psEnfSelect').value === 'SÍ';
+  p.enfermedad = isEnf ? (document.getElementById('psEnfDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Hermanos
+  const isHnos = document.getElementById('psHermanosSelect').value === 'SÍ';
+  p.hermanos_inst = isHnos ? (document.getElementById('psHermanosDetalle').value.trim() || 'SÍ') : 'NO';
+
+  if (_parentStandaloneFotoData) {
+    p.foto = _parentStandaloneFotoData;
+  }
+
+  _lastSavedParentStudentIndex = si;
+
+  // Persistir en Firebase en la nube y LocalStorage
+  saveData(true);
+
+  // Mostrar tarjeta de éxito
+  document.getElementById('psFormFieldsArea').style.display = 'none';
+  const summaryBox = document.getElementById('psSuccessSummary');
+  if (summaryBox) {
+    summaryBox.innerHTML = `
+      <div><strong>👤 Estudiante:</strong> ${escHTML(p.nombre)}</div>
+      <div><strong>🆔 Cédula:</strong> ${escHTML(p.cedula || 'Registrada')}</div>
+      <div><strong>📅 Fecha de Nacimiento:</strong> ${escHTML(p.fecha_nacimiento || '—')} (${escHTML(p.edad || '')})</div>
+      <div><strong>👨‍💼 Representante:</strong> ${escHTML(p.rep_nombre)} · WhatsApp: <strong>${escHTML(p.rep_telefono)}</strong></div>
+      <div><strong>📍 Dirección:</strong> ${escHTML(p.direccion)}</div>
+      <div><strong>🏥 Ficha Médica / NN.EE.:</strong> ${escHTML(p.nnee !== 'NO' ? p.nnee : 'Sin NN.EE.')} · ${escHTML(p.enfermedad !== 'NO' ? p.enfermedad : 'Sin enfermedades')}</div>
+    `;
+  }
+
+  const successCard = document.getElementById('psSuccessCard');
+  if (successCard) {
+    successCard.style.display = 'block';
+    successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  toast('🎉 ¡Ficha actualizada y sincronizada en tiempo real!', '#16a34a');
+}
+
+function sendParentConfirmationWa() {
+  if (_lastSavedParentStudentIndex === null) return;
+  ensureStudentProfiles();
+  const p = S.studentProfiles[_lastSavedParentStudentIndex];
+  if (!p) return;
+
+  const anio = S.anio || '2026-2027';
+  const grado = S.grado || '7mo EGB "C"';
+
+  const msg = 
+`*COMPROBANTE DE ACTUALIZACIÓN DE DATOS — UEF CALDERÓN 2*
+*Año Lectivo:* ${anio} | *Grado:* ${grado}
+
+Estimado/a Docente Tutor:
+
+Le informo que he completado exitosamente la actualización digital de la *Ficha Informativa y de Matrícula* de mi representado/a:
+
+👤 *Estudiante:* ${p.nombre}
+🆔 *Cédula:* ${p.cedula || 'Registrada'}
+👨‍💼 *Representante Legal:* ${p.rep_nombre}
+📱 *Teléfono WhatsApp:* ${p.rep_telefono}
+📍 *Dirección Domiciliaria:* ${p.direccion}
+🏥 *Ficha Médica / NN.EE.:* ${p.nnee !== 'NO' ? p.nnee : 'NO'} | ${p.enfermedad !== 'NO' ? p.enfermedad : 'NO'}
+
+Los datos ya quedaron guardados en el sistema institucional. Muchas gracias.`;
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function resetParentStandaloneForm() {
+  const sel = document.getElementById('psStudentSelect');
+  if (sel) sel.value = '';
+  document.getElementById('psSuccessCard').style.display = 'none';
+  document.getElementById('psFormFieldsArea').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ── IMPORTADOR MASIVO DESDE GOOGLE FORMS O EXCEL ─────────────────────────
