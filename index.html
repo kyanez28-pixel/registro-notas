@@ -2005,10 +2005,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span class="sidebar-btn-text">Exportar al Sistema</span>
       </button>
 
-      <button class="sidebar-btn" onclick="openCronogramaModal()" style="color:#b45309" title="Cronograma institucional de 200 días y actividades previas">
+      <button id="viewCronograma" class="sidebar-btn" onclick="switchView('cronograma')" title="Agenda y Cronograma Oficial Calderón 2 con seguimiento en vivo y checklist interactivo">
         <span class="sidebar-btn-icon">🏛️</span>
-        <span class="sidebar-btn-text">Cronograma Oficial</span>
-        <span class="sidebar-btn-badge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">200 Días</span>
+        <span class="sidebar-btn-text">Cronograma & Agenda</span>
+        <span class="sidebar-btn-badge" id="cronoProgressBadge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">En Vivo</span>
       </button>
 
       <button id="viewConfig" class="sidebar-btn" onclick="switchView('config')" title="Configuración de trimestres, materias y respaldos">
@@ -2577,6 +2577,428 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <tbody id="stMatrixTb"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     VISTA: CRONOGRAMA INSTITUCIONAL & AGENDA DE SEGUIMIENTO EN VIVO
+     (UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · 200 DÍAS LABORABLES)
+     ══════════════════════════════════════════════════════════════ -->
+<div id="cronogramaPanel" style="display:none" class="content">
+
+  <!-- Banner Superior de Encabezado -->
+  <div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:14px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-md)">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+        🏛️
+      </div>
+      <div>
+        <div style="font-size:1.2rem;font-weight:900;letter-spacing:0.2px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span>Cronograma Oficial & Agenda de Seguimiento</span>
+          <span style="font-size:0.72rem;background:#f59e0b;color:#78350f;padding:3px 10px;border-radius:99px;font-weight:800">U.E.F. CALDERÓN 2</span>
+          <span style="font-size:0.72rem;background:rgba(255,255,255,0.25);padding:3px 10px;border-radius:99px;font-weight:700">200 Días Laborables</span>
+        </div>
+        <div style="font-size:0.78rem;opacity:.92;margin-top:3px">
+          Seguimiento diario de actividades pedagógicas previas, fases curriculares, juntas, supletorios y feriados oficiales
+        </div>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-success" onclick="printCronogramaAgenda()" style="font-weight:800" title="Imprimir reporte de agenda y tareas completadas">
+        🖨 Imprimir Agenda
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-weight:700" onclick="exportCronogramaXLSX()" title="Descargar cronograma institucional en Excel">
+        📊 Exportar Excel
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-weight:700" onclick="openCalendarModal()" title="Gestionar calendario trimestral y feriados">
+        ⚙ Fechas Trimestre
+      </button>
+    </div>
+  </div>
+
+  <!-- ── TARJETA EN VIVO: SEGUIMIENTO SEGÚN FECHA ACTUAL & ESTADO INSTITUCIONAL ── -->
+  <div id="cronoLiveStatusCard" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      
+      <!-- Fecha Actual y Fase -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 3px 8px rgba(16,185,129,0.3)">
+          📅
+        </div>
+        <div>
+          <div style="font-size:0.72rem;font-weight:800;color:var(--text-light);text-transform:uppercase;letter-spacing:0.6px">Fecha del Sistema (Hoy)</div>
+          <div id="cronoTodayDateLabel" style="font-size:1.05rem;font-weight:900;color:var(--text-main)">—</div>
+        </div>
+      </div>
+
+      <!-- Estado / Fase Actual -->
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);padding:8px 14px;border-radius:10px;display:flex;align-items:center;gap:10px">
+        <span class="sync-dot pulse" style="background:#10b981;width:10px;height:10px"></span>
+        <div>
+          <div style="font-size:0.68rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Periodo / Fase en Curso</div>
+          <div id="cronoCurrentPhaseLabel" style="font-size:0.85rem;font-weight:900;color:var(--primary)">—</div>
+        </div>
+      </div>
+
+      <!-- Próximo Hito / Cuenta Regresiva -->
+      <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12) 0%,rgba(217,119,6,0.06) 100%);border:1px solid #fcd34d;padding:8px 14px;border-radius:10px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.2rem">⏳</span>
+        <div>
+          <div style="font-size:0.68rem;font-weight:800;color:#92400e;text-transform:uppercase">Próximo Hito Institucional</div>
+          <div id="cronoNextMilestoneLabel" style="font-size:0.82rem;font-weight:800;color:#78350f">—</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Barra de Cumplimiento de Tareas -->
+    <div style="border-top:1px solid var(--border-subtle);padding-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="flex:1;min-width:240px">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:800;margin-bottom:5px">
+          <span style="color:var(--text-muted)">Progreso de Actividades Pedagógicas Previas:</span>
+          <span id="cronoProgressText" style="color:var(--primary);font-family:var(--font-mono)">0 / 30 cumplidas (0%)</span>
+        </div>
+        <div style="width:100%;height:9px;background:var(--bg-card-subtle);border-radius:99px;overflow:hidden;border:1px solid var(--border-color)">
+          <div id="cronoProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,#2563eb,#10b981);transition:width .3s ease;border-radius:99px"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="toggleAllCronoTasks(true)">✔ Marcar Todo</button>
+        <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="toggleAllCronoTasks(false)">⏳ Desmarcar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BARRA DE PESTAÑAS DEL CRONOGRAMA ── -->
+  <div style="display:flex;gap:6px;border-bottom:2px solid var(--border-color);margin-bottom:14px;overflow-x:auto;padding-bottom:2px">
+    <button id="tabBtnCrono1" class="btn btn-primary" onclick="switchCronoModuleTab(1)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">
+      📅 1. Agenda Diaria & Checklist (11 al 31 Ago)
+    </button>
+    <button id="tabBtnCrono2" class="btn btn-outline" onclick="switchCronoModuleTab(2)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">
+      📆 2. Calendario de 200 Días (3 Trimestres)
+    </button>
+    <button id="tabBtnCrono3" class="btn btn-outline" onclick="switchCronoModuleTab(3)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">
+      🎯 3. Fases Pedagógicas (Conecta/Nivela/Crea)
+    </button>
+    <button id="tabBtnCrono4" class="btn btn-outline" onclick="switchCronoModuleTab(4)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">
+      🏁 4. Cierre de Año, Supletorios y Feriados
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 1: AGENDA DIARIA INTERACTIVA & CHECKLIST
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab1">
+    
+    <!-- Filtros de la Agenda -->
+    <div class="filter-bar" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px">
+      
+      <!-- Buscador -->
+      <div class="search-wrapper" style="max-width:320px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="cronoSearchInput" class="search-input" placeholder="Buscar actividad, responsable, lugar..." oninput="renderCronoAgenda()"/>
+      </div>
+
+      <!-- Filtros de Estado & Semana -->
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-primary crono-filter-btn" id="cronoFilterAll" onclick="setCronoFilter('all')" style="font-size:0.75rem;padding:5px 10px">
+          Todas (30)
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterToday" onclick="setCronoFilter('today')" style="font-size:0.75rem;padding:5px 10px">
+          ⚡ Hoy / En Curso
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterPending" onclick="setCronoFilter('pending')" style="font-size:0.75rem;padding:5px 10px">
+          ⏳ Pendientes
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterDone" onclick="setCronoFilter('done')" style="font-size:0.75rem;padding:5px 10px">
+          ✔ Cumplidas
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterSem1" onclick="setCronoFilter('sem1')" style="font-size:0.75rem;padding:5px 10px">
+          Semana 1
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterSem2" onclick="setCronoFilter('sem2')" style="font-size:0.75rem;padding:5px 10px">
+          Semana 2
+        </button>
+        <button class="btn btn-outline crono-filter-btn" id="cronoFilterSem3" onclick="setCronoFilter('sem3')" style="font-size:0.75rem;padding:5px 10px">
+          Semana 3
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Lista de Actividades / Agenda Interactiva -->
+    <div id="cronoAgendaList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 2: CALENDARIO OFICIAL DE 200 DÍAS (3 TRIMESTRES)
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab2" style="display:none">
+    
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:16px">
+      
+      <!-- Tarjeta 1er Trimestre -->
+      <div class="config-card" style="border-top:4px solid #2563eb">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#dbeafe;color:#1e40af">1️⃣</div>
+          <div>
+            <div class="config-card-title">1er Trimestre</div>
+            <div style="font-size:0.78rem;font-weight:800;color:#2563eb;margin-top:2px">01 Sep 2026 — 01 Dic 2026</div>
+          </div>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          <div>📌 <strong>Duración:</strong> 63 días laborables (14 semanas).</div>
+          <div>🎯 <strong>Fases:</strong> Conecta (Sem 1), Nivela (Sem 2-3), Crea (Sem 4-5), Abordaje (Sem 6-12), Evaluación Sumativa (Sem 13-14).</div>
+          <div>🌴 <strong>Feriados:</strong> 09 Octubre (Independencia de Guayaquil), 02 Noviembre (Difuntos), 03 Noviembre (Independencia de Cuenca).</div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2do Trimestre -->
+      <div class="config-card" style="border-top:4px solid #059669">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#d1fae5;color:#065f46">2️⃣</div>
+          <div>
+            <div class="config-card-title">2do Trimestre</div>
+            <div style="font-size:0.78rem;font-weight:800;color:#059669;margin-top:2px">02 Dic 2026 — 15 Mar 2027</div>
+          </div>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          <div>📌 <strong>Duración:</strong> 66 días laborables (15 semanas).</div>
+          <div>🎯 <strong>Fases:</strong> Abordaje Curricular (Sem 1-14), Evaluación Sumativa y Proyecto Interdisciplinar (Sem 15-16).</div>
+          <div>🌴 <strong>Vacaciones & Feriados:</strong> Navidad y Año Nuevo (25 Dic - 01 Ene), Carnaval (08 y 09 Feb).</div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3er Trimestre -->
+      <div class="config-card" style="border-top:4px solid #d97706">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#fef3c7;color:#92400e">3️⃣</div>
+          <div>
+            <div class="config-card-title">3er Trimestre</div>
+            <div style="font-size:0.78rem;font-weight:800;color:#d97706;margin-top:2px">16 Mar 2027 — 25 Jun 2027</div>
+          </div>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          <div>📌 <strong>Duración:</strong> 71 días laborables (16 semanas).</div>
+          <div>🎯 <strong>Fases:</strong> Abordaje (Sem 1-14), Fiesta de la Lectura (19 y 23 Abr), Evaluación (Sem 15), Recuperación (Sem 16).</div>
+          <div>🌴 <strong>Feriados:</strong> Viernes Santo (30 Abr), Día del Trabajo (03 May), Batalla de Pichincha (24 May).</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tabla Consolidada de los 200 Días -->
+    <div class="tw">
+      <table style="width:100%;font-size:0.82rem">
+        <thead>
+          <tr>
+            <th>Periodo Académico</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+            <th>Días Laborables</th>
+            <th>Semanas</th>
+            <th>Feriados y Asuetos Oficiales</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:800;color:#1e40af">1er Trimestre</td>
+            <td>Martes 01 Sep 2026</td>
+            <td>Martes 01 Dic 2026</td>
+            <td style="font-family:var(--font-mono);font-weight:800">63 días</td>
+            <td>14 semanas</td>
+            <td>09 Oct (Independencia Guayaquil) · 02 Nov (Difuntos) · 03 Nov (Cuenca)</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;color:#065f46">2do Trimestre</td>
+            <td>Miércoles 02 Dic 2026</td>
+            <td>Lunes 15 Mar 2027</td>
+            <td style="font-family:var(--font-mono);font-weight:800">66 días</td>
+            <td>15 semanas</td>
+            <td>25 Dic - 01 Ene (Vacaciones Estudiantiles) · 08 y 09 Feb (Carnaval)</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;color:#92400e">3er Trimestre</td>
+            <td>Martes 16 Mar 2027</td>
+            <td>Viernes 25 Jun 2027</td>
+            <td style="font-family:var(--font-mono);font-weight:800">71 días</td>
+            <td>16 semanas</td>
+            <td>19 y 23 Abr (Fiesta de la Lectura) · 30 Abr (Viernes Santo) · 03 May (Trabajo) · 24 May (Pichincha)</td>
+          </tr>
+          <tr style="background:var(--bg-card-subtle);font-weight:900">
+            <td colspan="3" style="text-align:right;padding-right:14px">TOTAL DÍAS LABORABLES MINISTERIALES:</td>
+            <td style="font-family:var(--font-mono);color:#1e40af;font-size:0.95rem">200 DÍAS</td>
+            <td>45 semanas</td>
+            <td>16 días de feriados/vacaciones computados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 3: FASES PEDAGÓGICAS MINISTERIALES
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab3" style="display:none">
+    
+    <div style="display:flex;flex-direction:column;gap:12px">
+      
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #2563eb;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#1e40af;font-size:0.95rem">1. FASE CONECTA (Semana 1 · 01 al 04 de Septiembre)</span>
+          <span style="font-size:0.7rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:800">Adaptación & Vínculo</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Jornadas de bienvenida, ambientación, dinámicas socioemocionales, socialización del código de convivencia, diagnóstico de estilos de aprendizaje y vinculación con la familia.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #059669;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#065f46;font-size:0.95rem">2. FASE NIVELA (Semanas 2 y 3 · 07 al 18 de Septiembre)</span>
+          <span style="font-size:0.7rem;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-weight:800">Diagnóstico & Nivelación</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Aplicación de pruebas diagnósticas, refuerzo de habilidades fundacionales en lectura, escritura y cálculo matemático, nivelación pedagógica y detección oportuna de necesidades educativas especiales.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #d97706;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#92400e;font-size:0.95rem">3. FASE CREA (Semanas 4 y 5 · 21 de Septiembre al 02 de Octubre)</span>
+          <span style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-weight:800">Proyecto Interdisciplinar (30%)</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Lanzamiento y desarrollo del Proyecto Interdisciplinario. Aprendizaje activo, trabajo cooperativo, resolución de problemas y elaboración del producto final que pondera el 30% sumativo del trimestre.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #7c3aed;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#6d28d9;font-size:0.95rem">4. ABORDAJE CURRICULAR (Semanas 6 a 12)</span>
+          <span style="font-size:0.7rem;background:#ede9fe;color:#6d28d9;padding:2px 8px;border-radius:99px;font-weight:800">Desarrollo de Destrezas (70%)</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Desarrollo intensivo de las destrezas con criterios de desempeño por asignaturas. Evaluación formativa continua con actividades individuales y grupales en clase y en casa.
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #dc2626;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#991b1b;font-size:0.95rem">5. EVALUACIÓN Y CIERRE TRIMESTRAL (Semanas 13 y 14)</span>
+          <span style="font-size:0.7rem;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:99px;font-weight:800">Evaluación Sumativa & Juntas</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Evaluación de base estructurada, rúbrica del proyecto interdisciplinar, consolidación de notas con 2 decimales truncados, juntas de grado y emisión de libretas a representantes legales vía WhatsApp.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 4: CIERRE DE AÑO, SUPLETORIOS Y VACACIONES
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab4" style="display:none">
+    
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow-xs)">
+      <div style="font-size:0.95rem;font-weight:900;color:var(--text-main);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <span>🏁 Cronograma Oficial de Fin de Año Lectivo (Junio — Agosto 2027)</span>
+      </div>
+      <div class="tw">
+        <table style="width:100%;font-size:0.82rem">
+          <thead>
+            <tr>
+              <th>Fase / Actividad</th>
+              <th>Fecha de Inicio</th>
+              <th>Fecha de Fin</th>
+              <th>Días</th>
+              <th>Responsables y Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:800;color:#ea580c">Clases de Recuperación para Supletorios</td>
+              <td>Lunes 28 Jun 2027</td>
+              <td>Viernes 02 Jul 2027</td>
+              <td style="font-family:var(--font-mono);font-weight:800">5 días</td>
+              <td>Docentes de materias con estudiantes &lt; 7.00</td>
+            </tr>
+            <tr>
+              <td style="font-weight:800;color:#2563eb">Juntas de Curso de Fin de Año</td>
+              <td>Lunes 05 Jul 2027</td>
+              <td>Martes 06 Jul 2027</td>
+              <td style="font-family:var(--font-mono);font-weight:800">2 días</td>
+              <td>Tutores, Docentes de Grado, DECE y Vicerrectorado</td>
+            </tr>
+            <tr>
+              <td style="font-weight:800;color:#16a34a">Publicación de Calificaciones y Cierre de Sistema</td>
+              <td>Miércoles 07 Jul 2027</td>
+              <td>Viernes 09 Jul 2027</td>
+              <td style="font-family:var(--font-mono);font-weight:800">3 días</td>
+              <td>Secretaría y Docentes en Plataforma Ministerial</td>
+            </tr>
+            <tr style="background:rgba(16,185,129,0.1)">
+              <td style="font-weight:900;color:#065f46">🏖️ Vacaciones Docentes Ininterrumpidas</td>
+              <td style="font-weight:800">Sábado 10 Jul 2027</td>
+              <td style="font-weight:800">Domingo 08 Ago 2027</td>
+              <td style="font-family:var(--font-mono);font-weight:900;color:#065f46">30 DÍAS</td>
+              <td>Todo el personal docente (30 días oficiales)</td>
+            </tr>
+            <tr>
+              <td style="font-weight:800;color:#1e40af">Retorno Docente para Nuevo Año</td>
+              <td>Lunes 10 Ago 2027</td>
+              <td>—</td>
+              <td style="font-family:var(--font-mono);font-weight:800">—</td>
+              <td>Reinicio de actividades de planificación previa</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Lista de Feriados Oficiales -->
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;box-shadow:var(--shadow-xs)">
+      <div style="font-size:0.95rem;font-weight:900;color:var(--text-main);margin-bottom:10px">
+        🌴 Nómina Oficial de Feriados Institucionales (16 Días)
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;font-size:0.8rem">
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>09 Oct 2026:</strong> Independencia de Guayaquil
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>02 Nov 2026:</strong> Día de los Difuntos
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>03 Nov 2026:</strong> Independencia de Cuenca
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>25 Dic 2026 - 01 Ene 2027:</strong> Vacaciones Navidad & Año Nuevo (6 días)
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>08 y 09 Feb 2027:</strong> Carnaval (2 días)
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>19 y 23 Abr 2027:</strong> Fiesta de la Lectura
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>30 Abr 2027:</strong> Viernes Santo
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>03 May 2027:</strong> Día del Trabajo (Traslado)
+        </div>
+        <div style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color)">
+          <strong>24 May 2027:</strong> Batalla de Pichincha
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
   </div> <!-- Fin .app-main-area -->
@@ -5404,7 +5826,8 @@ function switchView(v) {
     'pi':          'piPanel',
     'reporte':     'reportPanel',
     'export':      'exportPanel',
-    'config':      'configPanel'
+    'config':      'configPanel',
+    'cronograma':  'cronogramaPanel'
   };
 
   const navBtns = {
@@ -5414,7 +5837,8 @@ function switchView(v) {
     'pi':          'viewPi',
     'reporte':     'viewReporte',
     'export':      'viewExport',
-    'config':      'viewConfig'
+    'config':      'viewConfig',
+    'cronograma':  'viewCronograma'
   };
 
   Object.keys(panels).forEach(key => {
@@ -5441,6 +5865,7 @@ function switchView(v) {
   if (v === 'export') expInit();
   if (v === 'pi') renderPi();
   if (v === 'estudiantes') renderStudentsMatrix();
+  if (v === 'cronograma') renderCronogramaModule();
 }
 
 function toggleSidebarCollapse() {
@@ -6872,6 +7297,12 @@ function applyRemoteState(newState, updatedAt, source) {
   }
   if (document.getElementById('piPanel')?.style.display !== 'none' && typeof renderPi === 'function') {
     renderPi();
+  }
+  if (document.getElementById('cronogramaPanel')?.style.display !== 'none' && typeof renderCronogramaModule === 'function') {
+    renderCronogramaModule();
+  }
+  if (typeof updateCronoProgressStats === 'function') {
+    updateCronoProgressStats();
   }
 
   setSyncStatus('⚡ En Vivo', 'online');
@@ -9724,6 +10155,816 @@ const CALDERON2_FERIADOS = [
   { date: '2027-05-03', label: 'Día del Trabajo (Traslado)' },
   { date: '2027-05-24', label: 'Batalla de Pichincha' }
 ];
+
+// ══════════════════════════════════════════════════════════════
+//  AGENDA INTERACTIVA & CRONOGRAMA OFICIAL (UEF CALDERÓN 2)
+// ══════════════════════════════════════════════════════════════
+
+const CALDERON2_ACTIVIDADES_PREVIAS = [
+  // SEMANA 1 (11 al 14 de Agosto)
+  {
+    id: 'prev_1',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-11',
+    fecha_label: 'Martes 11 de agosto',
+    hora: '13:00 - 13:45',
+    actividad: 'Bienvenida institucional, presentación del personal, socialización del cronograma de trabajo y lineamientos generales para el inicio del año lectivo.',
+    responsables: 'Rectora y Vicerrector',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_2',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-11',
+    fecha_label: 'Martes 11 de agosto',
+    hora: '13:45 - 15:00',
+    actividad: 'Indicaciones generales para la elaboración de los Planes Curriculares Anuales (PCA) y Planes Operativos Anuales (POA).',
+    responsables: 'Vicerrector y Comisión Técnico Pedagógica',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_3',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-11',
+    fecha_label: 'Martes 11 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Trabajo por áreas disciplinares: inicio de elaboración del Plan Curricular Anual (PCA).',
+    responsables: 'Coordinadores de área y docentes',
+    lugar: 'Aulas asignadas por área',
+    tipo: 'area'
+  },
+  {
+    id: 'prev_4',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-12',
+    fecha_label: 'Miércoles 12 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Continuación del trabajo por áreas en la elaboración del PCA: revisión de destrezas con criterios de desempeño y criterios de evaluación.',
+    responsables: 'Coordinadores de área y docentes',
+    lugar: 'Aulas asignadas por área',
+    tipo: 'area'
+  },
+  {
+    id: 'prev_5',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-12',
+    fecha_label: 'Miércoles 12 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Reunión de comisiones institucionales para la elaboración del Plan Operativo Anual (POA).',
+    responsables: 'Coordinadores de comisiones y docentes',
+    lugar: 'Aulas asignadas',
+    tipo: 'comision'
+  },
+  {
+    id: 'prev_6',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-13',
+    fecha_label: 'Jueves 13 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Consolidación de los Planes Curriculares Anuales (PCA) por áreas y articulación con los planes de refuerzo pedagógico.',
+    responsables: 'Coordinadores de área y docentes',
+    lugar: 'Aulas asignadas por área',
+    tipo: 'area'
+  },
+  {
+    id: 'prev_7',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-13',
+    fecha_label: 'Jueves 13 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Recepción y trámite de posibles apelaciones de calificaciones de supletorios / fin de año lectivo anterior.',
+    responsables: 'Vicerrectorado y Secretaría',
+    lugar: 'Vicerrectorado / Secretaría',
+    tipo: 'administrativa'
+  },
+  {
+    id: 'prev_8',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-14',
+    fecha_label: 'Viernes 14 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Revisión final y entrega digital de borradores de PCA a Vicerrectorado para su validación.',
+    responsables: 'Coordinadores de área y Vicerrectorado',
+    lugar: 'Vicerrectorado',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_9',
+    semana: 1,
+    semana_label: 'SEMANA 1 (11 al 14 de Agosto)',
+    fecha: '2026-08-14',
+    fecha_label: 'Viernes 14 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Planificación de las actividades de inducción y bienvenida para los estudiantes en la Fase CONECTA.',
+    responsables: 'Tutores de grado/curso y DECE',
+    lugar: 'Aulas de grado',
+    tipo: 'tutoria'
+  },
+
+  // SEMANA 2 (17 al 21 de Agosto)
+  {
+    id: 'prev_10',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-17',
+    fecha_label: 'Lunes 17 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Taller de socialización del DECE: Rutas y protocolos de actuación, inclusión educativa y adaptaciones curriculares para estudiantes con NN.EE.',
+    responsables: 'Profesionales del DECE',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'dece'
+  },
+  {
+    id: 'prev_11',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-17',
+    fecha_label: 'Lunes 17 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Elaboración de instrumentos de evaluación diagnóstica para la Fase de Nivelación Pedagógica (Fase NIVELA).',
+    responsables: 'Docentes por área disciplinar',
+    lugar: 'Aulas por área',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_12',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-18',
+    fecha_label: 'Martes 18 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Planificación de actividades socioemocionales y dinámicas de integración para la Semana 1 de clases (Fase CONECTA).',
+    responsables: 'Tutores y DECE',
+    lugar: 'Aulas de grado',
+    tipo: 'tutoria'
+  },
+  {
+    id: 'prev_13',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-18',
+    fecha_label: 'Martes 18 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Validación técnica de las pruebas de diagnóstico por parte de la Comisión Técnico Pedagógica.',
+    responsables: 'Comisión Técnico Pedagógica',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_14',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-19',
+    fecha_label: 'Miércoles 19 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Taller institucional: Metodologías activas, Aprendizaje Basado en Proyectos (ABP) y diseño del Proyecto Interdisciplinario (Fase CREA).',
+    responsables: 'Vicerrectorado y CTP',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_15',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-19',
+    fecha_label: 'Miércoles 19 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Trabajo interdisciplinar por niveles/subniveles: estructuración y selección del tema del Proyecto Interdisciplinar del 1er Trimestre.',
+    responsables: 'Equipos docentes por subnivel',
+    lugar: 'Aulas asignadas',
+    tipo: 'proyecto'
+  },
+  {
+    id: 'prev_16',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-20',
+    fecha_label: 'Jueves 20 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Organización de distributivos de aulas, inventario de mobiliario y verificación de textos escolares.',
+    responsables: 'Comisión de Bienes e Inspección',
+    lugar: 'Aulas y Bodega',
+    tipo: 'administrativa'
+  },
+  {
+    id: 'prev_17',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-20',
+    fecha_label: 'Jueves 20 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Actualización y revisión de nóminas de estudiantes y matrices de paralelos en el sistema institucional.',
+    responsables: 'Docentes tutores y Secretaría',
+    lugar: 'Aulas y Laboratorio',
+    tipo: 'tutoria'
+  },
+  {
+    id: 'prev_18',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-21',
+    fecha_label: 'Viernes 21 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Aprobación definitiva de los Planes Curriculares Anuales (PCA) y Plan Operativo Anual (POA) por Vicerrectorado.',
+    responsables: 'Vicerrectorado y Coordinadores de Área',
+    lugar: 'Vicerrectorado',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_19',
+    semana: 2,
+    semana_label: 'SEMANA 2 (17 al 21 de Agosto)',
+    fecha: '2026-08-21',
+    fecha_label: 'Viernes 21 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Planificación de las actividades y estrategias didácticas para la Fase de Nivelación Pedagógica (Fase NIVELA - Semanas 2 y 3).',
+    responsables: 'Docentes de área',
+    lugar: 'Aulas por área',
+    tipo: 'pedagogica'
+  },
+
+  // SEMANA 3 (24 al 31 de Agosto)
+  {
+    id: 'prev_20',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-24',
+    fecha_label: 'Lunes 24 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Socialización del Código de Convivencia Institucional y acuerdos pedagógicos de aula para el nuevo año lectivo.',
+    responsables: 'Consejo Ejecutivo y DECE',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_21',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-24',
+    fecha_label: 'Lunes 24 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Ambientación pedagógica de las aulas de clase y preparación de carteleras informativas de bienvenida.',
+    responsables: 'Docentes tutores',
+    lugar: 'Aulas de grado',
+    tipo: 'tutoria'
+  },
+  {
+    id: 'prev_22',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-25',
+    fecha_label: 'Martes 25 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Planificación microcurricular de las primeras unidades didácticas del 1er Trimestre.',
+    responsables: 'Docentes por asignatura',
+    lugar: 'Aulas por área',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_23',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-25',
+    fecha_label: 'Martes 25 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Configuración final de los registros de asistencia y calificaciones digitales en el sistema.',
+    responsables: 'Docentes tutores',
+    lugar: 'Laboratorio de Informática',
+    tipo: 'administrativa'
+  },
+  {
+    id: 'prev_24',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-26',
+    fecha_label: 'Miércoles 26 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Reunión general de tutores: lineamientos para la primera asamblea de padres de familia y elección de comités.',
+    responsables: 'Vicerrectorado e Inspección General',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'tutoria'
+  },
+  {
+    id: 'prev_25',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-26',
+    fecha_label: 'Miércoles 26 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Elaboración de material didáctico, fichas de registro y dinámicas de integración para la Semana 1.',
+    responsables: 'Docentes tutores y de área',
+    lugar: 'Aulas',
+    tipo: 'pedagogica'
+  },
+  {
+    id: 'prev_26',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-27',
+    fecha_label: 'Jueves 27 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Inspección de seguridad de instalaciones escolares, rutas de evacuación y protocolos de emergencia.',
+    responsables: 'Comisión de Gestión de Riesgos e Inspección',
+    lugar: 'Instalaciones del plantel',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_27',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-27',
+    fecha_label: 'Jueves 27 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Simulacro interno de jornada pedagógica y ajuste final de horarios de clase.',
+    responsables: 'Inspección General y Todo el personal',
+    lugar: 'Instalaciones del plantel',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_28',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-28',
+    fecha_label: 'Viernes 28 de agosto',
+    hora: '13:00 - 15:00',
+    actividad: 'Sesión plenaria de clausura de las jornadas de planificación pedagógica previa.',
+    responsables: 'Rectora, Vicerrector e Inspección General',
+    lugar: 'Sala de Uso Múltiple',
+    tipo: 'institucional'
+  },
+  {
+    id: 'prev_29',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-28',
+    fecha_label: 'Viernes 28 de agosto',
+    hora: '15:30 - 18:30',
+    actividad: 'Entrega oficial de horarios definitivos de clase y distributivos de trabajo a los docentes.',
+    responsables: 'Vicerrectorado e Inspección General',
+    lugar: 'Vicerrectorado',
+    tipo: 'administrativa'
+  },
+  {
+    id: 'prev_30',
+    semana: 3,
+    semana_label: 'SEMANA 3 (24 al 31 de Agosto)',
+    fecha: '2026-08-31',
+    fecha_label: 'Lunes 31 de agosto',
+    hora: '13:00 - 18:30',
+    actividad: 'Últimos preparativos logísticos y bienvenida para el inicio del año lectivo 2026-2027.',
+    responsables: 'Todo el personal docente y administrativo',
+    lugar: 'Instalaciones del plantel',
+    tipo: 'institucional'
+  }
+];
+
+let _cronoActiveFilter = 'all';
+
+function ensureCronoData() {
+  if (!S.cronoChecklist) S.cronoChecklist = {};
+  if (!S.cronoNotes) S.cronoNotes = {};
+}
+
+function getTodayFormattedSpanish() {
+  const todayStr = getTodayDateStr(); // YYYY-MM-DD
+  const [y, m, d] = todayStr.split('-').map(Number);
+  const dateObj = new Date(y, m - 1, d);
+  const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  return `${dias[dateObj.getDay()]}, ${d} de ${meses[dateObj.getMonth()]} de ${y}`;
+}
+
+function renderCronogramaModule() {
+  ensureCronoData();
+  const todayStr = getTodayDateStr();
+
+  // 1. Fecha Actual
+  const dateLabel = document.getElementById('cronoTodayDateLabel');
+  if (dateLabel) dateLabel.textContent = getTodayFormattedSpanish();
+
+  // 2. Determinación de Fase Actual
+  const phaseLabel = document.getElementById('cronoCurrentPhaseLabel');
+  let phaseText = 'Actividades Pedagógicas Previas · Semana 2';
+  if (todayStr >= '2026-08-11' && todayStr <= '2026-08-14') phaseText = 'Planificación Previa · Semana 1 (Elaboración PCA)';
+  else if (todayStr >= '2026-08-17' && todayStr <= '2026-08-21') phaseText = 'Planificación Previa · Semana 2 (DECE, Diagnóstico y Proyectos)';
+  else if (todayStr >= '2026-08-24' && todayStr <= '2026-08-31') phaseText = 'Planificación Previa · Semana 3 (Ambientación y Preparativos)';
+  else if (todayStr >= '2026-09-01' && todayStr <= '2026-09-04') phaseText = '1er Trimestre · Semana 1 (Fase CONECTA)';
+  else if (todayStr >= '2026-09-07' && todayStr <= '2026-09-18') phaseText = '1er Trimestre · Semanas 2-3 (Fase NIVELA)';
+  else if (todayStr >= '2026-09-21' && todayStr <= '2026-10-02') phaseText = '1er Trimestre · Semanas 4-5 (Fase CREA · Proyecto 30%)';
+  else if (todayStr >= '2026-10-05' && todayStr <= '2026-11-20') phaseText = '1er Trimestre · Abordaje Curricular Regular';
+  else if (todayStr >= '2026-11-23' && todayStr <= '2026-12-01') phaseText = '1er Trimestre · Evaluación Sumativa y Cierre';
+  else if (todayStr >= '2026-12-02' && todayStr <= '2027-03-15') phaseText = '2do Trimestre en Curso';
+  else if (todayStr >= '2027-03-16' && todayStr <= '2027-06-25') phaseText = '3er Trimestre en Curso';
+  else if (todayStr >= '2027-06-28' && todayStr <= '2027-07-09') phaseText = 'Cierre de Año Lectivo, Supletorios y Juntas';
+  else if (todayStr >= '2027-07-10' && todayStr <= '2027-08-08') phaseText = '🏖️ Vacaciones Docentes Institucionales';
+
+  if (phaseLabel) phaseLabel.textContent = phaseText;
+
+  // 3. Próximo Hito y Cuenta Regresiva
+  const milestoneLabel = document.getElementById('cronoNextMilestoneLabel');
+  if (milestoneLabel) {
+    if (todayStr < '2026-09-01') {
+      const d1 = new Date(todayStr.replace(/-/g, '/'));
+      const d2 = new Date('2026/09/01');
+      const diffDays = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+      milestoneLabel.textContent = `Inauguración Año Lectivo 2026-2027 · 01 Sep (Faltan ${diffDays} días)`;
+    } else if (todayStr <= '2026-12-01') {
+      milestoneLabel.textContent = 'Evaluación Sumativa 1er Trimestre · 23 Nov al 01 Dic';
+    } else if (todayStr <= '2027-03-15') {
+      milestoneLabel.textContent = 'Evaluación Sumativa 2do Trimestre · 08 al 15 Mar 2027';
+    } else {
+      milestoneLabel.textContent = 'Cierre de Año y Supletorios · 28 Jun al 02 Jul 2027';
+    }
+  }
+
+  // 4. Progreso de Tareas
+  updateCronoProgressStats();
+
+  // 5. Renderizar lista de agenda
+  renderCronoAgenda();
+}
+
+function updateCronoProgressStats() {
+  ensureCronoData();
+  const total = CALDERON2_ACTIVIDADES_PREVIAS.length;
+  let doneCount = 0;
+  CALDERON2_ACTIVIDADES_PREVIAS.forEach(act => {
+    if (S.cronoChecklist[act.id]) doneCount++;
+  });
+  const pct = Math.round((doneCount / total) * 100);
+
+  const textEl = document.getElementById('cronoProgressText');
+  const barEl  = document.getElementById('cronoProgressBar');
+  const badgeEl = document.getElementById('cronoProgressBadge');
+
+  if (textEl) textEl.textContent = `${doneCount} / ${total} cumplidas (${pct}%)`;
+  if (barEl)  barEl.style.width = `${pct}%`;
+  if (badgeEl) badgeEl.textContent = `${pct}% Cumplido`;
+}
+
+function setCronoFilter(filterKey) {
+  _cronoActiveFilter = filterKey;
+  document.querySelectorAll('.crono-filter-btn').forEach(b => {
+    b.className = 'btn btn-outline crono-filter-btn';
+  });
+  const map = {
+    'all':     'cronoFilterAll',
+    'today':   'cronoFilterToday',
+    'pending': 'cronoFilterPending',
+    'done':    'cronoFilterDone',
+    'sem1':    'cronoFilterSem1',
+    'sem2':    'cronoFilterSem2',
+    'sem3':    'cronoFilterSem3'
+  };
+  const activeBtn = document.getElementById(map[filterKey]);
+  if (activeBtn) activeBtn.className = 'btn btn-primary crono-filter-btn';
+  renderCronoAgenda();
+}
+
+function renderCronoAgenda() {
+  ensureCronoData();
+  const listEl = document.getElementById('cronoAgendaList');
+  if (!listEl) return;
+
+  const search = (document.getElementById('cronoSearchInput')?.value || '').toLowerCase().trim();
+  const todayStr = getTodayDateStr();
+
+  let filtered = CALDERON2_ACTIVIDADES_PREVIAS.filter(act => {
+    // Filtro por búsqueda de texto
+    if (search) {
+      const match = act.actividad.toLowerCase().includes(search) ||
+                    act.responsables.toLowerCase().includes(search) ||
+                    act.lugar.toLowerCase().includes(search) ||
+                    act.fecha_label.toLowerCase().includes(search);
+      if (!match) return false;
+    }
+
+    // Filtro por estado
+    const isDone = !!S.cronoChecklist[act.id];
+    if (_cronoActiveFilter === 'pending' && isDone) return false;
+    if (_cronoActiveFilter === 'done' && !isDone) return false;
+    if (_cronoActiveFilter === 'today' && act.fecha !== todayStr) return false;
+    if (_cronoActiveFilter === 'sem1' && act.semana !== 1) return false;
+    if (_cronoActiveFilter === 'sem2' && act.semana !== 2) return false;
+    if (_cronoActiveFilter === 'sem3' && act.semana !== 3) return false;
+
+    return true;
+  });
+
+  if (!filtered.length) {
+    listEl.innerHTML = `
+      <div style="background:var(--bg-card);border:1px dashed var(--border-color);border-radius:var(--radius-md);padding:36px;text-align:center;color:var(--text-muted)">
+        <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+        <div style="font-size:0.95rem;font-weight:800;color:var(--text-main)">No se encontraron actividades</div>
+        <div style="font-size:0.8rem;margin-top:4px">Prueba cambiando el filtro o término de búsqueda.</div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  let currentSemana = null;
+
+  filtered.forEach(act => {
+    if (act.semana !== currentSemana && (_cronoActiveFilter === 'all' || _cronoActiveFilter === 'pending' || _cronoActiveFilter === 'done')) {
+      currentSemana = act.semana;
+      html += `
+        <div style="background:var(--primary-light);border:1px solid var(--primary-border);padding:8px 16px;border-radius:8px;font-weight:900;color:var(--primary);font-size:0.85rem;display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+          <span>📅 ${escHTML(act.semana_label)}</span>
+          <span style="font-size:0.72rem;font-weight:700;background:var(--bg-card);padding:2px 8px;border-radius:99px">Jornada 13:00 - 18:30</span>
+        </div>
+      `;
+    }
+
+    const isDone = !!S.cronoChecklist[act.id];
+    const isToday = (act.fecha === todayStr);
+    const note = S.cronoNotes[act.id] || '';
+
+    // Badges según tipo
+    const typeBadges = {
+      'institucional': { bg: '#dbeafe', color: '#1e40af', label: 'Institucional' },
+      'pedagogica':    { bg: '#d1fae5', color: '#065f46', label: 'Pedagógica' },
+      'area':          { bg: '#fef3c7', color: '#92400e', label: 'Área Disciplinar' },
+      'comision':      { bg: '#ede9fe', color: '#6d28d9', label: 'Comisión' },
+      'tutoria':       { bg: '#fee2e2', color: '#991b1b', label: 'Tutoría' },
+      'dece':          { bg: '#ccfbf1', color: '#115e59', label: 'DECE' },
+      'proyecto':      { bg: '#ffedd5', color: '#9a3412', label: 'Proyecto CREA' },
+      'administrativa':{ bg: '#f1f5f9', color: '#475569', label: 'Gestión' }
+    };
+    const tBadge = typeBadges[act.tipo] || { bg: '#f1f5f9', color: '#475569', label: 'Actividad' };
+
+    html += `
+      <div class="crono-act-card" style="background:var(--bg-card);border:1.5px solid ${isToday ? '#f59e0b' : (isDone ? '#10b981' : 'var(--border-color)')};border-radius:var(--radius-md);padding:14px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:${isToday ? '0 4px 16px rgba(245,158,11,0.2)' : 'var(--shadow-xs)'};transition:all .15s ease;${isDone ? 'opacity:.82' : ''}">
+        
+        <!-- Fila Superior: Checkbox + Fecha + Horario + Badges -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <label style="cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;margin:0">
+              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleCronoTask('${act.id}', this.checked)" style="width:20px;height:20px;accent-color:#16a34a;cursor:pointer"/>
+              <span style="font-weight:900;font-size:0.92rem;color:${isDone ? '#15803d' : 'var(--text-main)'}">
+                ${escHTML(act.fecha_label)}
+              </span>
+            </label>
+            <span style="background:var(--bg-card-subtle);border:1px solid var(--border-color);font-family:var(--font-mono);font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:6px;color:var(--text-main)">
+              ⏰ ${escHTML(act.hora)}
+            </span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${isToday ? '<span style="background:#f59e0b;color:#78350f;font-weight:900;font-size:0.72rem;padding:3px 10px;border-radius:99px;box-shadow:0 2px 6px rgba(245,158,11,0.3)">⚡ HOY (EN CURSO)</span>' : ''}
+            <span style="background:${tBadge.bg};color:${tBadge.color};font-weight:800;font-size:0.7rem;padding:2px 8px;border-radius:99px">
+              ${tBadge.label}
+            </span>
+            <span style="background:var(--bg-card-subtle);color:var(--text-muted);font-weight:700;font-size:0.7rem;padding:2px 8px;border-radius:99px;border:1px solid var(--border-color)">
+              📍 ${escHTML(act.lugar)}
+            </span>
+          </div>
+        </div>
+
+        <!-- Descripción de la Actividad -->
+        <div style="font-size:0.86rem;line-height:1.45;color:${isDone ? 'var(--text-muted)' : 'var(--text-main)'};${isDone ? 'text-decoration:line-through' : 'font-weight:600'}">
+          ${escHTML(act.actividad)}
+        </div>
+
+        <!-- Fila Inferior: Responsables & Botón de Nota -->
+        <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border-subtle);padding-top:8px;font-size:0.75rem;color:var(--text-muted);flex-wrap:wrap;gap:8px">
+          <div>
+            <strong>Responsables:</strong> ${escHTML(act.responsables)}
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-outline" onclick="openCronoNoteModal('${act.id}')" style="padding:2px 8px;font-size:0.72rem;border-radius:6px" title="Añadir o editar notas personales para esta actividad">
+              📝 ${note ? 'Nota guardada' : 'Añadir nota'}
+            </button>
+            ${isDone ? '<span style="color:#16a34a;font-weight:800">✔ Cumplida</span>' : '<span style="color:#ea580c;font-weight:700">⏳ Pendiente</span>'}
+          </div>
+        </div>
+
+        ${note ? `
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:6px 10px;font-size:0.75rem;color:var(--text-main);display:flex;align-items:flex-start;gap:6px">
+            <span>📌</span>
+            <div style="flex:1"><strong>Nota Personal:</strong> ${escHTML(note)}</div>
+          </div>
+        ` : ''}
+
+      </div>
+    `;
+  });
+
+  listEl.innerHTML = html;
+}
+
+function toggleCronoTask(actId, isChecked) {
+  ensureCronoData();
+  S.cronoChecklist[actId] = !!isChecked;
+  updateCronoProgressStats();
+  renderCronoAgenda();
+  saveData();
+  toast(isChecked ? '✔ Actividad marcada como cumplida' : '⏳ Actividad marcada como pendiente', isChecked ? '#16a34a' : '#d97706');
+}
+
+function toggleAllCronoTasks(status) {
+  ensureCronoData();
+  CALDERON2_ACTIVIDADES_PREVIAS.forEach(act => {
+    S.cronoChecklist[act.id] = !!status;
+  });
+  updateCronoProgressStats();
+  renderCronoAgenda();
+  saveData();
+  toast(status ? '✔ Todas las actividades marcadas como cumplidas' : '⏳ Todas las actividades desmarcadas', status ? '#16a34a' : '#d97706');
+}
+
+function openCronoNoteModal(actId) {
+  ensureCronoData();
+  const act = CALDERON2_ACTIVIDADES_PREVIAS.find(a => a.id === actId);
+  if (!act) return;
+
+  const curNote = S.cronoNotes[actId] || '';
+
+  showModal(
+    '📝 Nota Personal de Seguimiento',
+    `
+    <div style="margin-bottom:10px;font-size:0.82rem;color:var(--text-muted)">
+      <strong>Actividad:</strong> ${escHTML(act.actividad)}
+    </div>
+    <label>Tus observaciones, avances o compromisos docentes:</label>
+    <textarea id="mCronoNoteText" style="width:100%;min-height:90px;padding:8px 10px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-main);font-family:var(--font-main);font-size:0.85rem" placeholder="Ej: Se entregó el borrador del PCA a la coordinadora de área...">${escHTML(curNote)}</textarea>
+    `,
+    'Guardar Nota',
+    () => {
+      const val = document.getElementById('mCronoNoteText').value.trim();
+      S.cronoNotes[actId] = val;
+      closeModal();
+      renderCronoAgenda();
+      saveData();
+      toast('💾 Nota de seguimiento guardada', '#16a34a');
+    }
+  );
+}
+
+function switchCronoModuleTab(tabIdx) {
+  for (let i = 1; i <= 4; i++) {
+    const view = document.getElementById('cronoModuleTab' + i);
+    const btn  = document.getElementById('tabBtnCrono' + i);
+    if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
+    if (btn) {
+      if (i === tabIdx) btn.className = 'btn btn-primary';
+      else btn.className = 'btn btn-outline';
+    }
+  }
+}
+
+function printCronogramaAgenda() {
+  ensureCronoData();
+  const total = CALDERON2_ACTIVIDADES_PREVIAS.length;
+  let doneCount = 0;
+  CALDERON2_ACTIVIDADES_PREVIAS.forEach(act => {
+    if (S.cronoChecklist[act.id]) doneCount++;
+  });
+  const pct = Math.round((doneCount / total) * 100);
+
+  const w = window.open('', '_blank');
+  let rowsHtml = '';
+
+  CALDERON2_ACTIVIDADES_PREVIAS.forEach((act, idx) => {
+    const isDone = !!S.cronoChecklist[act.id];
+    const note = S.cronoNotes[act.id] || '—';
+    rowsHtml += `
+      <tr>
+        <td style="text-align:center;font-weight:bold">${idx + 1}</td>
+        <td><strong>${escHTML(act.fecha_label)}</strong><br><small>${escHTML(act.hora)}</small></td>
+        <td>${escHTML(act.actividad)}</td>
+        <td>${escHTML(act.responsables)}<br><small>Lugar: ${escHTML(act.lugar)}</small></td>
+        <td style="text-align:center;font-weight:bold;color:${isDone ? '#15803d' : '#ea580c'}">${isDone ? '✔ CUMPLIDA' : '⏳ PENDIENTE'}</td>
+        <td style="font-size:7.5pt">${escHTML(note)}</td>
+      </tr>
+    `;
+  });
+
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Agenda de Seguimiento Pedagógico — UEF Calderón 2</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; font-size: 8pt; color: #1e293b; }
+        .hdr { text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 14px; }
+        .hdr h2 { margin: 0 0 4px 0; color: #1e3a8a; font-size: 1.2rem; }
+        .hdr p { margin: 2px 0; font-size: 8.5pt; color: #475569; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #cbd5e1; padding: 4px 6px; font-size: 7.8pt; }
+        th { background: #1e3a8a; color: #fff; text-align: left; }
+        .progress-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 8.5pt; }
+        @media print { body { padding: 0; } @page { size: landscape; margin: 1cm; } }
+      </style>
+    </head>
+    <body>
+      <div class="hdr">
+        <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
+        <p><strong>AGENDA Y REGISTRO DE SEGUIMIENTO DE ACTIVIDADES PEDAGÓGICAS PREVIAS (11 AL 31 DE AGOSTO)</strong></p>
+        <p><strong>Año Lectivo:</strong> ${S.anio || '2026-2027'} · <strong>Grado:</strong> ${S.grado || '7mo C'} · <strong>Docente:</strong> ${S.docente || 'Mg. Luis Lema'}</p>
+      </div>
+
+      <div class="progress-box">
+        <strong>Estado de Cumplimiento Global:</strong> ${doneCount} de ${total} actividades completadas (${pct}%) · <strong>Fecha de Reporte:</strong> ${getTodayFormattedSpanish()}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px">N°</th>
+            <th style="width:130px">Fecha y Hora</th>
+            <th>Actividad Pedagógica Institucional</th>
+            <th style="width:180px">Responsables y Lugar</th>
+            <th style="width:80px;text-align:center">Estado</th>
+            <th style="width:140px">Notas Docente</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+
+      <div style="margin-top:40px;display:flex;justify-content:space-around;text-align:center;font-size:8pt">
+        <div>
+          <div style="border-top:1px solid #64748b;width:220px;margin-bottom:4px"></div>
+          <div>Firma del Docente Tutor</div>
+        </div>
+        <div>
+          <div style="border-top:1px solid #64748b;width:220px;margin-bottom:4px"></div>
+          <div>Vicerrectorado / CTP</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 300);
+}
+
+function exportCronogramaXLSX() {
+  if (typeof XLSX === 'undefined') {
+    toast('⚠️ Librería XLSX no disponible', '#dc2626');
+    return;
+  }
+  ensureCronoData();
+
+  // Hoja 1: Agenda de Actividades Previas
+  const data1 = [
+    ['UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"'],
+    ['CRONOGRAMA DE ACTIVIDADES PEDAGÓGICAS PREVIAS (11 AL 31 DE AGOSTO)'],
+    ['Año Lectivo:', S.anio || '2026-2027', 'Docente:', S.docente || 'Mg. Luis Lema', 'Grado:', S.grado || '7mo C'],
+    [],
+    ['N°', 'Semana', 'Fecha', 'Horario', 'Actividad Pedagógica', 'Responsables', 'Lugar', 'Estado', 'Nota Docente']
+  ];
+
+  CALDERON2_ACTIVIDADES_PREVIAS.forEach((act, idx) => {
+    const isDone = !!S.cronoChecklist[act.id];
+    const note = S.cronoNotes[act.id] || '';
+    data1.push([
+      idx + 1,
+      act.semana_label,
+      act.fecha_label,
+      act.hora,
+      act.actividad,
+      act.responsables,
+      act.lugar,
+      isDone ? 'CUMPLIDA' : 'PENDIENTE',
+      note
+    ]);
+  });
+
+  // Hoja 2: Calendario 200 Días
+  const data2 = [
+    ['CALENDARIO OFICIAL DE 200 DÍAS LABORABLES — U.E.F. CALDERÓN 2'],
+    [],
+    ['Periodo', 'Fecha Inicio', 'Fecha Fin', 'Días Laborables', 'Semanas', 'Feriados Oficiales'],
+    ['1er Trimestre', '2026-09-01', '2026-12-01', 63, 14, '09 Oct, 02 Nov, 03 Nov'],
+    ['2do Trimestre', '2026-12-02', '2027-03-15', 66, 15, '25 Dic - 01 Ene, 08-09 Feb (Carnaval)'],
+    ['3er Trimestre', '2027-03-16', '2027-06-25', 71, 16, '19/23 Abr, 30 Abr, 03 May, 24 May'],
+    ['TOTAL', '', '', 200, 45, '16 días feriados']
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet(data1);
+  const ws2 = XLSX.utils.aoa_to_sheet(data2);
+
+  XLSX.utils.book_append_sheet(wb, ws1, 'Agenda Actividades Previas');
+  XLSX.utils.book_append_sheet(wb, ws2, 'Calendario 200 Días');
+
+  XLSX.writeFile(wb, `Cronograma_Agenda_Calderon2_${S.grado || '7mo_C'}.xlsx`);
+  toast('📊 Cronograma y Agenda exportados a Excel', '#16a34a');
+}
 
 function openCronogramaModal() {
   const m = document.getElementById('cronogramaModal');
