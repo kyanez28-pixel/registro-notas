@@ -2538,6 +2538,12 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" style="background:#f59e0b;color:#78350f;font-weight:800;border:none;box-shadow:0 2px 8px rgba(245,158,11,0.3)" onclick="openParentLinkModal()" title="Generar enlace web y código QR para que los padres actualicen los datos de sus hijos">
+        📲 Enlace Padres & QR
+      </button>
+      <button class="btn" style="background:#10b981;color:#fff;font-weight:800;border:none;box-shadow:0 2px 8px rgba(16,185,129,0.3)" onclick="openImportParentsDataModal()" title="Importar respuestas masivas desde Google Forms o archivo Excel">
+        📥 Importar Google Forms / Excel
+      </button>
       <button class="btn btn-success" onclick="openAddStudentMatrixModal()" style="font-weight:800">
         ➕ Nuevo Estudiante
       </button>
@@ -3541,13 +3547,355 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <span style="font-weight:800;font-size:0.92rem">👁 Mostrar / Ocultar</span>
     <button onclick="closeVisPanel()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer">✕</button>
   </div>
-  <div style="padding:10px 14px;border-bottom:1px solid var(--border-color);display:flex;gap:6px">
-    <button class="btn btn-success" style="font-size:0.72rem;padding:4px 8px" onclick="showAllVis()">Mostrar Todo</button>
-    <button class="btn btn-danger"  style="font-size:0.72rem;padding:4px 8px" onclick="hideAllRows()">Ocultar Filas</button>
+<!-- ══ MODAL 1: COMPARTIR ENLACE Y CÓDIGO QR PARA PADRES DE FAMILIA ══ -->
+<div class="mo" id="parentLinkModal" style="z-index:10010" onclick="if(event.target===this)closeParentLinkModal()">
+  <div class="md" style="max-width:540px;width:94%;border-radius:18px;padding:24px;box-shadow:var(--shadow-xl)">
+    
+    <!-- Encabezado -->
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem">📲</div>
+        <div>
+          <h3 style="margin:0;font-size:1.1rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+            Enlace y Código QR para Padres
+          </h3>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">
+            U.E.F. "Calderón 2" · Actualización Digital de Datos de Matrícula
+          </div>
+        </div>
+      </div>
+      <button onclick="closeParentLinkModal()" class="btn btn-outline" style="padding:4px 8px;font-size:0.85rem">✕</button>
+    </div>
+
+    <div style="background:var(--primary-light);border:1px solid var(--primary-border);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:0.82rem;color:var(--primary);line-height:1.45">
+      <strong>📌 ¿Cómo funciona?</strong> Comparte este enlace o proyecta el código QR en la primera asamblea de padres. Cada representante podrá seleccionar a su hijo/a y llenar sus datos personales, ficha médica y teléfonos en tiempo real desde su celular.
+    </div>
+
+    <!-- Código QR -->
+    <div style="text-align:center;margin-bottom:16px;background:var(--bg-card-subtle);border:1.5px dashed var(--border-color);border-radius:14px;padding:16px">
+      <div id="parentQrCodeContainer" style="display:inline-block;padding:10px;background:#fff;border-radius:10px;box-shadow:var(--shadow-sm)">
+        <img id="parentQrCodeImg" src="" alt="Código QR para Padres" style="width:190px;height:190px;display:block"/>
+      </div>
+      <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-top:8px">
+        Escanea con la cámara del celular para abrir el formulario
+      </div>
+    </div>
+
+    <!-- Enlace Web -->
+    <div style="margin-bottom:16px">
+      <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Enlace Directo del Formulario:</label>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <input type="text" id="parentFormLinkInput" readonly style="flex:1;background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:8px;padding:8px 12px;font-size:0.82rem;color:var(--text-main);font-family:var(--font-mono);font-weight:700" onclick="this.select()"/>
+        <button class="btn btn-primary" onclick="copyParentFormLink()" style="font-weight:800;font-size:0.82rem">
+          📋 Copiar
+        </button>
+      </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div style="display:flex;gap:8px;flex-direction:column">
+      <button class="btn btn-success" onclick="shareParentFormWhatsAppGroup()" style="justify-content:center;padding:10px 16px;font-weight:800;font-size:0.88rem">
+        💬 Compartir Comunicado al Grupo de WhatsApp
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" onclick="openParentPortalPreview()" style="flex:1;justify-content:center;font-size:0.8rem">
+          👁 Probar Formulario (Vista Padre)
+        </button>
+        <button class="btn btn-outline" onclick="printParentQrFlyer()" style="flex:1;justify-content:center;font-size:0.8rem">
+          🖨 Imprimir Volante con QR
+        </button>
+      </div>
+    </div>
+
   </div>
-  <div id="visPanelBody" style="overflow-y:auto;flex:1;padding:12px 16px"></div>
 </div>
-<div id="visOverlay" onclick="closeVisPanel()" style="display:none;position:fixed;inset:0;z-index:8887;background:rgba(0,0,0,0.3);backdrop-filter:blur(2px)"></div>
+
+<!-- ══ MODAL 2: IMPORTADOR MASIVO DESDE GOOGLE FORMS O EXCEL ══ -->
+<div class="mo" id="importParentsDataModal" style="z-index:10010" onclick="if(event.target===this)closeImportParentsDataModal()">
+  <div class="md" style="max-width:760px;width:96%;border-radius:18px;padding:24px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl)">
+    
+    <!-- Encabezado -->
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:14px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem">📥</div>
+        <div>
+          <h3 style="margin:0;font-size:1.1rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+            Importar Datos desde Google Forms o Excel
+          </h3>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">
+            Actualiza automáticamente las fichas de los 40 estudiantes con 1 solo clic
+          </div>
+        </div>
+      </div>
+      <button onclick="closeImportParentsDataModal()" class="btn btn-outline" style="padding:4px 8px;font-size:0.85rem">✕</button>
+    </div>
+
+    <!-- Contenido Scrollable -->
+    <div style="overflow-y:auto;flex:1;padding-right:4px">
+      
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:0.82rem;color:var(--text-main);line-height:1.5">
+        <strong>💡 Instrucciones:</strong>
+        <ol style="margin:6px 0 0 16px;padding:0">
+          <li>Descarga el archivo Excel de respuestas de tu <strong>Google Form</strong> o copia las celdas desde Google Sheets.</li>
+          <li>Sube el archivo Excel (<strong>.xlsx</strong> / <strong>.csv</strong>) o pega el texto en la caja inferior.</li>
+          <li>El sistema detectará automáticamente los nombres de los estudiantes y actualizará cédulas, teléfonos de representantes, direcciones y fichas médicas.</li>
+        </ol>
+      </div>
+
+      <!-- Zona de Carga de Archivo -->
+      <div style="border:2px dashed #93c5fd;border-radius:12px;padding:18px;text-align:center;margin-bottom:14px;background:rgba(239,246,255,0.4)">
+        <div style="font-size:1.8rem;margin-bottom:6px">📊</div>
+        <div style="font-size:0.88rem;font-weight:800;color:var(--primary);margin-bottom:6px">Selecciona tu archivo Excel (.xlsx / .xls / .csv)</div>
+        <input type="file" id="parentsXlsxFileInput" accept=".xlsx,.xls,.csv" onchange="handleParentsXlsxFile(this)" style="display:none"/>
+        <button class="btn btn-primary" onclick="document.getElementById('parentsXlsxFileInput').click()" style="font-weight:800;padding:6px 16px;font-size:0.82rem">
+          📁 Seleccionar Archivo Excel
+        </button>
+      </div>
+
+      <!-- O pegar texto -->
+      <div style="margin-bottom:14px">
+        <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">O Pega las filas copiadas de Google Sheets / Excel:</label>
+        <textarea id="parentsPasteArea" placeholder="Pega aquí la tabla copiada de Google Forms (con o sin encabezados)..." style="width:100%;min-height:90px;padding:8px 10px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-main);font-family:var(--font-mono);font-size:0.78rem" oninput="parseParentsPastedData()"></textarea>
+      </div>
+
+      <!-- Vista Previa de Coincidencias -->
+      <div id="parentsImportPreviewArea" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:0.82rem;font-weight:800;color:var(--text-main)" id="parentsImportMatchCount">0 coincidencias detectadas</span>
+          <span style="font-size:0.72rem;color:var(--text-muted)">Verifica antes de aplicar los cambios</span>
+        </div>
+        <div class="tw" style="max-height:220px">
+          <table style="width:100%;font-size:0.76rem" id="parentsImportPreviewTable">
+            <thead>
+              <tr>
+                <th>Estudiante Matriz</th>
+                <th>Cédula</th>
+                <th>Representante</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>NN.EE.</th>
+                <th>Enfermedad</th>
+              </tr>
+            </thead>
+            <tbody id="parentsImportPreviewTb"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botones de Acción -->
+    <div style="display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--border-color);padding-top:12px;margin-top:12px;flex-shrink:0">
+      <button class="btn btn-outline" onclick="closeImportParentsDataModal()">Cancelar</button>
+      <button class="btn btn-success" id="btnApplyParentsImport" disabled onclick="applyParentsDataImport()" style="font-weight:800;padding:8px 20px">
+        ✔ Aplicar y Actualizar Matriz
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL 3: PORTAL DIGITAL PARA REPRESENTANTES (FICHA PADRES) ══ -->
+<div class="mo" id="parentPortalModal" style="z-index:10015" onclick="if(event.target===this)closeParentPortalModal()">
+  <div class="md" style="max-width:720px;width:96%;border-radius:20px;padding:24px;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl)">
+    
+    <!-- Encabezado Institucional -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:16px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem">🏛️</div>
+        <div>
+          <h3 style="margin:0;font-size:1.15rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+            UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"
+          </h3>
+          <div style="font-size:0.78rem;font-weight:700;color:var(--primary);margin-top:2px">
+            Ficha Informativa y Actualización Digital de Datos de Matrícula
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-muted)" id="pfHeaderGradeYear">Séptimo de Básica "C" · Año Lectivo 2026-2027</div>
+        </div>
+      </div>
+      <button onclick="closeParentPortalModal()" class="btn btn-outline" style="padding:4px 8px;font-size:0.85rem">✕</button>
+    </div>
+
+    <!-- Formulario Scrollable -->
+    <div style="overflow-y:auto;flex:1;padding-right:6px">
+      
+      <!-- Selector de Estudiante -->
+      <div style="background:var(--primary-light);border:1.5px solid var(--primary-border);border-radius:12px;padding:12px 16px;margin-bottom:16px">
+        <label style="font-weight:800;font-size:0.82rem;color:var(--primary);text-transform:uppercase;display:block;margin-bottom:4px">
+          1. Seleccione a su Representado/a (Estudiante):
+        </label>
+        <select id="pfStudentSelect" onchange="onParentSelectStudent(this.value)" style="width:100%;font-size:0.95rem;font-weight:800;padding:8px 12px;border-radius:8px;border:1.5px solid #93c5fd;background:var(--bg-card);color:var(--text-main)">
+          <option value="">-- Seleccione el nombre de su hijo/a --</option>
+        </select>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">
+          Al seleccionar al estudiante se cargarán automáticamente los datos registrados previamente.
+        </div>
+      </div>
+
+      <div id="pfFormFieldsArea" style="display:none">
+        
+        <!-- SECCIÓN A: DATOS DEL ESTUDIANTE -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-weight:900;font-size:0.88rem;color:#1e40af;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <span>👤 DATOS DEL ESTUDIANTE</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+            <div style="grid-column:1/-1">
+              <label>Nombres y Apellidos Completos</label>
+              <input type="text" id="pfEstNombre" readonly style="background:var(--bg-card-subtle);font-weight:800"/>
+            </div>
+            <div>
+              <label>Cédula de Identidad (10 dígitos) *</label>
+              <input type="text" id="pfEstCedula" placeholder="Ej: 1723456789" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')"/>
+            </div>
+            <div>
+              <label>Fecha de Nacimiento *</label>
+              <input type="date" id="pfEstFechaNac" onchange="calcParentFormAge()"/>
+            </div>
+            <div>
+              <label>Edad Calculada</label>
+              <input type="text" id="pfEstEdad" readonly placeholder="Automático" style="background:var(--bg-card-subtle);font-weight:800"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN B: DATOS DEL REPRESENTANTE LEGAL -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-weight:900;font-size:0.88rem;color:#15803d;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <span>👨‍💼 DATOS DEL REPRESENTANTE LEGAL</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+            <div style="grid-column:1/-1">
+              <label>Nombres y Apellidos del Representante *</label>
+              <input type="text" id="pfRepNombre" placeholder="Ej: María Elena Rodríguez Gómez"/>
+            </div>
+            <div>
+              <label>Cédula del Representante *</label>
+              <input type="text" id="pfRepCedula" placeholder="10 dígitos" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')"/>
+            </div>
+            <div>
+              <label>Teléfono Celular (WhatsApp) *</label>
+              <input type="text" id="pfRepTelefono" placeholder="Ej: 0991234567" maxlength="10" oninput="this.value=this.value.replace(/\\D/g,'')"/>
+            </div>
+            <div>
+              <label>Teléfono de Emergencia / Convencional</label>
+              <input type="text" id="pfRepTelEmergencia" placeholder="Ej: 022123456 / 0987654321"/>
+            </div>
+            <div>
+              <label>Correo Electrónico del Representante</label>
+              <input type="email" id="pfRepEmail" placeholder="ejemplo@gmail.com"/>
+            </div>
+            <div style="grid-column:1/-1">
+              <label>Dirección Domiciliaria Exacta (Sector, Barrio, Calles y N° de Casa) *</label>
+              <input type="text" id="pfRepDireccion" placeholder="Ej: Calderón, Barrio San José, Calle Principal y Pasaje A, Lote 14"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN C: DATOS DE LOS PADRES -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-weight:900;font-size:0.88rem;color:#7e22ce;margin-bottom:10px">
+            👨‍👩‍👧 DATOS DE CONTACTO DE MADRE Y PADRE
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+            <div style="background:var(--bg-card-subtle);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+              <strong style="font-size:0.78rem;color:#7e22ce">DATOS DE LA MADRE</strong>
+              <div style="margin-top:6px">
+                <label>Nombre de la Madre</label>
+                <input type="text" id="pfMadreNombre" placeholder="Nombres completos"/>
+              </div>
+              <div style="margin-top:6px">
+                <label>Teléfono Celular Madre</label>
+                <input type="text" id="pfMadreTelefono" placeholder="099..."/>
+              </div>
+            </div>
+            <div style="background:var(--bg-card-subtle);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+              <strong style="font-size:0.78rem;color:#7e22ce">DATOS DEL PADRE</strong>
+              <div style="margin-top:6px">
+                <label>Nombre del Padre</label>
+                <input type="text" id="pfPadreNombre" placeholder="Nombres completos"/>
+              </div>
+              <div style="margin-top:6px">
+                <label>Teléfono Celular Padre</label>
+                <input type="text" id="pfPadreTelefono" placeholder="099..."/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN D: FICHA MÉDICA & INCLUSIÓN EDUCATIVA -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-weight:900;font-size:0.88rem;color:#ea580c;margin-bottom:10px">
+            🏥 FICHA MÉDICA, NN.EE. Y HERMANOS EN EL PLANTEL
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+            <div>
+              <label>¿Tiene Necesidad Educativa Especial (NN.EE.) o Discapacidad?</label>
+              <select id="pfNneeSelect" onchange="togglePfNneeDetail(this.value)">
+                <option value="NO">NO</option>
+                <option value="SÍ">SÍ</option>
+              </select>
+            </div>
+            <div id="pfNneeDetailBox" style="display:none">
+              <label>Especifique la NN.EE. o porcentaje:</label>
+              <input type="text" id="pfNneeDetalle" placeholder="Ej: TDAH, Discapacidad auditiva 30%..."/>
+            </div>
+            <div>
+              <label>¿Padece alguna Enfermedad, Alergia o toma Medicamento?</label>
+              <select id="pfEnfSelect" onchange="togglePfEnfDetail(this.value)">
+                <option value="NO">NO</option>
+                <option value="SÍ">SÍ</option>
+              </select>
+            </div>
+            <div id="pfEnfDetailBox" style="display:none">
+              <label>Especifique enfermedad / alergia:</label>
+              <input type="text" id="pfEnfDetalle" placeholder="Ej: Asma, Alergia a la penicilina..."/>
+            </div>
+            <div style="grid-column:1/-1">
+              <label>¿Tiene Hermanos estudiando en la U.E.F. "Calderón 2"?</label>
+              <select id="pfHermanosSelect" onchange="togglePfHermanosDetail(this.value)">
+                <option value="NO">NO</option>
+                <option value="SÍ">SÍ</option>
+              </select>
+            </div>
+            <div id="pfHermanosDetailBox" style="grid-column:1/-1;display:none">
+              <label>Nombres y Grados de los Hermanos:</label>
+              <input type="text" id="pfHermanosDetalle" placeholder="Ej: Juan Pérez (3ro EGB A), Sofía Pérez (Bachillerato B)..."/>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN E: FOTO DEL ESTUDIANTE -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <div id="pfFotoPreviewBox" style="width:75px;height:90px;border-radius:8px;border:2px dashed var(--border-color);display:flex;align-items:center;justify-content:center;background:var(--bg-card-subtle);overflow:hidden;flex-shrink:0">
+            <span style="font-size:0.7rem;color:var(--text-muted);text-align:center">Sin foto</span>
+          </div>
+          <div style="flex:1;min-width:200px">
+            <div style="font-weight:800;font-size:0.85rem;color:var(--text-main);margin-bottom:4px">📷 Fotografía del Estudiante (Opcional)</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px">Sube una foto tipo carné clara o tómala con la cámara del celular.</div>
+            <input type="file" id="pfFotoInput" accept="image/*" onchange="handleParentFormFoto(this)" style="display:none"/>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('pfFotoInput').click()" style="font-size:0.78rem;padding:5px 12px">
+              📁 Subir Foto del Estudiante
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Botones de Guardado y Confirmación -->
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:2px solid var(--border-color);padding-top:14px;margin-top:12px;flex-shrink:0;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="closeParentPortalModal()">Cerrar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-success" id="btnSaveParentForm" disabled onclick="saveParentPortalData()" style="font-weight:900;padding:10px 22px;font-size:0.92rem;box-shadow:0 4px 12px rgba(22,163,74,0.3)">
+          ✔ Guardar y Actualizar Ficha
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <!-- ── MODAL GENÉRICO ── -->
 <div class="mo" id="modal">
@@ -9525,9 +9873,11 @@ function renderStudentsMatrix() {
           <div style="display:flex;align-items:center;gap:7px">${avatarHTML}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span></div>
         </td>
         ${cellsHTML}
-        <td style="text-align:center">
+        <td style="text-align:center;white-space:nowrap">
           <button class="btn btn-teal" style="padding:2px 8px;font-size:0.72rem;font-weight:700"
             onclick="event.stopPropagation();openStudentProfileModal(${si})" title="Abrir ficha completa">✎ Ficha</button>
+          <button class="btn btn-success" style="padding:2px 8px;font-size:0.72rem;font-weight:700;margin-left:3px"
+            onclick="event.stopPropagation();sendParentFormWhatsAppIndividual(${si})" title="Enviar enlace de actualización de datos por WhatsApp a este representante">📲 WhatsApp</button>
         </td>
       </tr>`;
   }).join('');
@@ -10132,6 +10482,652 @@ function exportStudentsMatrixXLSX() {
 
 
 
+
+// ══════════════════════════════════════════════════════════════
+//  PORTAL Y FORMULARIO DIGITAL PARA PADRES DE FAMILIA
+//  (ACTUALIZACIÓN DE MATRÍCULA Y FICHA DEL ESTUDIANTE)
+// ══════════════════════════════════════════════════════════════
+
+let _parentFormFotoData = null;
+let _pendingParentsImport = [];
+
+function getParentFormBaseUrl(stIndex = null) {
+  let url = window.location.protocol + '//' + window.location.host + window.location.pathname + '?padres=1';
+  if (stIndex !== null && stIndex !== undefined) {
+    url += `&st=${stIndex}`;
+  }
+  return url;
+}
+
+function openParentLinkModal() {
+  const m = document.getElementById('parentLinkModal');
+  const linkInput = document.getElementById('parentFormLinkInput');
+  const qrImg = document.getElementById('parentQrCodeImg');
+  if (!m || !linkInput || !qrImg) return;
+
+  const url = getParentFormBaseUrl();
+  linkInput.value = url;
+
+  // Generar código QR en alta definición
+  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=1&data=${encodeURIComponent(url)}`;
+
+  m.classList.add('open');
+}
+
+function closeParentLinkModal() {
+  const m = document.getElementById('parentLinkModal');
+  if (m) m.classList.remove('open');
+}
+
+function copyParentFormLink() {
+  const linkInput = document.getElementById('parentFormLinkInput');
+  if (!linkInput) return;
+  navigator.clipboard.writeText(linkInput.value).then(() => {
+    toast('📋 Enlace copiado al portapapeles. ¡Listo para enviar por WhatsApp!', '#16a34a');
+  }).catch(() => {
+    linkInput.select();
+    document.execCommand('copy');
+    toast('📋 Enlace copiado al portapapeles', '#16a34a');
+  });
+}
+
+function shareParentFormWhatsAppGroup() {
+  const url = getParentFormBaseUrl();
+  const anio = S.anio || '2026-2027';
+  const grado = S.grado || '7mo de Básica "C"';
+  const tutor = S.docente || S.tutor || 'Tutor de Grado';
+
+  const msg = 
+`*UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"*
+*ACTUALIZACIÓN DIGITAL DE FICHA DE MATRÍCULA (${anio})*
+
+Estimados Padres de Familia y Representantes Legales de *${grado}*:
+
+Para dar inicio al nuevo año lectivo y mantener actualizados los registros oficiales del aula (contactos de emergencia, teléfonos de WhatsApp, dirección domiciliaria, ficha médica y necesidades educativas), solicitamos comedidamente ingresar al siguiente formulario digital institucional:
+
+👉 *Enlace del Formulario:*
+${url}
+
+*Instrucciones:*
+1. Abra el enlace desde su celular o computador.
+2. Seleccione el nombre de su hijo/a en la lista.
+3. Revise y complete los datos solicitados.
+4. Presione el botón verde *"Guardar y Actualizar Ficha"*.
+
+Agradecemos su valiosa colaboración y compromiso con la educación de sus representados.
+
+Atentamente,
+*${tutor}*
+Docente Tutor — U.E.F. "Calderón 2"`;
+
+  const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+}
+
+function sendParentFormWhatsAppIndividual(si) {
+  ensureStudentProfiles();
+  const p = S.studentProfiles[si];
+  if (!p) return;
+
+  const url = getParentFormBaseUrl(si);
+  const nombreEst = p.nombre || S.students[si] || 'su representado/a';
+  const anio = S.anio || '2026-2027';
+  const grado = S.grado || '7mo de Básica "C"';
+  const tutor = S.docente || S.tutor || 'Tutor de Grado';
+
+  const rawPhone = p.rep_telefono || p.madre_telefono || p.padre_telefono || '';
+  const cleanPhone = formatPhoneWhatsApp(rawPhone);
+
+  const msg = 
+`*UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"*
+*ACTUALIZACIÓN DE FICHA DE MATRÍCULA (${anio})*
+
+Estimado/a Representante de *${nombreEst}* (${grado}):
+
+Le saluda cordialmente el tutor/a de grado. Solicitamos muy comedidamente ingresar al siguiente enlace directo para revisar y actualizar la *Ficha de Datos, Contactos y Ficha Médica* de su representado/a:
+
+👉 *Enlace directo de su representado/a:*
+${url}
+
+El formulario se llena directamente desde su celular en menos de 2 minutos. Al finalizar, presione *"Guardar y Actualizar Ficha"*.
+
+Muchas gracias por su pronta atención.
+
+Atentamente,
+*${tutor}* — Docente Tutor`;
+
+  const waUrl = cleanPhone 
+    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
+    : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+  window.open(waUrl, '_blank');
+}
+
+function printParentQrFlyer() {
+  const url = getParentFormBaseUrl();
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=${encodeURIComponent(url)}`;
+  const anio = S.anio || '2026-2027';
+  const grado = S.grado || '7mo de Básica "C"';
+  const tutor = S.docente || S.tutor || 'Mg. Luis Lema';
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Volante de Actualización de Datos — UEF Calderón 2</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; padding: 25px; color: #1e293b; }
+        .box { max-width: 620px; margin: 0 auto; border: 3px solid #1e3a8a; border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { margin: 0 0 6px 0; color: #1e3a8a; font-size: 1.5rem; }
+        h2 { margin: 0 0 16px 0; color: #d97706; font-size: 1.1rem; }
+        .qr-wrap { padding: 12px; background: #f8fafc; border: 2px dashed #94a3b8; border-radius: 12px; display: inline-block; margin: 16px 0; }
+        .steps { text-align: left; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; font-size: 9.5pt; line-height: 1.5; margin: 14px 0; }
+        .steps ol { margin: 6px 0 0 18px; padding: 0; }
+        .link { font-family: monospace; font-size: 9pt; color: #1e40af; word-break: break-all; margin: 8px 0; }
+        .footer { margin-top: 20px; font-size: 9pt; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 10px; }
+        @media print { body { padding: 0; } .box { border: 2px solid #000; box-shadow: none; } }
+      </style>
+    </head>
+    <body>
+      <div class="box">
+        <h1>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h1>
+        <h2>ACTUALIZACIÓN DIGITAL DE DATOS DE MATRÍCULA · AÑO LECTIVO ${anio}</h2>
+        <div style="font-weight:bold;font-size:10.5pt;color:#1e3a8a;margin-bottom:10px">${grado} · Tutor/a: ${tutor}</div>
+        
+        <p style="font-size:9.5pt;margin:0 0 10px 0">Estimado/a Representante Legal: Escanee este código con la cámara de su teléfono celular para acceder a la Ficha Informativa de su representado/a:</p>
+        
+        <div class="qr-wrap">
+          <img src="${qrUrl}" alt="Código QR" style="width:230px;height:230px;display:block"/>
+        </div>
+
+        <div class="link">O ingrese directamente en su navegador web a:<br><strong>${url}</strong></div>
+
+        <div class="steps">
+          <strong>Pasos sencillos:</strong>
+          <ol>
+            <li>Apunte la cámara de su celular al código QR y toque la notificación que aparece.</li>
+            <li>Seleccione los nombres y apellidos de su hijo/a en el menú desplegable.</li>
+            <li>Actualice los números telefónicos de contacto, WhatsApp, dirección y ficha médica.</li>
+            <li>Presione el botón verde <strong>"Guardar y Actualizar Ficha"</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="footer">
+          Juntos por una educación de calidad y comunicación oportuna · UEF Calderón 2
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 400);
+}
+
+// ── PORTAL DIGITAL DEL PADRE DE FAMILIA ───────────────────────────────────
+
+function openParentPortalModal(studentIndex = null) {
+  ensureStudentProfiles();
+  const m = document.getElementById('parentPortalModal');
+  const sel = document.getElementById('pfStudentSelect');
+  if (!m || !sel) return;
+
+  // Llenar selector de estudiantes
+  sel.innerHTML = '<option value="">-- Seleccione el nombre de su hijo/a --</option>';
+  S.studentProfiles.forEach((p, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = `${idx + 1}. ${p.nombre || S.students[idx] || ('Estudiante ' + (idx + 1))}`;
+    sel.appendChild(opt);
+  });
+
+  const hdrGrade = document.getElementById('pfHeaderGradeYear');
+  if (hdrGrade) {
+    hdrGrade.textContent = `${S.grado || '7mo EGB C'} · Año Lectivo ${S.anio || '2026-2027'} · Tutor: ${S.docente || 'Docente Tutor'}`;
+  }
+
+  // Si viene con índice predefinido
+  if (studentIndex !== null && studentIndex >= 0 && studentIndex < S.studentProfiles.length) {
+    sel.value = studentIndex;
+    onParentSelectStudent(studentIndex);
+  } else {
+    document.getElementById('pfFormFieldsArea').style.display = 'none';
+    document.getElementById('btnSaveParentForm').disabled = true;
+  }
+
+  m.classList.add('open');
+}
+
+function closeParentPortalModal() {
+  const m = document.getElementById('parentPortalModal');
+  if (m) m.classList.remove('open');
+}
+
+function openParentPortalPreview() {
+  closeParentLinkModal();
+  openParentPortalModal(0);
+}
+
+function onParentSelectStudent(val) {
+  const fieldsArea = document.getElementById('pfFormFieldsArea');
+  const btnSave = document.getElementById('btnSaveParentForm');
+  if (!val && val !== 0 && val !== '0') {
+    if (fieldsArea) fieldsArea.style.display = 'none';
+    if (btnSave) btnSave.disabled = true;
+    return;
+  }
+
+  const si = parseInt(val, 10);
+  ensureStudentProfiles();
+  const p = S.studentProfiles[si];
+  if (!p) return;
+
+  if (fieldsArea) fieldsArea.style.display = 'block';
+  if (btnSave) btnSave.disabled = false;
+
+  // Cargar datos en los campos
+  document.getElementById('pfEstNombre').value        = p.nombre || S.students[si] || '';
+  document.getElementById('pfEstCedula').value        = p.cedula || '';
+  document.getElementById('pfEstFechaNac').value      = p.fecha_nacimiento || '';
+  document.getElementById('pfEstEdad').value          = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad || '';
+  
+  document.getElementById('pfRepNombre').value        = p.rep_nombre || '';
+  document.getElementById('pfRepCedula').value        = p.rep_cedula || '';
+  document.getElementById('pfRepTelefono').value      = p.rep_telefono || '';
+  document.getElementById('pfRepTelEmergencia').value  = p.tel_emergencia || '';
+  document.getElementById('pfRepEmail').value          = p.rep_email || '';
+  document.getElementById('pfRepDireccion').value      = p.direccion || '';
+
+  document.getElementById('pfMadreNombre').value      = p.madre_nombre || '';
+  document.getElementById('pfMadreTelefono').value    = p.madre_telefono || '';
+  document.getElementById('pfPadreNombre').value      = p.padre_nombre || '';
+  document.getElementById('pfPadreTelefono').value    = p.padre_telefono || '';
+
+  // NN.EE.
+  const hasNnee = p.nnee && !['NO', 'NINGUNA', ''].includes(p.nnee.trim().toUpperCase());
+  document.getElementById('pfNneeSelect').value = hasNnee ? 'SÍ' : 'NO';
+  document.getElementById('pfNneeDetailBox').style.display = hasNnee ? 'block' : 'none';
+  document.getElementById('pfNneeDetalle').value = hasNnee ? (p.nnee === 'SÍ' ? '' : p.nnee) : '';
+
+  // Enfermedad
+  const hasEnf = p.enfermedad && !['NO', 'NINGUNA', 'NINGÚNA', ''].includes(p.enfermedad.trim().toUpperCase());
+  document.getElementById('pfEnfSelect').value = hasEnf ? 'SÍ' : 'NO';
+  document.getElementById('pfEnfDetailBox').style.display = hasEnf ? 'block' : 'none';
+  document.getElementById('pfEnfDetalle').value = hasEnf ? (p.enfermedad === 'SÍ' ? '' : p.enfermedad) : '';
+
+  // Hermanos
+  const hasHnos = p.hermanos_inst && !['NO', 'NINGUNO', ''].includes(p.hermanos_inst.trim().toUpperCase());
+  document.getElementById('pfHermanosSelect').value = hasHnos ? 'SÍ' : 'NO';
+  document.getElementById('pfHermanosDetailBox').style.display = hasHnos ? 'block' : 'none';
+  document.getElementById('pfHermanosDetalle').value = hasHnos ? (p.hermanos_inst === 'SÍ' ? '' : p.hermanos_inst) : '';
+
+  // Foto
+  _parentFormFotoData = p.foto || null;
+  const fotoBox = document.getElementById('pfFotoPreviewBox');
+  if (fotoBox) {
+    if (_parentFormFotoData) {
+      fotoBox.innerHTML = `<img src="${_parentFormFotoData}" style="width:100%;height:100%;object-fit:cover"/>`;
+    } else {
+      fotoBox.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted);text-align:center">Sin foto</span>';
+    }
+  }
+}
+
+function calcParentFormAge() {
+  const val = document.getElementById('pfEstFechaNac').value;
+  const age = calculateAgeFromBirthDate(val);
+  document.getElementById('pfEstEdad').value = age;
+}
+
+function togglePfNneeDetail(val) {
+  document.getElementById('pfNneeDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function togglePfEnfDetail(val) {
+  document.getElementById('pfEnfDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function togglePfHermanosDetail(val) {
+  document.getElementById('pfHermanosDetailBox').style.display = (val === 'SÍ') ? 'block' : 'none';
+}
+
+function handleParentFormFoto(input) {
+  const file = input.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _parentFormFotoData = e.target.result;
+    const fotoBox = document.getElementById('pfFotoPreviewBox');
+    if (fotoBox) {
+      fotoBox.innerHTML = `<img src="${_parentFormFotoData}" style="width:100%;height:100%;object-fit:cover"/>`;
+    }
+    toast('📷 Foto del estudiante cargada con éxito', '#2563eb');
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveParentPortalData() {
+  const sel = document.getElementById('pfStudentSelect');
+  if (!sel || sel.value === '') {
+    toast('⚠️ Por favor seleccione el nombre del estudiante', '#d97706');
+    return;
+  }
+  const si = parseInt(sel.value, 10);
+  ensureStudentProfiles();
+  const p = S.studentProfiles[si];
+  if (!p) return;
+
+  const repNombre = document.getElementById('pfRepNombre').value.trim();
+  const repTel    = document.getElementById('pfRepTelefono').value.trim();
+  const direccion = document.getElementById('pfRepDireccion').value.trim();
+
+  if (!repNombre) {
+    toast('⚠️ Ingrese los nombres y apellidos del representante legal', '#d97706');
+    document.getElementById('pfRepNombre').focus();
+    return;
+  }
+  if (!repTel || repTel.length < 9) {
+    toast('⚠️ Ingrese un número de celular de WhatsApp válido (mínimo 9 o 10 dígitos)', '#d97706');
+    document.getElementById('pfRepTelefono').focus();
+    return;
+  }
+  if (!direccion) {
+    toast('⚠️ Ingrese la dirección domiciliaria exacta del estudiante', '#d97706');
+    document.getElementById('pfRepDireccion').focus();
+    return;
+  }
+
+  // Guardar datos
+  p.cedula           = document.getElementById('pfEstCedula').value.trim();
+  p.fecha_nacimiento = document.getElementById('pfEstFechaNac').value.trim();
+  p.edad             = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad;
+
+  p.rep_nombre       = repNombre;
+  p.rep_cedula       = document.getElementById('pfRepCedula').value.trim();
+  p.rep_telefono     = repTel;
+  p.tel_emergencia   = document.getElementById('pfRepTelEmergencia').value.trim();
+  p.rep_email        = document.getElementById('pfRepEmail').value.trim();
+  p.direccion        = direccion;
+
+  p.madre_nombre     = document.getElementById('pfMadreNombre').value.trim();
+  p.madre_telefono   = document.getElementById('pfMadreTelefono').value.trim();
+  p.padre_nombre     = document.getElementById('pfPadreNombre').value.trim();
+  p.padre_telefono   = document.getElementById('pfPadreTelefono').value.trim();
+
+  // NN.EE.
+  const isNnee = document.getElementById('pfNneeSelect').value === 'SÍ';
+  p.nnee = isNnee ? (document.getElementById('pfNneeDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Enfermedad
+  const isEnf = document.getElementById('pfEnfSelect').value === 'SÍ';
+  p.enfermedad = isEnf ? (document.getElementById('pfEnfDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Hermanos
+  const isHnos = document.getElementById('pfHermanosSelect').value === 'SÍ';
+  p.hermanos_inst = isHnos ? (document.getElementById('pfHermanosDetalle').value.trim() || 'SÍ') : 'NO';
+
+  if (_parentFormFotoData) {
+    p.foto = _parentFormFotoData;
+  }
+
+  // Persistir en Firebase y LocalStorage
+  saveData();
+
+  if (document.getElementById('studentsMatrixPanel')?.style.display !== 'none' && typeof renderStudentsMatrix === 'function') {
+    renderStudentsMatrix();
+  }
+
+  closeParentPortalModal();
+
+  // Modal de confirmación para el padre
+  showModal(
+    '🎉 ¡Ficha Actualizada con Éxito!',
+    `
+    <div style="text-align:center;padding:10px">
+      <div style="font-size:3rem;margin-bottom:10px">✅</div>
+      <div style="font-size:1.1rem;font-weight:900;color:#15803d;margin-bottom:6px">
+        ¡Datos de ${escHTML(p.nombre)} guardados correctamente!
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin:0 0 14px 0">
+        La información ya fue sincronizada en tiempo real con el registro institucional del docente tutor en la <strong>U.E.F. "Calderón 2"</strong>.
+      </p>
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px;font-size:0.8rem;text-align:left;line-height:1.5">
+        <div><strong>👤 Estudiante:</strong> ${escHTML(p.nombre)}</div>
+        <div><strong>🆔 Cédula:</strong> ${escHTML(p.cedula || 'Registrada')}</div>
+        <div><strong>👨‍💼 Representante:</strong> ${escHTML(p.rep_nombre)} (${escHTML(p.rep_telefono)})</div>
+        <div><strong>📍 Dirección:</strong> ${escHTML(p.direccion)}</div>
+      </div>
+    </div>
+    `,
+    'Cerrar',
+    () => { closeModal(); }
+  );
+}
+
+// ── IMPORTADOR MASIVO DESDE GOOGLE FORMS O EXCEL ─────────────────────────
+
+function openImportParentsDataModal() {
+  const m = document.getElementById('importParentsDataModal');
+  if (!m) return;
+  document.getElementById('parentsPasteArea').value = '';
+  document.getElementById('parentsImportPreviewArea').style.display = 'none';
+  document.getElementById('btnApplyParentsImport').disabled = true;
+  _pendingParentsImport = [];
+  m.classList.add('open');
+}
+
+function closeImportParentsDataModal() {
+  const m = document.getElementById('importParentsDataModal');
+  if (m) m.classList.remove('open');
+}
+
+function handleParentsXlsxFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    toast('⚠️ Librería XLSX no disponible', '#dc2626');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      processImportedParentsRows(rows);
+    } catch(err) {
+      toast('❌ Error al procesar el archivo Excel: ' + err.message, '#dc2626');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseParentsPastedData() {
+  const text = document.getElementById('parentsPasteArea').value.trim();
+  if (!text) {
+    document.getElementById('parentsImportPreviewArea').style.display = 'none';
+    document.getElementById('btnApplyParentsImport').disabled = true;
+    return;
+  }
+  const lines = text.split(/\r?\n/);
+  const rows = lines.map(line => line.split('\t').map(cell => cell.trim()));
+  processImportedParentsRows(rows);
+}
+
+function normalizeNameForMatch(str) {
+  if (!str) return '';
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function findBestStudentMatchIndex(importedName) {
+  ensureStudentProfiles();
+  const target = normalizeNameForMatch(importedName);
+  if (!target || target.length < 3) return -1;
+
+  const targetWords = target.split(' ').filter(w => w.length > 2);
+
+  let bestIdx = -1;
+  let maxScore = 0;
+
+  S.studentProfiles.forEach((p, idx) => {
+    const currentName = normalizeNameForMatch(p.nombre || S.students[idx] || '');
+    if (!currentName) return;
+
+    if (currentName === target) {
+      bestIdx = idx;
+      maxScore = 100;
+      return;
+    }
+
+    // Coincidencia de palabras (Apellidos y Nombres)
+    const currentWords = currentName.split(' ').filter(w => w.length > 2);
+    let matchedWords = 0;
+    targetWords.forEach(tw => {
+      if (currentWords.includes(tw)) matchedWords++;
+    });
+
+    const score = (matchedWords / Math.max(targetWords.length, currentWords.length)) * 100;
+    if (score > maxScore && score >= 50) {
+      maxScore = score;
+      bestIdx = idx;
+    }
+  });
+
+  return bestIdx;
+}
+
+function processImportedParentsRows(rows) {
+  if (!rows || rows.length < 2) return;
+
+  // Identificar índices de columnas desde la cabecera
+  const headerRow = rows[0].map(h => String(h || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  
+  let colEstNombre = -1;
+  let colEstCedula = -1;
+  let colFechaNac  = -1;
+  let colRepNombre = -1;
+  let colRepCedula = -1;
+  let colRepTel    = -1;
+  let colDireccion = -1;
+  let colNnee      = -1;
+  let colEnf       = -1;
+  let colHnos      = -1;
+
+  headerRow.forEach((h, idx) => {
+    if (colEstNombre === -1 && (h.includes('estudiante') || h.includes('alumno') || h.includes('nombres y apellidos del estudiante') || h.includes('apellidos y nombres'))) colEstNombre = idx;
+    else if (colRepNombre === -1 && (h.includes('representante') && (h.includes('nombre') || h.includes('apellidos')))) colRepNombre = idx;
+    else if (colRepTel === -1 && (h.includes('telefono') || h.includes('celular') || h.includes('whatsapp') || h.includes('contacto'))) colRepTel = idx;
+    else if (colDireccion === -1 && (h.includes('direccion') || h.includes('domicilio') || h.includes('barrio') || h.includes('sector'))) colDireccion = idx;
+    else if (colEstCedula === -1 && (h.includes('cedula') || h.includes('identificacion') || h.includes('ci')) && !h.includes('rep') && !h.includes('padre') && !h.includes('madre')) colEstCedula = idx;
+    else if (colRepCedula === -1 && (h.includes('cedula') && (h.includes('rep') || h.includes('tutor')))) colRepCedula = idx;
+    else if (colFechaNac === -1 && (h.includes('nacimiento') || h.includes('fecha nac'))) colFechaNac = idx;
+    else if (colNnee === -1 && (h.includes('nnee') || h.includes('especial') || h.includes('discapacidad') || h.includes('inclusion'))) colNnee = idx;
+    else if (colEnf === -1 && (h.includes('enfermedad') || h.includes('alergia') || h.includes('medica') || h.includes('salud'))) colEnf = idx;
+    else if (colHnos === -1 && (h.includes('hermano') || h.includes('hermanos'))) colHnos = idx;
+  });
+
+  // Si no se encontró columna de nombre de estudiante, asumir primera columna con texto
+  if (colEstNombre === -1) colEstNombre = 1 < headerRow.length ? 1 : 0;
+
+  _pendingParentsImport = [];
+  let previewRowsHtml = '';
+  let matchCount = 0;
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || !row.length) continue;
+
+    const rawEstNombre = String(row[colEstNombre] || '').trim();
+    if (!rawEstNombre) continue;
+
+    const matchedIdx = findBestStudentMatchIndex(rawEstNombre);
+    if (matchedIdx !== -1) {
+      matchCount++;
+      const curProfile = S.studentProfiles[matchedIdx];
+      const matchObj = {
+        studentIdx: matchedIdx,
+        nombre: curProfile.nombre,
+        cedula: colEstCedula !== -1 ? String(row[colEstCedula]||'').trim() : curProfile.cedula,
+        fecha_nacimiento: colFechaNac !== -1 ? String(row[colFechaNac]||'').trim() : curProfile.fecha_nacimiento,
+        rep_nombre: colRepNombre !== -1 ? String(row[colRepNombre]||'').trim() : curProfile.rep_nombre,
+        rep_cedula: colRepCedula !== -1 ? String(row[colRepCedula]||'').trim() : curProfile.rep_cedula,
+        rep_telefono: colRepTel !== -1 ? String(row[colRepTel]||'').trim() : curProfile.rep_telefono,
+        direccion: colDireccion !== -1 ? String(row[colDireccion]||'').trim() : curProfile.direccion,
+        nnee: colNnee !== -1 ? String(row[colNnee]||'').trim() : curProfile.nnee,
+        enfermedad: colEnf !== -1 ? String(row[colEnf]||'').trim() : curProfile.enfermedad,
+        hermanos_inst: colHnos !== -1 ? String(row[colHnos]||'').trim() : curProfile.hermanos_inst
+      };
+      _pendingParentsImport.push(matchObj);
+
+      previewRowsHtml += `
+        <tr>
+          <td style="font-weight:700;color:#1e40af">${escHTML(matchObj.nombre)}</td>
+          <td>${escHTML(matchObj.cedula || '—')}</td>
+          <td>${escHTML(matchObj.rep_nombre || '—')}</td>
+          <td>${escHTML(matchObj.rep_telefono || '—')}</td>
+          <td>${escHTML(matchObj.direccion || '—')}</td>
+          <td>${escHTML(matchObj.nnee || 'NO')}</td>
+          <td>${escHTML(matchObj.enfermedad || 'NO')}</td>
+        </tr>
+      `;
+    }
+  }
+
+  const previewArea = document.getElementById('parentsImportPreviewArea');
+  const countLabel  = document.getElementById('parentsImportMatchCount');
+  const tb          = document.getElementById('parentsImportPreviewTb');
+  const btnApply    = document.getElementById('btnApplyParentsImport');
+
+  if (matchCount > 0) {
+    if (previewArea) previewArea.style.display = 'block';
+    if (countLabel) countLabel.textContent = `✔ ${matchCount} coincidencias de estudiantes detectadas`;
+    if (tb) tb.innerHTML = previewRowsHtml;
+    if (btnApply) btnApply.disabled = false;
+    toast(`✔ ${matchCount} estudiantes reconocidos de Google Forms`, '#16a34a');
+  } else {
+    if (previewArea) previewArea.style.display = 'none';
+    if (btnApply) btnApply.disabled = true;
+    toast('⚠️ No se reconocieron nombres de estudiantes coincidentes con la nómina', '#d97706');
+  }
+}
+
+function applyParentsDataImport() {
+  if (!_pendingParentsImport || !_pendingParentsImport.length) return;
+  ensureStudentProfiles();
+
+  let updatedCount = 0;
+  _pendingParentsImport.forEach(item => {
+    const p = S.studentProfiles[item.studentIdx];
+    if (p) {
+      if (item.cedula) p.cedula = item.cedula;
+      if (item.fecha_nacimiento) {
+        p.fecha_nacimiento = item.fecha_nacimiento;
+        p.edad = calculateAgeFromBirthDate(item.fecha_nacimiento) || p.edad;
+      }
+      if (item.rep_nombre) p.rep_nombre = item.rep_nombre;
+      if (item.rep_cedula) p.rep_cedula = item.rep_cedula;
+      if (item.rep_telefono) p.rep_telefono = item.rep_telefono;
+      if (item.direccion) p.direccion = item.direccion;
+      if (item.nnee) p.nnee = item.nnee;
+      if (item.enfermedad) p.enfermedad = item.enfermedad;
+      if (item.hermanos_inst) p.hermanos_inst = item.hermanos_inst;
+      updatedCount++;
+    }
+  });
+
+  saveData();
+  renderStudentsMatrix();
+  closeImportParentsDataModal();
+
+  toast(`🎉 ¡${updatedCount} fichas de estudiantes actualizadas con éxito desde Google Forms!`, '#16a34a');
+}
 
 // ══════════════════════════════════════════════════════════════
 //  CRONOGRAMA & CALENDARIO INSTITUCIONAL (UEF CALDERÓN 2)
@@ -11804,16 +12800,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  /* ══ Auto-hide scroll hint after first scroll ══ */
-  const tw = document.querySelector('.tw');
-  const hint = document.getElementById('twHint');
-  if (tw && hint) {
-    tw.addEventListener('scroll', function onScroll() {
-      if (tw.scrollLeft > 20) {
-        hint.style.display = 'none';
-        tw.removeEventListener('scroll', onScroll);
-      }
-    }, { passive: true });
+  /* ══ Auto-open Parent Portal if URL contains ?padres=1 or ?ficha=1 ══ */
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('padres') === '1' || urlParams.get('ficha') === '1') {
+    const stParam = urlParams.get('st');
+    const stIdx = (stParam !== null && stParam !== undefined && !isNaN(parseInt(stParam, 10))) ? parseInt(stParam, 10) : null;
+    setTimeout(() => {
+      openParentPortalModal(stIdx);
+    }, 350);
   }
 });
 
