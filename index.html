@@ -1437,28 +1437,224 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   .view-bar::-webkit-scrollbar { display: none; }
   .view-btn {
     flex-shrink: 0;
-    padding: 6px 12px;
-    font-size: 0.78rem;
-    font-weight: 800;
-    border-radius: 8px;
-    white-space: nowrap;
-  }
+/* ══════════════════════════════════════════════════════
+   BARRA DE NAVEGACIÓN PRINCIPAL MODULAR (TOP NAVIGATION)
+   ══════════════════════════════════════════════════════ */
+.main-nav-bar {
+  background: var(--bg-card);
+  padding: 8px 18px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  scrollbar-width: none;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.main-nav-bar::-webkit-scrollbar { display: none; }
+
+.nav-tab-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card-subtle);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+}
+.nav-tab-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+.nav-tab-btn.active {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff !important;
+  border-color: #1e40af;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+.nav-tab-btn.active .nav-tab-icon {
+  transform: scale(1.15);
+}
+.nav-tab-badge {
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.08);
+  font-weight: 800;
+}
+.nav-tab-btn.active .nav-tab-badge {
+  background: rgba(255,255,255,0.25);
+  color: #ffffff;
 }
 
-@media (max-width: 480px) {
-  .hdr-logo { width: 32px; height: 32px; font-size: 1.1rem; }
-  .hdr-title-area h1 { font-size: 0.96rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .att-btn { min-width: 34px; min-height: 34px; padding: 7px 10px; font-size: 0.82rem; }
-  .mob-nav-label { font-size: 0.6rem; }
-  .mob-nav-icon { font-size: 1.25rem; }
+/* ── TOOLBAR CONTEXTUAL MODULAR ── */
+.module-toolbar {
+  background: var(--bg-card);
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 14px;
+  border-radius: var(--radius-md);
+}
+.module-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.module-toolbar-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
 }
 
-/* ── ENCABEZADO INSTITUCIONAL DE IMPRESIÓN (SOLO EN IMPRESIÓN) ── */
-.print-header { display: none; }
+/* ── CONFIG PANEL CARDS ── */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+.config-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.config-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.config-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.config-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.config-card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+.config-card-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-top: 4px;
+}
+.config-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+/* ── CUADRO DE HONOR & ALERTAS ── */
+.honor-roll-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.honor-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.honor-card.rank-1 { border-color: #f59e0b; background: linear-gradient(135deg, rgba(254,243,199,0.4) 0%, var(--bg-card) 100%); }
+.honor-card.rank-2 { border-color: #94a3b8; background: linear-gradient(135deg, rgba(241,245,249,0.6) 0%, var(--bg-card) 100%); }
+.honor-card.rank-3 { border-color: #d97706; background: linear-gradient(135deg, rgba(254,243,199,0.25) 0%, var(--bg-card) 100%); }
+.honor-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+.honor-card.rank-1 .honor-badge { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px rgba(245,158,11,0.4); }
+.honor-card.rank-2 .honor-badge { background: linear-gradient(135deg, #94a3b8, #64748b); box-shadow: 0 4px 10px rgba(148,163,184,0.4); }
+.honor-card.rank-3 .honor-badge { background: linear-gradient(135deg, #b45309, #78350f); box-shadow: 0 4px 10px rgba(180,83,9,0.4); }
+.honor-card:not(.rank-1):not(.rank-2):not(.rank-3) .honor-badge { background: var(--primary); font-size: 0.88rem; }
+
+/* ── ASISTENCIA EN LIBRETAS ── */
+.rp-att-box {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.rp-att-stat {
+  display: flex;
+  flex-direction: column;
+}
+.rp-att-stat-val {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+.rp-att-stat-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
 
 @media print {
-  header, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel { display: none !important; }
+  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
   .content { padding: 0; }
   .tw { box-shadow: none; max-height: none; overflow: visible; border: none; }
@@ -1593,83 +1789,38 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 </header>
 
-<!-- ── TOOLBAR ── -->
-<div class="toolbar">
-  <button class="btn btn-magic" onclick="openNewYearWizard()" data-tip="Iniciar configuración guiada para el nuevo año lectivo">
-    ✨ Nuevo Año Lectivo
+<!-- ── BARRA DE NAVEGACIÓN PRINCIPAL MODULAR (7 MÓDULOS INTERCONECTADOS) ── -->
+<nav class="main-nav-bar" id="mainNavBar" role="navigation" aria-label="Módulos del Sistema">
+  <button id="viewNotas" class="nav-tab-btn active" onclick="switchView('notas')">
+    <span class="nav-tab-icon">📋</span>
+    <span>Notas (70/30)</span>
+    <span class="nav-tab-badge">EGB Media</span>
   </button>
-  <button class="btn btn-purple" onclick="openManageTrimestres()" data-tip="Cambiar, crear o gestionar Trimestres (1er, 2do, 3er Trimestre)">
-    📅 Trimestres
+  <button id="viewEstudiantes" class="nav-tab-btn" onclick="switchView('estudiantes')">
+    <span class="nav-tab-icon">👥</span>
+    <span>Matriz de Estudiantes</span>
   </button>
-  <button class="btn btn-teal" onclick="openSyncModal()" data-tip="Vincular celular o computadora mediante código QR o código de aula para sincronización en tiempo real">
-    📱 Vincular Celular / En Vivo
+  <button id="viewAttendance" class="nav-tab-btn" onclick="switchView('asistencia')">
+    <span class="nav-tab-icon">📅</span>
+    <span>Asistencia Diaria</span>
   </button>
-  <div class="toolbar-sep"></div>
-
-  <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
-    ➕ Estudiante
+  <button id="viewPi" class="nav-tab-btn" onclick="switchView('pi')">
+    <span class="nav-tab-icon">📚</span>
+    <span>Proyecto Interdisciplinario</span>
   </button>
-  <button class="btn btn-teal" onclick="openManageNomina()" data-tip="Gestionar, reordenar (▲/▼) y organizar nómina de estudiantes">
-    ⚙ Nómina
+  <button id="viewReporte" class="nav-tab-btn" onclick="switchView('reporte')">
+    <span class="nav-tab-icon">📊</span>
+    <span>Libretas & WhatsApp</span>
   </button>
-  <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
-    ➕ Semana
+  <button id="viewExport" class="nav-tab-btn" onclick="switchView('export')">
+    <span class="nav-tab-icon">📤</span>
+    <span>Exportar al Sistema</span>
   </button>
-  <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
-    ➕ Actividad
+  <button id="viewConfig" class="nav-tab-btn" onclick="switchView('config')">
+    <span class="nav-tab-icon">⚙️</span>
+    <span>Configuración & Respaldos</span>
   </button>
-  <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
-    🗑 Actividad
-  </button>
-  <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
-    🗑 Semana
-  </button>
-  <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
-    ⇄ Mover Columnas
-  </button>
-  <div class="toolbar-sep"></div>
-
-  <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
-    📊 Descargar Excel
-  </button>
-  <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir planilla de calificaciones">
-    🖨 Imprimir
-  </button>
-  <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar en la nube y caché local">
-    💾 Guardar
-  </button>
-  <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar calificaciones">
-    🧹 Limpiar
-  </button>
-  <div class="toolbar-sep"></div>
-
-  <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
-    📋 Copiar Columna
-  </button>
-  <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
-    👁 Columnas
-  </button>
-  <button class="btn btn-outline" onclick="exportBackup()" data-tip="Descargar copia de seguridad JSON">
-    ⬇ Backup
-  </button>
-  <button class="btn btn-outline" onclick="document.getElementById('importFile').click()" data-tip="Restaurar datos desde archivo JSON">
-    ⬆ Restaurar
-  </button>
-  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)"/>
-
-  <div style="display:flex;gap:2px;margin-left:auto">
-    <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
-    <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
-  </div>
-</div>
-
-<!-- ── PESTAÑAS DE MATERIAS ── -->
-<div class="tabs-container">
-  <div class="tabs-scroll" id="tabs"></div>
-  <button class="tab-action-btn" onclick="openManageMats()" data-tip="Gestionar asignaturas (cuantitativas y cualitativas)">
-    ⚙ Materias
-  </button>
-</div>
+</nav>
 
 <!-- ── BOTTOM NAVIGATION BAR (MÓVIL) ── -->
 <nav id="mobileNav" role="navigation" aria-label="Navegación principal">
@@ -1687,38 +1838,88 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </button>
   <button class="mob-nav-btn" id="mnReporte" onclick="mobileSwitchView('reporte')">
     <span class="mob-nav-icon">📊</span>
-    <span class="mob-nav-label">Reportes</span>
+    <span class="mob-nav-label">Libretas</span>
   </button>
   <button class="mob-nav-btn" id="mnHerramientas" onclick="mobileSwitchView('herramientas')">
-    <span class="mob-nav-icon">⚡</span>
-    <span class="mob-nav-label">Menú</span>
+    <span class="mob-nav-icon">⚙️</span>
+    <span class="mob-nav-label">Ajustes</span>
   </button>
 </nav>
 
-<!-- ── BARRA DE VISTAS ── -->
-<div class="view-bar">
-  <button id="viewNotas"       class="view-btn active" onclick="switchView('notas')">
-    📋 Calificaciones (70/30)
-  </button>
-  <button id="viewEstudiantes" class="view-btn" onclick="switchView('estudiantes')">
-    👥 Matriz de Estudiantes
-  </button>
-  <button id="viewPi"          class="view-btn" onclick="switchView('pi')">
-    📚 Proyecto Interdisciplinario
-  </button>
-  <button id="viewAttendance"  class="view-btn" onclick="switchView('asistencia')">
-    📅 Asistencia
-  </button>
-  <button id="viewReporte"     class="view-btn" onclick="switchView('reporte')">
-    📊 Reportes & WhatsApp
-  </button>
-  <button id="viewExport"      class="view-btn" onclick="switchView('export')">
-    📤 Exportar al Sistema
-  </button>
-</div>
-
-<!-- ── VISTA: NOTAS ── -->
+<!-- ── VISTA: NOTAS (CALIFICACIONES 70/30 & CUALITATIVAS) ── -->
 <div class="content" id="viewNotasPanel">
+
+  <!-- Pestañas de Materias -->
+  <div class="tabs-container" style="margin-bottom:12px;border-radius:var(--radius-sm)">
+    <div class="tabs-scroll" id="tabs"></div>
+    <button class="tab-action-btn" onclick="openManageMats()" data-tip="Gestionar asignaturas (cuantitativas y cualitativas)">
+      ⚙ Materias
+    </button>
+  </div>
+
+  <!-- Toolbar Contextual de Calificaciones -->
+  <div class="module-toolbar">
+    <div class="module-toolbar-group">
+      <span class="module-toolbar-label">Actividades:</span>
+      <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
+        ➕ Actividad
+      </button>
+      <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
+        ➕ Semana
+      </button>
+      <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
+        🗑 Actividad
+      </button>
+      <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
+        🗑 Semana
+      </button>
+      <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
+        ⇄ Mover Columnas
+      </button>
+      <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
+        👁 Columnas
+      </button>
+    </div>
+
+    <div class="toolbar-sep"></div>
+
+    <div class="module-toolbar-group">
+      <span class="module-toolbar-label">Nómina:</span>
+      <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
+        ➕ Estudiante
+      </button>
+      <button class="btn btn-teal" onclick="openManageNomina()" data-tip="Gestionar, reordenar (▲/▼) y organizar nómina de estudiantes">
+        ⚙ Nómina
+      </button>
+    </div>
+
+    <div class="toolbar-sep"></div>
+
+    <div class="module-toolbar-group">
+      <span class="module-toolbar-label">Acciones:</span>
+      <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
+        📋 Copiar Columna
+      </button>
+      <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
+        📊 Excel Notas
+      </button>
+      <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir planilla de calificaciones">
+        🖨 Imprimir
+      </button>
+      <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar en la nube y caché local">
+        💾 Guardar
+      </button>
+      <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar calificaciones de la materia activa">
+        🧹 Limpiar
+      </button>
+    </div>
+
+    <div style="display:flex;gap:3px;margin-left:auto">
+      <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
+      <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
+    </div>
+  </div>
+
   <div class="stats-grid" id="stats"></div>
 
   <div class="filter-bar">
@@ -1757,7 +1958,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 </div>
 
 <!-- ── VISTA: ASISTENCIA ── -->
-<div id="attendancePanel" style="display:none" class="att-panel">
+<div id="attendancePanel" style="display:none" class="content att-panel">
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-xs)">
     <div>
       <label style="font-size:0.75rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:3px">📅 Fecha de Registro</label>
@@ -1769,7 +1970,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar toda la nómina como Presentes">✔ Todos Presentes</button>
       <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
-      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel</button>
+      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel Asistencia</button>
       <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre, días sin clase y gestionar fechas" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
     </div>
     <!-- Reportes -->
@@ -1793,22 +1994,24 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <div id="attGrid"></div>
 </div>
 
-<!-- ── VISTA: REPORTES ── -->
-<div id="reportPanel">
-  <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-    <div class="search-wrapper" style="max-width:320px">
+<!-- ── VISTA: REPORTES, LIBRETAS & WHATSAPP ── -->
+<div id="reportPanel" class="content">
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;background:var(--bg-card);padding:12px 16px;border-radius:var(--radius-md);border:1px solid var(--border-color);box-shadow:var(--shadow-xs)">
+    <div class="search-wrapper" style="max-width:300px">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="rpSearch" class="search-input" placeholder="Buscar estudiante para reporte..." oninput="rpFilter(this.value)" autocomplete="off"/>
     </div>
-    <button class="btn btn-primary" onclick="rpShowAll()">Ver Todos</button>
-    <button class="btn btn-purple"  onclick="rpPrint()">🖨 Imprimir Reportes</button>
-    <span id="rpCount" style="font-size:0.78rem;color:var(--text-muted);font-weight:600"></span>
+    <button class="btn btn-primary" onclick="rpShowAll()">👥 Ver Todos</button>
+    <button class="btn btn-warning" onclick="rpShowHonorRoll()">🏆 Cuadro de Honor</button>
+    <button class="btn btn-danger"  onclick="rpShowAtRisk()">⚠️ Alertas de Refuerzo (< 7.00)</button>
+    <button class="btn btn-purple"  onclick="rpPrint()">🖨 Imprimir Libretas</button>
+    <span id="rpCount" style="font-size:0.78rem;color:var(--text-muted);font-weight:700;margin-left:auto"></span>
   </div>
   <div id="rpBody"></div>
 </div>
 
 <!-- ── VISTA: EXPORTAR AL SISTEMA EXTERNO ── -->
-<div id="exportPanel">
+<div id="exportPanel" class="content">
   <div class="rp-card">
     <div style="font-size:1.1rem;font-weight:800;color:var(--text-main);margin-bottom:4px">📤 Exportar Promedios a Sistemas Externos</div>
     <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
@@ -1872,6 +2075,86 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         </thead>
         <tbody id="expTbody"></tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── VISTA: CONFIGURACIÓN, AÑO LECTIVO & RESPALDOS ── -->
+<div id="configPanel" style="display:none" class="content">
+  <div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:var(--shadow-md)">
+    <div>
+      <div style="font-size:1.15rem;font-weight:900;letter-spacing:0.3px;display:flex;align-items:center;gap:8px">
+        <span>⚙️ Configuración del Sistema y Respaldo de Datos</span>
+      </div>
+      <div style="font-size:0.75rem;opacity:.9;margin-top:3px">
+        Gestione el período académico, asignaturas, sincronización en vivo mediante código QR y copias de seguridad de notas
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="background:rgba(255,255,255,0.25);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="saveData(true)">
+        💾 Guardar Todo
+      </button>
+    </div>
+  </div>
+
+  <div class="config-grid">
+    <!-- Tarjeta 1: Año Lectivo y Trimestres -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div class="config-card-icon">📅</div>
+        <div>
+          <div class="config-card-title">Período Lectivo y Trimestres</div>
+          <div class="config-card-desc">Defina el año escolar actual, configure las fechas del 1er, 2do y 3er Trimestre o inicie un año escolar nuevo.</div>
+        </div>
+      </div>
+      <div class="config-card-actions">
+        <button class="btn btn-magic" onclick="openNewYearWizard()">✨ Asistente Nuevo Año</button>
+        <button class="btn btn-purple" onclick="openManageTrimestres()">📅 Gestionar Trimestres</button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Asignaturas y Ponderación -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div class="config-card-icon">📚</div>
+        <div>
+          <div class="config-card-title">Asignaturas y Normativa</div>
+          <div class="config-card-desc">Personalice la lista de materias cuantitativas (70/30) y cualitativas (A, EP, I, NE), agregue o reordene asignaturas.</div>
+        </div>
+      </div>
+      <div class="config-card-actions">
+        <button class="btn btn-primary" onclick="openManageMats()">⚙ Gestionar Materias</button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3: Sincronización y Dispositivos -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div class="config-card-icon">📱</div>
+        <div>
+          <div class="config-card-title">Sincronización Celular / En Vivo</div>
+          <div class="config-card-desc">Vincule su teléfono celular o laptop mediante código QR para calificar en tiempo real en el aula y registrar asistencias.</div>
+        </div>
+      </div>
+      <div class="config-card-actions">
+        <button class="btn btn-teal" onclick="openSyncModal()">📱 Vincular Celular / Código QR</button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 4: Respaldos y Archivos -->
+    <div class="config-card">
+      <div class="config-card-header">
+        <div class="config-card-icon">💾</div>
+        <div>
+          <div class="config-card-title">Copias de Seguridad (JSON & Excel)</div>
+          <div class="config-card-desc">Descargue un respaldo completo con todas las materias, notas y asistencia en su computadora o restaure una copia previa.</div>
+        </div>
+      </div>
+      <div class="config-card-actions">
+        <button class="btn btn-outline" onclick="exportBackup()">⬇ Descargar Backup JSON</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">⬆ Restaurar Backup</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)"/>
+      </div>
     </div>
   </div>
 </div>
@@ -4248,19 +4531,35 @@ function applySortOrder() {
 }
 
 function switchView(v) {
-  document.getElementById('viewNotasPanel').style.display      = v === 'notas'       ? '' : 'none';
-  document.getElementById('studentsMatrixPanel').style.display = v === 'estudiantes' ? 'block' : 'none';
-  document.getElementById('attendancePanel').style.display     = v === 'asistencia'  ? 'block' : 'none';
-  document.getElementById('reportPanel').style.display         = v === 'reporte'     ? 'block' : 'none';
-  document.getElementById('exportPanel').style.display         = v === 'export'      ? 'block' : 'none';
-  document.getElementById('piPanel').style.display             = v === 'pi'          ? 'block' : 'none';
+  const panels = {
+    'notas':       'viewNotasPanel',
+    'estudiantes': 'studentsMatrixPanel',
+    'asistencia':  'attendancePanel',
+    'pi':          'piPanel',
+    'reporte':     'reportPanel',
+    'export':      'exportPanel',
+    'config':      'configPanel'
+  };
 
-  document.getElementById('viewNotas').className       = 'view-btn ' + (v === 'notas' ? 'active' : '');
-  document.getElementById('viewEstudiantes').className = 'view-btn ' + (v === 'estudiantes' ? 'active' : '');
-  document.getElementById('viewPi').className          = 'view-btn ' + (v === 'pi' ? 'active' : '');
-  document.getElementById('viewAttendance').className  = 'view-btn ' + (v === 'asistencia' ? 'active' : '');
-  document.getElementById('viewReporte').className     = 'view-btn ' + (v === 'reporte' ? 'active' : '');
-  document.getElementById('viewExport').className      = 'view-btn ' + (v === 'export' ? 'active' : '');
+  const navBtns = {
+    'notas':       'viewNotas',
+    'estudiantes': 'viewEstudiantes',
+    'asistencia':  'viewAttendance',
+    'pi':          'viewPi',
+    'reporte':     'viewReporte',
+    'export':      'viewExport',
+    'config':      'viewConfig'
+  };
+
+  Object.keys(panels).forEach(key => {
+    const el = document.getElementById(panels[key]);
+    if (el) el.style.display = (key === v) ? (key === 'notas' ? '' : 'block') : 'none';
+    const btn = document.getElementById(navBtns[key]);
+    if (btn) {
+      if (key === v) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
 
   if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') rpShowAll();
@@ -4552,20 +4851,153 @@ function exportAttendanceXLSX() {
   toast('✔ Asistencia exportada a Excel', '#16a34a');
 }
 
+function getStudentAttendanceStats(si) {
+  if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100 };
+  const trimStartDate = S.calendar?.trimStart || '';
+  const dates = Object.keys(S.asistencia).filter(d => {
+    if (trimStartDate && d < trimStartDate) return false;
+    return S.asistencia[d] && S.asistencia[d][si] !== undefined;
+  });
+  let p = 0, f = 0, fj = 0, a = 0;
+  dates.forEach(d => {
+    const status = S.asistencia[d][si];
+    if (status === 'P') p++;
+    else if (status === 'F') f++;
+    else if (status === 'FJ' || status === 'J') fj++;
+    else if (status === 'A' || status === 'T') a++;
+  });
+  const total = dates.length;
+  const pct = total > 0 ? Math.round(((p + a) / total) * 100) : 100;
+  return { total, p, f, fj, a, pct };
+}
+
 function rpShowAll() {
   document.getElementById('rpCount').textContent = `${S.students.length} estudiantes`;
   let html = `<div class="rp-all">`;
   S.students.forEach((name, si) => {
     const gAvg = studentGeneralAvg(si);
     const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
+    const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
+    const repTel = profile.rep_telefono || '';
     html += `<div class="rp-row" onclick="rpShowOne(${si})">
       <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800">${si+1}</span>
-      <span class="rp-row-name">${escHTML(name)}</span>
-      <span style="font-family:var(--font-mono);font-weight:700;font-size:0.85rem;color:${color}">Prom. General: ${gAvg || '—'}</span>
+      <div style="flex:1;min-width:0">
+        <div class="rp-row-name">${escHTML(name)}</div>
+        <div style="font-size:0.72rem;color:var(--text-muted)">Rep: ${escHTML(profile.rep_nombre || 'No registrado')} ${repTel ? '· 📱 '+escHTML(repTel) : ''}</div>
+      </div>
+      <span style="font-family:var(--font-mono);font-weight:800;font-size:0.88rem;color:${color};white-space:nowrap">Prom: ${gAvg || '—'}</span>
       <span style="color:var(--text-light);font-size:0.75rem">▶</span>
     </div>`;
   });
   document.getElementById('rpBody').innerHTML = html + '</div>';
+}
+
+function rpShowHonorRoll() {
+  const ranked = S.students.map((name, si) => {
+    const avg = studentGeneralAvg(si);
+    return { name, si, avg: avg !== null && avg !== '—' ? parseFloat(avg) : 0, avgStr: avg || '—' };
+  }).filter(s => s.avg > 0).sort((a, b) => b.avg - a.avg);
+
+  let html = `
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <div>
+          <div style="font-size:1.15rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px">
+            <span>🏆 Cuadro de Honor Académico</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted)">Estudiantes con los mejores promedios generales del ${escHTML(S.periodo || 'Trimestre')}</div>
+        </div>
+        <button class="btn btn-outline" onclick="rpShowAll()">← Ver Todos</button>
+      </div>
+
+      <div class="honor-roll-grid">
+  `;
+
+  ranked.slice(0, 10).forEach((st, idx) => {
+    const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+    const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx+1}º`));
+    html += `
+      <div class="honor-card ${rankClass}" onclick="rpShowOne(${st.si})" style="cursor:pointer">
+        <div class="honor-badge">${medal}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:0.88rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHTML(st.name)}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">Puesto ${idx+1} · ${escHTML(S.grado)}</div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:1.15rem;font-weight:900;color:var(--primary)">${st.avgStr}</div>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+  document.getElementById('rpBody').innerHTML = html;
+}
+
+function rpShowAtRisk() {
+  const atRisk = [];
+  S.students.forEach((name, si) => {
+    const gAvg = studentGeneralAvg(si);
+    const lowMats = [];
+    getMats().forEach(m => {
+      const calc = getStudentTrimestreCalc(si, m);
+      if (!calc.isQual && calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7.00) {
+        lowMats.push({ m, avg: calc.trimAvg });
+      }
+    });
+    const isGeneralLow = gAvg !== null && gAvg !== '—' && parseFloat(gAvg) < 7.00;
+    if (isGeneralLow || lowMats.length > 0) {
+      atRisk.push({ name, si, gAvg: gAvg || '—', lowMats, isGeneralLow });
+    }
+  });
+
+  let html = `
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <div>
+          <div style="font-size:1.15rem;font-weight:900;color:#dc2626;display:flex;align-items:center;gap:8px">
+            <span>⚠️ Alertas de Refuerzo Pedagógico (Notas &lt; 7.00)</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted)">Estudiantes en riesgo académico según normativa MINEDUC que requieren plan de mejora</div>
+        </div>
+        <button class="btn btn-outline" onclick="rpShowAll()">← Ver Todos</button>
+      </div>
+  `;
+
+  if (atRisk.length === 0) {
+    html += `<div style="padding:20px;text-align:center;color:#16a34a;font-weight:800;font-size:0.95rem">🎉 ¡Excelente! No hay estudiantes con promedio o materias menores a 7.00 en este período.</div>`;
+  } else {
+    html += `
+      <div style="overflow-x:auto">
+        <table style="width:100%">
+          <thead>
+            <tr>
+              <th style="width:40px;text-align:left">#</th>
+              <th style="text-align:left">Estudiante</th>
+              <th style="text-align:center">Promedio General</th>
+              <th style="text-align:left">Asignaturas que Requieren Refuerzo</th>
+              <th style="text-align:center">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    atRisk.forEach((st, idx) => {
+      const matsList = st.lowMats.map(lm => `<span style="display:inline-block;background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:700;margin:2px 3px"><strong>${escHTML(lm.m)}</strong>: ${lm.avg}</span>`).join('');
+      html += `
+        <tr>
+          <td>${idx+1}</td>
+          <td style="font-weight:800;color:var(--text-main)">${escHTML(st.name)}</td>
+          <td style="text-align:center;font-family:var(--font-mono);font-weight:900;color:${st.isGeneralLow?'#dc2626':'var(--text-main)'}">${st.gAvg}</td>
+          <td>${matsList || '<span style="color:var(--text-muted);font-size:0.75rem">Materias individuales aprobadas</span>'}</td>
+          <td style="text-align:center">
+            <button class="btn btn-success" style="padding:4px 8px;font-size:0.75rem" onclick="shareWhatsApp(${st.si})">📱 WhatsApp</button>
+          </td>
+        </tr>
+      `;
+    });
+    html += `</tbody></table></div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('rpBody').innerHTML = html;
 }
 
 function rpFilter(q) {
@@ -4583,52 +5015,89 @@ function buildStudentCard(si) {
   const name = S.students[si];
   const gAvg = studentGeneralAvg(si);
   const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
+  const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
+  const attStats = getStudentAttendanceStats(si);
 
   let statusBadge = '🟢 Domina los aprendizajes (Aprobado)';
   if (gAvg !== null) {
     const n = parseFloat(gAvg);
     if (n < 4.01) statusBadge = '⚠ Promoción Excepcional (Requiere acuerdo y plan)';
-    else if (n < 7.00) statusBadge = '🔴 Supletorio (Requiere 5 días de refuerzo previo)';
+    else if (n < 7.00) statusBadge = '🔴 Supletorio (Requiere refuerzo pedagógico)';
     else if (n < 9.00) statusBadge = '🟡 Alcanza aprendizajes (Opción a 1 mejora)';
   }
 
+  const repName = profile.rep_nombre || 'No registrado';
+  const repTel = profile.rep_telefono || '';
+  const repRel = profile.rep_parentesco ? `(${profile.rep_parentesco})` : '';
+  const cedula = profile.cedula || '—';
+
   let html = `
-    <div class="rp-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+    <div class="rp-card" style="box-shadow:var(--shadow-md);border-radius:var(--radius-md);margin-bottom:18px;border:1px solid var(--border-color)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;border-bottom:1px solid var(--border-color);padding-bottom:12px">
         <div>
-          <div class="rp-name">👤 ${escHTML(name)}</div>
-          <div class="rp-sub">${escHTML(S.grado)} · ${escHTML(S.anio)} · ${escHTML(S.periodo)}</div>
-          <div style="font-size:0.75rem;font-weight:700;color:${color};margin-top:4px">${statusBadge}</div>
+          <div class="rp-name" style="font-size:1.15rem;font-weight:900;color:var(--primary)">👤 ${si+1}. ${escHTML(name)}</div>
+          <div class="rp-sub" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px">
+            Cédula: <strong>${escHTML(cedula)}</strong> · ${escHTML(S.grado)} · ${escHTML(S.anio)} · ${escHTML(S.periodo)}
+          </div>
+          <div style="font-size:0.78rem;font-weight:800;color:${color};margin-top:4px">${statusBadge}</div>
         </div>
-        <div style="display:flex;gap:6px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-outline" onclick="rpShowAll()">← Lista</button>
-          <button class="btn btn-success" onclick="shareWhatsApp(${si})">📱 WhatsApp</button>
+          <button class="btn btn-success" onclick="shareWhatsApp(${si})">📱 Enviar por WhatsApp</button>
         </div>
       </div>
-      <div class="rp-summary">
-        <div class="rp-stat"><div class="rp-stat-v" style="color:${color}">${gAvg || '—'}</div><div class="rp-stat-l">Prom. General Truncado</div></div>
+
+      <!-- Ficha de Representante & Asistencia -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px">
+          <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">👨‍👩‍👧 Representante Legal</div>
+          <div style="font-weight:800;font-size:0.88rem;color:var(--text-main);margin-top:2px">${escHTML(repName)} ${escHTML(repRel)}</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">
+            Teléfono/WhatsApp: <strong style="color:var(--primary)">${escHTML(repTel || 'No registrado')}</strong>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px">
+          <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">📅 Resumen de Asistencia</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+            <span style="font-size:0.8rem;font-weight:700">Asistencias: <strong style="color:#16a34a">${attStats.p}</strong></span>
+            <span style="font-size:0.8rem;font-weight:700">Faltas: <strong style="color:#dc2626">${attStats.f}</strong></span>
+            <span style="font-size:0.8rem;font-weight:700">Justificadas: <strong style="color:#2563eb">${attStats.fj}</strong></span>
+            <span style="font-size:0.8rem;font-weight:700">Atrasos: <strong style="color:#d97706">${attStats.a}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-summary" style="margin-bottom:14px">
+        <div class="rp-stat" style="border-left:4px solid ${color}">
+          <div class="rp-stat-v" style="color:${color}">${gAvg || '—'}</div>
+          <div class="rp-stat-l">Promedio General Truncado (2 decimales)</div>
+        </div>
       </div>
   `;
 
   // Desglose por Materia
+  html += `<div style="font-size:0.85rem;font-weight:900;margin-bottom:8px;color:var(--text-main)">📚 Calificaciones por Asignatura:</div>`;
   getMats().forEach(mName => {
     const calc = getStudentTrimestreCalc(si, mName);
     if (!calc.isQual) {
-      html += `<div style="margin-bottom:10px;border:1px solid var(--border-color);border-radius:8px;padding:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-weight:800;font-size:0.85rem;color:var(--primary)">${escHTML(mName)}</span>
-          <span style="font-family:var(--font-mono);font-weight:800;font-size:0.9rem">Nota Trimestre: ${calc.trimAvg}</span>
+      const isLow = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7.00;
+      const mColor = isLow ? '#dc2626' : '#1e3a8a';
+      html += `<div style="margin-bottom:8px;border:1px solid var(--border-color);border-left:4px solid ${mColor};border-radius:var(--radius-sm);padding:10px 14px;background:var(--bg-card)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <span style="font-weight:800;font-size:0.88rem;color:${mColor}">${escHTML(mName)}</span>
+          <span style="font-family:var(--font-mono);font-weight:900;font-size:0.95rem;color:${mColor}">Nota Trimestre: ${calc.trimAvg}</span>
         </div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">
-          70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) | 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px">
+          70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) · 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
         </div>
       </div>`;
     } else {
       const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
-      html += `<div style="margin-bottom:10px;border:1px solid var(--border-color);border-radius:8px;padding:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">${escHTML(mName)}</span>
-          <span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label}</span>
+      html += `<div style="margin-bottom:8px;border:1px solid var(--border-color);border-left:4px solid #7c3aed;border-radius:var(--radius-sm);padding:10px 14px;background:var(--bg-card)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <span style="font-weight:800;font-size:0.88rem;color:var(--text-main)">${escHTML(mName)}</span>
+          <span class="badge-qual ${qObj.cls}">${qObj.val} — ${qObj.label}</span>
         </div>
         <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">${qObj.desc}</div>
       </div>`;
@@ -4641,31 +5110,55 @@ function buildStudentCard(si) {
 function shareWhatsApp(si) {
   const name = S.students[si];
   const gAvg = studentGeneralAvg(si);
+  const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
+  const repName = profile.rep_nombre || 'Estimado/a Representante';
+  const attStats = getStudentAttendanceStats(si);
+
+  let rawTel = (profile.rep_telefono || '').replace(/\D/g, '');
+  if (rawTel.startsWith('09') && rawTel.length === 10) {
+    rawTel = '593' + rawTel.substring(1);
+  }
+
   const lines = [
-    `📚 *INFORME TRIMESTRAL DE CALIFICACIONES*`,
-    `👤 *${name}*`,
-    `🏫 ${S.grado} · ${S.anio} · ${S.periodo}`,
-    `📊 *Promedio General: ${gAvg || '—'}*`,
+    `🎓 *INFORME DE CALIFICACIONES Y ASISTENCIA*`,
+    `Estimado/a: *${repName}*`,
+    `Estudiante: *${name}*`,
+    `Grado/Curso: ${S.grado || '—'} · Año Lectivo: ${S.anio || '—'}`,
+    `Período: *${S.periodo || '1er Trimestre'}*`,
     `─────────────────────`,
-    `*ASIGNATURAS CUANTITATIVAS (70/30):*`
+    `📊 *PROMEDIO GENERAL: ${gAvg || '—'} / 10*`,
+    `─────────────────────`,
+    `*CALIFICACIONES (70% Form. + 30% Sum.):*`
   ];
 
   getMats().forEach(m => {
     const calc = getStudentTrimestreCalc(si, m);
-    if (!calc.isQual) lines.push(`• *${m}*: ${calc.trimAvg} (70%: ${calc.formWeighted} | 30%: ${calc.sumWeighted})`);
+    if (!calc.isQual) {
+      lines.push(`• *${m}*: ${calc.trimAvg} (70%: ${calc.formWeighted} | 30%: ${calc.sumWeighted})`);
+    }
   });
 
   lines.push(`─────────────────────`);
   lines.push(`*EVALUACIÓN CUALITATIVA:*`);
   getMats().forEach(m => {
     const calc = getStudentTrimestreCalc(si, m);
-    if (calc.isQual) lines.push(`• *${m}*: [${calc.qualVal}]`);
+    if (calc.isQual) {
+      lines.push(`• *${m}*: [${calc.qualVal}]`);
+    }
   });
 
-  lines.push(`─────────────────────`);
-  lines.push(`_Instructivo Oficial EGB Media — 2 decimales truncados_`);
+  if (attStats.total > 0) {
+    lines.push(`─────────────────────`);
+    lines.push(`*ASISTENCIA:* ${attStats.p} Asistencias · ${attStats.f} Faltas · ${attStats.fj} Justificadas · ${attStats.a} Atrasos`);
+  }
 
-  window.open(`https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
+  lines.push(`─────────────────────`);
+  lines.push(`Docente: ${S.docente || 'Docente'}`);
+  lines.push(`_Instructivo Oficial MinEduc — 2 decimales truncados_`);
+
+  const msg = encodeURIComponent(lines.join('\n'));
+  const url = rawTel ? `https://wa.me/${rawTel}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  window.open(url, '_blank');
 }
 
 function rpPrint() { window.print(); }
@@ -9084,7 +9577,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'asistencia': 'mnAsistencia',
         'reporte': 'mnReporte',
         'export': 'mnHerramientas',
-        'pi': 'mnHerramientas'
+        'pi': 'mnHerramientas',
+        'config': 'mnHerramientas'
       };
       document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
       const target = navMap[v];
