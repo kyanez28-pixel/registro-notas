@@ -9814,6 +9814,39 @@ function calculateAgeFromBirthDate(birthDateStr) {
   return `${strY}, ${strM}, ${strD}`;
 }
 
+function repairSpanishText(str) {
+  if (!str || typeof str !== 'string') return str || '';
+  return str
+    .replace(/\u00c3\u00b1/g, '\u00f1') // Ã± -> ñ
+    .replace(/\u00c3\u0091/g, '\u00d1') // Ã‘ -> Ñ
+    .replace(/\u00c3\u00a1/g, '\u00e1') // Ã¡ -> á
+    .replace(/\u00c3\u00a9/g, '\u00e9') // Ã© -> é
+    .replace(/\u00c3\u00ad/g, '\u00ed') // Ã­ -> í
+    .replace(/\u00c3\u00b3/g, '\u00f3') // Ã³ -> ó
+    .replace(/\u00c3\u00ba/g, '\u00fa') // Ãº -> ú
+    .replace(/\u00c3\u0081/g, '\u00c1') // Ã -> Á
+    .replace(/\u00c3\u0089/g, '\u00c9') // Ã‰ -> É
+    .replace(/\u00c3\u008d/g, '\u00cd') // Ã -> Í
+    .replace(/\u00c3\u0093/g, '\u00d3') // Ã“ -> Ó
+    .replace(/\u00c3\u009a/g, '\u00da') // Ãš -> Ú
+    .replace(/\u00c2/g, '')
+    .replace(/ANZATU[\?\uFFFD]A/gi, 'ANZATU\u00d1A')
+    .replace(/CEDE[\?\uFFFD]O/gi, 'CEDE\u00d1O')
+    .replace(/TITUA[\?\uFFFD]A/gi, 'TITUA\u00d1A')
+    .replace(/I[\?\uFFFD]IGUEZ/gi, 'I\u00d1IGUEZ')
+    .replace(/QUI[\?\uFFFD]ONEZ/gi, 'QUI\u00d1ONEZ')
+    .replace(/GUA[\?\uFFFD]UNA/gi, 'GUA\u00d1UNA')
+    .replace(/CA[\?\uFFFD]AR/gi, 'CA\u00d1AR')
+    .replace(/NU[\?\uFFFD]EZ/gi, 'NU\u00d1EZ')
+    .replace(/MU[\?\uFFFD]OZ/gi, 'MU\u00d1OZ')
+    .replace(/A[\?\uFFFD]O/gi, 'A\u00d1O')
+    .replace(/a[\?\uFFFD]o/gi, 'a\u00f1o')
+    .replace(/ni[\?\uFFFD]o/gi, 'ni\u00f1o')
+    .replace(/ni[\?\uFFFD]a/gi, 'ni\u00f1a')
+    .replace(/acompa[\?\uFFFD]amiento/gi, 'acompa\u00f1amiento')
+    .replace(/pesta[\?\uFFFD]a/gi, 'pesta\u00f1a');
+}
+
 function ensureStudentProfiles() {
   if (!S.studentProfiles || !Array.isArray(S.studentProfiles) || !S.studentProfiles.length) {
     S.studentProfiles = JSON.parse(JSON.stringify(DEFAULT_STUDENT_PROFILES));
@@ -9846,8 +9879,22 @@ function ensureStudentProfiles() {
       });
     }
   }
-  // Actualizar edad dinámica diaria para todos los estudiantes
+
+  // Sanitizar y reparar caracteres especiales (Ñ, tildes) en todos los nombres y campos
+  if (S.students && Array.isArray(S.students)) {
+    S.students = S.students.map(n => repairSpanishText(n));
+  }
   S.studentProfiles.forEach(p => {
+    p.nombre        = repairSpanishText(p.nombre);
+    p.rep_nombre    = repairSpanishText(p.rep_nombre);
+    p.madre_nombre  = repairSpanishText(p.madre_nombre);
+    p.padre_nombre  = repairSpanishText(p.padre_nombre);
+    p.direccion     = repairSpanishText(p.direccion);
+    p.edad          = repairSpanishText(p.edad);
+    p.nnee          = repairSpanishText(p.nnee);
+    p.enfermedad    = repairSpanishText(p.enfermedad);
+    p.hermanos_inst = repairSpanishText(p.hermanos_inst);
+
     if (p.fecha_nacimiento) {
       const calc = calculateAgeFromBirthDate(p.fecha_nacimiento);
       if (calc) p.edad = calc;
