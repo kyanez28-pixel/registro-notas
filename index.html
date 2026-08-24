@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon.svg">
-<title>Registro de Notas — EGB Media (Séptimo de Básica)</title>
+<title>Registro de Notas — EGB Media (Séptimo de Básica) · MINEDEC 2026-2027</title>
 
 <!-- Google Fonts: Inter, Plus Jakarta Sans & JetBrains Mono para máxima claridad y nitidez -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2292,7 +2292,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
           </td>
           <td>
             <div class="ph-inst" id="phInstName">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
-            <div style="text-align:center;font-size:9pt;font-weight:700;color:#334155;margin:2px 0">REGISTRO DE CALIFICACIONES — EVALUACIÓN FORMATIVA Y SUMATIVA</div>
+            <div style="text-align:center;font-size:9pt;font-weight:700;color:#334155;margin:2px 0">REGISTRO DE CALIFICACIONES — EVALUACIÓN FORMATIVA Y SUMATIVA · Ministerio de Educación, Deporte y Cultura (MINEDEC)</div>
             <div style="display:flex;justify-content:space-between;font-size:8pt;margin-top:4px">
               <span>Docente: <strong id="phDocente"></strong></span>
               <span>Grado: <strong id="phGrado"></strong></span>
@@ -2302,7 +2302,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
             <div style="display:flex;justify-content:space-between;font-size:8pt">
               <span>Año Lectivo: <strong id="phAnio"></strong></span>
               <span>Periodo: <strong id="phPeriodo"></strong></span>
-              <span>Normativa: <strong>70% Formativo + 30% Sumativo · 2 decimales truncados</strong></span>
+              <span>Normativa: <strong>70% Formativo + 30% Sumativo · 2 decimales truncados · Acuerdo MINEDUC-2024-00031-A</strong></span>
             </div>
           </td>
         </tr>
@@ -2327,7 +2327,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
               <span class="sync-dot"></span> <span id="syncText">⚡ En Vivo</span>
             </span>
           </h1>
-          <div class="hdr-sub">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Séptimo de Básica (EGB Media) · 70% Formativo + 30% Sumativo</div>
+          <div class="hdr-sub">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Séptimo de Básica (EGB Media) · 70% Formativo + 30% Sumativo · <span style="opacity:.85">MINEDEC 2026-2027</span></div>
         </div>
       </div>
 
@@ -2725,7 +2725,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <div style="background:linear-gradient(135deg,#d97706,#b45309);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div>
       <div style="font-size:1.05rem;font-weight:900;letter-spacing:0.3px">📚 Evaluación del Proyecto Interdisciplinario</div>
-      <div style="font-size:0.75rem;opacity:.85;margin-top:3px">Componente Sumativo (30%) · Rúbrica Ministerial MINEDUC</div>
+      <div style="font-size:0.75rem;opacity:.85;margin-top:3px">Componente Sumativo (30%) · Rúbrica Ministerial MINEDEC · Acuerdo MINEDUC-2024-00031-A</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" style="background:rgba(255,255,255,0.25);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="syncPiToSubjects()" data-tip="Pasar automáticamente las notas del PI a la columna PI (30% Sumativo) de cada materia">⚡ Sincronizar a Asignaturas (30%)</button>
@@ -2923,6 +2923,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <button id="tabBtnCrono4" class="btn btn-outline" onclick="switchCronoModuleTab(4)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">
       🏁 4. Cierre de Año, Supletorios y Feriados
     </button>
+    <button id="tabBtnCrono5" class="btn btn-outline" onclick="switchCronoModuleTab(5)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;background:rgba(124,58,237,0.1);border-color:#a855f7;color:#7c3aed">
+      📚 5. Orientaciones MINEDEC 2026-2027
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -3083,9 +3086,104 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
        ══════════════════════════════════════════════════════════ -->
   <div id="cronoModuleTab3" style="display:none">
     
+    <!-- Banner de la estrategia MINEDEC -->
+    <div style="background:linear-gradient(135deg,#1e3a8a 0%,#7c3aed 100%);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:14px;color:#fff;display:flex;align-items:center;gap:14px">
+      <div style="font-size:2rem;flex-shrink:0">🎓</div>
+      <div>
+        <div style="font-weight:900;font-size:1rem;margin-bottom:2px">«Conecta, Nivela y Crea: 5 semanas para arrancar con éxito el año escolar»</div>
+        <div style="font-size:0.76rem;opacity:.92">Estrategia Pedagógica Oficial MINEDEC · Acuerdo MINEDUC-2024-00060-A · Año Lectivo 2026-2027 · Sierra-Amazonía</div>
+      </div>
+    </div>
+
     <div style="display:flex;flex-direction:column;gap:12px">
-      
+
+      <!-- FASE 1: CONECTA -->
       <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #2563eb;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <span style="font-weight:900;color:#1e40af;font-size:0.95rem">🔵 SEMANA 1 — FASE CONECTA: Adaptación y Evaluación Diagnóstica</span>
+          <span style="font-size:0.7rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:800;white-space:nowrap">01 al 04 Sep · 4 Días</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:8px">
+          Jornadas de bienvenida, ambientación, dinámicas lúdicas de integración socioemocional, socialización del código de convivencia,
+          vinculación con la familia y diagnóstico del estado socioemocional con instrumentos no tradicionales.
+        </div>
+        <div style="background:#dbeafe;border-radius:8px;padding:10px 14px;font-size:0.8rem;color:#1e3a8a">
+          <div style="font-weight:800;margin-bottom:5px">💬 Preguntas de Reflexión Metacognitiva (Instrumento Diagnóstico MINEDEC):</div>
+          <ol style="margin:0 0 0 16px;padding:0;line-height:1.8">
+            <li>¿Qué aprendí el año pasado en <strong>Lengua y Literatura</strong>?</li>
+            <li>¿Qué aprendí el año pasado en <strong>Matemática</strong>?</li>
+            <li>¿En qué aspectos de la cotidianidad lo apliqué?</li>
+            <li>¿Qué me falta por aprender y cómo puedo lograrlo?</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- FASE 2: NIVELA -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #059669;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <span style="font-weight:900;color:#065f46;font-size:0.95rem">🟢 SEMANAS 2 y 3 — FASE NIVELA: Nivelación de Habilidades y Aprendizajes</span>
+          <span style="font-size:0.7rem;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-weight:800;white-space:nowrap">07 al 18 Sep · 10 Días</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:8px">
+          Priorización en <strong>Lengua y Literatura</strong> y <strong>Matemática</strong> como asignaturas fundacionales, fortalecidas interdisciplinariamente.
+          Refuerzo de habilidades en lectura, escritura, comprensión y cálculo. Detección oportuna de NEE.
+        </div>
+        <div style="background:#d1fae5;border-radius:8px;padding:10px 14px;font-size:0.8rem;color:#065f46;margin-bottom:8px">
+          <div style="font-weight:800;margin-bottom:4px">🤝 Estrategia Co-nivelación — Tutoría entre Pares (MINEDEC):</div>
+          <div style="line-height:1.6">Estudiantes con destrezas consolidadas actúan como <strong>tutores</strong> de sus compañeros,
+          bajo orientación docente. Permite atención diferenciada sin separar grupos.</div>
+        </div>
+        <div style="background:#ecfdf5;border-radius:8px;padding:8px 14px;font-size:0.8rem;color:#065f46">
+          <span style="font-weight:700">📐 También en esta etapa:</span> Diseño previo del proyecto interdisciplinar para semanas 4 y 5.
+        </div>
+      </div>
+
+      <!-- FASE 3: CREA -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #d97706;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <span style="font-weight:900;color:#92400e;font-size:0.95rem">🟡 SEMANAS 4 y 5 — FASE CREA: Implementación del Proyecto Interdisciplinar</span>
+          <span style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-weight:800;white-space:nowrap">21 Sep al 02 Oct · 10 Días</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:8px">
+          Lanzamiento y ejecución del Proyecto Interdisciplinario. Articulación de asignaturas para evidenciar logros cognitivos,
+          procedimentales y actitudinales de la nivelación. Trabajo cooperativo, resolución de problemas y producto final.
+        </div>
+        <div style="background:#fef3c7;border-radius:8px;padding:10px 14px;font-size:0.8rem;color:#78350f">
+          <div style="font-weight:800;margin-bottom:4px">📊 Ponderación Sumativa — Acuerdo MINEDUC-2024-00031-A:</div>
+          <div style="line-height:1.6">El proyecto interdisciplinar constituye el <strong>30% Sumativo</strong> del trimestre.
+          Rúbrica de 5 indicadores: pertinencia, aplicación de contenidos, calidad del trabajo, colaboración y creatividad.</div>
+        </div>
+      </div>
+
+      <!-- FASE 4: ABORDAJE CURRICULAR -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #7c3aed;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#6d28d9;font-size:0.95rem">🟣 SEMANA 6 en adelante — ABORDAJE CURRICULAR REGULAR</span>
+          <span style="font-size:0.7rem;background:#ede9fe;color:#6d28d9;padding:2px 8px;border-radius:99px;font-weight:800">Destrezas por Competencias (70%) · Acuerdo MINEDUC-2024-00060-A</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Desarrollo de destrezas con criterios de desempeño por competencias. Planificación microcurricular por unidades
+          (sin plan de clase por hora). Evaluación formativa continua con actividades individuales y grupales en clase y en casa.
+        </div>
+      </div>
+
+      <!-- FASE 5: EVALUACIÓN Y CIERRE TRIMESTRAL -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:5px solid #dc2626;border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-weight:900;color:#991b1b;font-size:0.95rem">🔴 EVALUACIÓN Y CIERRE TRIMESTRAL (Semanas 13 y 14)</span>
+          <span style="font-size:0.7rem;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:99px;font-weight:800">Evaluación Sumativa &amp; Juntas de Grado</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.5">
+          Evaluación de base estructurada, rúbrica del proyecto interdisciplinar, consolidación de notas con 2 decimales truncados,
+          juntas de grado, emisión de libretas a representantes legales vía WhatsApp y registro en plataforma MINEDEC.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
           <span style="font-weight:900;color:#1e40af;font-size:0.95rem">1. FASE CONECTA (Semana 1 · 01 al 04 de Septiembre)</span>
           <span style="font-size:0.7rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:800">Adaptación & Vínculo</span>
@@ -3238,6 +3336,170 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
   </div>
 
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 5: ORIENTACIONES PEDAGÓGICAS & NORMATIVA MINEDEC
+       (Lineamientos Pedagógicos Inicio de Año Lectivo 2026-2027)
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab5" style="display:none">
+    
+    <!-- Banner Principal -->
+    <div style="background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 50%,#2563eb 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:1.15rem;font-weight:900;letter-spacing:0.2px;display:flex;align-items:center;gap:8px">
+            <span>📚 Orientaciones Pedagógicas &amp; Normativa Ministerial</span>
+            <span style="font-size:0.72rem;background:rgba(255,255,255,0.22);padding:3px 10px;border-radius:99px;font-weight:800">Tercera Edición 2026</span>
+          </div>
+          <div style="font-size:0.78rem;opacity:.92;margin-top:4px">
+            Ministerio de Educación, Deporte y Cultura (MINEDEC) · Régimen Sierra - Amazonía · Año Lectivo 2026 - 2027
+          </div>
+        </div>
+        <span style="font-size:0.75rem;background:#10b981;color:#fff;padding:4px 12px;border-radius:99px;font-weight:800">Oficial 100%</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:16px">
+
+      <!-- Tarjeta 1: Marco Normativo y Acuerdos Vigentes -->
+      <div class="config-card" style="border-top:4px solid #2563eb">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#dbeafe;color:#1e40af">📜</div>
+          <div>
+            <div class="config-card-title">Marco Legal &amp; Acuerdos Ministeriales</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">Disposiciones oficiales de aplicación obligatoria</div>
+          </div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--bg-card-subtle);padding:8px 10px;border-radius:8px;border:1px solid var(--border-color)">
+            <strong style="color:#1e40af">Acuerdo MINEDEC-2026-00024-A:</strong> Lineamientos para el Momento Cívico, fomento del civismo, identidad nacional y patriotismo.
+          </div>
+          <div style="background:var(--bg-card-subtle);padding:8px 10px;border-radius:8px;border:1px solid var(--border-color)">
+            <strong style="color:#1e40af">Acuerdo MINEDUC-2024-00031-A:</strong> Normativa de evaluación estudiantil (70% Formativo + 30% Sumativo, truncamiento a 2 decimales, Modelo Institucional MIEE).
+          </div>
+          <div style="background:var(--bg-card-subtle);padding:8px 10px;border-radius:8px;border:1px solid var(--border-color)">
+            <strong style="color:#1e40af">Acuerdo MINEDUC-2024-00085-A:</strong> Guía práctica para el acompañamiento socioemocional y período de Cívica en el aula.
+          </div>
+          <div style="background:var(--bg-card-subtle);padding:8px 10px;border-radius:8px;border:1px solid var(--border-color)">
+            <strong style="color:#1e40af">Acuerdo MINEDUC-2024-00060-A:</strong> Inserciones curriculares y Renovación Curricular por Competencias.
+          </div>
+          <div style="background:var(--bg-card-subtle);padding:8px 10px;border-radius:8px;border:1px solid var(--border-color)">
+            <strong style="color:#1e40af">Acuerdo MINEDUC-2024-00089-A:</strong> Oficialización del Mapa de Inclusión y Guía DUA.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: Orientaciones Didácticas EGB Media (Séptimo de Básica) -->
+      <div class="config-card" style="border-top:4px solid #059669">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#d1fae5;color:#065f46">🎯</div>
+          <div>
+            <div class="config-card-title">Estrategias Didácticas — EGB Media (9-11 años)</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">Séptimo de Básica · Metodologías activas sugeridas</div>
+          </div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;display:flex;flex-direction:column;gap:8px">
+          <div>
+            <strong style="color:#065f46">📖 Lectura Transversal:</strong> La comprensión lectora es fundamental en todas las asignaturas para el aprendizaje significativo.
+          </div>
+          <div>
+            <strong style="color:#065f46">🎲 Juegos Matemáticos:</strong> Bingos, rompecabezas y juegos de mesa para afianzar sumas, restas, multiplicaciones y divisiones.
+          </div>
+          <div>
+            <strong style="color:#065f46">📐 Proyectos de Medición:</strong> Medir objetos reales, comparar datos y representarlos en tablas y gráficos de barras.
+          </div>
+          <div>
+            <strong style="color:#065f46">🍳 Matemáticas en la Cocina:</strong> Aplicación de fracciones, proporciones y medidas en recetas sencillas.
+          </div>
+          <div>
+            <strong style="color:#065f46">🎭 Teatro de Lectores &amp; Club de Libros:</strong> Dramatización de cuentos y espacios de análisis literario colaborativo.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Periodos Pedagógicos Especiales -->
+      <div class="config-card" style="border-top:4px solid #d97706">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#fef3c7;color:#92400e">👥</div>
+          <div>
+            <div class="config-card-title">Periodos Pedagógicos Especiales</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">Cívica, Animación Lectora y Momento Cívico</div>
+          </div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;display:flex;flex-direction:column;gap:8px">
+          <div>
+            <strong style="color:#92400e">🏛️ Cívica y Acompañamiento Integral en el Aula:</strong> A cargo del docente tutor. Desarrolla habilidades sociales, empatía, ética y resolución pacífica. En caso de alertas, articulación inmediata con el DECE.
+          </div>
+          <div>
+            <strong style="color:#92400e">📚 Animación a la Lectura:</strong> Periodo centrado en el gusto lector. Enfoque participativo, escritura creativa y fomento de la biblioteca de aula.
+          </div>
+          <div>
+            <strong style="color:#92400e">🇪🇨 Momento Cívico Semanal:</strong> Espacio de fortalecimiento de valores patrios, respeto a los símbolos nacionales e identidad comunitaria.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 4: Inclusión, DUA y Planificación Microcurricular -->
+      <div class="config-card" style="border-top:4px solid #7c3aed">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#ede9fe;color:#6d28d9">♿</div>
+          <div>
+            <div class="config-card-title">Inclusión (DUA) &amp; Planificación</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">Atención a la diversidad y simplificación curricular</div>
+          </div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;display:flex;flex-direction:column;gap:8px">
+          <div>
+            <strong style="color:#6d28d9">🌟 Diseño Universal para el Aprendizaje (DUA):</strong> Múltiples formas de representación, expresión e implicación.
+          </div>
+          <div>
+            <strong style="color:#6d28d9">🤝 Atención a NEE:</strong> Guías específicas para TEA, altas capacidades, patios inclusivos y adaptaciones curriculares contextualizadas.
+          </div>
+          <div>
+            <strong style="color:#6d28d9">📑 Planificación Microcurricular:</strong> Unidades didácticas por competencias. Se eliminan las planificaciones de menor jerarquía (no se requiere plan de hora clase).
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bibliotecas Digitales Gratuitas Recomendadas por MINEDEC -->
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;box-shadow:var(--shadow-xs)">
+      <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:8px">
+        <span>🌐 Bibliotecas Digitales de Acceso Libre recomendadas por el MINEDEC (Plan Lector)</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px">
+        <em>Disposición Ministerial:</em> Las instituciones educativas no podrán exigir la compra obligatoria de libros ni direccionar hacia editoriales específicas. Los estudiantes pueden acceder libremente a estos repositorios:
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
+        <a href="https://ciudadseva.com/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Ciudad Seva</span>
+        </a>
+        <a href="https://openlibrary.org/?lang=es" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Open Library (Español)</span>
+        </a>
+        <a href="https://archive.org/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Internet Archive</span>
+        </a>
+        <a href="https://www.cervantesvirtual.com/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Cervantes Virtual</span>
+        </a>
+        <a href="http://www.bdmx.mx/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Biblioteca Digital Mexicana</span>
+        </a>
+        <a href="https://www.bn.gov.ar/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Biblioteca Nacional Mariano Moreno</span>
+        </a>
+        <a href="https://uotinitiative.org/es/" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 UOT Initiative</span>
+        </a>
+        <a href="https://www.gutenberg.org/browse/languages/es" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span>🔗 Project Gutenberg (Español)</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
   </div> <!-- Fin .app-main-area -->
@@ -3276,6 +3538,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </button>
       <button id="cronoTabBtn4" class="btn btn-outline" onclick="switchCronogramaTab(4)" style="font-size:0.78rem;white-space:nowrap">
         🏁 4. Cierre de Año y Feriados
+      </button>
+      <button id="cronoTabBtn5" class="btn btn-outline" onclick="switchCronogramaTab(5)" style="font-size:0.78rem;white-space:nowrap;color:#7c3aed;border-color:#a855f7;background:rgba(124,58,237,0.08)">
+        📚 5. Orientaciones MINEDEC
       </button>
     </div>
 
@@ -3662,47 +3927,61 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         </div>
       </div>
 
-      <!-- TAB 3: FASES PEDAGÓGICAS -->
+      <!-- TAB 3: FASES PEDAGÓGICAS (ESTRATEGIA 5 SEMANAS MINEDEC) -->
       <div id="cronoView3" style="display:none">
         <div style="display:flex;flex-direction:column;gap:12px">
           
+          <div style="background:linear-gradient(135deg,#1e3a8a 0%,#7c3aed 100%);border-radius:10px;padding:12px 16px;color:#fff;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.5rem">🎓</span>
+            <div>
+              <div style="font-weight:900;font-size:0.92rem">Estrategia «Conecta, Nivela y Crea: 5 semanas para arrancar con éxito el año escolar»</div>
+              <div style="font-size:0.72rem;opacity:.9">Lineamientos Pedagógicos MINEDEC · Sierra-Amazonía 2026-2027 (Tercera Edición 2026)</div>
+            </div>
+          </div>
+
           <div style="background:var(--bg-card);border-left:5px solid #2563eb;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
               <span style="font-weight:900;font-size:0.95rem;color:#2563eb">1. FASE CONECTA: Adaptación y Diagnóstico (Semana 1)</span>
               <span style="font-size:0.75rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700">01 al 04 de Septiembre · 4 Días</span>
             </div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
-              Actividades de bienvenida, integración socioemocional, diagnóstico pedagógico y aplicación de instrumentos de evaluación diagnóstica para conocer el punto de partida de cada estudiante.
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;line-height:1.5">
+              Jornadas de bienvenida, ambientación, dinámicas lúdicas de integración socioemocional, socialización de acuerdos de convivencia y aplicación de diagnósticos formativos (con instrumentos no tradicionales).
+            </div>
+            <div style="background:#dbeafe;border-radius:6px;padding:8px 12px;font-size:0.76rem;color:#1e3a8a">
+              <strong>Preguntas Diagnósticas Clave:</strong> 1. ¿Qué aprendí en Lengua? | 2. ¿Qué aprendí en Matemática? | 3. ¿En qué lo apliqué? | 4. ¿Qué me falta por aprender?
             </div>
           </div>
 
           <div style="background:var(--bg-card);border-left:5px solid #059669;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
               <span style="font-weight:900;font-size:0.95rem;color:#059669">2. FASE NIVELA: Nivelación de Habilidades (Semanas 2 y 3)</span>
               <span style="font-size:0.75rem;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-weight:700">07 al 18 de Septiembre · 10 Días</span>
             </div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
-              Fortalecimiento de destrezas indispensables y nivelación pedagógica personalizada para garantizar los prerrequisitos del nuevo grado escolar antes del abordaje curricular profundo.
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;line-height:1.5">
+              Refuerzo específico en <strong>Lengua y Literatura</strong> y <strong>Matemática</strong> como asignaturas fundacionales. Nivelación de destrezas para cerrar brechas de aprendizaje.
+            </div>
+            <div style="background:#d1fae5;border-radius:6px;padding:8px 12px;font-size:0.76rem;color:#065f46">
+              <strong>Estrategia Co-nivelación:</strong> Tutoría colaborativa entre pares (estudiantes con habilidades consolidadas apoyan a sus compañeros). Diseño previo del proyecto interdisciplinar.
             </div>
           </div>
 
           <div style="background:var(--bg-card);border-left:5px solid #d97706;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
               <span style="font-weight:900;font-size:0.95rem;color:#d97706">3. FASE CREA: Implementación de Proyecto Interdisciplinar (Semanas 4 y 5)</span>
               <span style="font-size:0.75rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-weight:700">21 de Septiembre al 02 de Octubre · 10 Días</span>
             </div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
-              Diseño, desarrollo y ejecución del proyecto interdisciplinario integrador. Articulación de asignaturas, desarrollo de producto final y aplicación de rúbricas sumativas del 30%.
+            <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5">
+              Desarrollo del proyecto interdisciplinario. Articulación de asignaturas para evidenciar aprendizajes de la nivelación. Evaluación formativa y sumativa con rúbrica ministerial (<strong>30% Sumativo</strong>).
             </div>
           </div>
 
           <div style="background:var(--bg-card);border-left:5px solid #7c3aed;border-radius:10px;padding:14px;box-shadow:var(--shadow-xs);border-top:1px solid var(--border-color);border-right:1px solid var(--border-color);border-bottom:1px solid var(--border-color)">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-              <span style="font-weight:900;font-size:0.95rem;color:#7c3aed">4. ABORDAJE CURRICULAR REGULAR & EVALUACIÓN SUMATIVA</span>
-              <span style="font-size:0.75rem;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:99px;font-weight:700">Semanas 6 en adelante</span>
+              <span style="font-weight:900;font-size:0.95rem;color:#7c3aed">4. ABORDAJE CURRICULAR REGULAR &amp; EVALUACIÓN (Semanas 6 en adelante)</span>
+              <span style="font-size:0.75rem;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:99px;font-weight:700">Acuerdo MINEDUC-2024-00060-A</span>
             </div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.4">
-              Desarrollo de destrezas con criterios de desempeño, actividades formativas individuales y grupales (70%), evaluaciones sumativas parciales y evaluación trimestral (30%).
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;line-height:1.5">
+              Desarrollo de destrezas por competencias e inserciones curriculares. Unidades microcurriculares estructuradas (sin planes de clase por hora). Evaluación formativa (70%) y sumativa (30%).
             </div>
           </div>
         </div>
@@ -3759,6 +4038,62 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ORIENTACIONES PEDAGÓGICAS MINEDEC -->
+      <div id="cronoView5" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          
+          <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;border-radius:10px;padding:12px 16px">
+            <div style="font-weight:900;font-size:0.95rem">📖 Lineamientos Pedagógicos MINEDEC — Tercera Edición 2026</div>
+            <div style="font-size:0.72rem;opacity:.9">Orientaciones Didácticas para EGB Media, Inclusión DUA, Animación Lectora y Cívica</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+            
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:12px">
+              <div style="font-weight:800;color:#059669;font-size:0.85rem;margin-bottom:4px">🎯 Estrategias EGB Media (Séptimo)</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5">
+                • <strong>Comprensión Lectora:</strong> Transversal a todas las materias.<br>
+                • <strong>Juegos Matemáticos:</strong> Bingos, rompecabezas para 4 operaciones.<br>
+                • <strong>Proyectos de Medición:</strong> Medir y graficar datos reales.<br>
+                • <strong>Cocina Matemática:</strong> Fracciones y medidas en recetas.<br>
+                • <strong>Teatro &amp; Club de Lectores:</strong> Dramatización y debate literario.
+              </div>
+            </div>
+
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:12px">
+              <div style="font-weight:800;color:#2563eb;font-size:0.85rem;margin-bottom:4px">🏛️ Periodos Pedagógicos</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5">
+                • <strong>Cívica y Acompañamiento:</strong> Tutor de aula, habilidades sociales y alerta DECE.<br>
+                • <strong>Animación a la Lectura:</strong> Plan Lector, bibliotecas digitales libres, sin compra forzosa de libros comerciales.<br>
+                • <strong>Momento Cívico:</strong> Valores patrios y respeto a símbolos (Acuerdo MINEDEC-2026-00024-A).
+              </div>
+            </div>
+
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:12px">
+              <div style="font-weight:800;color:#7c3aed;font-size:0.85rem;margin-bottom:4px">♿ Inclusión &amp; Planificación</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5">
+                • <strong>DUA &amp; Mapa de Inclusión:</strong> Acuerdo MINEDUC-2024-00089-A.<br>
+                • <strong>Guías TEA &amp; Altas Capacidades:</strong> Adaptaciones curriculares.<br>
+                • <strong>Planificación Microcurricular:</strong> Unidades por competencias (Acuerdo MINEDUC-2024-00060-A). Sin plan de hora clase.
+              </div>
+            </div>
+
+          </div>
+
+          <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px;font-size:0.75rem">
+            <div style="font-weight:800;color:var(--text-main);margin-bottom:6px">🌐 Repositorios Digitales Gratuitos MINEDEC:</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <a href="https://ciudadseva.com/" target="_blank" style="color:var(--primary);font-weight:700">Ciudad Seva</a> ·
+              <a href="https://openlibrary.org/?lang=es" target="_blank" style="color:var(--primary);font-weight:700">Open Library</a> ·
+              <a href="https://archive.org/" target="_blank" style="color:var(--primary);font-weight:700">Internet Archive</a> ·
+              <a href="https://www.cervantesvirtual.com/" target="_blank" style="color:var(--primary);font-weight:700">Cervantes Virtual</a> ·
+              <a href="https://www.gutenberg.org/browse/languages/es" target="_blank" style="color:var(--primary);font-weight:700">Project Gutenberg</a>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -6862,7 +7197,7 @@ function rpShowAtRisk() {
           <div style="font-size:1.15rem;font-weight:900;color:#dc2626;display:flex;align-items:center;gap:8px">
             <span>⚠️ Alertas de Refuerzo Pedagógico (Notas &lt; 7.00)</span>
           </div>
-          <div style="font-size:0.78rem;color:var(--text-muted)">Estudiantes en riesgo académico según normativa MINEDUC que requieren plan de mejora</div>
+          <div style="font-size:0.78rem;color:var(--text-muted)">Estudiantes en riesgo académico según normativa MINEDEC (Acuerdo MINEDUC-2024-00031-A) que requieren plan de mejora pedagógico</div>
         </div>
         <button class="btn btn-outline" onclick="rpShowAll()">← Ver Todos</button>
       </div>
@@ -7060,7 +7395,7 @@ function shareWhatsApp(si) {
 
   lines.push(`─────────────────────`);
   lines.push(`Docente: ${S.docente || 'Docente'}`);
-  lines.push(`_Instructivo Oficial MinEduc — 2 decimales truncados_`);
+  lines.push(`_Instructivo Oficial MINEDEC · Acuerdo MINEDUC-2024-00031-A — 2 decimales truncados_`);
 
   const msg = encodeURIComponent(lines.join('\n'));
   const url = rawTel ? `https://wa.me/${rawTel}?text=${msg}` : `https://wa.me/?text=${msg}`;
@@ -8133,7 +8468,7 @@ window.addEventListener('offline', () => { setSyncStatus('🟡 Sin conexión', '
 // ══════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════
 //  MÓDULO PROYECTO INTERDISCIPLINARIO (PI)
-//  Rúbrica Ministerial MINEDUC — Componente Sumativo 30%
+//  Rúbrica Ministerial MINEDEC — Componente Sumativo 30% · Acuerdo MINEDUC-2024-00031-A
 // ══════════════════════════════════════════════════════
 
 const PI_DEFAULT_CONFIG = {
@@ -12412,13 +12747,18 @@ function openCronoNoteModal(actId) {
 }
 
 function switchCronoModuleTab(tabIdx) {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const view = document.getElementById('cronoModuleTab' + i);
     const btn  = document.getElementById('tabBtnCrono' + i);
     if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
     if (btn) {
-      if (i === tabIdx) btn.className = 'btn btn-primary';
-      else btn.className = 'btn btn-outline';
+      if (i === tabIdx) {
+        if (i === 5) { btn.style.background='#7c3aed'; btn.style.color='#fff'; btn.style.borderColor='#7c3aed'; }
+        else btn.className = 'btn btn-primary';
+      } else {
+        btn.className = 'btn btn-outline';
+        if (i === 5) { btn.style.background='rgba(124,58,237,0.1)'; btn.style.color='#7c3aed'; btn.style.borderColor='#a855f7'; }
+      }
     }
   }
 }
@@ -12580,15 +12920,17 @@ function closeCronogramaModal() {
 }
 
 function switchCronogramaTab(tabIdx) {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const view = document.getElementById('cronoView' + i);
     const btn = document.getElementById('cronoTabBtn' + i);
     if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
     if (btn) {
       if (i === tabIdx) {
-        btn.className = 'btn btn-primary';
+        if (i === 5) { btn.className='btn'; btn.style.background='#7c3aed'; btn.style.color='#fff'; btn.style.borderColor='#7c3aed'; }
+        else btn.className = 'btn btn-primary';
       } else {
         btn.className = 'btn btn-outline';
+        if (i === 5) { btn.style.background=''; btn.style.color='#7c3aed'; btn.style.borderColor='#a855f7'; }
       }
     }
   }
