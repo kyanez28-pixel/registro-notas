@@ -4465,8 +4465,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 </div>
 
 <!-- ── MODAL GENÉRICO ── -->
-<div class="mo" id="modal">
-  <div class="md">
+<div class="mo" id="modal" style="z-index:100050" onclick="if(event.target===this)closeModal()">
+  <div class="md" onclick="event.stopPropagation()">
     <h3 id="mTitle">—</h3>
     <div id="mBody"></div>
     <div class="ma">
@@ -4817,18 +4817,78 @@ function esc(s)     { return String(s||'').replace(/\\/g,"\\\\").replace(/'/g,"\
 function escHTML(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&gt;'); }
 function escVal(s)  { return String(s||'').replace(/"/g,'&quot;'); }
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function closeCf()    { document.getElementById('mCf').classList.remove('open'); }
+function closeModal() {
+  const m = document.getElementById('modal');
+  if (m) {
+    m.classList.remove('open');
+    m.style.display = 'none';
+  }
+}
+function closeCf() {
+  const m = document.getElementById('mCf');
+  if (m) {
+    m.classList.remove('open');
+    m.style.display = 'none';
+  }
+}
 
 function showModal(title, bodyHTML, okLabel, okFn, okClass) {
+  const m = document.getElementById('modal');
+  if (!m) return;
   document.getElementById('mTitle').innerHTML = title;
   document.getElementById('mBody').innerHTML  = bodyHTML;
   const btn = document.getElementById('mOk');
   btn.textContent = okLabel || 'Guardar';
   btn.className = 'btn ' + (okClass || 'btn-success');
   btn.onclick = okFn;
-  document.getElementById('modal').classList.add('open');
+  m.classList.add('open');
+  m.style.display = 'flex';
+  m.style.zIndex = '100050';
 }
+
+let _lastColClickTime = 0;
+let _lastColClickKey = '';
+function handleColHeaderClick(wi, ci) {
+  const now = Date.now();
+  const key = wi + '-' + ci;
+  if (now - _lastColClickTime < 500 && _lastColClickKey === key) {
+    _lastColClickTime = 0;
+    _lastColClickKey = '';
+    editColName(wi, ci);
+  } else {
+    _lastColClickTime = now;
+    _lastColClickKey = key;
+  }
+}
+
+let _lastWeekClickTime = 0;
+let _lastWeekClickKey = -1;
+function handleWeekHeaderClick(wi) {
+  const now = Date.now();
+  if (now - _lastWeekClickTime < 500 && _lastWeekClickKey === wi) {
+    _lastWeekClickTime = 0;
+    _lastWeekClickKey = -1;
+    editWeekName(wi);
+  } else {
+    _lastWeekClickTime = now;
+    _lastWeekClickKey = wi;
+  }
+}
+
+let _lastEmptyColClickTime = 0;
+let _lastEmptyColKey = '';
+function handleEmptyColClick(wName) {
+  const now = Date.now();
+  if (now - _lastEmptyColClickTime < 500 && _lastEmptyColKey === wName) {
+    _lastEmptyColClickTime = 0;
+    _lastEmptyColKey = '';
+    addColToWeek(wName);
+  } else {
+    _lastEmptyColClickTime = now;
+    _lastEmptyColKey = wName;
+  }
+}
+
 
 function confirm2(title, msg, fn, btnClass) {
   document.getElementById('cfT').textContent = title;
@@ -5051,11 +5111,12 @@ function renderTable() {
     const span = (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, wName, wi);
     r1 += `<th class="wh" colspan="${span}"
+      onclick="handleWeekHeaderClick(${wi})"
       ondblclick="editWeekName(${wi})"
       oncontextmenu="openWeekContextMenu(event, ${wi})"
       title="${escHTML(wTitle)} · Doble clic para editar tema y destreza"
-      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none">
-      <div style="width:100%;text-align:center" ondblclick="event.stopPropagation();editWeekName(${wi})">
+      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
+      <div style="width:100%;text-align:center;pointer-events:none">
         ${escHTML(wTitle)}
       </div>
     </th>`;
@@ -5078,10 +5139,12 @@ function renderTable() {
     const c = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
     if (!c.length) {
-      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(wName)}')"
+      r2 += `<th class="sh"
+        onclick="handleEmptyColClick('${esc(wName)}')"
+        ondblclick="addColToWeek('${esc(wName)}')"
         oncontextmenu="openWeekContextMenu(event, ${wi})"
         title="Doble clic para agregar actividad a esta semana"
-        style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer;user-select:none">+ act</th>`;
+        style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer;user-select:none;-webkit-user-select:none">+ act</th>`;
     } else {
       c.forEach((col, ci) => {
         const at = actType(col.type);
@@ -5090,18 +5153,19 @@ function renderTable() {
 
         // Mostrar la descripción (o nombre si no tiene) como texto principal en grande y limpio
         const displayName = col.desc || col.name;
-        const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal">${escHTML(displayName)}</div>`;
-        const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px">${escHTML(col.date)}</div>` : '';
-        const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2">${escHTML(at.label)}${catBadge}</div>`;
+        const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal;pointer-events:none">${escHTML(displayName)}</div>`;
+        const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px;pointer-events:none">${escHTML(col.date)}</div>` : '';
+        const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2;pointer-events:none">${escHTML(at.label)}${catBadge}</div>`;
 
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh"
+          onclick="handleColHeaderClick(${wi},${ci})"
           ondblclick="editColName(${wi},${ci})"
           oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
           title="${fullTitle} · Doble clic para editar · Clic derecho para opciones"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none">
-          <div style="width:100%;text-align:center" ondblclick="event.stopPropagation();editColName(${wi},${ci})">
+          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none">
+          <div style="width:100%;text-align:center;pointer-events:none">
             ${actNameHTML}
             ${dateHTML}
             ${typeHTML}
