@@ -138,32 +138,13 @@ input.gi {
 th, td {
   font-size: var(--fs) !important;
 }
-
-/* ── BOTONES DE EDICIÓN RÁPIDA EN ENCABEZADOS ── */
-.btn-th-edit {
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: #ffffff;
-  border-radius: 4px;
-  padding: 1px 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  cursor: pointer;
-  line-height: 1.2;
-  transition: all .15s ease;
-  backdrop-filter: blur(4px);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.btn-th-edit:hover {
-  background: rgba(255, 255, 255, 0.5);
-  transform: scale(1.12);
-  color: #ffffff;
-}
-.btn-th-edit:active {
-  transform: scale(0.95);
-}
+/* ── SCROLLBARS PULIDAS ── */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.03); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+body.dark ::-webkit-scrollbar-thumb { background: #334155; background-clip: content-box; }
+body.dark ::-webkit-scrollbar-thumb:hover { background: #475569; background-clip: content-box; }
 
 /* ══════════════════════════════════════════════════════
    USER BAR (AUTH & CLOUD SYNC)
@@ -5069,19 +5050,13 @@ function renderTable() {
     const c = mat.cols[wName] || [];
     const span = (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, wName, wi);
-    r1 += `<th class="wh" colspan="${span}" draggable="true"
-      ondragstart="handleWeekDragStart(event, ${wi})"
-      ondragover="handleWeekDragOver(event)"
-      ondragleave="handleWeekDragLeave(event)"
-      ondrop="handleWeekDrop(event, ${wi})"
-      ondragend="handleWeekDragEnd(event)"
+    r1 += `<th class="wh" colspan="${span}"
       ondblclick="editWeekName(${wi})"
       oncontextmenu="openWeekContextMenu(event, ${wi})"
-      title="${escHTML(wTitle)} · Clic en ✎ para editar tema/destreza"
-      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:6px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:grab;text-align:center">
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-        <span>${escHTML(wTitle)}</span>
-        <button type="button" class="btn-th-edit" onclick="event.stopPropagation();editWeekName(${wi})" title="Editar nombre y destreza de la semana">✎ Editar</button>
+      title="${escHTML(wTitle)} · Doble clic para editar tema y destreza"
+      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none">
+      <div style="width:100%;text-align:center" ondblclick="event.stopPropagation();editWeekName(${wi})">
+        ${escHTML(wTitle)}
       </div>
     </th>`;
   });
@@ -5103,13 +5078,10 @@ function renderTable() {
     const c = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
     if (!c.length) {
-      r2 += `<th class="sh" onclick="addColToWeek('${esc(wName)}')"
-        ondragover="handleColDragOver(event)"
-        ondragleave="handleColDragLeave(event)"
-        ondrop="handleColDrop(event, '${esc(wName)}', 0)"
+      r2 += `<th class="sh" ondblclick="addColToWeek('${esc(wName)}')"
         oncontextmenu="openWeekContextMenu(event, ${wi})"
-        title="Clic para agregar actividad · Arrastra y suelta aquí para mover a esta semana"
-        style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer">➕ Actividad</th>`;
+        title="Doble clic para agregar actividad a esta semana"
+        style="background:${wc.s};border-color:${wc.h};min-width:100px;cursor:pointer;user-select:none">+ act</th>`;
     } else {
       c.forEach((col, ci) => {
         const at = actType(col.type);
@@ -5124,24 +5096,15 @@ function renderTable() {
 
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
-        r2 += `<th class="sh" draggable="true"
-          ondragstart="handleColDragStart(event, '${esc(wName)}', ${ci})"
-          ondragover="handleColDragOver(event)"
-          ondragleave="handleColDragLeave(event)"
-          ondrop="handleColDrop(event, '${esc(wName)}', ${ci})"
-          ondragend="handleColDragEnd(event)"
+        r2 += `<th class="sh"
           ondblclick="editColName(${wi},${ci})"
           oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
-          title="${fullTitle} · Clic para editar · Arrastra para mover"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:6px 6px;vertical-align:middle;text-align:center;cursor:pointer">
-          <div style="width:100%;text-align:center;cursor:pointer;position:relative" onclick="editColName(${wi},${ci})">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:2px">
-              <button type="button" class="btn-th-edit" onclick="event.stopPropagation();editColName(${wi},${ci})" title="Editar actividad">✎</button>
-            </div>
+          title="${fullTitle} · Doble clic para editar · Clic derecho para opciones"
+          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none">
+          <div style="width:100%;text-align:center" ondblclick="event.stopPropagation();editColName(${wi},${ci})">
             ${actNameHTML}
             ${dateHTML}
             ${typeHTML}
-            <div style="font-size:0.58rem;color:rgba(255,255,255,0.75);margin-top:3px;font-weight:600">✎ Clic para editar</div>
           </div>
         </th>`;
       });
@@ -6160,9 +6123,16 @@ function openAddCol() {
 }
 function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 function editColName(wi, ci) {
-  const w = gm().weeks[wi];
-  const wName = getWeekName(w);
-  showColModal(wName, gm().cols[wName][ci], true, wi, ci);
+  try {
+    const mat = gm();
+    if (!mat || !mat.weeks || !mat.weeks[wi]) return;
+    const w = mat.weeks[wi];
+    const wName = getWeekName(w);
+    if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) return;
+    showColModal(wName, mat.cols[wName][ci], true, wi, ci);
+  } catch (err) {
+    console.error('Error in editColName:', err);
+  }
 }
 
 function delCol(wi, ci) {
@@ -6633,24 +6603,27 @@ function closeCtxMenu() {
 document.addEventListener('click', closeCtxMenu);
 
 function showColModal(selWeek, col, isEdit, wi, ci) {
-  const mat = gm();
-  const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
-  const typeOpts = ACT_TYPES.map(t => {
-    const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
-    return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
-  }).join('');
+  try {
+    const mat = gm();
+    if (!mat) return;
+    const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
+    const typeOpts = ACT_TYPES.map(t => {
+      const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
+      return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
+    }).join('');
 
-  const actionsHTML = isEdit ? `
-    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color)">
-      <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-bottom:8px">Acciones Rápidas:</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},-1)" title="Mover a la izquierda">◀ Mover Izq</button>
-        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},1)" title="Mover a la derecha">Mover Der ▶</button>
-        <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();copyMainColumn('activity','${esc(selWeek)}','${esc(col.name)}')" title="Copiar notas para Excel">📋 Copiar</button>
-        <button type="button" class="btn btn-danger" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();delCol(${wi},${ci})" title="Eliminar actividad">🗑 Eliminar</button>
+    const colName = col ? (col.name || '') : '';
+    const actionsHTML = isEdit ? `
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color)">
+        <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-bottom:8px">Acciones Rápidas:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},-1)" title="Mover a la izquierda">◀ Mover Izq</button>
+          <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();moveColStep(${wi},${ci},1)" title="Mover a la derecha">Mover Der ▶</button>
+          <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();copyMainColumn('activity','${esc(selWeek)}','${esc(colName)}')" title="Copiar notas para Excel">📋 Copiar</button>
+          <button type="button" class="btn btn-danger" style="flex:1;justify-content:center;font-size:0.75rem" onclick="closeModal();delCol(${wi},${ci})" title="Eliminar actividad">🗑 Eliminar</button>
+        </div>
       </div>
-    </div>
-  ` : '';
+    ` : '';
 
   // Valor mostrado: si tiene desc usa esa, sino usa name (retrocompatibilidad)
   const descVal = col ? escVal(col.desc || col.name || '') : '';
@@ -6732,6 +6705,9 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
       closeModal(); render(); saveData();
     }
   );
+  } catch (err) {
+    console.error('Error in showColModal:', err);
+  }
 }
 
 function doClearGrades() {
