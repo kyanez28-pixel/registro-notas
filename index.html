@@ -4894,12 +4894,16 @@ function handleEmptyColClick(wName) {
 
 
 function confirm2(title, msg, fn, btnClass) {
+  const m = document.getElementById('mCf');
+  if (!m) return;
   document.getElementById('cfT').textContent = title;
   document.getElementById('cfM').innerHTML   = msg;
   const btn = document.getElementById('cfBtn');
   btn.className = 'btn ' + (btnClass || 'btn-danger');
   btn.onclick = () => { closeCf(); fn(); };
-  document.getElementById('mCf').classList.add('open');
+  m.classList.add('open');
+  m.style.display = 'flex';
+  m.style.zIndex = '100060';
 }
 
 function weekColor(matName, week, wi) {
@@ -6117,30 +6121,53 @@ function openManageNomina() {
 
 function openAddWeek() {
   const mat = gm();
+  if (!mat) return;
+  // Sugerir el número de semana correcto excluyendo sumativas
+  const teachingWeeksCount = (mat.weeks || []).filter(w => {
+    const n = getWeekName(w).toUpperCase();
+    return !n.includes('SUMATIV') && !n.includes('EXAMEN') && !n.includes('PROYECTO');
+  }).length;
+
   showModal(
     '➕ Agregar Tema y Destreza de la Semana',
     `
     <label>Tema / Nombre de la Semana</label>
-    <input type="text" id="mWeekInp" value="SEMANA ${(mat.weeks.length||0)+1}" placeholder="Ej: ESCRIBIR POESÍAS, SEMANA 1"/>
+    <input type="text" id="mWeekInp" value="SEMANA ${teachingWeeksCount + 1}" placeholder="Ej: ESCRIBIR POESÍAS, SEMANA 1"/>
     <label>Destreza / Criterio de Evaluación (Al lado)</label>
     <input type="text" id="mWeekDest" value="" placeholder="Ej: I.LL.3.1.1."/>
     `,
-    'Agregar',
+    'Agregar Semana',
     () => {
       const nv = document.getElementById('mWeekInp').value.trim().toUpperCase();
       const dest = document.getElementById('mWeekDest')?.value.trim().toUpperCase() || '';
       if (!nv) return;
 
       const newWeekObj = { name: nv, destreza: dest };
-      mat.weeks.push(newWeekObj);
+      if (!mat.weeks) mat.weeks = [];
+      if (!mat.cols) mat.cols = {};
+
+      // Ubicar ANTES de la Evaluación Sumativa si existe, para no desordenar el trimestre
+      const sumIdx = mat.weeks.findIndex(w => {
+        const n = getWeekName(w).toUpperCase();
+        return n.includes('SUMATIV') || n.includes('EXAMEN') || n.includes('PROYECTO');
+      });
+
+      if (sumIdx >= 0) {
+        mat.weeks.splice(sumIdx, 0, newWeekObj);
+      } else {
+        mat.weeks.push(newWeekObj);
+      }
+
       if (!mat.cols[nv]) mat.cols[nv] = [];
       closeModal(); render(); saveData();
+      toast(`✔ Semana "${nv}" agregada correctamente`, '#16a34a');
     }
   );
 }
 
 function editWeekName(wi) {
   const mat = gm();
+  if (!mat || !mat.weeks || !mat.weeks[wi]) return;
   const oldW = mat.weeks[wi];
   const oldName = getWeekName(oldW);
   const oldDest = getWeekDestreza(oldW);
@@ -6168,35 +6195,52 @@ function editWeekName(wi) {
       }
 
       closeModal(); render(); saveData();
+      toast(`✔ Semana actualizada a "${nv}"`, '#2563eb');
     }
   );
 }
 
 function openDelWeek() {
   const mat = gm();
+  if (!mat || !mat.weeks || !mat.weeks.length) {
+    toast('⚠️ No hay semanas para eliminar en esta materia', '#d97706');
+    return;
+  }
   const opts = mat.weeks.map((w, wi) => `<option value="${wi}">${escHTML(getWeekTitle(w))}</option>`).join('');
-  showModal('🗑 Eliminar Semana', `<label>Semana:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar', () => {
+  showModal('🗑 Eliminar Semana', `<label>Semana a Eliminar:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar Semana', () => {
     const wi = parseInt(document.getElementById('mDelWeekSel').value);
     const targetW = mat.weeks[wi];
+    if (!targetW) return;
     const targetName = getWeekName(targetW);
     mat.weeks.splice(wi, 1);
     delete mat.cols[targetName];
     closeModal(); render(); saveData();
+    toast(`🗑 Semana "${targetName}" eliminada`, '#dc2626');
   }, 'btn-danger');
 }
 
 function openAddCol() {
-  showColModal(getWeekName(gm().weeks[0]) || 'SEMANA 1', null, false);
+  const mat = gm();
+  if (!mat || !mat.weeks || !mat.weeks.length) {
+    toast('⚠️ Primero agrega una semana para crear actividades', '#d97706');
+    return;
+  }
+  showColModal(getWeekName(mat.weeks[0]) || 'SEMANA 1', null, false);
 }
 function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
+
 function editColName(wi, ci) {
   const mat = gm();
-  if (!mat) { alert('Error: no hay datos de materia'); return; }
-  if (!mat.weeks || !mat.weeks[wi]) { alert('Error: semana ' + wi + ' no existe'); return; }
+  if (!mat || !mat.weeks || !mat.weeks[wi]) {
+    toast('⚠️ No se encontró la semana de la actividad', '#d97706');
+    return;
+  }
   const w = mat.weeks[wi];
   const wName = getWeekName(w);
-  if (!mat.cols || !mat.cols[wName]) { alert('Error: no hay columnas para "' + wName + '"'); return; }
-  if (!mat.cols[wName][ci]) { alert('Error: columna ' + ci + ' no existe en "' + wName + '"'); return; }
+  if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) {
+    toast('⚠️ No se encontró la actividad a editar', '#d97706');
+    return;
+  }
   showColModal(wName, mat.cols[wName][ci], true, wi, ci);
 }
 
@@ -6204,23 +6248,25 @@ function openEditColModal() {
   const mat = gm();
   if (!mat) return;
   const allCols = [];
-  mat.weeks.forEach((w, wi) => {
+  (mat.weeks || []).forEach((w, wi) => {
     const wName = getWeekName(w);
     (mat.cols[wName] || []).forEach((c, ci) => {
       allCols.push({ w: wName, wi, ci, name: c.name, desc: c.desc, type: c.type });
     });
   });
   if (!allCols.length) {
-    toast('\u26a0\ufe0f No hay actividades para editar en esta materia', '#d97706');
+    toast('⚠️ No hay actividades para editar en esta materia', '#d97706');
     return;
   }
   const opts = allCols.map(c =>
-    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} \u2192 ${escHTML(c.desc || c.name)} (${actType(c.type).label})</option>`
+    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} → ${escHTML(c.desc || c.name)} (${actType(c.type).label})</option>`
   ).join('');
   showModal(
-    '\u270e Editar Actividad',
-    `<label>Selecciona la Actividad a Editar</label>
-    <select id="mEditColSel" style="margin-bottom:14px">${opts}</select>`,
+    '✎ Editar Actividad',
+    `
+    <label>Selecciona la Actividad a Editar:</label>
+    <select id="mEditColSel" style="margin-bottom:14px">${opts}</select>
+    `,
     'Editar',
     () => {
       const val = document.getElementById('mEditColSel').value;
@@ -6233,12 +6279,13 @@ function openEditColModal() {
 
 function delCol(wi, ci) {
   const mat = gm();
+  if (!mat || !mat.weeks || !mat.weeks[wi]) return;
   const w = mat.weeks[wi];
   const wName = getWeekName(w);
-  if (!mat || !mat.cols[wName] || !mat.cols[wName][ci]) return;
+  if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) return;
   const col = mat.cols[wName][ci];
 
-  confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.name)}</strong> (${escHTML(wName)}) y todas sus calificaciones?`, () => {
+  confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.desc || col.name)}</strong> (${escHTML(wName)}) y todas sus calificaciones?`, () => {
     const deletedColName = col.name;
     mat.cols[wName].splice(ci, 1);
 
@@ -6258,11 +6305,12 @@ function delCol(wi, ci) {
 
 function openDelColModal() {
   const mat = gm();
+  if (!mat) return;
   const allCols = [];
-  mat.weeks.forEach((w, wi) => {
+  (mat.weeks || []).forEach((w, wi) => {
     const wName = getWeekName(w);
     (mat.cols[wName] || []).forEach((c, ci) => {
-      allCols.push({ w: wName, wi, ci, name: c.name, type: c.type });
+      allCols.push({ w: wName, wi, ci, name: c.name, desc: c.desc, type: c.type });
     });
   });
 
@@ -6272,13 +6320,13 @@ function openDelColModal() {
   }
 
   const opts = allCols.map(c =>
-    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} → ${escHTML(c.name)} (${actType(c.type).label})</option>`
+    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} → ${escHTML(c.desc || c.name)} (${actType(c.type).label})</option>`
   ).join('');
 
   showModal(
     '🗑 Eliminar Actividad Evaluativa',
     `
-    <label>Selecciona la Actividad a Eliminar</label>
+    <label>Selecciona la Actividad a Eliminar:</label>
     <select id="mDelColSel">${opts}</select>
     <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">Se eliminará la columna y las calificaciones asociadas en esta materia.</div>
     `,
