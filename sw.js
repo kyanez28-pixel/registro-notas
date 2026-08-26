@@ -1,5 +1,5 @@
 // Service Worker para PWA — Registro de Notas
-const CACHE_NAME = 'registro-notas-v20';
+const CACHE_NAME = 'registro-notas-v21';
 const ASSETS = [
   './',
   './index.html',
@@ -29,6 +29,13 @@ self.addEventListener('activate', (e) => {
     })
   );
   self.clients.claim();
+});
+
+// Escuchar mensaje SKIP_WAITING del cliente
+self.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (e) => {
