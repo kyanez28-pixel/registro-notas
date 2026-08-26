@@ -6191,12 +6191,17 @@ function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 function editColName(wi, ci) {
   try {
     const mat = gm();
-    if (!mat || !mat.weeks || !mat.weeks[wi]) return;
+    if (!mat) { toast('❌ DEBUG: mat es null', '#dc2626'); return; }
+    if (!mat.weeks) { toast('❌ DEBUG: sin semanas', '#dc2626'); return; }
+    if (!mat.weeks[wi]) { toast('❌ DEBUG: semana ' + wi + ' no existe (total:' + mat.weeks.length + ')', '#dc2626'); return; }
     const w = mat.weeks[wi];
     const wName = getWeekName(w);
-    if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) return;
+    if (!mat.cols) { toast('❌ DEBUG: sin cols', '#dc2626'); return; }
+    if (!mat.cols[wName]) { toast('❌ DEBUG: no hay cols para semana "' + wName + '"', '#dc2626'); return; }
+    if (!mat.cols[wName][ci]) { toast('❌ DEBUG: col ' + ci + ' no existe en "' + wName + '" (total:' + mat.cols[wName].length + ')', '#dc2626'); return; }
     showColModal(wName, mat.cols[wName][ci], true, wi, ci);
   } catch (err) {
+    toast('❌ ERROR: ' + err.message, '#dc2626');
     console.error('Error in editColName:', err);
   }
 }
@@ -6671,7 +6676,8 @@ document.addEventListener('click', closeCtxMenu);
 function showColModal(selWeek, col, isEdit, wi, ci) {
   try {
     const mat = gm();
-    if (!mat) return;
+    if (!mat) { toast('❌ DEBUG showColModal: sin mat', '#dc2626'); return; }
+    toast('✅ DEBUG: abriendo modal...', '#16a34a', 1500);
     const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
     const typeOpts = ACT_TYPES.map(t => {
       const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
@@ -6772,6 +6778,7 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     }
   );
   } catch (err) {
+    toast('❌ ERROR showColModal: ' + err.message, '#dc2626');
     console.error('Error in showColModal:', err);
   }
 }
