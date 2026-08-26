@@ -4787,14 +4787,14 @@ function saveHdr() {
   saveData();
 }
 
-function toast(msg, color, duration) {
+function toast(msg, color) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.innerHTML = `<span>${msg}</span>`;
   t.style.borderColor = color || '#3b82f6';
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), duration || 2600);
+  t._t = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
 setInterval(() => saveData(false), 30000);
@@ -4851,14 +4851,13 @@ let _lastColClickKey = '';
 function handleColHeaderClick(wi, ci) {
   const now = Date.now();
   const key = wi + '-' + ci;
-  if (now - _lastColClickTime < 600 && _lastColClickKey === key) {
+  if (now - _lastColClickTime < 500 && _lastColClickKey === key) {
     _lastColClickTime = 0;
     _lastColClickKey = '';
     editColName(wi, ci);
   } else {
     _lastColClickTime = now;
     _lastColClickKey = key;
-    toast('✎ Clic de nuevo para editar', '#6366f1', 900);
   }
 }
 
@@ -4866,7 +4865,7 @@ let _lastWeekClickTime = 0;
 let _lastWeekClickKey = -1;
 function handleWeekHeaderClick(wi) {
   const now = Date.now();
-  if (now - _lastWeekClickTime < 600 && _lastWeekClickKey === wi) {
+  if (now - _lastWeekClickTime < 500 && _lastWeekClickKey === wi) {
     _lastWeekClickTime = 0;
     _lastWeekClickKey = -1;
     editWeekName(wi);
@@ -5113,6 +5112,7 @@ function renderTable() {
     const wc = weekColor(mName, wName, wi);
     r1 += `<th class="wh" colspan="${span}"
       onclick="handleWeekHeaderClick(${wi})"
+      ondblclick="editWeekName(${wi})"
       oncontextmenu="openWeekContextMenu(event, ${wi})"
       title="${escHTML(wTitle)} · Doble clic para editar tema y destreza"
       style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
@@ -5160,13 +5160,11 @@ function renderTable() {
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh"
+          onclick="handleColHeaderClick(${wi},${ci})"
+          ondblclick="editColName(${wi},${ci})"
           oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
-          title="${fullTitle} · Clic en ✎ para editar · Clic derecho para opciones"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:6px 8px;vertical-align:middle;text-align:center;user-select:none;-webkit-user-select:none;position:relative">
-          <button type="button"
-            onclick="event.stopPropagation();editColName(${wi},${ci})"
-            title="Editar actividad"
-            style="position:absolute;top:3px;right:3px;background:rgba(255,255,255,0.25);border:none;border-radius:4px;color:#fff;font-size:0.75rem;cursor:pointer;padding:1px 4px;line-height:1.4;z-index:2">✎</button>
+          title="${fullTitle} · Doble clic para editar · Clic derecho para opciones"
+          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none">
           <div style="width:100%;text-align:center;pointer-events:none">
             ${actNameHTML}
             ${dateHTML}
@@ -5763,7 +5761,7 @@ function wizardFinish() {
 // ══════════════════════════════════════════════════════
 //  GESTIÓN DE PERIODOS Y MATERIAS
 // ══════════════════════════════════════════════════════
-function openEditPeriodLegacy() {
+function openEditPeriod() {
   showModal(
     '✎ Periodo Trimestral',
     `
@@ -6191,17 +6189,12 @@ function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 function editColName(wi, ci) {
   try {
     const mat = gm();
-    if (!mat) { toast('❌ DEBUG: mat es null', '#dc2626'); return; }
-    if (!mat.weeks) { toast('❌ DEBUG: sin semanas', '#dc2626'); return; }
-    if (!mat.weeks[wi]) { toast('❌ DEBUG: semana ' + wi + ' no existe (total:' + mat.weeks.length + ')', '#dc2626'); return; }
+    if (!mat || !mat.weeks || !mat.weeks[wi]) return;
     const w = mat.weeks[wi];
     const wName = getWeekName(w);
-    if (!mat.cols) { toast('❌ DEBUG: sin cols', '#dc2626'); return; }
-    if (!mat.cols[wName]) { toast('❌ DEBUG: no hay cols para semana "' + wName + '"', '#dc2626'); return; }
-    if (!mat.cols[wName][ci]) { toast('❌ DEBUG: col ' + ci + ' no existe en "' + wName + '" (total:' + mat.cols[wName].length + ')', '#dc2626'); return; }
+    if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) return;
     showColModal(wName, mat.cols[wName][ci], true, wi, ci);
   } catch (err) {
-    toast('❌ ERROR: ' + err.message, '#dc2626');
     console.error('Error in editColName:', err);
   }
 }
@@ -6676,8 +6669,7 @@ document.addEventListener('click', closeCtxMenu);
 function showColModal(selWeek, col, isEdit, wi, ci) {
   try {
     const mat = gm();
-    if (!mat) { toast('❌ DEBUG showColModal: sin mat', '#dc2626'); return; }
-    toast('✅ DEBUG: abriendo modal...', '#16a34a', 1500);
+    if (!mat) return;
     const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
     const typeOpts = ACT_TYPES.map(t => {
       const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
@@ -6778,7 +6770,6 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
     }
   );
   } catch (err) {
-    toast('❌ ERROR showColModal: ' + err.message, '#dc2626');
     console.error('Error in showColModal:', err);
   }
 }
