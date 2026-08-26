@@ -4111,12 +4111,16 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 </div>
 
-<!-- ── PANEL DE VISIBILIDAD ── -->
+<!-- ── OVERLAY Y PANEL DE VISIBILIDAD ── -->
+<div id="visOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:8887" onclick="closeVisPanel()"></div>
 <div id="visPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--bg-card);z-index:8888;box-shadow:var(--shadow-xl);border-left:1px solid var(--border-color);flex-direction:column">
   <div style="background:#1e3a8a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
     <span style="font-weight:800;font-size:0.92rem">👁 Mostrar / Ocultar</span>
     <button onclick="closeVisPanel()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer">✕</button>
   </div>
+  <div id="visPanelBody" style="flex:1;overflow-y:auto;padding:14px"></div>
+</div>
+
 <!-- ══ MODAL 1: COMPARTIR ENLACE Y CÓDIGO QR PARA PADRES DE FAMILIA ══ -->
 <div class="mo" id="parentLinkModal" style="z-index:10010" onclick="if(event.target===this)closeParentLinkModal()">
   <div class="md" style="max-width:540px;width:94%;border-radius:18px;padding:24px;box-shadow:var(--shadow-xl)">
@@ -8201,26 +8205,28 @@ function refreshVisPanel() {
   const body = document.getElementById('visPanelBody');
   if (!body) return;
   const mat = gm();
+  if (!mat) return;
   const mName = curMatName();
 
-  let html = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Alternar visibilidad:</div>`;
+  let html = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Alternar visibilidad de columnas y estudiantes:</div>`;
 
-  mat.weeks.forEach((w) => {
-    const cols = mat.cols[w] || [];
-    html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:8px 0 4px">${escHTML(w)}</div>`;
+  (mat.weeks || []).forEach((w) => {
+    const wName = getWeekName(w);
+    const cols = (mat.cols && mat.cols[wName]) || [];
+    html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:8px 0 4px">${escHTML(getWeekTitle(w))}</div>`;
     cols.forEach(col => {
-      const key = `${mName}||${w}||${col.name}`;
+      const key = `${mName}||${wName}||${col.name}`;
       const vis = !S.hiddenCols[key];
-      html += `<div onclick="toggleCol('${esc(key)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px">
-        <span>${vis?'👁':'🙈'}</span> <span style="font-size:0.75rem">${escHTML(col.name)}</span>
+      html += `<div onclick="toggleCol('${esc(key)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px;user-select:none">
+        <span>${vis?'👁':'🙈'}</span> <span style="font-size:0.75rem">${escHTML(col.desc || col.name)}</span>
       </div>`;
     });
   });
 
   html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:12px 0 4px">Estudiantes</div>`;
-  S.students.forEach(name => {
+  (S.students || []).forEach(name => {
     const vis = !S.hiddenRows[name];
-    html += `<div onclick="toggleRow('${esc(name)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px">
+    html += `<div onclick="toggleRow('${esc(name)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px;user-select:none">
       <span>${vis?'👁':'🙈'}</span> <span style="font-size:0.75rem">${escHTML(name)}</span>
     </div>`;
   });
