@@ -2413,6 +2413,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
         🗑 Actividad
       </button>
+      <button class="btn btn-outline" onclick="openEditColModal()" data-tip="Editar nombre y tipo de una actividad existente" style="border-color:#a78bfa;color:#a78bfa">
+        ✎ Actividad
+      </button>
       <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
         🗑 Semana
       </button>
@@ -6187,16 +6190,45 @@ function openAddCol() {
 }
 function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 function editColName(wi, ci) {
-  try {
-    const mat = gm();
-    if (!mat || !mat.weeks || !mat.weeks[wi]) return;
-    const w = mat.weeks[wi];
+  const mat = gm();
+  if (!mat) { alert('Error: no hay datos de materia'); return; }
+  if (!mat.weeks || !mat.weeks[wi]) { alert('Error: semana ' + wi + ' no existe'); return; }
+  const w = mat.weeks[wi];
+  const wName = getWeekName(w);
+  if (!mat.cols || !mat.cols[wName]) { alert('Error: no hay columnas para "' + wName + '"'); return; }
+  if (!mat.cols[wName][ci]) { alert('Error: columna ' + ci + ' no existe en "' + wName + '"'); return; }
+  showColModal(wName, mat.cols[wName][ci], true, wi, ci);
+}
+
+function openEditColModal() {
+  const mat = gm();
+  if (!mat) return;
+  const allCols = [];
+  mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
-    if (!mat.cols || !mat.cols[wName] || !mat.cols[wName][ci]) return;
-    showColModal(wName, mat.cols[wName][ci], true, wi, ci);
-  } catch (err) {
-    console.error('Error in editColName:', err);
+    (mat.cols[wName] || []).forEach((c, ci) => {
+      allCols.push({ w: wName, wi, ci, name: c.name, desc: c.desc, type: c.type });
+    });
+  });
+  if (!allCols.length) {
+    toast('\u26a0\ufe0f No hay actividades para editar en esta materia', '#d97706');
+    return;
   }
+  const opts = allCols.map(c =>
+    `<option value="${c.wi}||${c.ci}">${escHTML(c.w)} \u2192 ${escHTML(c.desc || c.name)} (${actType(c.type).label})</option>`
+  ).join('');
+  showModal(
+    '\u270e Editar Actividad',
+    `<label>Selecciona la Actividad a Editar</label>
+    <select id="mEditColSel" style="margin-bottom:14px">${opts}</select>`,
+    'Editar',
+    () => {
+      const val = document.getElementById('mEditColSel').value;
+      const [wiStr, ciStr] = val.split('||');
+      closeModal();
+      editColName(parseInt(wiStr), parseInt(ciStr));
+    }
+  );
 }
 
 function delCol(wi, ci) {
