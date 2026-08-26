@@ -5160,10 +5160,13 @@ function renderTable() {
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh"
-          onclick="handleColHeaderClick(${wi},${ci})"
           oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
-          title="${fullTitle} · Doble clic para editar · Clic derecho para opciones"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none">
+          title="${fullTitle} · Clic en ✎ para editar · Clic derecho para opciones"
+          style="background:${bg};border-color:${bg};min-width:115px;padding:6px 8px;vertical-align:middle;text-align:center;user-select:none;-webkit-user-select:none;position:relative">
+          <button type="button"
+            onclick="event.stopPropagation();editColName(${wi},${ci})"
+            title="Editar actividad"
+            style="position:absolute;top:3px;right:3px;background:rgba(255,255,255,0.25);border:none;border-radius:4px;color:#fff;font-size:0.75rem;cursor:pointer;padding:1px 4px;line-height:1.4;z-index:2">✎</button>
           <div style="width:100%;text-align:center;pointer-events:none">
             ${actNameHTML}
             ${dateHTML}
