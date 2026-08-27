@@ -10046,6 +10046,9 @@ function renderDiagSubjectTable() {
       <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">EVALUADOS</span><br><strong>${stats.evaluated} / ${stats.totalStudents}</strong></div>
       <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">REQUIEREN NIVELACIÓN</span><br><span style="color:#b91c1c;font-weight:800">${stats.paCount + stats.naCount} est. (${stats.alertPct}%)</span></div>
       <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">TUTORES POTENCIALES</span><br><span style="color:#15803d;font-weight:800">${stats.daCount} est. (DA: 9-10)</span></div>
+      <button class="btn btn-outline" style="margin-left:auto;font-size:0.75rem;padding:4px 10px;font-weight:800" onclick="openDiagnosticoConfigModal('${curMatId}')" title="Editar destrezas, códigos y pesos de ${escHTML(curMat.name)}">
+        ⚙️ Editar Destrezas (${skills.length})
+      </button>
     `;
   }
 
@@ -10056,7 +10059,7 @@ function renderDiagSubjectTable() {
     <th class="fxn" style="min-width:200px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
 
   skills.forEach((sk, i) => {
-    r1 += `<th class="wh" title="${escHTML(sk.desc||sk.name)}" style="min-width:65px;max-width:90px;background:${curMat.color||'#1e40af'};border-color:${curMat.color||'#1e40af'}">
+    r1 += `<th class="wh" title="Doble clic para editar: ${escHTML(sk.desc||sk.name)}" ondblclick="editSingleDiagSkill('${curMatId}', ${i})" style="min-width:65px;max-width:90px;background:${curMat.color||'#1e40af'};border-color:${curMat.color||'#1e40af'};cursor:pointer">
       <div style="padding:1px 0">
         <span style="font-weight:800;font-size:0.78rem;display:block">${sk.id}</span>
         <span style="font-size:0.55rem;opacity:.9;display:block;white-space:normal;line-height:1.15;max-width:85px">${escHTML(sk.name)}</span>
@@ -10980,44 +10983,235 @@ function shareDiagnosticoWhatsApp(targetSi) {
   window.open(url, '_blank');
 }
 
-function openDiagnosticoConfigModal() {
+let _curDiagConfigMatId = 'matematicas';
+
+function openDiagnosticoConfigModal(targetMatId) {
   ensureDiagnostico();
   const cfg = S.diagnostico.config;
   const mats = cfg.materias || DEFAULT_DIAG_MATS;
 
-  const matsHtml = mats.map((m, i) => `
-    <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:8px;padding:10px;margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <strong style="font-size:0.85rem">${m.icon||'📚'} ${escHTML(m.name)}</strong>
-        <span style="font-size:0.7rem;color:var(--text-muted)">${(m.skills||[]).length} destrezas evaluadas</span>
+  if (targetMatId && mats.some(m => m.id === targetMatId)) {
+    _curDiagConfigMatId = targetMatId;
+  } else if (!mats.some(m => m.id === _curDiagConfigMatId)) {
+    _curDiagConfigMatId = mats[0].id;
+  }
+
+  const curMat = mats.find(m => m.id === _curDiagConfigMatId) || mats[0];
+  const skills = curMat.skills || [];
+
+  // Subject selection tabs
+  const matTabsHtml = mats.map(m => {
+    const isAct = m.id === _curDiagConfigMatId;
+    return `<button type="button" onclick="switchDiagConfigMatTab('${m.id}')" style="background:${isAct ? (m.color||'#1e40af') : 'var(--bg-card)'};color:${isAct ? '#ffffff' : 'var(--text-main)'};border:1.5px solid ${isAct ? (m.color||'#1e40af') : 'var(--border-color)'};padding:6px 12px;border-radius:8px;font-weight:800;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:4px">
+      <span>${m.icon||'📚'}</span> <span>${escHTML(m.name)}</span>
+    </button>`;
+  }).join('');
+
+  // Skills editor inputs
+  const skillsInputsHtml = skills.map((sk, i) => `
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <input type="text" id="diagSkId_${i}" value="${escVal(sk.id)}" placeholder="D1" style="width:55px;font-weight:900;text-align:center;font-size:0.8rem" title="Identificador de la destreza"/>
+        <input type="text" id="diagSkCode_${i}" value="${escVal(sk.code||'')}" placeholder="Código MINEDEC (Ej: M.3.1.7)" style="width:130px;font-size:0.78rem;font-family:var(--font-mono)" title="Código curricular"/>
+        <input type="text" id="diagSkName_${i}" value="${escVal(sk.name)}" placeholder="Nombre de la destreza" style="flex:1;font-size:0.82rem;font-weight:700" title="Nombre de la destreza"/>
+        <div style="display:flex;align-items:center;gap:3px">
+          <input type="number" id="diagSkPeso_${i}" value="${sk.peso||25}" min="0" max="100" style="width:55px;font-size:0.8rem;text-align:center;font-weight:700" title="Ponderación %"/>
+          <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted)">%</span>
+        </div>
+        <button type="button" class="bt btd" onclick="removeDiagSkill('${_curDiagConfigMatId}', ${i})" title="Eliminar destreza" style="padding:4px 8px;font-size:0.8rem">✕</button>
       </div>
-      <div style="font-size:0.75rem;color:var(--text-light)">
-        ${(m.skills||[]).map(sk => `<span style="display:inline-block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:4px;padding:2px 6px;margin:2px 4px 2px 0"><strong>${sk.id}:</strong> ${escHTML(sk.name)} (${sk.peso||25}%)</span>`).join('')}
+      <div>
+        <input type="text" id="diagSkDesc_${i}" value="${escVal(sk.desc||'')}" placeholder="Descripción detallada de la habilidad o indicador evaluado..." style="width:100%;font-size:0.75rem;color:var(--text-muted)"/>
       </div>
     </div>
   `).join('');
 
   showModal(
-    '⚙ Configurar Evaluación Diagnóstica',
+    '⚙ Configurar Destrezas de Evaluación Diagnóstica',
     `
-    <div>
-      <label>Periodo y Fases Pedagógicas</label>
-      <input type="text" id="diagCfgPeriodo" value="${escVal(cfg.periodo)}" style="width:100%;margin-bottom:10px"/>
-      
-      <label>Fechas de Aplicación</label>
-      <input type="text" id="diagCfgFecha" value="${escVal(cfg.fecha)}" style="width:100%;margin-bottom:14px"/>
+    <div id="diagConfigForm">
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <div style="flex:1">
+          <label>Fases Pedagógicas y Periodo</label>
+          <input type="text" id="diagCfgPeriodo" value="${escVal(cfg.periodo)}" style="width:100%"/>
+        </div>
+        <div style="width:200px">
+          <label>Fechas de Aplicación</label>
+          <input type="text" id="diagCfgFecha" value="${escVal(cfg.fecha)}" style="width:100%"/>
+        </div>
+      </div>
 
-      <label style="margin-bottom:6px;display:block">Asignaturas y Destrezas Configuradas</label>
-      <div style="max-height:260px;overflow-y:auto">${matsHtml}</div>
+      <label style="margin-bottom:6px;display:block">Selecciona la Asignatura para Editar sus Destrezas:</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${matTabsHtml}</div>
+
+      <div style="background:var(--bg-card-subtle);border:1.5px solid var(--border-color);border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+          <div style="font-weight:900;font-size:0.9rem;color:${curMat.color||'var(--primary)'}">
+            ${curMat.icon||'📚'} Destrezas para ${escHTML(curMat.name)} (${skills.length})
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn-teal" style="font-size:0.72rem;padding:3px 8px" onclick="distributeDiagSkillWeights('${_curDiagConfigMatId}')">⚖️ Repartir % Iguales</button>
+            <button type="button" class="btn btn-primary" style="font-size:0.72rem;padding:3px 8px" onclick="addDiagSkill('${_curDiagConfigMatId}')">➕ Añadir Destreza</button>
+            <button type="button" class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px;color:#b91c1c;border-color:#fca5a5" onclick="resetDiagSkillsToDefault('${_curDiagConfigMatId}')" title="Restaurar destrezas oficiales MINEDEC">🔄 Restaurar Oficial</button>
+          </div>
+        </div>
+
+        <div style="max-height:280px;overflow-y:auto;padding-right:4px">
+          ${skillsInputsHtml || '<div style="text-align:center;padding:16px;color:var(--text-light);font-size:0.8rem">No hay destrezas configuradas. Presiona "➕ Añadir Destreza"</div>'}
+        </div>
+      </div>
+
+      <div style="font-size:0.72rem;color:var(--text-light)">
+        💡 Puedes modificar el nombre, código curricular y porcentaje de cada destreza. Al guardar, las columnas de la tabla diagnóstica se actualizarán automáticamente.
+      </div>
     </div>
     `,
-    'Guardar Ajustes',
+    'Guardar Todas las Destrezas',
     () => {
-      if (document.getElementById('diagCfgPeriodo')) cfg.periodo = document.getElementById('diagCfgPeriodo').value;
-      if (document.getElementById('diagCfgFecha')) cfg.fecha = document.getElementById('diagCfgFecha').value;
+      saveCurrentDiagConfigDraft();
       saveData();
       renderDiagnostico();
-      toast('✔ Configuración diagnóstica actualizada', '#16a34a');
+      toast(`✔ Destrezas de ${curMat.name} guardadas con éxito`, '#16a34a');
+    },
+    'btn-primary'
+  );
+}
+
+function saveCurrentDiagConfigDraft() {
+  ensureDiagnostico();
+  const cfg = S.diagnostico.config;
+  const mats = cfg.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === _curDiagConfigMatId);
+  if (!curMat) return;
+
+  if (document.getElementById('diagCfgPeriodo')) cfg.periodo = document.getElementById('diagCfgPeriodo').value;
+  if (document.getElementById('diagCfgFecha')) cfg.fecha = document.getElementById('diagCfgFecha').value;
+
+  const skills = curMat.skills || [];
+  skills.forEach((sk, i) => {
+    const idEl = document.getElementById(`diagSkId_${i}`);
+    const codeEl = document.getElementById(`diagSkCode_${i}`);
+    const nameEl = document.getElementById(`diagSkName_${i}`);
+    const pesoEl = document.getElementById(`diagSkPeso_${i}`);
+    const descEl = document.getElementById(`diagSkDesc_${i}`);
+
+    if (idEl) sk.id = idEl.value.trim().toUpperCase() || `D${i+1}`;
+    if (codeEl) sk.code = codeEl.value.trim();
+    if (nameEl) sk.name = nameEl.value.trim() || `Destreza ${i+1}`;
+    if (pesoEl) sk.peso = parseFloat(pesoEl.value) || 0;
+    if (descEl) sk.desc = descEl.value.trim();
+  });
+}
+
+function switchDiagConfigMatTab(matId) {
+  saveCurrentDiagConfigDraft();
+  _curDiagConfigMatId = matId;
+  openDiagnosticoConfigModal(matId);
+}
+
+function addDiagSkill(matId) {
+  saveCurrentDiagConfigDraft();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === matId);
+  if (!curMat) return;
+  if (!curMat.skills) curMat.skills = [];
+
+  const num = curMat.skills.length + 1;
+  curMat.skills.push({
+    id: `D${num}`,
+    code: '',
+    name: `Nueva Destreza ${num}`,
+    desc: 'Descripción del criterio evaluado',
+    peso: 0
+  });
+
+  distributeDiagSkillWeights(matId);
+}
+
+function removeDiagSkill(matId, i) {
+  saveCurrentDiagConfigDraft();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === matId);
+  if (!curMat || !curMat.skills) return;
+
+  if (curMat.skills.length <= 1) {
+    toast('⚠️ Debe existir al menos 1 destreza', '#d97706');
+    return;
+  }
+
+  curMat.skills.splice(i, 1);
+  distributeDiagSkillWeights(matId);
+}
+
+function distributeDiagSkillWeights(matId) {
+  saveCurrentDiagConfigDraft();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === matId);
+  if (!curMat || !curMat.skills || !curMat.skills.length) return;
+
+  const count = curMat.skills.length;
+  const base = Math.floor(100 / count);
+  const remainder = 100 - (base * count);
+
+  curMat.skills.forEach((sk, i) => {
+    sk.peso = i === 0 ? (base + remainder) : base;
+  });
+
+  openDiagnosticoConfigModal(matId);
+}
+
+function resetDiagSkillsToDefault(matId) {
+  const defMat = DEFAULT_DIAG_MATS.find(m => m.id === matId);
+  if (!defMat) return;
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === matId);
+  if (!curMat) return;
+
+  if (confirm(`¿Deseas restaurar las destrezas oficiales del MINEDEC para ${curMat.name}?`)) {
+    curMat.skills = JSON.parse(JSON.stringify(defMat.skills));
+    openDiagnosticoConfigModal(matId);
+    toast(`🔄 Destrezas de ${curMat.name} restauradas al formato oficial`, '#16a34a');
+  }
+}
+
+function editSingleDiagSkill(matId, skillIndex) {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMat = mats.find(m => m.id === matId);
+  if (!curMat || !curMat.skills || !curMat.skills[skillIndex]) return;
+  const sk = curMat.skills[skillIndex];
+
+  showModal(
+    `✎ Editar Destreza: ${escHTML(sk.id)} (${escHTML(curMat.name)})`,
+    `
+    <div>
+      <label>Identificador</label>
+      <input type="text" id="quickSkId" value="${escVal(sk.id)}" style="width:100%;font-weight:900"/>
+
+      <label>Código Curricular MINEDEC (Opcional)</label>
+      <input type="text" id="quickSkCode" value="${escVal(sk.code||'')}" placeholder="Ej: M.3.1.7 o LL.3.3.2" style="width:100%;font-family:var(--font-mono)"/>
+
+      <label>Nombre / Título de la Destreza</label>
+      <input type="text" id="quickSkName" value="${escVal(sk.name)}" style="width:100%;font-weight:700"/>
+
+      <label>Ponderación (%)</label>
+      <input type="number" id="quickSkPeso" value="${sk.peso||25}" min="0" max="100" style="width:100%;font-weight:800"/>
+
+      <label>Descripción / Criterio de Logro</label>
+      <textarea id="quickSkDesc" rows="3" style="width:100%;font-size:0.8rem">${escVal(sk.desc||'')}</textarea>
+    </div>
+    `,
+    'Guardar Cambios',
+    () => {
+      sk.id = document.getElementById('quickSkId')?.value.trim().toUpperCase() || sk.id;
+      sk.code = document.getElementById('quickSkCode')?.value.trim() || '';
+      sk.name = document.getElementById('quickSkName')?.value.trim() || sk.name;
+      sk.peso = parseFloat(document.getElementById('quickSkPeso')?.value) || sk.peso;
+      sk.desc = document.getElementById('quickSkDesc')?.value.trim() || '';
+
+      saveData();
+      renderDiagnostico();
+      toast(`✔ Destreza ${sk.id} actualizada`, '#16a34a');
     },
     'btn-primary'
   );
