@@ -1458,8 +1458,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
 /* Sidebar */
 .app-sidebar {
-  width: 270px;
-  min-width: 270px;
+  width: 280px;
+  min-width: 280px;
   background: var(--bg-card);
   border-right: 1.5px solid var(--border-color);
   display: flex;
@@ -1572,13 +1572,13 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
+  gap: 10px;
+  padding: 9px 12px;
   border-radius: 10px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-main);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -1598,7 +1598,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 .sidebar-btn-icon {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -1616,13 +1616,14 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   letter-spacing: -0.1px;
 }
 .sidebar-btn-badge {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 99px;
   background: var(--bg-card-subtle);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 .sidebar-btn.active .sidebar-btn-badge {
   background: rgba(255, 255, 255, 0.25);
@@ -2038,50 +2039,56 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
    ══════════════════════════════════════════════════════ */
 .herramientas-subtabs {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   background: var(--bg-card);
-  padding: 6px 8px;
+  padding: 8px 12px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  margin-bottom: 14px;
+  border: 1.5px solid var(--border-color);
+  margin-bottom: 16px;
   overflow-x: auto;
   align-items: center;
+  box-shadow: var(--shadow-xs);
 }
 .herramientas-subtab-btn {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all .15s ease;
+  gap: 8px;
+  transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 .herramientas-subtab-btn:hover {
   background: var(--bg-card-subtle);
   color: var(--text-main);
+  border-color: var(--border-subtle);
 }
 .herramientas-subtab-btn.active {
-  background: var(--primary);
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
   color: #ffffff;
-  box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.32);
+  border-color: transparent;
 }
 
 .printable-sheet {
   background: #ffffff;
   color: #0f172a;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
-  margin-top: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  margin: 18px 0;
+  position: relative;
 }
-.dark-theme .printable-sheet {
+.dark-theme .printable-sheet, body.dark .printable-sheet {
   background: #ffffff;
   color: #0f172a;
 }
@@ -2091,24 +2098,29 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 }
 .printable-sheet th, .printable-sheet td {
   border: 1px solid #cbd5e1;
-  padding: 5px 8px;
-  font-size: 0.8rem;
+  padding: 6px 10px;
+  font-size: 0.82rem;
 }
 .printable-sheet th {
-  background: #f1f5f9;
+  background: #f8fafc;
   font-weight: 800;
   text-align: center;
-  color: #1e293b;
+  color: #0f172a;
 }
 
 .cut-slip {
   border: 1.5px dashed #94a3b8;
-  border-radius: 8px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
   background: #ffffff;
   color: #0f172a;
   page-break-inside: avoid;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+}
+.dark-theme .cut-slip, body.dark .cut-slip {
+  background: #ffffff;
+  color: #0f172a;
 }
 .cut-line {
   display: flex;
@@ -2117,7 +2129,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   color: #64748b;
   font-size: 0.72rem;
   font-family: var(--font-mono);
-  margin: 12px 0;
+  margin: 14px 0;
 }
 .cut-line::before, .cut-line::after {
   content: '';
@@ -2443,13 +2455,13 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <button id="viewDiagnostico" class="sidebar-btn" onclick="switchView('diagnostico')" title="Evaluación Diagnóstica y Sistema de Resultados Pedagógicos (Fases Conecta y Nivela)">
         <span class="sidebar-btn-icon">🎯</span>
         <span class="sidebar-btn-text">Eval. Diagnóstica</span>
-        <span class="sidebar-btn-badge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Conecta/Nivela</span>
+        <span class="sidebar-btn-badge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Conecta</span>
       </button>
 
       <button id="viewEstudiantes" class="sidebar-btn" onclick="switchView('estudiantes')" title="Matriz general de datos de estudiantes, representantes y fichas">
         <span class="sidebar-btn-icon">👥</span>
         <span class="sidebar-btn-text">Matriz Estudiantes</span>
-        <span class="sidebar-btn-badge" id="sbStCountBadge">Nómina</span>
+        <span class="sidebar-btn-badge" id="sbStCountBadge">40 est.</span>
       </button>
 
       <button id="viewAttendance" class="sidebar-btn" onclick="switchView('asistencia')" title="Control de asistencia diaria, justificaciones y faltas">
@@ -2461,12 +2473,12 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <button id="viewPi" class="sidebar-btn" onclick="switchView('pi')" title="Evaluación y rúbrica del Proyecto Interdisciplinario (30%)">
         <span class="sidebar-btn-icon">📚</span>
         <span class="sidebar-btn-text">Proyecto Interdisc.</span>
-        <span class="sidebar-btn-badge" style="background:#fef3c7;color:#92400e;border-color:#fcd34d">CREA 30%</span>
+        <span class="sidebar-btn-badge" style="background:#fef3c7;color:#92400e;border-color:#fcd34d">CREA</span>
       </button>
 
       <button id="viewReporte" class="sidebar-btn" onclick="switchView('reporte')" title="Libretas individuales, cuadro de honor y alertas de refuerzo">
         <span class="sidebar-btn-icon">📊</span>
-        <span class="sidebar-btn-text">Libretas & WhatsApp</span>
+        <span class="sidebar-btn-text">Libretas &amp; WhatsApp</span>
       </button>
 
       <button id="viewExport" class="sidebar-btn" onclick="switchView('export')" title="Exportar notas a sistemas ministeriales y Excel">
@@ -2476,7 +2488,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
       <button id="viewCronograma" class="sidebar-btn" onclick="switchView('cronograma')" title="Agenda y Cronograma Oficial Calderón 2 con seguimiento en vivo y checklist interactivo">
         <span class="sidebar-btn-icon">🏛️</span>
-        <span class="sidebar-btn-text">Cronograma & Agenda</span>
+        <span class="sidebar-btn-text">Cronograma &amp; Agenda</span>
         <span class="sidebar-btn-badge" id="cronoProgressBadge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">En Vivo</span>
       </button>
 
@@ -2511,15 +2523,27 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
        ══════════════════════════════════════════════════════ -->
   <div class="app-main-area" id="appMainArea">
 
-    <!-- ── BARRA DE USUARIO & SYNC (STATUS BAR) ── -->
-    <div id="userBar" style="background:var(--bg-card);border-bottom:1px solid var(--border-color);padding:6px 18px;display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;color:var(--text-muted)">
-      <div class="user-pill" style="display:flex;align-items:center;gap:8px">
-        <div class="user-avatar-badge" id="userAvatar" style="width:24px;height:24px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem">D</div>
-        <span id="userInfo" style="font-weight:700;color:var(--text-main)">docente@educacion.gob.ec</span>
+    <!-- ── BARRA DE USUARIO & SYNC (STATUS BAR MODERNA) ── -->
+    <div id="userBar" style="background:var(--bg-card);border-bottom:1px solid var(--border-color);padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;color:var(--text-muted);box-shadow:var(--shadow-xs);position:relative;z-index:100">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn btn-outline mobile-menu-btn" id="btnMobileSidebar" onclick="openMobileSidebar()" title="Abrir menú lateral" style="padding:4px 9px;font-size:1.05rem;display:none;align-items:center;justify-content:center">
+          ☰
+        </button>
+        <div class="user-pill" style="display:flex;align-items:center;gap:8px">
+          <div class="user-avatar-badge" id="userAvatar" style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;box-shadow:0 2px 6px rgba(37,99,235,0.35)">D</div>
+          <span id="userInfo" style="font-weight:700;color:var(--text-main)">docente@educacion.gob.ec</span>
+        </div>
+        <span class="normative-pill" style="font-size:0.72rem;padding:2px 8px" id="topBarCourseBadge">Séptimo EGB C · 2026-2027</span>
       </div>
+
       <div style="display:flex;align-items:center;gap:10px">
-        <span id="syncStatus" class="sync-badge online" style="font-size:0.72rem;padding:2px 8px;border-radius:99px">🟢 En la nube</span>
-        <button onclick="signOutUser()" class="btn btn-outline" style="padding:2px 8px;font-size:0.72rem;border-radius:6px">
+        <span id="syncStatus" class="sync-badge online" onclick="openSyncModal()" style="font-size:0.72rem;padding:3px 10px;border-radius:99px" title="Sincronización en tiempo real">🟢 En la nube</span>
+        
+        <button onclick="toggleDark()" class="btn btn-outline" style="padding:4px 8px;font-size:0.85rem;border-radius:6px" title="Alternar modo oscuro / claro">
+          🌙
+        </button>
+
+        <button onclick="signOutUser()" class="btn btn-outline" style="padding:3px 9px;font-size:0.72rem;border-radius:6px;font-weight:700" title="Cerrar sesión de usuario">
           Cerrar sesión
         </button>
       </div>
@@ -2551,12 +2575,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </table>
     </div>
 
-    <!-- ── HEADER SUPERIOR ── -->
-    <header>
+    <!-- ── HEADER SUPERIOR (MÓDULO DE CALIFICACIONES) ── -->
+    <header id="mainAppHeader">
       <div class="hdr-brand">
-        <button class="btn btn-outline mobile-menu-btn" id="btnMobileSidebar" onclick="openMobileSidebar()" title="Abrir menú lateral" style="padding:6px 10px;font-size:1.1rem;display:none;align-items:center;justify-content:center">
-          ☰
-        </button>
         <div class="hdr-logo">📊</div>
         <div class="hdr-title-area">
           <h1>
@@ -7780,6 +7801,16 @@ function switchView(v) {
       else btn.classList.remove('active');
     }
   });
+
+  // Mostrar el header principal de notas solo en la vista de notas
+  const mainHdr = document.getElementById('mainAppHeader');
+  if (mainHdr) mainHdr.style.display = (v === 'notas') ? 'flex' : 'none';
+
+  // Actualizar indicador de curso en la barra superior
+  const topCBadge = document.getElementById('topBarCourseBadge');
+  if (topCBadge) {
+    topCBadge.textContent = `${S.grado || 'Séptimo EGB C'} · ${S.anio || '2026-2027'}`;
+  }
 
   // Actualizar contador de estudiantes en sidebar
   const sbCount = document.getElementById('sbStCountBadge');
