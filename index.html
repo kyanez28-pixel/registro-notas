@@ -9771,10 +9771,14 @@ const DEFAULT_DIAG_MATS = [
     icon: '📖',
     color: '#7c3aed',
     skills: [
-      { id: 'D1', code: 'LL.3.3.2',  name: 'Comprensión Lectora e Inferencia', desc: 'Comprende textos expositivos y narrativos; extrae ideas principales e implícitas.', peso: 25 },
-      { id: 'D2', code: 'LL.3.4.1',  name: 'Producción de Textos & Ortografía', desc: 'Redacta párrafos coherentes aplicando reglas ortográficas y signos de puntuación.', peso: 25 },
-      { id: 'D3', code: 'LL.3.4.10', name: 'Gramática: Sujeto, Predicado y Concordancia', desc: 'Identifica la estructura de la oración simple y concordancia de género/número.', peso: 25 },
-      { id: 'D4', code: 'LL.3.2.1',  name: 'Expresión Oral y Argumentación', desc: 'Comunica ideas de forma clara, respetando turnos de habla y enriqueciendo vocabulario.', peso: 25 }
+      { id: 'D1', code: 'LL.3.3.2.', name: 'Comprensión de Contenidos Implícitos e Inferencias', desc: 'Comprender los contenidos implícitos de un texto mediante la realización de inferencias fundamentales y proyectivo-valorativas. (Hora 1)', peso: 13 },
+      { id: 'D2', code: 'LL.3.4.4.', name: 'Escritura de Instrucciones y Conectores Lógicos', desc: 'Escribir instrucciones con secuencia lógica, uso de conectores temporales y de orden, y coherencia en el manejo del referente y de las personas gramaticales, en situaciones comunicativas que lo requieran. (Horas 2-3)', peso: 13 },
+      { id: 'D3', code: 'LL.3.5.1.', name: 'Elementos de Textos Literarios', desc: 'Reconocer en un texto literario los elementos característicos que le dan sentido. (Hora 4)', peso: 12 },
+      { id: 'D4', code: 'LL.3.2.2.', name: 'Intervenciones Orales y Estructura Discursiva', desc: 'Proponer intervenciones orales con una intención comunicativa, organizar el discurso según las estructuras básicas de la lengua oral y utilizar un vocabulario adecuado. (Hora 5)', peso: 13 },
+      { id: 'D5', code: 'LL.3.3.3.', name: 'Inferencia y Síntesis: Tema e Ideas Principales', desc: 'Inferir y sintetizar el contenido esencial de un texto al diferenciar el tema de las ideas principales. (Hora 6)', peso: 13 },
+      { id: 'D6', code: 'LL.3.4.3.', name: 'Escritura de Exposiciones y Párrafos Estructurados', desc: 'Escribir exposiciones organizadas en párrafos según esquema de comparación, problema-solución y antecedente-consecuente, en las situaciones comunicativas que lo requieran. (Horas 7-8)', peso: 12 },
+      { id: 'D7', code: 'LL.3.5.3.', name: 'Lectura Autónoma y Preferencias Personales', desc: 'Elegir lecturas basándose en preferencias personales de autor, género o temas y el manejo de diversos soportes para formarse como lector autónomo. (Hora 9)', peso: 12 },
+      { id: 'D8', code: 'LL.3.2.1.', name: 'Escucha Activa y Juicios de Valor en Discursos', desc: 'Escuchar discursos orales y formular juicios de valor con respecto a su contenido y forma, y participar de manera respetuosa frente a las intervenciones de los demás. (Hora 10)', peso: 12 }
     ]
   },
   {
@@ -9810,6 +9814,15 @@ function ensureDiagnostico() {
       materias: JSON.parse(JSON.stringify(DEFAULT_DIAG_MATS)),
       metaMinima: 7.00
     };
+  } else {
+    // Actualizar materias existentes con las destrezas oficiales si lengua tiene formato previo
+    if (S.diagnostico.config.materias) {
+      const lenguaMat = S.diagnostico.config.materias.find(m => m.id === 'lengua');
+      const defLengua = DEFAULT_DIAG_MATS.find(m => m.id === 'lengua');
+      if (lenguaMat && defLengua && (!lenguaMat.skills || lenguaMat.skills.length < 8)) {
+        lenguaMat.skills = JSON.parse(JSON.stringify(defLengua.skills));
+      }
+    }
   }
   if (!S.diagnostico.grades) S.diagnostico.grades = {};
   if (!S.diagnostico.socioemocional) S.diagnostico.socioemocional = {};
