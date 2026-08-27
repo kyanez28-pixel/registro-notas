@@ -2565,6 +2565,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
         ⇄ Mover Columnas
       </button>
+      <button class="btn btn-warning" onclick="openFillColModal()" data-tip="Llenar rápidamente una columna entera con una nota (ej: 10.00) y editar solo excepciones" style="font-weight:800">
+        ⚡ Llenar Columna
+      </button>
       <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
         👁 Columnas
       </button>
@@ -2972,7 +2975,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <select id="diagSubjectSel" class="sort-select" style="min-width:210px;font-weight:800" onchange="onDiagSubjectChange(this.value)"></select>
       </div>
 
-      <div class="module-toolbar-group" style="margin-left:auto;gap:8px">
+        <button class="btn btn-warning" onclick="openFillDiagColModal()" title="Llenar rápidamente una columna o destreza con una nota base (ej: 10.00)" style="font-weight:800">
+          ⚡ Llenar Columna
+        </button>
         <button class="btn btn-teal" onclick="copyDiagSubjectColumn()" title="Copiar notas de esta materia al portapapeles">
           📋 Copiar Columna
         </button>
@@ -6660,6 +6665,79 @@ function openAddCol() {
 }
 function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 
+function openFillColModal() {
+  const mat = gm();
+  if (!mat || !mat.weeks || !mat.weeks.length) {
+    toast('⚠️ Primero agrega una semana con actividades', '#d97706');
+    return;
+  }
+  const allCols = [];
+  (mat.weeks || []).forEach(w => {
+    const wName = getWeekName(w);
+    (mat.cols[wName] || []).forEach(c => {
+      allCols.push({ week: wName, col: c.name, type: c.type, desc: c.desc });
+    });
+  });
+
+  if (!allCols.length) {
+    toast('⚠️ No hay columnas de actividades en esta materia', '#d97706');
+    return;
+  }
+
+  const opts = allCols.map((c, i) => `<option value="${i}">${escHTML(c.week)} → ${escHTML(c.desc || c.col)} (${c.type})</option>`).join('');
+
+  showModal(
+    '⚡ Llenar Columna Rápido (Auto-calificar)',
+    `
+    <div>
+      <label>Selecciona la Actividad / Columna a Llenar</label>
+      <select id="fillColTarget" style="width:100%;margin-bottom:12px;font-weight:700">${opts}</select>
+
+      <label>Nota a aplicar a todos los estudiantes (1.00 a 10.00 o F, NP, EX)</label>
+      <input type="text" id="fillColVal" value="10.00" placeholder="10.00" style="width:100%;font-size:1.1rem;font-weight:900;text-align:center;font-family:var(--font-mono);margin-bottom:12px"/>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='10.00'">⭐ 10.00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='9.00'">9.00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='8.00'">8.00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='7.00'">7.00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='EX'">EX (Exonerado)</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='NP'">NP (No Presentó)</button>
+      </div>
+
+      <div style="font-size:0.75rem;color:var(--text-muted)">
+        💡 Rellena instantáneamente a todos los estudiantes con esta nota. Luego podrás cambiar rápidamente solo a los alumnos que tengan otra calificación.
+      </div>
+    </div>
+    `,
+    '⚡ Aplicar a Todos',
+    () => {
+      const idx = parseInt(document.getElementById('fillColTarget')?.value || '0', 10);
+      const target = allCols[idx];
+      let val = document.getElementById('fillColVal')?.value.trim().replace(',', '.') || '';
+      if (!target || !val) return;
+
+      if (!specialCls(val)) {
+        let n = parseFloat(val);
+        if (isNaN(n)) { toast('⚠️ Ingresa una nota válida', '#dc2626'); return; }
+        n = Math.min(10, Math.max(1, n));
+        val = trunc2(n);
+      }
+
+      const key = target.week + '||' + target.col;
+      S.students.forEach((_, si) => {
+        if (!mat.grades[si]) mat.grades[si] = {};
+        mat.grades[si][key] = val;
+      });
+
+      saveData();
+      render();
+      toast(`⚡ Columna "${target.col}" llenada con nota ${val}`, '#16a34a');
+    },
+    'btn-success'
+  );
+}
+
 function editColName(wi, ci) {
   const mat = gm();
   if (!mat || !mat.weeks || !mat.weeks[wi]) {
@@ -10293,6 +10371,64 @@ function openDiagPasteModal() {
       toast(`✔ ${count} notas asignadas a ${curMat.name}`, '#16a34a');
     },
     'btn-primary'
+  );
+}
+
+function openFillDiagColModal() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMatId = S.diagnostico.activeSubject || mats[0].id;
+  const curMat = mats.find(m => m.id === curMatId) || mats[0];
+  const skills = curMat.skills || [];
+
+  const opts = [
+    { id: '_direct', name: 'Calificación Global / Directa' },
+    ...skills.map(sk => ({ id: sk.id, name: `${sk.id}: ${sk.name}` }))
+  ].map(o => `<option value="${o.id}">${escHTML(o.name)}</option>`).join('');
+
+  showModal(
+    `⚡ Llenar Rápido Columna de ${escHTML(curMat.name)}`,
+    `
+    <div>
+      <label>Destreza o Columna a Rellenar</label>
+      <select id="fillDiagColTarget" style="width:100%;margin-bottom:12px;font-weight:700">${opts}</select>
+
+      <label>Nota a aplicar (1.00 a 10.00)</label>
+      <input type="text" id="fillDiagColVal" value="10.00" placeholder="10.00" style="width:100%;font-size:1.1rem;font-weight:900;text-align:center;font-family:var(--font-mono);margin-bottom:12px"/>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillDiagColVal').value='10.00'">⭐ 10.00 (DA)</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillDiagColVal').value='9.00'">9.00 (DA)</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillDiagColVal').value='8.00'">8.00 (AA)</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillDiagColVal').value='7.00'">7.00 (AA)</button>
+      </div>
+
+      <div style="font-size:0.75rem;color:var(--text-muted)">
+        💡 Rellena a todos los estudiantes de una vez. Luego solo modificas a quienes requieran otra calificación.
+      </div>
+    </div>
+    `,
+    '⚡ Aplicar a Todos',
+    () => {
+      const field = document.getElementById('fillDiagColTarget')?.value || '_direct';
+      let val = document.getElementById('fillDiagColVal')?.value.trim().replace(',', '.') || '10.00';
+      const num = parseFloat(val);
+      if (isNaN(num)) { toast('⚠️ Ingresa una nota válida', '#dc2626'); return; }
+      const bounded = Math.min(10, Math.max(1, num));
+      const valTrunc = String(trunc2(bounded));
+
+      if (!S.diagnostico.grades[curMatId]) S.diagnostico.grades[curMatId] = {};
+      S.students.forEach((_, si) => {
+        if (!S.diagnostico.grades[curMatId][si]) S.diagnostico.grades[curMatId][si] = {};
+        if (field === '_direct') S.diagnostico.grades[curMatId][si]._direct = valTrunc;
+        else S.diagnostico.grades[curMatId][si][field] = valTrunc;
+      });
+
+      saveData();
+      renderDiagSubjectTable();
+      toast(`⚡ Columna llenada con nota ${valTrunc}`, '#16a34a');
+    },
+    'btn-success'
   );
 }
 
