@@ -4003,21 +4003,21 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     VISTA: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES
+     VISTA: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES (DIGITAL & PERSISTENTE)
      ══════════════════════════════════════════════════════ -->
 <div id="herramientasPanel" style="display:none" class="content">
 
   <!-- Header Banner -->
-  <div style="background:linear-gradient(135deg,#312e81 0%,#4338ca 50%,#6366f1 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+  <div style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4338ca 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
     <div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.8rem">🛠️</span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.8rem;background:rgba(255,255,255,0.15);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid rgba(255,255,255,0.25)">🛠️</span>
         <div>
           <h2 style="margin:0;font-size:1.25rem;font-weight:900;letter-spacing:-0.3px;border:none;padding:0;color:#fff">
-            Herramientas de Aula &amp; Formatos Imprimibles
+            Herramientas de Aula &amp; Gestión Digital
           </h2>
           <div style="font-size:0.8rem;opacity:.9;margin-top:2px">
-            En esta sección encontrará formatos como Registro de Asistencia, Reuniones, Atención a Padres, Convocatorias, Listados personalizados y Rúbricas.
+            Ingreso de datos en tiempo real (PC/Celular), almacenamiento en la nube, bitácoras de tutoría, actas de reuniones y formatos imprimibles oficiales.
           </div>
         </div>
       </div>
@@ -4026,7 +4026,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <span class="normative-pill" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.4)" id="herramientasCourseTag">
         Séptimo EGB C · 2026-2027
       </span>
-      <button class="btn" style="background:rgba(255,255,255,0.18);color:#fff;border:1.5px solid rgba(255,255,255,0.35)" onclick="printCurrentHerramientasView()" title="Imprimir el documento actualmente seleccionado">
+      <button class="btn btn-primary" style="background:#2563eb;color:#fff;border:none;font-weight:800;box-shadow:0 3px 10px rgba(37,99,235,0.4)" onclick="saveData(true)" title="Guardar todos los cambios en la nube">
+        💾 Guardar Cambios
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.18);color:#fff;border:1.5px solid rgba(255,255,255,0.35)" onclick="printCurrentHerramientasView()" title="Imprimir el formato activo con la información ingresada">
         🖨️ Imprimir Formato Activo
       </button>
     </div>
@@ -4038,7 +4041,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <span>📑</span> <span>1. Listados Personalizados</span>
     </button>
     <button class="herramientas-subtab-btn" id="btnHerramientasTabReuniones" onclick="switchHerramientasTab('reuniones')">
-      <span>👥</span> <span>2. Reuniones de Padres (Firmas &amp; Quórum)</span>
+      <span>👥</span> <span>2. Reuniones de Padres (Quórum Digital)</span>
     </button>
     <button class="herramientas-subtab-btn" id="btnHerramientasTabAtencion" onclick="switchHerramientasTab('atencion')">
       <span>💬</span> <span>3. Atención a Representantes (Bitácora)</span>
@@ -4047,7 +4050,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <span>✉️</span> <span>4. Convocatorias &amp; Citaciones Recortables</span>
     </button>
     <button class="herramientas-subtab-btn" id="btnHerramientasTabRubricas" onclick="switchHerramientasTab('rubricas')">
-      <span>📊</span> <span>5. Rúbricas de Aula (MINEDEC)</span>
+      <span>📊</span> <span>5. Rúbricas de Aula Digitales</span>
     </button>
   </div>
 
@@ -4057,35 +4060,51 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <div class="config-card-header">
         <div class="config-card-icon" style="background:#e0e7ff;color:#4338ca">📑</div>
         <div>
-          <div class="config-card-title">Configuración de Listado Personalizado</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Crea listas para control de uniformes, tareas, textos, aportes o cualquier actividad de aula</div>
+          <div class="config-card-title">Gestor de Listados Interactivos</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Crea, guarda y archiva listas con datos digitados para textos, tareas, aportes o salidas</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('textos')">📚 Entrega Textos</button>
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('tareas')">✍️ Control Tareas</button>
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('comite')">💵 Aportes Comité</button>
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('salidas')">🚌 Salida Pedagógica</button>
+          <button class="btn btn-primary" style="font-size:0.75rem" onclick="openNewCustomListModal()">➕ Nueva Lista</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="duplicateCurrentCustomList()">📋 Duplicar</button>
+          <button class="btn btn-danger" style="font-size:0.75rem" onclick="deleteCurrentCustomList()">🗑️ Eliminar</button>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:14px">
+      <!-- Selector de lista activa y plantillas -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px;background:var(--bg-card-subtle);padding:12px;border-radius:8px;border:1px solid var(--border-color)">
         <div>
-          <label>Título del Documento</label>
-          <input type="text" id="custDocTitle" value="LISTADO DE CONTROL DE ACTIVIDADES" oninput="updateCustomListPreview()" placeholder="Ej: REGISTRO DE ENTREGA DE TEXTOS ESCOLARES" style="width:100%;font-weight:700"/>
+          <label style="font-weight:800">📂 Seleccionar Lista Guardada:</label>
+          <select id="custActiveListSel" onchange="onSelectCustomList(this.value)" style="width:100%;font-weight:700"></select>
         </div>
         <div>
-          <label>Detalle / Asignatura / Indicador</label>
-          <input type="text" id="custDocSubtitle" value="" oninput="updateCustomListPreview()" placeholder="Ej: Lengua y Literatura / Primer Trimestre" style="width:100%"/>
+          <label>Plantillas Rápidas (1 Clic):</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('textos')">📚 Textos</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('tareas')">✍️ Tareas</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('comite')">💵 Aportes</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('salidas')">🚌 Salidas</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Título del Listado</label>
+          <input type="text" id="custDocTitle" value="LISTADO DE CONTROL DE ACTIVIDADES" oninput="onCustomListMetaInput()" placeholder="Ej: REGISTRO DE ENTREGA DE TEXTOS ESCOLARES" style="width:100%;font-weight:700"/>
         </div>
         <div>
-          <label>Orientación y Formato de Impresión</label>
-          <select id="custDocOrientation" onchange="updateCustomListPreview()" style="width:100%">
-            <option value="portrait">📄 Vertical (Retrato - Hasta 5 columnas)</option>
-            <option value="landscape">📑 Horizontal (Paisaje - Hasta 10 columnas)</option>
+          <label>Detalle / Subtítulo / Asignatura</label>
+          <input type="text" id="custDocSubtitle" value="" oninput="onCustomListMetaInput()" placeholder="Ej: Lengua y Literatura / Primer Trimestre" style="width:100%"/>
+        </div>
+        <div>
+          <label>Orientación de Impresión</label>
+          <select id="custDocOrientation" onchange="onCustomListOrientationChange(this.value)" style="width:100%">
+            <option value="portrait">📄 Vertical (Portrait)</option>
+            <option value="landscape">📑 Horizontal (Landscape)</option>
           </select>
         </div>
         <div>
-          <label>¿Cuántas columnas necesita crear?</label>
+          <label>Número de Columnas</label>
           <select id="custDocColCount" onchange="onCustomColCountChange(this.value)" style="width:100%;font-weight:800">
             <option value="1">1 Columna</option>
             <option value="2">2 Columnas</option>
@@ -4102,18 +4121,24 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
 
       <!-- Columnas configuradas dinámicas -->
-      <label style="margin-bottom:6px;display:block">Nombres y Tipos de las Columnas:</label>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <label style="margin:0;font-weight:800">Configuración de Encabezados y Tipos de Columna:</label>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px" onclick="bulkSetCheckboxes(true)" title="Marcar todas las casillas de verificación como cumplidas">⚡ Marcar Todo [✓]</button>
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px" onclick="bulkSetCheckboxes(false)" title="Desmarcar todas las casillas">⚡ Desmarcar Todo</button>
+        </div>
+      </div>
       <div id="custColsConfigContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:14px"></div>
 
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="printCustomList()">🖨️ Imprimir Listado Membretado</button>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border-color);padding-top:12px">
+        <button class="btn btn-primary" onclick="printCustomList()">🖨️ Imprimir Listado con Datos</button>
         <button class="btn btn-teal" onclick="exportCustomListXLSX()">📥 Exportar a Excel (.xlsx)</button>
-        <button class="btn btn-outline" onclick="resetCustomListForm()">🔄 Restablecer</button>
-        <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto">Nómina sincronizada: <strong id="custNominaCount">40 estudiantes</strong></span>
+        <button class="btn btn-success" onclick="saveData(true)">💾 Guardar en la Nube</button>
+        <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto">Nómina: <strong id="custNominaCount">40 estudiantes</strong></span>
       </div>
     </div>
 
-    <!-- Vista Previa Imprimible de Listado -->
+    <!-- Vista Previa Imprimible e Interactiva de Listado -->
     <div id="customListPreviewBox" class="printable-sheet"></div>
   </div>
 
@@ -4123,29 +4148,52 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <div class="config-card-header">
         <div class="config-card-icon" style="background:#d1fae5;color:#065f46">👥</div>
         <div>
-          <div class="config-card-title">Registro de Asistencia a Reunión de Padres</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Genera el acta de reunión con orden del día, registro de firmas y quórum</div>
+          <div class="config-card-title">Gestión de Asistencia &amp; Actas de Reuniones</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Registro interactivo de firmas, datos de representantes y cálculo automático de quórum</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-success" style="font-size:0.75rem" onclick="openNewReunionModal()">➕ Nueva Reunión</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="autoFillReunionRepsFromStudents()">👥 Auto-llenar Representantes</button>
+          <button class="btn btn-danger" style="font-size:0.75rem" onclick="deleteCurrentReunion()">🗑️ Eliminar</button>
+        </div>
+      </div>
+
+      <!-- Selector de Reunión y Quorum Widget -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px;background:var(--bg-card-subtle);padding:12px;border-radius:8px;border:1px solid var(--border-color)">
+        <div>
+          <label style="font-weight:800">📂 Seleccionar Acta de Reunión:</label>
+          <select id="reunionActiveSel" onchange="onSelectReunion(this.value)" style="width:100%;font-weight:700"></select>
+        </div>
+        <div id="reunionQuorumCardLive" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border:1px solid #059669;border-radius:8px;padding:8px 14px">
+          <div>
+            <div style="font-size:0.72rem;font-weight:800;color:#065f46;text-transform:uppercase">Quórum en Vivo</div>
+            <div style="font-size:1.15rem;font-weight:900;color:#065f46" id="reunionQuorumPct">0.0%</div>
+          </div>
+          <div style="text-align:right;font-size:0.75rem;color:var(--text-muted)">
+            <span id="reunionPresentCount">0</span> / <span id="reunionTotalCount">40</span> Presentes<br>
+            <span id="reunionAbsentCount" style="color:#dc2626">40</span> Ausentes
+          </div>
         </div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px">
         <div>
-          <label>Título de la Reunión</label>
-          <input type="text" id="reunionTitulo" value="I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO" oninput="updateReunionPreview()" style="width:100%;font-weight:700"/>
+          <label>Título / Motivo de la Reunión</label>
+          <input type="text" id="reunionTitulo" value="I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO" oninput="onReunionMetaInput()" style="width:100%;font-weight:700"/>
         </div>
         <div>
           <label>Fecha de la Reunión</label>
-          <input type="text" id="reunionFecha" value="Viernes, 05 de Septiembre de 2026" oninput="updateReunionPreview()" style="width:100%"/>
+          <input type="text" id="reunionFecha" value="Viernes, 05 de Septiembre de 2026" oninput="onReunionMetaInput()" style="width:100%"/>
         </div>
         <div>
           <label>Hora y Lugar</label>
-          <input type="text" id="reunionHoraLugar" value="13:30 a 15:00 · Aula de Séptimo C" oninput="updateReunionPreview()" style="width:100%"/>
+          <input type="text" id="reunionHoraLugar" value="13:30 a 15:00 · Aula de Séptimo C" oninput="onReunionMetaInput()" style="width:100%"/>
         </div>
       </div>
 
       <div style="margin-bottom:14px">
-        <label>Orden del Día / Temas Tratados (Puntos a tratar)</label>
-        <textarea id="reunionOrden" rows="3" oninput="updateReunionPreview()" style="width:100%;font-size:0.82rem">1. Saludo y bienvenida por parte del Docente Tutor.
+        <label>Orden del Día / Temas Tratados</label>
+        <textarea id="reunionOrden" rows="3" oninput="onReunionMetaInput()" style="width:100%;font-size:0.82rem">1. Saludo y bienvenida por parte del Docente Tutor.
 2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).
 3. Informe de la Fase CONECTA y diagnóstico socioemocional.
 4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).
@@ -4153,23 +4201,27 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
 
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-success" onclick="printReunionActa()">🖨️ Imprimir Acta y Registro de Firmas</button>
-        <button class="btn btn-teal" onclick="exportReunionXLSX()">📥 Exportar Lista a Excel (.xlsx)</button>
+        <button class="btn btn-success" onclick="printReunionActa()">🖨️ Imprimir Acta con Asistencias</button>
+        <button class="btn btn-teal" onclick="exportReunionXLSX()">📥 Exportar Asistencia a Excel (.xlsx)</button>
+        <button class="btn btn-primary" onclick="saveData(true)">💾 Guardar Acta en la Nube</button>
       </div>
     </div>
 
-    <!-- Vista Previa Imprimible de Reunión -->
+    <!-- Vista Previa e Interactiva de Reunión -->
     <div id="reunionPreviewBox" class="printable-sheet"></div>
   </div>
 
-  <!-- ════ SUB-PANEL 3: ATENCIÓN A REPRESENTANTES (BITÁCORA) ════ -->
+  <!-- ════ SUB-PANEL 3: ATENCIÓN A REPRESENTANTES (BITÁCORA DIGITAL) ════ -->
   <div id="herramientasViewAtencion" class="herramientas-view" style="display:none">
     <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #d97706">
       <div class="config-card-header">
         <div class="config-card-icon" style="background:#fef3c7;color:#92400e">💬</div>
         <div>
-          <div class="config-card-title">Ficha Individual de Atención a Padres de Familia (Bitácora)</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Instrumento oficial de tutoría y respaldo para archivo DECE con acuerdos y firmas</div>
+          <div class="config-card-title">Ficha Individual de Atención a Padres (Bitácora DECE/Tutoría)</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Registra entrevistas, motivos, acuerdos y firmas para respaldo institucional</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="resetAtencionForm()">✨ Nueva Ficha</button>
         </div>
       </div>
 
@@ -4227,8 +4279,24 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
 
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-warning" onclick="printAtencionFicha()" style="font-weight:800">🖨️ Imprimir Ficha de Atención</button>
+        <button class="btn btn-warning" onclick="saveAtencionToHistory()" style="font-weight:800">💾 Guardar en Bitácora Institucional</button>
+        <button class="btn btn-primary" onclick="printAtencionFicha()">🖨️ Imprimir Ficha de Atención</button>
       </div>
+    </div>
+
+    <!-- Historial de Bitácora -->
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #b45309">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#fef3c7;color:#92400e">📜</div>
+        <div>
+          <div class="config-card-title">Historial de Atenciones Registradas</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Registro cronológico de compromisos y acuerdos para seguimiento pedagógico</div>
+        </div>
+        <div style="margin-left:auto">
+          <input type="text" id="atencionFilterInput" oninput="renderAtencionHistoryTable()" placeholder="🔍 Filtrar por estudiante..." style="font-size:0.78rem;padding:4px 8px"/>
+        </div>
+      </div>
+      <div id="atencionHistoryTableContainer" style="overflow-x:auto"></div>
     </div>
 
     <!-- Vista Previa Imprimible de Ficha de Atención -->
@@ -4282,16 +4350,16 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <div id="citacionesPreviewBox"></div>
   </div>
 
-  <!-- ════ SUB-PANEL 5: RÚBRICAS DE AULA ════ -->
+  <!-- ════ SUB-PANEL 5: RÚBRICAS DE AULA DIGITALES ════ -->
   <div id="herramientasViewRubricas" class="herramientas-view" style="display:none">
     <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #0284c7">
       <div class="config-card-header">
         <div class="config-card-icon" style="background:#e0f2fe;color:#0284c7">📊</div>
         <div>
-          <div class="config-card-title">Rúbricas Oficiales de Observación y Trabajo en Aula</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Instrumentos cualitativos con escalas ministeriales (DA, AA, PA, NA) listos para imprimir</div>
+          <div class="config-card-title">Calificador Interactivo de Rúbricas Oficiales (MINEDEC)</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Haz clic sobre los criterios para calificar en vivo, calcular promedio y guardar en historial</div>
         </div>
-        <div style="margin-left:auto">
+        <div style="margin-left:auto;display:flex;gap:8px">
           <select id="rubricaPresetSel" onchange="onRubricaPresetChange(this.value)" style="font-weight:700">
             <option value="exposicion">🎤 Rúbrica: Exposición Oral y Discurso</option>
             <option value="cooperativo">🤝 Rúbrica: Trabajo Cooperativo en Grupo</option>
@@ -4301,9 +4369,44 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="printRubrica()">🖨️ Imprimir Rúbrica Seleccionada</button>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Estudiante a Evaluar:</label>
+          <select id="rubricaStudentSel" onchange="onRubricaStudentChange(this.value)" style="width:100%;font-weight:800"></select>
+        </div>
+        <div style="background:var(--bg-card-subtle);border:1px solid #0284c7;border-radius:8px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:0.72rem;font-weight:800;color:#0284c7;text-transform:uppercase">Nota Calculada</div>
+            <div style="font-size:1.25rem;font-weight:900;color:var(--text-main)" id="rubricaLiveScore">-- / 10.00</div>
+          </div>
+          <div>
+            <span class="diag-badge diag-badge-da" id="rubricaLiveScale">DA</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Observaciones de la Rúbrica -->
+      <div style="margin-bottom:14px">
+        <label>Observaciones y Recomendaciones Pedagógicas:</label>
+        <input type="text" id="rubricaObsInput" oninput="updateRubricaPreview()" placeholder="Ej: Excelente dicción y dominio escénico..." style="width:100%"/>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveRubricaToHistory()">💾 Guardar Calificación de Rúbrica</button>
+        <button class="btn btn-teal" onclick="printRubrica()">🖨️ Imprimir Rúbrica Evaluada</button>
+      </div>
+    </div>
+
+    <!-- Historial de Rúbricas Evaluadas -->
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #0284c7">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#e0f2fe;color:#0284c7">📋</div>
+        <div>
+          <div class="config-card-title">Historial de Rúbricas Guardadas</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Registro de evaluaciones cualitativas por estudiante</div>
+        </div>
+      </div>
+      <div id="rubricasHistoryTableContainer" style="overflow-x:auto"></div>
     </div>
 
     <!-- Vista Previa de la Rúbrica -->
@@ -11955,7 +12058,7 @@ function exportDiagnosticoXLSX() {
 }
 
 // ══════════════════════════════════════════════════════
-//  MÓDULO: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES
+//  MÓDULO: HERRAMIENTAS DE AULA & GESTIÓN DIGITAL
 //  (UEF CALDERÓN 2 · SÉPTIMO EGB MEDIA · MINEDEC)
 // ══════════════════════════════════════════════════════
 
@@ -11989,36 +12092,61 @@ const LIST_PRESETS = {
 
 function ensureHerramientas() {
   if (!S.herramientas) S.herramientas = {};
-  if (!S.herramientas.listado) {
-    S.herramientas.listado = {
-      title: 'LISTADO DE CONTROL DE ACTIVIDADES',
-      subtitle: `${S.grado||'Séptimo de Básica C'} · Año Lectivo ${S.anio||'2026-2027'}`,
-      orientation: 'portrait',
-      colCount: 4,
-      cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
-      colTypes: ['texto', 'check', 'firma', 'texto']
-    };
+
+  // 1. Listados Personalizados
+  if (!S.herramientas.lists || !Array.isArray(S.herramientas.lists) || S.herramientas.lists.length === 0) {
+    S.herramientas.lists = [
+      {
+        id: 'list_' + Date.now(),
+        title: 'LISTADO DE CONTROL DE ACTIVIDADES',
+        subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
+        orientation: 'portrait',
+        colCount: 4,
+        cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
+        colTypes: ['texto', 'check', 'firma', 'texto'],
+        data: {}
+      }
+    ];
   }
-  if (!S.herramientas.reunion) {
-    S.herramientas.reunion = {
-      titulo: 'I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO',
-      fecha: 'Viernes, 05 de Septiembre de 2026',
-      horaLugar: '13:30 a 15:00 · Aula de Séptimo C',
-      orden: '1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.'
-    };
+  if (!S.herramientas.activeListId) {
+    S.herramientas.activeListId = S.herramientas.lists[0].id;
   }
-  if (!S.herramientas.atencion) {
-    S.herramientas.atencion = {
+
+  // 2. Reuniones de Padres
+  if (!S.herramientas.reuniones || !Array.isArray(S.herramientas.reuniones) || S.herramientas.reuniones.length === 0) {
+    S.herramientas.reuniones = [
+      {
+        id: 'reu_' + Date.now(),
+        titulo: 'I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO',
+        fecha: 'Viernes, 05 de Septiembre de 2026',
+        horaLugar: '13:30 a 15:00 · Aula de Séptimo C',
+        orden: '1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.',
+        attendance: {}
+      }
+    ];
+  }
+  if (!S.herramientas.activeReunionId) {
+    S.herramientas.activeReunionId = S.herramientas.reuniones[0].id;
+  }
+
+  // 3. Atenciones (Bitácora)
+  if (!S.herramientas.atenciones || !Array.isArray(S.herramientas.atenciones)) {
+    S.herramientas.atenciones = [];
+  }
+  if (!S.herramientas.currentAtencionForm) {
+    S.herramientas.currentAtencionForm = {
       studentIdx: 0,
       repName: '',
       parentesco: 'Madre de Familia',
-      fechaHora: 'Lunes, 14 de Septiembre de 2026 · 14:00',
+      fechaHora: '',
       motivo: 'Bajo Rendimiento Académico / Alerta de Refuerzo',
       contacto: '',
       hechos: '',
       compromisos: ''
     };
   }
+
+  // 4. Convocatorias / Citaciones
   if (!S.herramientas.citaciones) {
     S.herramientas.citaciones = {
       modo: 'individual',
@@ -12028,26 +12156,41 @@ function ensureHerramientas() {
       motivo: 'Tratar asuntos pedagógicos y comportamentales relacionados con su representado/a.'
     };
   }
-  if (!S.herramientas.rubrica) {
-    S.herramientas.rubrica = { preset: 'exposicion' };
+
+  // 5. Rúbricas
+  if (!S.herramientas.rubricas || !Array.isArray(S.herramientas.rubricas)) {
+    S.herramientas.rubricas = [];
+  }
+  if (!S.herramientas.rubricaEval) {
+    S.herramientas.rubricaEval = {
+      studentIdx: 0,
+      preset: 'exposicion',
+      scores: { '1': 'DA', '2': 'AA', '3': 'DA', '4': 'AA' },
+      obs: ''
+    };
   }
 }
 
 function renderHerramientas() {
   ensureHerramientas();
 
-  // Actualizar indicador de curso
   const cTag = document.getElementById('herramientasCourseTag');
-  if (cTag) cTag.textContent = `${S.grado || 'Séptimo EGB C'} · ${S.anio || '2026-2027'}`;
+  if (cTag) cTag.textContent = (S.grado || 'Séptimo EGB C') + ' · ' + (S.anio || '2026-2027');
 
-  // Actualizar contador de nómina
   const nCount = document.getElementById('custNominaCount');
-  if (nCount && S.students) nCount.textContent = `${S.students.length} estudiantes`;
+  if (nCount && S.students) nCount.textContent = S.students.length + ' estudiantes';
 
+  populateCustomListSelect();
+  populateReunionSelect();
   populateAtencionStudentSelect();
   populateCitacionStudentSelect();
+  populateRubricaStudentSelect();
+
   renderCustomColsConfig();
-  switchHerramientasTab(_activeHerramientasTab);
+  renderAtencionHistoryTable();
+  renderRubricasHistoryTable();
+
+  switchHerramientasTab(_activeHerramientasTab || 'listados');
 }
 
 function switchHerramientasTab(tabId) {
@@ -12094,64 +12237,167 @@ function printCurrentHerramientasView() {
   else if (_activeHerramientasTab === 'rubricas') printRubrica();
 }
 
-// ── 1. LISTADOS PERSONALIZADOS ──
-function renderCustomColsConfig() {
+function getCurrentCustomList() {
   ensureHerramientas();
-  const cfg = S.herramientas.listado;
-  const count = cfg.colCount || 4;
+  let list = S.herramientas.lists.find(l => l.id === S.herramientas.activeListId);
+  if (!list) {
+    list = S.herramientas.lists[0];
+    S.herramientas.activeListId = list.id;
+  }
+  if (!list.data) list.data = {};
+  return list;
+}
+
+function populateCustomListSelect() {
+  ensureHerramientas();
+  const sel = document.getElementById('custActiveListSel');
+  if (!sel) return;
+  sel.innerHTML = S.herramientas.lists.map(l => 
+    '<option value="' + l.id + '" ' + (l.id === S.herramientas.activeListId ? 'selected' : '') + '>📋 ' + escHTML(l.title) + '</option>'
+  ).join('');
+}
+
+function onSelectCustomList(listId) {
+  ensureHerramientas();
+  S.herramientas.activeListId = listId;
+  const list = getCurrentCustomList();
+
+  const tEl = document.getElementById('custDocTitle');
+  const sEl = document.getElementById('custDocSubtitle');
+  const oEl = document.getElementById('custDocOrientation');
+  const cEl = document.getElementById('custDocColCount');
+
+  if (tEl) tEl.value = list.title || '';
+  if (sEl) sEl.value = list.subtitle || '';
+  if (oEl) oEl.value = list.orientation || 'portrait';
+  if (cEl) cEl.value = list.colCount || 4;
+
+  renderCustomColsConfig();
+  updateCustomListPreview();
+}
+
+function openNewCustomListModal() {
+  const name = prompt('Ingrese el título para el nuevo listado:', 'REGISTRO DE CONTROL DE ');
+  if (!name || !name.trim()) return;
+  ensureHerramientas();
+  const newList = {
+    id: 'list_' + Date.now(),
+    title: name.trim().toUpperCase(),
+    subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
+    orientation: 'portrait',
+    colCount: 4,
+    cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
+    colTypes: ['texto', 'check', 'firma', 'texto'],
+    data: {}
+  };
+  S.herramientas.lists.push(newList);
+  S.herramientas.activeListId = newList.id;
+  populateCustomListSelect();
+  onSelectCustomList(newList.id);
+  saveData();
+  toast('✔ Nuevo listado creado', '#16a34a');
+}
+
+function duplicateCurrentCustomList() {
+  ensureHerramientas();
+  const current = getCurrentCustomList();
+  const newList = JSON.parse(JSON.stringify(current));
+  newList.id = 'list_' + Date.now();
+  newList.title = current.title + ' (COPIA)';
+  S.herramientas.lists.push(newList);
+  S.herramientas.activeListId = newList.id;
+  populateCustomListSelect();
+  onSelectCustomList(newList.id);
+  saveData();
+  toast('✔ Listado duplicado', '#2563eb');
+}
+
+function deleteCurrentCustomList() {
+  ensureHerramientas();
+  if (S.herramientas.lists.length <= 1) {
+    toast('⚠️ No se puede eliminar el único listado activo', '#dc2626');
+    return;
+  }
+  const current = getCurrentCustomList();
+  if (!confirm('¿Está seguro de eliminar el listado "' + current.title + '"?')) return;
+  S.herramientas.lists = S.herramientas.lists.filter(l => l.id !== current.id);
+  S.herramientas.activeListId = S.herramientas.lists[0].id;
+  populateCustomListSelect();
+  onSelectCustomList(S.herramientas.activeListId);
+  saveData();
+  toast('🗑️ Listado eliminado', '#b45309');
+}
+
+function onCustomListMetaInput() {
+  const list = getCurrentCustomList();
+  const tEl = document.getElementById('custDocTitle');
+  const sEl = document.getElementById('custDocSubtitle');
+  if (tEl) list.title = tEl.value.trim() || 'LISTADO DE CONTROL';
+  if (sEl) list.subtitle = sEl.value.trim();
+  populateCustomListSelect();
+  updateCustomListPreview();
+}
+
+function onCustomListOrientationChange(val) {
+  const list = getCurrentCustomList();
+  list.orientation = val;
+  updateCustomListPreview();
+}
+
+function renderCustomColsConfig() {
+  const list = getCurrentCustomList();
+  const count = list.colCount || 4;
   const container = document.getElementById('custColsConfigContainer');
   if (!container) return;
 
   let html = '';
   for (let i = 0; i < count; i++) {
-    const colName = cfg.cols[i] || `Columna ${i+1}`;
-    const colType = cfg.colTypes[i] || 'texto';
-    html += `
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px 10px">
-        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:4px">Columna #${i+1}</div>
-        <input type="text" id="custColName_${i}" value="${escVal(colName)}" oninput="onCustomColMetaChange(${i})" placeholder="Nombre de columna" style="width:100%;margin-bottom:6px;font-size:0.8rem;font-weight:700"/>
-        <select id="custColType_${i}" onchange="onCustomColMetaChange(${i})" style="width:100%;font-size:0.75rem">
-          <option value="texto" ${colType==='texto'?'selected':''}>📝 Texto / Datos</option>
-          <option value="check" ${colType==='check'?'selected':''}>☑️ Casilla Verificación</option>
-          <option value="firma" ${colType==='firma'?'selected':''}>✍️ Espacio para Firma</option>
-        </select>
-      </div>
-    `;
+    const colName = list.cols[i] || ('Columna ' + (i+1));
+    const colType = list.colTypes[i] || 'texto';
+    html += '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px 10px">' +
+      '<div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:4px">Columna #' + (i+1) + '</div>' +
+      '<input type="text" id="custColName_' + i + '" value="' + escVal(colName) + '" oninput="onCustomColMetaChange(' + i + ')" placeholder="Nombre de columna" style="width:100%;margin-bottom:6px;font-size:0.8rem;font-weight:700"/>' +
+      '<select id="custColType_' + i + '" onchange="onCustomColMetaChange(' + i + ')" style="width:100%;font-size:0.75rem">' +
+        '<option value="texto" ' + (colType==='texto'?'selected':'') + '>📝 Texto / Datos Editables</option>' +
+        '<option value="check" ' + (colType==='check'?'selected':'') + '>☑️ Casilla Verificación [✓]</option>' +
+        '<option value="firma" ' + (colType==='firma'?'selected':'') + '>✍️ Espacio para Firma</option>' +
+      '</select>' +
+    '</div>';
   }
   container.innerHTML = html;
 }
 
 function onCustomColCountChange(val) {
-  ensureHerramientas();
+  const list = getCurrentCustomList();
   const count = parseInt(val, 10) || 4;
-  S.herramientas.listado.colCount = count;
-  while (S.herramientas.listado.cols.length < count) {
-    const idx = S.herramientas.listado.cols.length + 1;
-    S.herramientas.listado.cols.push(`Columna ${idx}`);
-    S.herramientas.listado.colTypes.push('texto');
+  list.colCount = count;
+  while (list.cols.length < count) {
+    const idx = list.cols.length + 1;
+    list.cols.push('Columna ' + idx);
+    list.colTypes.push('texto');
   }
   renderCustomColsConfig();
   updateCustomListPreview();
 }
 
 function onCustomColMetaChange(idx) {
-  ensureHerramientas();
-  const nameEl = document.getElementById(`custColName_${idx}`);
-  const typeEl = document.getElementById(`custColType_${idx}`);
-  if (nameEl) S.herramientas.listado.cols[idx] = nameEl.value.trim() || `Col ${idx+1}`;
-  if (typeEl) S.herramientas.listado.colTypes[idx] = typeEl.value;
+  const list = getCurrentCustomList();
+  const nameEl = document.getElementById('custColName_' + idx);
+  const typeEl = document.getElementById('custColType_' + idx);
+  if (nameEl) list.cols[idx] = nameEl.value.trim() || ('Col ' + (idx+1));
+  if (typeEl) list.colTypes[idx] = typeEl.value;
   updateCustomListPreview();
 }
 
 function applyListPreset(key) {
   const p = LIST_PRESETS[key];
   if (!p) return;
-  ensureHerramientas();
-  S.herramientas.listado.title = p.title;
-  S.herramientas.listado.subtitle = p.subtitle;
-  S.herramientas.listado.colCount = p.cols.length;
-  S.herramientas.listado.cols = [...p.cols];
-  S.herramientas.listado.colTypes = [...p.types];
+  const list = getCurrentCustomList();
+  list.title = p.title;
+  list.subtitle = p.subtitle;
+  list.colCount = p.cols.length;
+  list.cols = [...p.cols];
+  list.colTypes = [...p.types];
 
   const tEl = document.getElementById('custDocTitle');
   const sEl = document.getElementById('custDocSubtitle');
@@ -12160,107 +12406,131 @@ function applyListPreset(key) {
   if (sEl) sEl.value = p.subtitle;
   if (cEl) cEl.value = p.cols.length;
 
+  populateCustomListSelect();
   renderCustomColsConfig();
   updateCustomListPreview();
-  toast(`✔ Plantilla "${p.title.split(' ')[0]}..." aplicada`, '#16a34a');
+  saveData();
+  toast('✔ Plantilla aplicada', '#16a34a');
 }
 
-function resetCustomListForm() {
-  ensureHerramientas();
-  S.herramientas.listado = {
-    title: 'LISTADO DE CONTROL DE ACTIVIDADES',
-    subtitle: `${S.grado||'Séptimo de Básica C'} · Año Lectivo ${S.anio||'2026-2027'}`,
-    orientation: 'portrait',
-    colCount: 4,
-    cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
-    colTypes: ['texto', 'check', 'firma', 'texto']
-  };
-  const tEl = document.getElementById('custDocTitle');
-  const sEl = document.getElementById('custDocSubtitle');
-  const cEl = document.getElementById('custDocColCount');
-  if (tEl) tEl.value = S.herramientas.listado.title;
-  if (sEl) sEl.value = S.herramientas.listado.subtitle;
-  if (cEl) cEl.value = 4;
-  renderCustomColsConfig();
+function setCustomCellText(si, colIdx, val) {
+  const list = getCurrentCustomList();
+  if (!list.data[si]) list.data[si] = {};
+  list.data[si][colIdx] = val;
+  saveData();
+}
+
+function toggleCustomCellCheck(si, colIdx) {
+  const list = getCurrentCustomList();
+  if (!list.data[si]) list.data[si] = {};
+  list.data[si][colIdx] = !list.data[si][colIdx];
   updateCustomListPreview();
-  toast('🔄 Listado restablecido', '#2563eb');
+  saveData();
+}
+
+function bulkSetCheckboxes(isChecked) {
+  const list = getCurrentCustomList();
+  const count = list.colCount || 4;
+  const sorted = getSortedIndices();
+  sorted.forEach(si => {
+    if (!list.data[si]) list.data[si] = {};
+    for (let c = 0; c < count; c++) {
+      if (list.colTypes[c] === 'check') {
+        list.data[si][c] = isChecked;
+      }
+    }
+  });
+  updateCustomListPreview();
+  saveData();
+  toast(isChecked ? '✔ Todas las casillas marcadas' : '✔ Todas las casillas desmarcadas', '#2563eb');
 }
 
 function updateCustomListPreview() {
-  ensureHerramientas();
-  const cfg = S.herramientas.listado;
-  const title = document.getElementById('custDocTitle')?.value.trim() || cfg.title || 'LISTADO DE CONTROL';
-  const subtitle = document.getElementById('custDocSubtitle')?.value.trim() || cfg.subtitle || '';
-  const count = cfg.colCount || 4;
+  const list = getCurrentCustomList();
+  const title = list.title || 'LISTADO DE CONTROL';
+  const subtitle = list.subtitle || '';
+  const count = list.colCount || 4;
   const sorted = getSortedIndices();
   const box = document.getElementById('customListPreviewBox');
   if (!box) return;
 
   let thCols = '';
   for (let i = 0; i < count; i++) {
-    const colName = cfg.cols[i] || `Columna ${i+1}`;
-    const colType = cfg.colTypes[i] || 'texto';
+    const colName = list.cols[i] || ('Columna ' + (i+1));
+    const colType = list.colTypes[i] || 'texto';
     let minW = '110px';
-    if (colType === 'check') minW = '70px';
-    if (colType === 'firma') minW = '160px';
-    thCols += `<th style="min-width:${minW};text-align:center">${escHTML(colName.toUpperCase())}</th>`;
+    if (colType === 'check') minW = '80px';
+    if (colType === 'firma') minW = '150px';
+    thCols += '<th style="min-width:' + minW + ';text-align:center">' + escHTML(colName.toUpperCase()) + '</th>';
   }
 
   let rowsHtml = sorted.map((si, rowPos) => {
-    const name = S.students[si] || `Estudiante ${si+1}`;
+    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const stData = list.data[si] || {};
     let tdCols = '';
-    for (let i = 0; i < count; i++) {
-      const colType = cfg.colTypes[i] || 'texto';
+    for (let c = 0; c < count; c++) {
+      const colType = list.colTypes[c] || 'texto';
+      const val = stData[c] || '';
       if (colType === 'check') {
-        tdCols += `<td style="text-align:center;font-size:1.1rem;color:#cbd5e1">▢</td>`;
+        const isChecked = !!val;
+        tdCols += '<td style="text-align:center;padding:3px">' +
+          '<button type="button" class="btn ' + (isChecked ? 'btn-success' : 'btn-outline') + ' no-print" onclick="toggleCustomCellCheck(' + si + ', ' + c + ')" style="padding:2px 8px;font-size:0.75rem;font-weight:800;border-radius:6px;width:100%">' +
+            (isChecked ? '☑ SÍ' : '▢ NO') +
+          '</button>' +
+          '<span class="only-print" style="font-size:1.1rem;font-weight:900;text-align:center;display:block">' +
+            (isChecked ? '☑' : '☐') +
+          '</span>' +
+        '</td>';
       } else if (colType === 'firma') {
-        tdCols += `<td style="height:26px;border-bottom:1px solid #cbd5e1"></td>`;
+        tdCols += '<td style="padding:4px">' +
+          '<input type="text" class="no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Firma / Aclaración" style="width:100%;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;padding:2px 4px"/>' +
+          '<span class="only-print" style="display:block;height:24px;border-bottom:1px solid #000">' + escHTML(val) + '</span>' +
+        '</td>';
       } else {
-        tdCols += `<td style="height:22px"></td>`;
+        tdCols += '<td style="padding:4px">' +
+          '<input type="text" class="no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="width:100%;font-size:0.78rem;border:1px solid #cbd5e1;border-radius:4px;padding:3px 6px"/>' +
+          '<span class="only-print" style="font-size:0.8rem">' + escHTML(val) + '</span>' +
+        '</td>';
       }
     }
-    return `<tr>
-      <td style="text-align:center;font-weight:800;width:36px">${rowPos+1}</td>
-      <td style="font-weight:700;padding-left:8px">${escHTML(name)}</td>
-      ${tdCols}
-    </tr>`;
+    return '<tr>' +
+      '<td style="text-align:center;font-weight:800;width:36px">' + (rowPos+1) + '</td>' +
+      '<td style="font-weight:700;padding-left:8px;font-size:0.82rem">' + escHTML(name) + '</td>' +
+      tdCols +
+    '</tr>';
   }).join('');
 
-  box.innerHTML = `
-    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">
-      <div style="font-weight:900;font-size:1.05rem;letter-spacing:0.3px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
-      <div style="font-weight:800;font-size:0.92rem;color:#1e3a8a;margin:2px 0">${escHTML(title)}</div>
-      ${subtitle ? `<div style="font-size:0.78rem;color:#475569">${escHTML(subtitle)}</div>` : ''}
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155">
-        <span>Docente / Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
-        <span>Grado: <strong>${escHTML(S.grado||'Séptimo C')}</strong></span>
-        <span>Año Lectivo: <strong>${escHTML(S.anio||'2026-2027')}</strong></span>
-        <span>Fecha: <strong>____ / ____ / 202__</strong></span>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width:36px">#</th>
-          <th style="min-width:220px;text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>
-          ${thCols}
-        </tr>
-      </thead>
-      <tbody>${rowsHtml}</tbody>
-    </table>
-
-    <div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
-        <span style="font-size:0.72rem;color:#475569">DOCENTE / TUTOR</span>
-      </div>
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">DIRECTIVA / COORDINACIÓN</strong><br>
-        <span style="font-size:0.72rem;color:#475569">RECIBIDO / REVISADO</span>
-      </div>
-    </div>
-  `;
+  box.innerHTML = '<div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">' +
+      '<div style="font-weight:900;font-size:1.05rem;letter-spacing:0.3px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+      '<div style="font-weight:800;font-size:0.95rem;color:#1e3a8a;margin:2px 0">' + escHTML(title) + '</div>' +
+      (subtitle ? '<div style="font-size:0.8rem;color:#475569">' + escHTML(subtitle) + '</div>' : '') +
+      '<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">' +
+        '<span>Docente / Tutor: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></span>' +
+        '<span>Grado: <strong>' + escHTML(S.grado||'Séptimo C') + '</strong></span>' +
+        '<span>Año Lectivo: <strong>' + escHTML(S.anio||'2026-2027') + '</strong></span>' +
+        '<span>Fecha: <strong>____ / ____ / 202__</strong></span>' +
+      '</div>' +
+    '</div>' +
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<th style="width:36px">#</th>' +
+          '<th style="min-width:200px;text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>' +
+          thCols +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + rowsHtml + '</tbody>' +
+    '</table>' +
+    '<div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">DOCENTE / TUTOR</span>' +
+      '</div>' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">DIRECTIVA / COORDINACIÓN</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">RECIBIDO / REVISADO</span>' +
+      '</div>' +
+    '</div>';
 }
 
 function printCustomList() {
@@ -12269,10 +12539,9 @@ function printCustomList() {
 }
 
 function exportCustomListXLSX() {
-  ensureHerramientas();
-  const cfg = S.herramientas.listado;
-  const title = document.getElementById('custDocTitle')?.value.trim() || cfg.title;
-  const count = cfg.colCount || 4;
+  const list = getCurrentCustomList();
+  const title = list.title || 'LISTADO DE CONTROL';
+  const count = list.colCount || 4;
   const sorted = getSortedIndices();
 
   const headers = [
@@ -12280,25 +12549,30 @@ function exportCustomListXLSX() {
     { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' }
   ];
   for (let i = 0; i < count; i++) {
-    headers.push({ v: (cfg.cols[i] || `Columna ${i+1}`).toUpperCase(), t: 's', s: 'hdr_col' });
+    headers.push({ v: (list.cols[i] || ('Columna ' + (i+1))).toUpperCase(), t: 's', s: 'hdr_col' });
   }
 
   const rows = [
-    [{ v: `UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"`, t: 's', s: 'title' }],
+    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'title' }],
     [{ v: title.toUpperCase(), t: 's', s: 'sub' }],
-    [{ v: `Docente: ${S.docente||'Lcdo. Kevin Yánez'} | Grado: ${S.grado||'7mo C'} | Año: ${S.anio||'2026-2027'}`, t: 's', s: 'sub' }],
+    [{ v: 'Docente: ' + (S.docente||'Lcdo. Kevin Yánez') + ' | Grado: ' + (S.grado||'7mo C') + ' | Año: ' + (S.anio||'2026-2027'), t: 's', s: 'sub' }],
     [],
     headers
   ];
 
   sorted.forEach((si, rowIdx) => {
-    const name = S.students[si] || `Estudiante ${si+1}`;
+    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const stData = list.data[si] || {};
     const row = [
       { v: rowIdx + 1, t: 'n', s: 'num' },
       { v: name, t: 's', s: 'name' }
     ];
-    for (let i = 0; i < count; i++) {
-      row.push({ v: '', t: 's', s: 'empty' });
+    for (let c = 0; c < count; c++) {
+      const colType = list.colTypes[c] || 'texto';
+      const val = stData[c] || '';
+      let cellVal = val;
+      if (colType === 'check') cellVal = val ? 'SÍ' : 'NO';
+      row.push({ v: cellVal, t: 's', s: 'val' });
     }
     rows.push(row);
   });
@@ -12308,86 +12582,262 @@ function exportCustomListXLSX() {
   const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Listado_${title.replace(/\s+/g,'_')}_${(S.grado||'7mo').replace(/\s+/g,'_')}.xlsx`;
+  a.download = 'Listado_' + title.replace(/\s+/g,'_') + '_' + (S.grado||'7mo').replace(/\s+/g,'_') + '.xlsx';
   a.click();
-  toast('✔ Archivo Excel generado con éxito', '#16a34a');
+  toast('✔ Archivo Excel con datos generado con éxito', '#16a34a');
 }
 
-// ── 2. REUNIONES DE PADRES (ACTA & ASISTENCIA) ──
-function updateReunionPreview() {
+function getCurrentReunion() {
   ensureHerramientas();
-  const titulo = document.getElementById('reunionTitulo')?.value.trim() || S.herramientas.reunion.titulo;
-  const fecha = document.getElementById('reunionFecha')?.value.trim() || S.herramientas.reunion.fecha;
-  const horaLugar = document.getElementById('reunionHoraLugar')?.value.trim() || S.herramientas.reunion.horaLugar;
-  const orden = document.getElementById('reunionOrden')?.value.trim() || S.herramientas.reunion.orden;
+  let reu = S.herramientas.reuniones.find(r => r.id === S.herramientas.activeReunionId);
+  if (!reu) {
+    reu = S.herramientas.reuniones[0];
+    S.herramientas.activeReunionId = reu.id;
+  }
+  if (!reu.attendance) reu.attendance = {};
+  return reu;
+}
+
+function populateReunionSelect() {
+  ensureHerramientas();
+  const sel = document.getElementById('reunionActiveSel');
+  if (!sel) return;
+  sel.innerHTML = S.herramientas.reuniones.map(r => 
+    '<option value="' + r.id + '" ' + (r.id === S.herramientas.activeReunionId ? 'selected' : '') + '>👥 ' + escHTML(r.titulo) + '</option>'
+  ).join('');
+}
+
+function onSelectReunion(reuId) {
+  ensureHerramientas();
+  S.herramientas.activeReunionId = reuId;
+  const reu = getCurrentReunion();
+
+  const tEl = document.getElementById('reunionTitulo');
+  const fEl = document.getElementById('reunionFecha');
+  const hEl = document.getElementById('reunionHoraLugar');
+  const oEl = document.getElementById('reunionOrden');
+
+  if (tEl) tEl.value = reu.titulo || '';
+  if (fEl) fEl.value = reu.fecha || '';
+  if (hEl) hEl.value = reu.horaLugar || '';
+  if (oEl) oEl.value = reu.orden || '';
+
+  updateReunionPreview();
+}
+
+function openNewReunionModal() {
+  const name = prompt('Ingrese el título para la nueva reunión de padres:', 'II REUNIÓN ORDINARIA DE PADRES DE FAMILIA');
+  if (!name || !name.trim()) return;
+  ensureHerramientas();
+  const newReu = {
+    id: 'reu_' + Date.now(),
+    titulo: name.trim().toUpperCase(),
+    fecha: new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
+    horaLugar: '13:30 a 15:00 · Aula de Séptimo C',
+    orden: '1. Constatación del quórum y bienvenida.\n2. Informe de rendimiento académico del trimestre.\n3. Acuerdos y compromisos de apoyo en el hogar.\n4. Asuntos varios.',
+    attendance: {}
+  };
+  S.herramientas.reuniones.push(newReu);
+  S.herramientas.activeReunionId = newReu.id;
+  populateReunionSelect();
+  onSelectReunion(newReu.id);
+  saveData();
+  toast('✔ Nueva reunión creada', '#16a34a');
+}
+
+function deleteCurrentReunion() {
+  ensureHerramientas();
+  if (S.herramientas.reuniones.length <= 1) {
+    toast('⚠️ No se puede eliminar el único registro de reunión', '#dc2626');
+    return;
+  }
+  const current = getCurrentReunion();
+  if (!confirm('¿Está seguro de eliminar el acta "' + current.titulo + '"?')) return;
+  S.herramientas.reuniones = S.herramientas.reuniones.filter(r => r.id !== current.id);
+  S.herramientas.activeReunionId = S.herramientas.reuniones[0].id;
+  populateReunionSelect();
+  onSelectReunion(S.herramientas.activeReunionId);
+  saveData();
+  toast('🗑️ Acta de reunión eliminada', '#b45309');
+}
+
+function onReunionMetaInput() {
+  const reu = getCurrentReunion();
+  const tEl = document.getElementById('reunionTitulo');
+  const fEl = document.getElementById('reunionFecha');
+  const hEl = document.getElementById('reunionHoraLugar');
+  const oEl = document.getElementById('reunionOrden');
+  if (tEl) reu.titulo = tEl.value.trim() || 'REUNIÓN DE PADRES';
+  if (fEl) reu.fecha = fEl.value.trim();
+  if (hEl) reu.horaLugar = hEl.value.trim();
+  if (oEl) reu.orden = oEl.value.trim();
+  populateReunionSelect();
+  updateReunionPreview();
+}
+
+function autoFillReunionRepsFromStudents() {
+  const reu = getCurrentReunion();
+  const sorted = getSortedIndices();
+  let filledCount = 0;
+  sorted.forEach(si => {
+    if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
+    if (S.studentsMeta && S.studentsMeta[si]) {
+      const meta = S.studentsMeta[si];
+      if (meta.rep) { reu.attendance[si].rep = meta.rep; filledCount++; }
+      if (meta.repCI) reu.attendance[si].ci = meta.repCI;
+    }
+  });
+  updateReunionPreview();
+  saveData();
+  toast(filledCount > 0 ? ('✔ ' + filledCount + ' representantes autocompletados') : 'ℹ️ Ingrese los nombres de los representantes directamente en la tabla', '#2563eb');
+}
+
+function setReunionRep(si, val) {
+  const reu = getCurrentReunion();
+  if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
+  reu.attendance[si].rep = val;
+  saveData();
+}
+
+function setReunionCI(si, val) {
+  const reu = getCurrentReunion();
+  if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
+  reu.attendance[si].ci = val;
+  saveData();
+}
+
+function toggleReunionAttendance(si, isPresent) {
+  const reu = getCurrentReunion();
+  if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
+  reu.attendance[si].present = isPresent;
+  updateReunionQuorumStats();
+  saveData();
+}
+
+function setReunionObs(si, val) {
+  const reu = getCurrentReunion();
+  if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
+  reu.attendance[si].obs = val;
+  saveData();
+}
+
+function updateReunionQuorumStats() {
+  const reu = getCurrentReunion();
+  const sorted = getSortedIndices();
+  const total = sorted.length;
+  let presentCount = 0;
+  sorted.forEach(si => {
+    if (reu.attendance[si] && reu.attendance[si].present) presentCount++;
+  });
+  const absentCount = total - presentCount;
+  const pct = total > 0 ? ((presentCount / total) * 100).toFixed(1) : '0.0';
+
+  const pctEl = document.getElementById('reunionQuorumPct');
+  const presEl = document.getElementById('reunionPresentCount');
+  const totEl = document.getElementById('reunionTotalCount');
+  const absEl = document.getElementById('reunionAbsentCount');
+
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (presEl) presEl.textContent = presentCount;
+  if (totEl) totEl.textContent = total;
+  if (absEl) absEl.textContent = absentCount;
+}
+
+function updateReunionPreview() {
+  const reu = getCurrentReunion();
+  const titulo = reu.titulo || 'REUNIÓN DE PADRES';
+  const fecha = reu.fecha || '';
+  const horaLugar = reu.horaLugar || '';
+  const orden = reu.orden || '';
   const sorted = getSortedIndices();
   const box = document.getElementById('reunionPreviewBox');
   if (!box) return;
 
-  const ordenListHtml = orden.split('\n').filter(l => l.trim() !== '').map(l => `<li style="margin-bottom:2px">${escHTML(l.replace(/^\d+\.\s*/, ''))}</li>`).join('');
+  updateReunionQuorumStats();
 
+  const ordenListHtml = orden.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:2px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
+
+  let presentCount = 0;
   const rowsHtml = sorted.map((si, rowPos) => {
-    const name = S.students[si] || `Estudiante ${si+1}`;
-    return `<tr>
-      <td style="text-align:center;font-weight:800;width:34px">${rowPos+1}</td>
-      <td style="font-weight:700;padding-left:8px;min-width:200px">${escHTML(name)}</td>
-      <td style="min-width:180px"></td>
-      <td style="width:110px;text-align:center"></td>
-      <td style="min-width:150px"></td>
-      <td style="min-width:110px"></td>
-    </tr>`;
+    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const att = reu.attendance[si] || { rep: '', ci: '', present: false, obs: '' };
+    if (att.present) presentCount++;
+
+    return '<tr>' +
+      '<td style="text-align:center;font-weight:800;width:34px">' + (rowPos+1) + '</td>' +
+      '<td style="font-weight:700;padding-left:8px;font-size:0.8rem;min-width:190px">' + escHTML(name) + '</td>' +
+      '<td style="padding:4px;min-width:180px">' +
+        '<input type="text" class="no-print" value="' + escVal(att.rep) + '" onchange="setReunionRep(' + si + ', this.value)" placeholder="Nombre del representante" style="width:100%;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;padding:2px 4px"/>' +
+        '<span class="only-print" style="font-size:0.78rem">' + escHTML(att.rep) + '</span>' +
+      '</td>' +
+      '<td style="padding:4px;width:110px;text-align:center">' +
+        '<input type="text" class="no-print" value="' + escVal(att.ci) + '" onchange="setReunionCI(' + si + ', this.value)" placeholder="C.I." style="width:100%;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;padding:2px 4px;text-align:center"/>' +
+        '<span class="only-print" style="font-size:0.78rem">' + escHTML(att.ci) + '</span>' +
+      '</td>' +
+      '<td style="text-align:center;padding:4px;width:120px">' +
+        '<label class="no-print" style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:0.75rem;font-weight:800">' +
+          '<input type="checkbox" ' + (att.present ? 'checked' : '') + ' onchange="toggleReunionAttendance(' + si + ', this.checked)" style="transform:scale(1.2)"/>' +
+          '<span>' + (att.present ? 'PRESENTE' : 'AUSENTE') + '</span>' +
+        '</label>' +
+        '<span class="only-print" style="font-size:1rem;display:block;height:24px;border-bottom:1px solid #000;line-height:24px">' +
+          (att.present ? '☑ PRESENTE' : '☐') +
+        '</span>' +
+      '</td>' +
+      '<td style="padding:4px;min-width:110px">' +
+        '<input type="text" class="no-print" value="' + escVal(att.obs) + '" onchange="setReunionObs(' + si + ', this.value)" placeholder="Observaciones" style="width:100%;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;padding:2px 4px"/>' +
+        '<span class="only-print" style="font-size:0.75rem">' + escHTML(att.obs) + '</span>' +
+      '</td>' +
+    '</tr>';
   }).join('');
 
-  box.innerHTML = `
-    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">
-      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
-      <div style="font-weight:800;font-size:0.92rem;color:#065f46;margin:2px 0">${escHTML(titulo)}</div>
-      <div style="font-size:0.78rem;color:#475569">ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</div>
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">
-        <span>Docente Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
-        <span>Grado: <strong>${escHTML(S.grado||'Séptimo de Básica C')}</strong></span>
-        <span>Fecha: <strong>${escHTML(fecha)}</strong></span>
-        <span>Hora/Lugar: <strong>${escHTML(horaLugar)}</strong></span>
-      </div>
-    </div>
+  const total = sorted.length;
+  const absentCount = total - presentCount;
+  const pct = total > 0 ? ((presentCount / total) * 100).toFixed(1) : '0.0';
 
-    <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem">
-      <strong style="color:#0f172a;display:block;margin-bottom:4px">📌 ORDEN DEL DÍA / PUNTOS TRATADOS:</strong>
-      <ol style="margin:0 0 0 16px;padding:0;line-height:1.5">${ordenListHtml}</ol>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width:34px">#</th>
-          <th style="text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>
-          <th style="text-align:left;padding-left:8px">NOMBRE DEL REPRESENTANTE</th>
-          <th>CÉDULA DE IDENTIDAD</th>
-          <th>FIRMA DE ASISTENCIA</th>
-          <th>OBSERVACIONES</th>
-        </tr>
-      </thead>
-      <tbody>${rowsHtml}</tbody>
-    </table>
-
-    <div style="margin-top:14px;font-size:0.78rem;display:flex;justify-content:space-between;background:#f8fafc;padding:8px 12px;border-radius:6px;border:1px solid #cbd5e1">
-      <span>Total Matriculados: <strong>${sorted.length}</strong></span>
-      <span>Presentes: <strong>_____</strong></span>
-      <span>Ausentes: <strong>_____</strong></span>
-      <span>Quórum: <strong>_____%</strong></span>
-    </div>
-
-    <div style="display:flex;justify-content:space-around;margin-top:40px;page-break-inside:avoid">
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
-        <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR</span>
-      </div>
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">PRESIDENTE/A DEL COMITÉ</strong><br>
-        <span style="font-size:0.72rem;color:#475569">COMITÉ DE PADRES DE FAMILIA</span>
-      </div>
-    </div>
-  `;
+  box.innerHTML = '<div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">' +
+      '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+      '<div style="font-weight:800;font-size:0.95rem;color:#065f46;margin:2px 0">' + escHTML(titulo) + '</div>' +
+      '<div style="font-size:0.78rem;color:#475569">ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">' +
+        '<span>Docente Tutor: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></span>' +
+        '<span>Grado: <strong>' + escHTML(S.grado||'Séptimo de Básica C') + '</strong></span>' +
+        '<span>Fecha: <strong>' + escHTML(fecha) + '</strong></span>' +
+        '<span>Hora/Lugar: <strong>' + escHTML(horaLugar) + '</strong></span>' +
+      '</div>' +
+    '</div>' +
+    '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem">' +
+      '<strong style="color:#0f172a;display:block;margin-bottom:4px">📌 ORDEN DEL DÍA / PUNTOS TRATADOS:</strong>' +
+      '<ol style="margin:0 0 0 16px;padding:0;line-height:1.5">' + ordenListHtml + '</ol>' +
+    '</div>' +
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<th style="width:34px">#</th>' +
+          '<th style="text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>' +
+          '<th style="text-align:left;padding-left:8px">NOMBRE DEL REPRESENTANTE</th>' +
+          '<th>CÉDULA DE IDENTIDAD</th>' +
+          '<th>ASISTENCIA / FIRMA</th>' +
+          '<th>OBSERVACIONES</th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + rowsHtml + '</tbody>' +
+    '</table>' +
+    '<div style="margin-top:14px;font-size:0.8rem;display:flex;justify-content:space-between;background:#f0fdf4;padding:10px 14px;border-radius:6px;border:1.5px solid #059669;color:#065f46;font-weight:800">' +
+      '<span>Total Matriculados: <strong>' + total + '</strong></span>' +
+      '<span>Presentes: <strong>' + presentCount + '</strong></span>' +
+      '<span>Ausentes: <strong>' + absentCount + '</strong></span>' +
+      '<span>Quórum Alcanzado: <strong>' + pct + '%</strong></span>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-around;margin-top:40px;page-break-inside:avoid">' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR</span>' +
+      '</div>' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">PRESIDENTE/A DEL COMITÉ</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">COMITÉ DE PADRES DE FAMILIA</span>' +
+      '</div>' +
+    '</div>';
 }
 
 function printReunionActa() {
@@ -12396,34 +12846,35 @@ function printReunionActa() {
 }
 
 function exportReunionXLSX() {
-  ensureHerramientas();
-  const titulo = document.getElementById('reunionTitulo')?.value.trim() || S.herramientas.reunion.titulo;
+  const reu = getCurrentReunion();
+  const titulo = reu.titulo || 'REUNIÓN DE PADRES';
   const sorted = getSortedIndices();
 
   const rows = [
-    [{ v: `UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"`, t: 's', s: 'title' }],
+    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'title' }],
     [{ v: titulo.toUpperCase(), t: 's', s: 'sub' }],
-    [{ v: `Docente: ${S.docente||'Lcdo. Kevin Yánez'} | Grado: ${S.grado||'7mo C'} | Año: ${S.anio||'2026-2027'}`, t: 's', s: 'sub' }],
+    [{ v: 'Docente: ' + (S.docente||'Lcdo. Kevin Yánez') + ' | Grado: ' + (S.grado||'7mo C') + ' | Fecha: ' + (reu.fecha||''), t: 's', s: 'sub' }],
     [],
     [
       { v: '#', t: 's', s: 'hdr' },
       { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' },
       { v: 'NOMBRE DEL REPRESENTANTE', t: 's', s: 'hdr_col' },
       { v: 'CÉDULA', t: 's', s: 'hdr_col' },
-      { v: 'FIRMA', t: 's', s: 'hdr_col' },
+      { v: 'ASISTIÓ', t: 's', s: 'hdr_col' },
       { v: 'OBSERVACIONES', t: 's', s: 'hdr_col' }
     ]
   ];
 
   sorted.forEach((si, rowIdx) => {
-    const name = S.students[si] || `Estudiante ${si+1}`;
+    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const att = reu.attendance[si] || { rep: '', ci: '', present: false, obs: '' };
     rows.push([
       { v: rowIdx + 1, t: 'n', s: 'num' },
       { v: name, t: 's', s: 'name' },
-      { v: '', t: 's', s: 'empty' },
-      { v: '', t: 's', s: 'empty' },
-      { v: '', t: 's', s: 'empty' },
-      { v: '', t: 's', s: 'empty' }
+      { v: att.rep || '', t: 's', s: 'val' },
+      { v: att.ci || '', t: 's', s: 'val' },
+      { v: att.present ? 'SÍ' : 'NO', t: 's', s: 'val' },
+      { v: att.obs || '', t: 's', s: 'val' }
     ]);
   });
 
@@ -12432,21 +12883,163 @@ function exportReunionXLSX() {
   const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Asistencia_Reunion_Padres_${(S.grado||'7mo').replace(/\s+/g,'_')}.xlsx`;
+  a.download = 'Asistencia_Reunion_Padres_' + (S.grado||'7mo').replace(/\s+/g,'_') + '.xlsx';
   a.click();
   toast('✔ Archivo Excel de reunión descargado', '#16a34a');
 }
 
-// ── 3. ATENCIÓN A REPRESENTANTES (BITÁCORA) ──
 function populateAtencionStudentSelect() {
   const sel = document.getElementById('atencionStudentSel');
   if (!sel || !S.students) return;
   const sorted = getSortedIndices();
-  sel.innerHTML = sorted.map(si => `<option value="${si}">${si+1}. ${escHTML(S.students[si])}</option>`).join('');
+  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
 }
 
 function onAtencionStudentChange(si) {
+  if (S.studentsMeta && S.studentsMeta[si]) {
+    const meta = S.studentsMeta[si];
+    const repEl = document.getElementById('atencionRepName');
+    const conEl = document.getElementById('atencionContacto');
+    if (repEl && meta.rep) repEl.value = meta.rep;
+    if (conEl && (meta.repCI || meta.telefono)) conEl.value = ((meta.repCI || '') + ' ' + (meta.telefono || '')).trim();
+  }
   updateAtencionPreview();
+}
+
+function resetAtencionForm() {
+  const repEl = document.getElementById('atencionRepName');
+  const conEl = document.getElementById('atencionContacto');
+  const hecEl = document.getElementById('atencionHechos');
+  const comEl = document.getElementById('atencionCompromisos');
+  const fecEl = document.getElementById('atencionFechaHora');
+  if (repEl) repEl.value = '';
+  if (conEl) conEl.value = '';
+  if (hecEl) hecEl.value = '';
+  if (comEl) comEl.value = '';
+  if (fecEl) fecEl.value = new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · 14:00';
+  updateAtencionPreview();
+  toast('✨ Formulario de atención listo', '#2563eb');
+}
+
+function saveAtencionToHistory() {
+  ensureHerramientas();
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  const stName = S.students[si] || ('Estudiante ' + (si+1));
+  const repName = document.getElementById('atencionRepName')?.value.trim();
+  const parentesco = document.getElementById('atencionParentesco')?.value || 'Madre de Familia';
+  const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleDateString('es-EC');
+  const motivo = document.getElementById('atencionMotivo')?.value || 'Atención General';
+  const contacto = document.getElementById('atencionContacto')?.value.trim() || '';
+  const hechos = document.getElementById('atencionHechos')?.value.trim() || '';
+  const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '';
+
+  if (!repName) {
+    toast('⚠️ Ingrese el nombre del representante que asiste', '#dc2626');
+    return;
+  }
+
+  const record = {
+    id: 'atn_' + Date.now(),
+    studentIdx: si,
+    stName,
+    repName,
+    parentesco,
+    fechaHora,
+    motivo,
+    contacto,
+    hechos,
+    compromisos,
+    createdAt: new Date().toISOString()
+  };
+
+  S.herramientas.atenciones.unshift(record);
+  saveData();
+  renderAtencionHistoryTable();
+  toast('✔ Ficha de atención para ' + stName + ' guardada en bitácora', '#16a34a');
+}
+
+function renderAtencionHistoryTable() {
+  ensureHerramientas();
+  const container = document.getElementById('atencionHistoryTableContainer');
+  if (!container) return;
+
+  const filter = (document.getElementById('atencionFilterInput')?.value || '').toLowerCase();
+  const records = S.herramientas.atenciones.filter(r => 
+    !filter || r.stName.toLowerCase().includes(filter) || r.repName.toLowerCase().includes(filter) || r.motivo.toLowerCase().includes(filter)
+  );
+
+  if (records.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text-muted);font-size:0.8rem">No hay registros de atención guardados en la bitácora.</div>';
+    return;
+  }
+
+  const rows = records.map(r => '<tr>' +
+      '<td style="font-size:0.75rem;white-space:nowrap;font-weight:700">' + escHTML(r.fechaHora.split('·')[0] || r.fechaHora) + '</td>' +
+      '<td style="font-weight:800;font-size:0.8rem">' + escHTML(r.stName) + '</td>' +
+      '<td style="font-size:0.78rem">' + escHTML(r.repName) + ' <span style="font-size:0.7rem;color:var(--text-muted)">(' + escHTML(r.parentesco) + ')</span></td>' +
+      '<td><span class="normative-pill" style="font-size:0.7rem">' + escHTML(r.motivo) + '</span></td>' +
+      '<td style="text-align:center;white-space:nowrap">' +
+        '<button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="loadAtencionToForm(\'' + r.id + '\')" title="Cargar datos en el formulario">✎ Cargar</button> ' +
+        '<button class="btn btn-primary" style="padding:2px 6px;font-size:0.72rem" onclick="printAtencionEntry(\'' + r.id + '\')" title="Imprimir esta ficha de atención">🖨️ Imprimir</button> ' +
+        '<button class="btn btn-danger" style="padding:2px 6px;font-size:0.72rem" onclick="deleteAtencionEntry(\'' + r.id + '\')" title="Eliminar registro">🗑️</button>' +
+      '</td>' +
+    '</tr>'
+  ).join('');
+
+  container.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">' +
+      '<thead>' +
+        '<tr style="background:var(--bg-card-subtle)">' +
+          '<th style="padding:6px 8px;text-align:left">Fecha</th>' +
+          '<th style="padding:6px 8px;text-align:left">Estudiante</th>' +
+          '<th style="padding:6px 8px;text-align:left">Representante</th>' +
+          '<th style="padding:6px 8px;text-align:left">Motivo</th>' +
+          '<th style="padding:6px 8px;text-align:center">Acciones</th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>';
+}
+
+function loadAtencionToForm(atnId) {
+  ensureHerramientas();
+  const record = S.herramientas.atenciones.find(r => r.id === atnId);
+  if (!record) return;
+
+  const sel = document.getElementById('atencionStudentSel');
+  const repEl = document.getElementById('atencionRepName');
+  const parEl = document.getElementById('atencionParentesco');
+  const fecEl = document.getElementById('atencionFechaHora');
+  const motEl = document.getElementById('atencionMotivo');
+  const conEl = document.getElementById('atencionContacto');
+  const hecEl = document.getElementById('atencionHechos');
+  const comEl = document.getElementById('atencionCompromisos');
+
+  if (sel) sel.value = record.studentIdx;
+  if (repEl) repEl.value = record.repName;
+  if (parEl) parEl.value = record.parentesco;
+  if (fecEl) fecEl.value = record.fechaHora;
+  if (motEl) motEl.value = record.motivo;
+  if (conEl) conEl.value = record.contacto;
+  if (hecEl) hecEl.value = record.hechos;
+  if (comEl) comEl.value = record.compromisos;
+
+  updateAtencionPreview();
+  toast('✔ Ficha cargada en formulario', '#2563eb');
+}
+
+function deleteAtencionEntry(atnId) {
+  ensureHerramientas();
+  if (!confirm('¿Desea eliminar este registro de atención de la bitácora?')) return;
+  S.herramientas.atenciones = S.herramientas.atenciones.filter(r => r.id !== atnId);
+  saveData();
+  renderAtencionHistoryTable();
+  toast('🗑️ Registro de atención eliminado', '#b45309');
+}
+
+function printAtencionEntry(atnId) {
+  loadAtencionToForm(atnId);
+  window.print();
 }
 
 function updateAtencionPreview() {
@@ -12464,57 +13057,46 @@ function updateAtencionPreview() {
   const box = document.getElementById('atencionPreviewBox');
   if (!box) return;
 
-  const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => `<p style="margin:4px 0">${escHTML(l)}</p>`).join('');
-  const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => `<li style="margin-bottom:4px">${escHTML(l.replace(/^\d+\.\s*/, ''))}</li>`).join('');
+  const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => '<p style="margin:4px 0">' + escHTML(l) + '</p>').join('');
+  const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:4px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
 
-  box.innerHTML = `
-    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">
-      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
-      <div style="font-weight:800;font-size:0.92rem;color:#b45309;margin:2px 0">BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</div>
-      <div style="font-size:0.78rem;color:#475569">Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio||'2026-2027')}</div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;padding:12px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.8rem;margin-bottom:14px">
-      <div><strong>Estudiante:</strong> ${escHTML(stName)}</div>
-      <div><strong>Grado / Paralelo:</strong> ${escHTML(S.grado||'Séptimo EGB C')}</div>
-      <div><strong>Representante:</strong> ${escHTML(repName)}</div>
-      <div><strong>Parentesco:</strong> ${escHTML(parentesco)}</div>
-      <div><strong>Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
-      <div><strong>C.I. / Contacto:</strong> ${escHTML(contacto)}</div>
-      <div style="grid-column:1/-1"><strong>Motivo Principal:</strong> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:800">${escHTML(motivo)}</span></div>
-    </div>
-
-    <div style="border:1px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.8rem">
-      <strong style="color:#0f172a;display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">
-        1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):
-      </strong>
-      <div style="color:#334155;line-height:1.6">${hechosHtml}</div>
-    </div>
-
-    <div style="border:1.5px solid #059669;background:#f0fdf4;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem">
-      <strong style="color:#065f46;display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px">
-        2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:
-      </strong>
-      <ol style="margin:0 0 0 16px;padding:0;color:#065f46;line-height:1.6">${compListHtml}</ol>
-    </div>
-
-    <div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;line-height:1.4">
-      <em>Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:</em>
-    </div>
-
-    <div style="display:flex;justify-content:space-around;page-break-inside:avoid">
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">${escHTML(repName)}</strong><br>
-        <span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>
-        <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span>
-      </div>
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
-        <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>
-        <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
-      </div>
-    </div>
-  `;
+  box.innerHTML = '<div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">' +
+      '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+      '<div style="font-weight:800;font-size:0.92rem;color:#b45309;margin:2px 0">BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</div>' +
+      '<div style="font-size:0.78rem;color:#475569">Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ' + escHTML(S.anio||'2026-2027') + '</div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;padding:12px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.8rem;margin-bottom:14px">' +
+      '<div><strong>Estudiante:</strong> ' + escHTML(stName) + '</div>' +
+      '<div><strong>Grado / Paralelo:</strong> ' + escHTML(S.grado||'Séptimo EGB C') + '</div>' +
+      '<div><strong>Representante:</strong> ' + escHTML(repName) + '</div>' +
+      '<div><strong>Parentesco:</strong> ' + escHTML(parentesco) + '</div>' +
+      '<div><strong>Fecha y Hora:</strong> ' + escHTML(fechaHora) + '</div>' +
+      '<div><strong>C.I. / Contacto:</strong> ' + escHTML(contacto) + '</div>' +
+      '<div style="grid-column:1/-1"><strong>Motivo Principal:</strong> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:800">' + escHTML(motivo) + '</span></div>' +
+    '</div>' +
+    '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.8rem">' +
+      '<strong style="color:#0f172a;display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>' +
+      '<div style="color:#334155;line-height:1.6">' + hechosHtml + '</div>' +
+    '</div>' +
+    '<div style="border:1.5px solid #059669;background:#f0fdf4;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem">' +
+      '<strong style="color:#065f46;display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>' +
+      '<ol style="margin:0 0 0 16px;padding:0;color:#065f46;line-height:1.6">' + compListHtml + '</ol>' +
+    '</div>' +
+    '<div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;line-height:1.4">' +
+      '<em>Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:</em>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-around;page-break-inside:avoid">' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(repName) + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>' +
+        '<span style="font-size:0.68rem;color:#64748b">C.I.: ' + escHTML(contacto) + '</span>' +
+      '</div>' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>' +
+        '<span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>' +
+      '</div>' +
+    '</div>';
 }
 
 function printAtencionFicha() {
@@ -12522,12 +13104,11 @@ function printAtencionFicha() {
   window.print();
 }
 
-// ── 4. CONVOCATORIAS & CITACIONES RECORTABLES ──
 function populateCitacionStudentSelect() {
   const sel = document.getElementById('citacionStudentSel');
   if (!sel || !S.students) return;
   const sorted = getSortedIndices();
-  sel.innerHTML = sorted.map(si => `<option value="${si}">${si+1}. ${escHTML(S.students[si])}</option>`).join('');
+  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
 }
 
 function onCitacionModoChange(val) {
@@ -12556,59 +13137,52 @@ function updateCitacionesPreview() {
   }
 
   let html = '';
-  studentsToRender.forEach((si, idx) => {
-    const stName = S.students[si] || `Estudiante ${si+1}`;
-    html += `
-      <div class="cut-slip">
-        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">
-          <div>
-            <strong style="font-size:0.88rem;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</strong><br>
-            <span style="font-size:0.75rem;font-weight:700;color:#0f172a">CONVOCATORIA / CITACIÓN A REPRESENTANTE LEGAL</span>
-          </div>
-          <span style="font-size:0.75rem;font-weight:800;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px">
-            ${escHTML(S.grado||'7mo EGB C')}
-          </span>
-        </div>
-
-        <div style="font-size:0.78rem;color:#334155;line-height:1.5;margin-bottom:10px">
-          Señor/a Representante Legal de: <strong>${escHTML(stName)}</strong>.<br>
-          Se le convoca de manera obligatoria y puntual a una reunión con el Docente Tutor:
-        </div>
-
-        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.76rem;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <div><strong>📅 Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
-          <div><strong>📍 Lugar:</strong> ${escHTML(lugar)}</div>
-          <div style="grid-column:1/-1"><strong>📌 Asunto:</strong> ${escHTML(motivo)}</div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:0.72rem;margin-bottom:10px">
-          <div>
-            <span>Docente Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span><br>
-            <span style="color:#64748b">Firma y Sello Institucional</span>
-          </div>
-          <div style="text-align:right;color:#64748b">
-            <span>Favor portar su cédula de identidad</span>
-          </div>
-        </div>
-
-        <div class="cut-line">✂️ DESPRENDIBLE DE CONFIRMACIÓN (RECORTAR Y DEVOLVER FIRMADO) ✂️</div>
-
-        <div style="font-size:0.74rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span><strong>Estudiante:</strong> ${escHTML(stName)}</span>
-            <span><strong>Grado:</strong> ${escHTML(S.grado||'7mo C')}</span>
-          </div>
-          <div style="margin-bottom:6px">
-            Yo, ____________________________________________, confirmo la recepción de la convocatoria para el día <strong>${escHTML(fechaHora)}</strong>.
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
-            <span>C.I.: ________________________</span>
-            <span>Teléfono: ________________________</span>
-            <span>Firma: ________________________</span>
-          </div>
-        </div>
-      </div>
-    `;
+  studentsToRender.forEach(si => {
+    const stName = S.students[si] || ('Estudiante ' + (si+1));
+    html += '<div class="cut-slip">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">' +
+        '<div>' +
+          '<strong style="font-size:0.88rem;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</strong><br>' +
+          '<span style="font-size:0.75rem;font-weight:700;color:#0f172a">CONVOCATORIA / CITACIÓN A REPRESENTANTE LEGAL</span>' +
+        '</div>' +
+        '<span style="font-size:0.75rem;font-weight:800;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px">' +
+          escHTML(S.grado||'7mo EGB C') +
+        '</span>' +
+      '</div>' +
+      '<div style="font-size:0.78rem;color:#334155;line-height:1.5;margin-bottom:10px">' +
+        'Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>.<br>' +
+        'Se le convoca de manera obligatoria y puntual a una reunión con el Docente Tutor:' +
+      '</div>' +
+      '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.76rem;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">' +
+        '<div><strong>📅 Fecha y Hora:</strong> ' + escHTML(fechaHora) + '</div>' +
+        '<div><strong>📍 Lugar:</strong> ' + escHTML(lugar) + '</div>' +
+        '<div style="grid-column:1/-1"><strong>📌 Asunto:</strong> ' + escHTML(motivo) + '</div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:0.72rem;margin-bottom:10px">' +
+        '<div>' +
+          '<span>Docente Tutor: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></span><br>' +
+          '<span style="color:#64748b">Firma y Sello Institucional</span>' +
+        '</div>' +
+        '<div style="text-align:right;color:#64748b">' +
+          '<span>Favor portar su cédula de identidad</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cut-line">✂️ DESPRENDIBLE DE CONFIRMACIÓN (RECORTAR Y DEVOLVER FIRMADO) ✂️</div>' +
+      '<div style="font-size:0.74rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">' +
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
+          '<span><strong>Estudiante:</strong> ' + escHTML(stName) + '</span>' +
+          '<span><strong>Grado:</strong> ' + escHTML(S.grado||'7mo C') + '</span>' +
+        '</div>' +
+        '<div style="margin-bottom:6px">' +
+          'Yo, ____________________________________________, confirmo la recepción de la convocatoria para el día <strong>' + escHTML(fechaHora) + '</strong>.' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">' +
+          '<span>C.I.: ________________________</span>' +
+          '<span>Teléfono: ________________________</span>' +
+          '<span>Firma: ________________________</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   });
 
   box.innerHTML = html;
@@ -12619,19 +13193,32 @@ function printCitaciones() {
   window.print();
 }
 
-// ── 5. RÚBRICAS DE AULA ──
-function onRubricaPresetChange(val) {
+function populateRubricaStudentSelect() {
+  const sel = document.getElementById('rubricaStudentSel');
+  if (!sel || !S.students) return;
+  const sorted = getSortedIndices();
+  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
+}
+
+function onRubricaStudentChange(si) {
   ensureHerramientas();
-  S.herramientas.rubrica.preset = val;
+  S.herramientas.rubricaEval.studentIdx = parseInt(si, 10);
   updateRubricaPreview();
 }
 
-function updateRubricaPreview() {
+function onRubricaPresetChange(val) {
   ensureHerramientas();
-  const preset = document.getElementById('rubricaPresetSel')?.value || S.herramientas.rubrica.preset || 'exposicion';
-  const box = document.getElementById('rubricaPreviewBox');
-  if (!box) return;
+  S.herramientas.rubricaEval.preset = val;
+  updateRubricaPreview();
+}
 
+function setRubricaCriterionScore(critNum, levelCode) {
+  ensureHerramientas();
+  S.herramientas.rubricaEval.scores[critNum] = levelCode;
+  updateRubricaPreview();
+}
+
+function getRubricaPresetData(preset) {
   let title = '';
   let criteria = [];
 
@@ -12649,7 +13236,7 @@ function updateRubricaPreview() {
       { num: '1', name: 'Participación y Aporte Activo', da: 'Aporta ideas valiosas de forma constante y asume roles con entusiasmo.', aa: 'Participa activamente en la mayoría de actividades del equipo.', pa: 'Participación pasiva; solo colabora cuando se le solicita directamente.', na: 'No aporta al grupo; se distrae o entorpece el trabajo colectivo.' },
       { num: '2', name: 'Escucha Activa & Respeto', da: 'Escucha con empatía, valora la opinión ajena y resuelve desacuerdos pacíficamente.', aa: 'Escucha y respeta las opiniones de todos sus compañeros.', pa: 'Interrumpe o muestra desinterés por las ideas de los demás.', na: 'Falta al respeto, impone sus criterios o genera conflictos.' },
       { num: '3', name: 'Responsabilidad con la Tarea', da: 'Cumple a cabalidad su parte asignada antes del tiempo límite con excelencia.', aa: 'Cumple con su parte asignada dentro del plazo establecido.', pa: 'Entrega su parte incompleta o requiere recordatorios constantes.', na: 'No entrega su parte, afectando el resultado final del equipo.' },
-      { num: '4', name: 'Co-nivelación & Apoyo Mutuo', da: 'Apoya con paciencia y generosidad a compañeros que presentan dudas.', aa: 'Disposicion positiva para ayudar a sus pares cuando lo necesitan.', pa: 'Rara vez ayuda a sus compañeros; se enfoca solo en lo individual.', na: 'Se niega a colaborar o discrimina a compañeros en proceso.' }
+      { num: '4', name: 'Co-nivelación & Apoyo Mutuo', da: 'Apoya con paciencia y generosidad a compañeros que presentan dudas.', aa: 'Disposición positiva para ayudar a sus pares cuando lo necesitan.', pa: 'Rara vez ayuda a sus compañeros; se enfoca solo en lo individual.', na: 'Se niega a colaborar o discrimina a compañeros en proceso.' }
     ];
   } else if (preset === 'cuaderno') {
     title = 'RÚBRICA DE EVALUACIÓN: CUADERNO / PORTAFOLIO ESTUDIANTIL';
@@ -12667,71 +13254,245 @@ function updateRubricaPreview() {
     ];
   }
 
-  const tableRows = criteria.map(c => `
-    <tr>
-      <td style="text-align:center;font-weight:800;width:30px">${c.num}</td>
-      <td style="font-weight:800;width:150px;background:#f8fafc">${escHTML(c.name)}</td>
-      <td style="font-size:0.75rem;padding:6px;background:#f0fdf4;border-color:#86efac"><strong style="color:#15803d">DA (9.00-10.00):</strong><br>${escHTML(c.da)}</td>
-      <td style="font-size:0.75rem;padding:6px;background:#eff6ff;border-color:#93c5fd"><strong style="color:#1e40af">AA (7.00-8.99):</strong><br>${escHTML(c.aa)}</td>
-      <td style="font-size:0.75rem;padding:6px;background:#fffbeb;border-color:#fde68a"><strong style="color:#b45309">PA (4.01-6.99):</strong><br>${escHTML(c.pa)}</td>
-      <td style="font-size:0.75rem;padding:6px;background:#fef2f2;border-color:#fca5a5"><strong style="color:#b91c1c">NA (≤ 4.00):</strong><br>${escHTML(c.na)}</td>
-    </tr>
-  `).join('');
+  return { title, criteria };
+}
 
-  box.innerHTML = `
-    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">
-      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
-      <div style="font-weight:800;font-size:0.92rem;color:#0284c7;margin:2px 0">${title}</div>
-      <div style="font-size:0.78rem;color:#475569">Instrumento de Evaluación Cualitativa · Escala Oficial MINEDEC · Año Lectivo ${escHTML(S.anio||'2026-2027')}</div>
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">
-        <span>Docente: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
-        <span>Grado: <strong>${escHTML(S.grado||'Séptimo de Básica C')}</strong></span>
-        <span>Estudiante / Equipo: ____________________________________</span>
-        <span>Fecha: ____/____/202__</span>
-      </div>
-    </div>
+function updateRubricaPreview() {
+  ensureHerramientas();
+  const evalData = S.herramientas.rubricaEval;
+  const preset = document.getElementById('rubricaPresetSel')?.value || evalData.preset || 'exposicion';
+  evalData.preset = preset;
+  const si = parseInt(document.getElementById('rubricaStudentSel')?.value || evalData.studentIdx || '0', 10);
+  evalData.studentIdx = si;
+  const stName = S.students[si] || ('Estudiante ' + (si+1));
+  const obs = document.getElementById('rubricaObsInput')?.value || evalData.obs || '';
+  evalData.obs = obs;
 
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>CRITERIO DE EVALUACIÓN</th>
-          <th style="background:#dcfce7;color:#15803d">DOMINA (DA: 9-10)</th>
-          <th style="background:#dbeafe;color:#1e40af">ALCANZA (AA: 7-8.9)</th>
-          <th style="background:#fef3c7;color:#b45309">PRÓXIMO (PA: 4.1-6.9)</th>
-          <th style="background:#fee2e2;color:#b91c1c">NO ALCANZA (NA: ≤4)</th>
-        </tr>
-      </thead>
-      <tbody>${tableRows}</tbody>
-    </table>
+  const box = document.getElementById('rubricaPreviewBox');
+  if (!box) return;
 
-    <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:10px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.8rem">
-      <div><strong>Calificación Cualitativa / Cuantitativa Final:</strong> [ ________ / 10.00 ]</div>
-      <div><strong>Escala Obtenida:</strong> [ ___ DA ___ AA ___ PA ___ NA ]</div>
-    </div>
+  const { title, criteria } = getRubricaPresetData(preset);
 
-    <div style="margin-top:12px;font-size:0.78rem;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">
-      <strong>Observaciones y Recomendaciones Pedagógicas:</strong><br>
-      <div style="height:35px"></div>
-    </div>
+  const levelValues = { 'DA': 10.0, 'AA': 8.0, 'PA': 6.0, 'NA': 4.0 };
+  let sumScore = 0;
+  let count = criteria.length;
 
-    <div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
-        <span style="font-size:0.72rem;color:#475569">DOCENTE EVALUADOR</span>
-      </div>
-      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
-        <strong style="font-size:0.8rem">ESTUDIANTE / REPRESENTANTE</strong><br>
-        <span style="font-size:0.72rem;color:#475569">FIRMA DE CONFORMIDAD</span>
-      </div>
-    </div>
-  `;
+  criteria.forEach(c => {
+    const lvl = evalData.scores[c.num] || 'DA';
+    sumScore += (levelValues[lvl] || 10.0);
+  });
+
+  const finalScore = count > 0 ? (sumScore / count) : 10.0;
+  let finalScale = 'DA';
+  if (finalScore >= 9.0) finalScale = 'DA';
+  else if (finalScore >= 7.0) finalScale = 'AA';
+  else if (finalScore >= 4.01) finalScale = 'PA';
+  else finalScale = 'NA';
+
+  const scoreEl = document.getElementById('rubricaLiveScore');
+  const scaleEl = document.getElementById('rubricaLiveScale');
+  if (scoreEl) scoreEl.textContent = finalScore.toFixed(2) + ' / 10.00';
+  if (scaleEl) {
+    scaleEl.textContent = finalScale;
+    scaleEl.className = 'diag-badge diag-badge-' + finalScale.toLowerCase();
+  }
+
+  const tableRows = criteria.map(c => {
+    const selLvl = evalData.scores[c.num] || 'DA';
+    return '<tr>' +
+        '<td style="text-align:center;font-weight:800;width:30px">' + c.num + '</td>' +
+        '<td style="font-weight:800;width:150px;background:#f8fafc">' + escHTML(c.name) + '</td>' +
+        
+        '<td onclick="setRubricaCriterionScore(\'' + c.num + '\', \'DA\')" style="cursor:pointer;font-size:0.75rem;padding:6px;background:' + (selLvl==='DA'?'#bbf7d0':'#f0fdf4') + ';border:2px solid ' + (selLvl==='DA'?'#16a34a':'#86efac') + ';transition:all .15s ease">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<strong style="color:#15803d">DA (10.00)</strong>' +
+            (selLvl==='DA'?'<span style="font-weight:900;color:#15803d">✓ SELECCIONADO</span>':'') +
+          '</div>' +
+          escHTML(c.da) +
+        '</td>' +
+
+        '<td onclick="setRubricaCriterionScore(\'' + c.num + '\', \'AA\')" style="cursor:pointer;font-size:0.75rem;padding:6px;background:' + (selLvl==='AA'?'#bfdbfe':'#eff6ff') + ';border:2px solid ' + (selLvl==='AA'?'#2563eb':'#93c5fd') + ';transition:all .15s ease">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<strong style="color:#1e40af">AA (8.00)</strong>' +
+            (selLvl==='AA'?'<span style="font-weight:900;color:#1e40af">✓ SELECCIONADO</span>':'') +
+          '</div>' +
+          escHTML(c.aa) +
+        '</td>' +
+
+        '<td onclick="setRubricaCriterionScore(\'' + c.num + '\', \'PA\')" style="cursor:pointer;font-size:0.75rem;padding:6px;background:' + (selLvl==='PA'?'#fde68a':'#fffbeb') + ';border:2px solid ' + (selLvl==='PA'?'#d97706':'#fde68a') + ';transition:all .15s ease">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<strong style="color:#b45309">PA (6.00)</strong>' +
+            (selLvl==='PA'?'<span style="font-weight:900;color:#b45309">✓ SELECCIONADO</span>':'') +
+          '</div>' +
+          escHTML(c.pa) +
+        '</td>' +
+
+        '<td onclick="setRubricaCriterionScore(\'' + c.num + '\', \'NA\')" style="cursor:pointer;font-size:0.75rem;padding:6px;background:' + (selLvl==='NA'?'#fecaca':'#fef2f2') + ';border:2px solid ' + (selLvl==='NA'?'#dc2626':'#fca5a5') + ';transition:all .15s ease">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<strong style="color:#b91c1c">NA (4.00)</strong>' +
+            (selLvl==='NA'?'<span style="font-weight:900;color:#b91c1c">✓ SELECCIONADO</span>':'') +
+          '</div>' +
+          escHTML(c.na) +
+        '</td>' +
+      '</tr>';
+  }).join('');
+
+  box.innerHTML = '<div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">' +
+      '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+      '<div style="font-weight:800;font-size:0.92rem;color:#0284c7;margin:2px 0">' + title + '</div>' +
+      '<div style="font-size:0.78rem;color:#475569">Instrumento de Evaluación Cualitativa · Escala Oficial MINEDEC · Año Lectivo ' + escHTML(S.anio||'2026-2027') + '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">' +
+        '<span>Docente: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></span>' +
+        '<span>Grado: <strong>' + escHTML(S.grado||'Séptimo de Básica C') + '</strong></span>' +
+        '<span>Estudiante Evaluado: <strong>' + escHTML(stName) + '</strong></span>' +
+        '<span>Fecha: <strong>' + new Date().toLocaleDateString('es-EC') + '</strong></span>' +
+      '</div>' +
+    '</div>' +
+    '<table>' +
+      '<thead>' +
+        '<tr>' +
+          '<th>#</th>' +
+          '<th>CRITERIO DE EVALUACIÓN</th>' +
+          '<th style="background:#dcfce7;color:#15803d">DOMINA (DA: 9-10)</th>' +
+          '<th style="background:#dbeafe;color:#1e40af">ALCANZA (AA: 7-8.9)</th>' +
+          '<th style="background:#fef3c7;color:#b45309">PRÓXIMO (PA: 4.1-6.9)</th>' +
+          '<th style="background:#fee2e2;color:#b91c1c">NO ALCANZA (NA: ≤4)</th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + tableRows + '</tbody>' +
+    '</table>' +
+    '<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:12px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.82rem">' +
+      '<div><strong>Calificación Final Calculada:</strong> <span style="font-size:1.1rem;font-weight:900;color:#1e3a8a">[ ' + finalScore.toFixed(2) + ' / 10.00 ]</span></div>' +
+      '<div><strong>Escala Obtenida:</strong> <span class="diag-badge diag-badge-' + finalScale.toLowerCase() + '" style="font-size:0.85rem">' + finalScale + '</span></div>' +
+    '</div>' +
+    '<div style="margin-top:12px;font-size:0.78rem;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">' +
+      '<strong>Observaciones y Recomendaciones Pedagógicas:</strong><br>' +
+      '<div style="margin-top:4px;color:#334155">' + (escHTML(obs) || '<em>Sin observaciones registradas.</em>') + '</div>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">DOCENTE EVALUADOR</span>' +
+      '</div>' +
+      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
+        '<strong style="font-size:0.8rem">' + escHTML(stName) + '</strong><br>' +
+        '<span style="font-size:0.72rem;color:#475569">ESTUDIANTE / REPRESENTANTE</span>' +
+      '</div>' +
+    '</div>';
+}
+
+function saveRubricaToHistory() {
+  ensureHerramientas();
+  const evalData = S.herramientas.rubricaEval;
+  const si = evalData.studentIdx;
+  const stName = S.students[si] || ('Estudiante ' + (si+1));
+  const { title, criteria } = getRubricaPresetData(evalData.preset);
+
+  const levelValues = { 'DA': 10.0, 'AA': 8.0, 'PA': 6.0, 'NA': 4.0 };
+  let sumScore = 0;
+  criteria.forEach(c => {
+    const lvl = evalData.scores[c.num] || 'DA';
+    sumScore += (levelValues[lvl] || 10.0);
+  });
+  const finalScore = criteria.length > 0 ? (sumScore / criteria.length) : 10.0;
+  let scale = 'DA';
+  if (finalScore >= 9.0) scale = 'DA';
+  else if (finalScore >= 7.0) scale = 'AA';
+  else if (finalScore >= 4.01) scale = 'PA';
+  else scale = 'NA';
+
+  const record = {
+    id: 'rub_' + Date.now(),
+    studentIdx: si,
+    stName,
+    preset: evalData.preset,
+    title,
+    scores: { ...evalData.scores },
+    finalScore: parseFloat(finalScore.toFixed(2)),
+    scale,
+    obs: evalData.obs || '',
+    fecha: new Date().toLocaleDateString('es-EC')
+  };
+
+  S.herramientas.rubricas.unshift(record);
+  saveData();
+  renderRubricasHistoryTable();
+  toast('✔ Rúbrica de ' + stName + ' (' + finalScore.toFixed(2) + ' - ' + scale + ') guardada', '#16a34a');
+}
+
+function renderRubricasHistoryTable() {
+  ensureHerramientas();
+  const container = document.getElementById('rubricasHistoryTableContainer');
+  if (!container) return;
+
+  const records = S.herramientas.rubricas;
+  if (records.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text-muted);font-size:0.8rem">No hay rúbricas guardadas en el historial.</div>';
+    return;
+  }
+
+  const rows = records.map(r => '<tr>' +
+      '<td style="font-size:0.75rem;white-space:nowrap;font-weight:700">' + escHTML(r.fecha) + '</td>' +
+      '<td style="font-weight:800;font-size:0.8rem">' + escHTML(r.stName) + '</td>' +
+      '<td style="font-size:0.75rem">' + escHTML(r.title) + '</td>' +
+      '<td style="font-weight:900;font-size:0.85rem;color:#1e3a8a;text-align:center">' + r.finalScore.toFixed(2) + '</td>' +
+      '<td style="text-align:center"><span class="diag-badge diag-badge-' + r.scale.toLowerCase() + '">' + r.scale + '</span></td>' +
+      '<td style="text-align:center;white-space:nowrap">' +
+        '<button class="btn btn-primary" style="padding:2px 6px;font-size:0.72rem" onclick="printRubricaEntry(\'' + r.id + '\')" title="Imprimir rúbrica">🖨️ Imprimir</button> ' +
+        '<button class="btn btn-danger" style="padding:2px 6px;font-size:0.72rem" onclick="deleteRubricaEntry(\'' + r.id + '\')" title="Eliminar registro">🗑️</button>' +
+      '</td>' +
+    '</tr>'
+  ).join('');
+
+  container.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">' +
+      '<thead>' +
+        '<tr style="background:var(--bg-card-subtle)">' +
+          '<th style="padding:6px 8px;text-align:left">Fecha</th>' +
+          '<th style="padding:6px 8px;text-align:left">Estudiante</th>' +
+          '<th style="padding:6px 8px;text-align:left">Instrumento</th>' +
+          '<th style="padding:6px 8px;text-align:center">Nota</th>' +
+          '<th style="padding:6px 8px;text-align:center">Escala</th>' +
+          '<th style="padding:6px 8px;text-align:center">Acciones</th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>';
+}
+
+function deleteRubricaEntry(rubId) {
+  ensureHerramientas();
+  if (!confirm('¿Desea eliminar esta calificación de rúbrica del historial?')) return;
+  S.herramientas.rubricas = S.herramientas.rubricas.filter(r => r.id !== rubId);
+  saveData();
+  renderRubricasHistoryTable();
+  toast('🗑️ Registro de rúbrica eliminado', '#b45309');
+}
+
+function printRubricaEntry(rubId) {
+  ensureHerramientas();
+  const r = S.herramientas.rubricas.find(x => x.id === rubId);
+  if (!r) return;
+  S.herramientas.rubricaEval = {
+    studentIdx: r.studentIdx,
+    preset: r.preset,
+    scores: { ...r.scores },
+    obs: r.obs
+  };
+  const selPreset = document.getElementById('rubricaPresetSel');
+  const selStudent = document.getElementById('rubricaStudentSel');
+  const obsInput = document.getElementById('rubricaObsInput');
+  if (selPreset) selPreset.value = r.preset;
+  if (selStudent) selStudent.value = r.studentIdx;
+  if (obsInput) obsInput.value = r.obs;
+  updateRubricaPreview();
+  window.print();
 }
 
 function printRubrica() {
   updateRubricaPreview();
   window.print();
 }
+
 
 // ══════════════════════════════════════════════════════
 //  GESTIÓN DE TRIMESTRES (1ER, 2DO, 3ER TRIMESTRE INDEPENDIENTES)
