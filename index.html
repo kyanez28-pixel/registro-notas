@@ -4017,7 +4017,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
             Herramientas de Aula &amp; Gestión Digital
           </h2>
           <div style="font-size:0.8rem;opacity:.9;margin-top:2px">
-            Ingreso de datos en tiempo real (PC/Celular), almacenamiento en la nube, bitácoras de tutoría, actas de reuniones y formatos imprimibles oficiales.
+            Ingreso de datos en tiempo real (PC/Celular), autollenado desde la Matriz de Estudiantes, actas de reuniones, bitácoras y formatos oficiales.
           </div>
         </div>
       </div>
@@ -4061,7 +4061,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <div class="config-card-icon" style="background:#e0e7ff;color:#4338ca">📑</div>
         <div>
           <div class="config-card-title">Gestor de Listados Interactivos</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Crea, guarda y archiva listas con datos digitados para textos, tareas, aportes o salidas</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Crea, guarda y archiva listas con datos digitados o vinculados automáticamente a la Matriz de Estudiantes</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-primary" style="font-size:0.75rem" onclick="openNewCustomListModal()">➕ Nueva Lista</button>
@@ -4077,8 +4077,12 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
           <select id="custActiveListSel" onchange="onSelectCustomList(this.value)" style="width:100%;font-weight:700"></select>
         </div>
         <div>
-          <label>Plantillas Rápidas (1 Clic):</label>
+          <label>Plantillas Rápidas con Datos de la Matriz (1 Clic):</label>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('contactos')" title="Autollenar con cédula, representante legal, teléfono/WhatsApp y teléfono de emergencia">📞 Contactos &amp; WhatsApp</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('matriculados')" title="Autollenar con cédula, fecha de nacimiento, edad y dirección">🪪 Cédulas &amp; Datos</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('padres_madres')" title="Autollenar con nombres y teléfonos de la madre y del padre">👨‍👩‍👧 Padres &amp; Madres</button>
+            <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('medica')" title="Autollenar con NN.EE., alergias, condición médica y contacto de emergencia">🩺 Ficha Médica</button>
             <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('textos')">📚 Textos</button>
             <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('tareas')">✍️ Tareas</button>
             <button class="btn btn-outline" style="font-size:0.72rem;padding:4px 8px" onclick="applyListPreset('comite')">💵 Aportes</button>
@@ -4121,14 +4125,16 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
 
       <!-- Columnas configuradas dinámicas -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <label style="margin:0;font-weight:800">Configuración de Encabezados y Tipos de Columna:</label>
-        <div style="display:flex;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+        <label style="margin:0;font-weight:800">Configuración de Encabezados y Origen de Datos:</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px;border-color:#2563eb;color:#2563eb" onclick="openAutoFillModal()" title="Autollenar una columna específica con cualquier dato de la Matriz de Estudiantes">⚡ Auto-llenar desde Matriz</button>
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px" onclick="syncAllListColsFromMatrix()" title="Actualizar todas las columnas vinculadas con la última información de la Matriz">🔄 Sincronizar Matriz</button>
           <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px" onclick="bulkSetCheckboxes(true)" title="Marcar todas las casillas de verificación como cumplidas">⚡ Marcar Todo [✓]</button>
           <button class="btn btn-outline" style="font-size:0.72rem;padding:3px 8px" onclick="bulkSetCheckboxes(false)" title="Desmarcar todas las casillas">⚡ Desmarcar Todo</button>
         </div>
       </div>
-      <div id="custColsConfigContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:14px"></div>
+      <div id="custColsConfigContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:14px"></div>
 
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border-color);padding-top:12px">
         <button class="btn btn-primary" onclick="printCustomList()">🖨️ Imprimir Listado con Datos</button>
@@ -4153,7 +4159,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         </div>
         <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-success" style="font-size:0.75rem" onclick="openNewReunionModal()">➕ Nueva Reunión</button>
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="autoFillReunionRepsFromStudents()">👥 Auto-llenar Representantes</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="autoFillReunionRepsFromStudents()" title="Cargar los nombres y cédulas de los representantes desde la Matriz">👥 Auto-llenar Representantes desde Matriz</button>
           <button class="btn btn-danger" style="font-size:0.75rem" onclick="deleteCurrentReunion()">🗑️ Eliminar</button>
         </div>
       </div>
@@ -4218,7 +4224,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <div class="config-card-icon" style="background:#fef3c7;color:#92400e">💬</div>
         <div>
           <div class="config-card-title">Ficha Individual de Atención a Padres (Bitácora DECE/Tutoría)</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Registra entrevistas, motivos, acuerdos y firmas para respaldo institucional</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Registra entrevistas, motivos, acuerdos y firmas con autollenado de datos del representante</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:6px">
           <button class="btn btn-outline" style="font-size:0.75rem" onclick="resetAtencionForm()">✨ Nueva Ficha</button>
@@ -12063,7 +12069,66 @@ function exportDiagnosticoXLSX() {
 // ══════════════════════════════════════════════════════
 
 let _activeHerramientasTab = 'listados';
+
+// Mapeo exhaustivo de campos de la Matriz de Estudiantes
+const MATRIX_FIELD_MAP = {
+  'mat_cedula':         { label: 'Cédula',                  prop: 'cedula' },
+  'mat_fecha_nac':      { label: 'Fecha Nacimiento',        prop: 'fecha_nacimiento' },
+  'mat_edad':           { label: 'Edad',                    prop: 'edad', isAge: true },
+  'mat_nnee':           { label: 'NN.EE.',                  prop: 'nnee' },
+  'mat_enfermedad':     { label: 'Enfermedad / Alergia',    prop: 'enfermedad' },
+  'mat_hermanos':       { label: 'Hermanos Inst.',          prop: 'hermanos_inst' },
+  'mat_rep_nombre':     { label: 'Representante Legal',     prop: 'rep_nombre' },
+  'mat_rep_cedula':     { label: 'Cédula Representante',    prop: 'rep_cedula' },
+  'mat_rep_telefono':   { label: 'Teléfono / WhatsApp',     prop: 'rep_telefono' },
+  'mat_direccion':      { label: 'Dirección Domiciliaria',  prop: 'direccion' },
+  'mat_rep_email':      { label: 'Correo Electrónico',      prop: 'rep_email' },
+  'mat_tel_emergencia': { label: 'Tel. Emergencia',         prop: 'tel_emergencia' },
+  'mat_madre_nombre':   { label: 'Nombre de la Madre',      prop: 'madre_nombre' },
+  'mat_madre_cedula':   { label: 'Cédula Madre',            prop: 'madre_cedula' },
+  'mat_madre_tel':      { label: 'Teléfono Madre',          prop: 'madre_telefono' },
+  'mat_padre_nombre':   { label: 'Nombre del Padre',        prop: 'padre_nombre' },
+  'mat_padre_cedula':   { label: 'Cédula Padre',            prop: 'padre_cedula' },
+  'mat_padre_tel':      { label: 'Teléfono Padre',          prop: 'padre_telefono' }
+};
+
+function getStudentMatrixValue(si, fieldKey) {
+  ensureStudentProfiles();
+  const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+  if (!p) return '';
+  const def = MATRIX_FIELD_MAP[fieldKey];
+  if (!def) return '';
+  if (def.isAge) {
+    return (typeof calculateAgeFromBirthDate === 'function' ? calculateAgeFromBirthDate(p.fecha_nacimiento) : '') || p.edad || '';
+  }
+  return p[def.prop] || '';
+}
+
 const LIST_PRESETS = {
+  contactos: {
+    title: 'DIRECTORIO DE CONTACTOS Y REPRESENTANTES LEGALES',
+    subtitle: 'Nómina Oficial y Enlaces Telefónicos de Emergencia · Séptimo de Básica C',
+    cols: ['Cédula Est.', 'Representante Legal', 'Teléfono / WhatsApp', 'Tel. Emergencia', 'Firma Representante'],
+    types: ['mat_cedula', 'mat_rep_nombre', 'mat_rep_telefono', 'mat_tel_emergencia', 'firma']
+  },
+  matriculados: {
+    title: 'MATRIZ GENERAL DE DATOS PERSONALES DE ESTUDIANTES',
+    subtitle: 'Registro de Matrícula y Datos Sociodemográficos · Año Lectivo 2026-2027',
+    cols: ['Cédula', 'Fecha Nacimiento', 'Edad', 'Dirección Domiciliaria', 'Representante Legal'],
+    types: ['mat_cedula', 'mat_fecha_nac', 'mat_edad', 'mat_direccion', 'mat_rep_nombre']
+  },
+  padres_madres: {
+    title: 'REGISTRO Y CONTACTOS DE PADRES Y MADRES DE FAMILIA',
+    subtitle: 'Base de Datos de Madres y Padres del Paralelo · Séptimo EGB C',
+    cols: ['Nombre de la Madre', 'Teléfono Madre', 'Nombre del Padre', 'Teléfono Padre', 'Firma'],
+    types: ['mat_madre_nombre', 'mat_madre_tel', 'mat_padre_nombre', 'mat_padre_tel', 'firma']
+  },
+  medica: {
+    title: 'FICHA DE SALUD, ALERGIAS Y NECESIDADES EDUCATIVAS (NN.EE.)',
+    subtitle: 'Protocolo de Seguridad y Atención a la Diversidad · U.E.F. "Calderón 2"',
+    cols: ['Cédula', 'NN.EE. / Discapacidad', 'Enfermedad / Alergia', 'Tel. Emergencia', 'Observaciones'],
+    types: ['mat_cedula', 'mat_nnee', 'mat_enfermedad', 'mat_tel_emergencia', 'texto']
+  },
   textos: {
     title: 'REGISTRO DE ENTREGA DE TEXTOS ESCOLARES',
     subtitle: 'Ministerio de Educación, Deporte y Cultura (MINEDEC) · Régimen Sierra-Amazonía',
@@ -12086,7 +12151,7 @@ const LIST_PRESETS = {
     title: 'AUTORIZACIÓN Y REGISTRO DE SALIDA PEDAGÓGICA',
     subtitle: 'Gira de Observación / Proyecto Interdisciplinario CREA',
     cols: ['Autorización [SÍ/NO]', 'Cédula Representante', 'Teléfono de Contacto', 'Firma de Autorización', 'Observaciones Médicas'],
-    types: ['check', 'texto', 'texto', 'firma', 'texto']
+    types: ['check', 'mat_rep_cedula', 'mat_rep_telefono', 'firma', 'mat_enfermedad']
   }
 };
 
@@ -12098,12 +12163,12 @@ function ensureHerramientas() {
     S.herramientas.lists = [
       {
         id: 'list_' + Date.now(),
-        title: 'LISTADO DE CONTROL DE ACTIVIDADES',
+        title: 'DIRECTORIO DE CONTACTOS Y REPRESENTANTES LEGALES',
         subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
         orientation: 'portrait',
-        colCount: 4,
-        cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
-        colTypes: ['texto', 'check', 'firma', 'texto'],
+        colCount: 5,
+        cols: ['Cédula Est.', 'Representante Legal', 'Teléfono / WhatsApp', 'Tel. Emergencia', 'Firma Representante'],
+        colTypes: ['mat_cedula', 'mat_rep_nombre', 'mat_rep_telefono', 'mat_tel_emergencia', 'firma'],
         data: {}
       }
     ];
@@ -12286,8 +12351,8 @@ function openNewCustomListModal() {
     subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
     orientation: 'portrait',
     colCount: 4,
-    cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
-    colTypes: ['texto', 'check', 'firma', 'texto'],
+    cols: ['Cédula', 'Representante Legal', 'Teléfono / WhatsApp', 'Firma'],
+    colTypes: ['mat_cedula', 'mat_rep_nombre', 'mat_rep_telefono', 'firma'],
     data: {}
   };
   S.herramientas.lists.push(newList);
@@ -12354,17 +12419,62 @@ function renderCustomColsConfig() {
   for (let i = 0; i < count; i++) {
     const colName = list.cols[i] || ('Columna ' + (i+1));
     const colType = list.colTypes[i] || 'texto';
-    html += '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px 10px">' +
-      '<div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:4px">Columna #' + (i+1) + '</div>' +
+    const isMat = colType.startsWith('mat_');
+
+    html += '<div style="background:var(--bg-card);border:1px solid ' + (isMat ? '#3b82f6' : 'var(--border-color)') + ';border-radius:8px;padding:8px 10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+        '<span style="font-size:0.75rem;font-weight:800;color:var(--text-muted)">Columna #' + (i+1) + '</span>' +
+        (isMat ? '<span class="normative-pill" style="font-size:0.65rem;background:#dbeafe;color:#1e40af">⚡ Matriz</span>' : '') +
+      '</div>' +
       '<input type="text" id="custColName_' + i + '" value="' + escVal(colName) + '" oninput="onCustomColMetaChange(' + i + ')" placeholder="Nombre de columna" style="width:100%;margin-bottom:6px;font-size:0.8rem;font-weight:700"/>' +
-      '<select id="custColType_' + i + '" onchange="onCustomColMetaChange(' + i + ')" style="width:100%;font-size:0.75rem">' +
-        '<option value="texto" ' + (colType==='texto'?'selected':'') + '>📝 Texto / Datos Editables</option>' +
+      '<select id="custColType_' + i + '" onchange="onCustomColTypeSelect(' + i + ', this.value)" style="width:100%;font-size:0.75rem;font-weight:600">' +
+        '<option value="texto" ' + (colType==='texto'?'selected':'') + '>📝 Texto / Datos Manuales</option>' +
         '<option value="check" ' + (colType==='check'?'selected':'') + '>☑️ Casilla Verificación [✓]</option>' +
         '<option value="firma" ' + (colType==='firma'?'selected':'') + '>✍️ Espacio para Firma</option>' +
+        '<optgroup label="⚡ Autollenar con Matriz de Estudiantes:">' +
+          '<option value="mat_cedula" ' + (colType==='mat_cedula'?'selected':'') + '>🪪 Cédula del Estudiante</option>' +
+          '<option value="mat_fecha_nac" ' + (colType==='mat_fecha_nac'?'selected':'') + '>📅 Fecha de Nacimiento</option>' +
+          '<option value="mat_edad" ' + (colType==='mat_edad'?'selected':'') + '>🎂 Edad del Estudiante</option>' +
+          '<option value="mat_rep_nombre" ' + (colType==='mat_rep_nombre'?'selected':'') + '>👤 Nombre Representante Legal</option>' +
+          '<option value="mat_rep_cedula" ' + (colType==='mat_rep_cedula'?'selected':'') + '>🪪 Cédula Representante</option>' +
+          '<option value="mat_rep_telefono" ' + (colType==='mat_rep_telefono'?'selected':'') + '>📱 Teléfono / WhatsApp Rep.</option>' +
+          '<option value="mat_direccion" ' + (colType==='mat_direccion'?'selected':'') + '>🏠 Dirección Domiciliaria</option>' +
+          '<option value="mat_rep_email" ' + (colType==='mat_rep_email'?'selected':'') + '>✉️ Correo Electrónico</option>' +
+          '<option value="mat_tel_emergencia" ' + (colType==='mat_tel_emergencia'?'selected':'') + '>🚨 Teléfono de Emergencia</option>' +
+          '<option value="mat_madre_nombre" ' + (colType==='mat_madre_nombre'?'selected':'') + '>👩 Nombre de la Madre</option>' +
+          '<option value="mat_madre_cedula" ' + (colType==='mat_madre_cedula'?'selected':'') + '>🪪 Cédula de la Madre</option>' +
+          '<option value="mat_madre_tel" ' + (colType==='mat_madre_tel'?'selected':'') + '>📱 Teléfono de la Madre</option>' +
+          '<option value="mat_padre_nombre" ' + (colType==='mat_padre_nombre'?'selected':'') + '>👨 Nombre del Padre</option>' +
+          '<option value="mat_padre_cedula" ' + (colType==='mat_padre_cedula'?'selected':'') + '>🪪 Cédula del Padre</option>' +
+          '<option value="mat_padre_tel" ' + (colType==='mat_padre_tel'?'selected':'') + '>📱 Teléfono del Padre</option>' +
+          '<option value="mat_nnee" ' + (colType==='mat_nnee'?'selected':'') + '>♿ NN.EE. / Discapacidad</option>' +
+          '<option value="mat_enfermedad" ' + (colType==='mat_enfermedad'?'selected':'') + '>🩺 Enfermedad / Alergia</option>' +
+          '<option value="mat_hermanos" ' + (colType==='mat_hermanos'?'selected':'') + '>👥 Hermanos en la Institución</option>' +
+        '</optgroup>' +
       '</select>' +
     '</div>';
   }
   container.innerHTML = html;
+}
+
+function onCustomColTypeSelect(idx, val) {
+  const list = getCurrentCustomList();
+  list.colTypes[idx] = val;
+
+  // Si se selecciona un campo de la matriz y el nombre es genérico, sugerir el nombre oficial
+  if (MATRIX_FIELD_MAP[val]) {
+    const curName = list.cols[idx] || '';
+    if (!curName || curName.startsWith('Columna') || curName.startsWith('Col ')) {
+      list.cols[idx] = MATRIX_FIELD_MAP[val].label;
+    }
+  }
+
+  renderCustomColsConfig();
+  updateCustomListPreview();
+  saveData();
+  if (MATRIX_FIELD_MAP[val]) {
+    toast('✔ Columna ' + (idx+1) + ' vinculada a ' + MATRIX_FIELD_MAP[val].label, '#2563eb');
+  }
 }
 
 function onCustomColCountChange(val) {
@@ -12389,6 +12499,97 @@ function onCustomColMetaChange(idx) {
   updateCustomListPreview();
 }
 
+function openAutoFillModal() {
+  ensureStudentProfiles();
+  const list = getCurrentCustomList();
+  const count = list.colCount || 4;
+
+  let colOptions = '';
+  for (let i = 0; i < count; i++) {
+    colOptions += '<option value="' + i + '">Columna #' + (i+1) + ': ' + escHTML(list.cols[i] || ('Columna ' + (i+1))) + '</option>';
+  }
+
+  let fieldOptions = '';
+  Object.keys(MATRIX_FIELD_MAP).forEach(k => {
+    fieldOptions += '<option value="' + k + '">' + escHTML(MATRIX_FIELD_MAP[k].label) + '</option>';
+  });
+
+  showModal(
+    '⚡ Auto-llenar Columna desde Matriz de Estudiantes',
+    '<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px">' +
+      'Selecciona una columna de tu listado y el campo de la matriz con el que deseas poblar automáticamente los 40 estudiantes.' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">' +
+      '<div>' +
+        '<label style="font-weight:800">1. Columna Destino en tu Listado:</label>' +
+        '<select id="modalAutoFillColIdx" style="width:100%;font-weight:700">' + colOptions + '</select>' +
+      '</div>' +
+      '<div>' +
+        '<label style="font-weight:800">2. Campo de la Matriz a Extraer:</label>' +
+        '<select id="modalAutoFillFieldKey" style="width:100%;font-weight:700">' + fieldOptions + '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;font-size:0.78rem;color:#1e40af;margin-bottom:16px">' +
+      'ℹ️ Esta acción llenará todas las filas del listado con la información actual de las fichas de los estudiantes y mantendrá la columna vinculada.' +
+    '</div>' +
+    '<div style="display:flex;justify-content:flex-end;gap:8px">' +
+      '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>' +
+      '<button class="btn btn-primary" onclick="confirmAutoFillFromModal()" style="font-weight:800">⚡ Auto-llenar Ahora</button>' +
+    '</div>'
+  );
+}
+
+function confirmAutoFillFromModal() {
+  const colIdx = parseInt(document.getElementById('modalAutoFillColIdx')?.value || '0', 10);
+  const fieldKey = document.getElementById('modalAutoFillFieldKey')?.value || 'mat_cedula';
+  closeModal();
+  populateListColFromMatrix(colIdx, fieldKey);
+}
+
+function populateListColFromMatrix(colIdx, fieldKey) {
+  const list = getCurrentCustomList();
+  ensureStudentProfiles();
+  const sorted = getSortedIndices();
+  sorted.forEach(si => {
+    if (!list.data[si]) list.data[si] = {};
+    list.data[si][colIdx] = getStudentMatrixValue(si, fieldKey);
+  });
+  list.colTypes[colIdx] = fieldKey;
+  if (MATRIX_FIELD_MAP[fieldKey]) {
+    list.cols[colIdx] = MATRIX_FIELD_MAP[fieldKey].label;
+  }
+  renderCustomColsConfig();
+  updateCustomListPreview();
+  saveData();
+  toast('✔ Columna #' + (colIdx + 1) + ' autollenada con ' + MATRIX_FIELD_MAP[fieldKey].label, '#16a34a');
+}
+
+function syncAllListColsFromMatrix() {
+  const list = getCurrentCustomList();
+  const count = list.colCount || 4;
+  const sorted = getSortedIndices();
+  let updatedCols = 0;
+
+  for (let c = 0; c < count; c++) {
+    const colType = list.colTypes[c];
+    if (colType && colType.startsWith('mat_')) {
+      sorted.forEach(si => {
+        if (!list.data[si]) list.data[si] = {};
+        list.data[si][c] = getStudentMatrixValue(si, colType);
+      });
+      updatedCols++;
+    }
+  }
+
+  updateCustomListPreview();
+  saveData();
+  if (updatedCols > 0) {
+    toast('✔ ' + updatedCols + ' columnas sincronizadas con la Matriz de Estudiantes', '#16a34a');
+  } else {
+    toast('ℹ️ Selecciona un campo de la Matriz en los desplegables de columna para vincular', '#2563eb');
+  }
+}
+
 function applyListPreset(key) {
   const p = LIST_PRESETS[key];
   if (!p) return;
@@ -12398,6 +12599,18 @@ function applyListPreset(key) {
   list.colCount = p.cols.length;
   list.cols = [...p.cols];
   list.colTypes = [...p.types];
+
+  // Poblar inmediatamente los datos de la matriz para las columnas vinculadas
+  const sorted = getSortedIndices();
+  for (let c = 0; c < p.types.length; c++) {
+    const type = p.types[c];
+    if (type.startsWith('mat_')) {
+      sorted.forEach(si => {
+        if (!list.data[si]) list.data[si] = {};
+        list.data[si][c] = getStudentMatrixValue(si, type);
+      });
+    }
+  }
 
   const tEl = document.getElementById('custDocTitle');
   const sEl = document.getElementById('custDocSubtitle');
@@ -12410,7 +12623,7 @@ function applyListPreset(key) {
   renderCustomColsConfig();
   updateCustomListPreview();
   saveData();
-  toast('✔ Plantilla aplicada', '#16a34a');
+  toast('✔ Plantilla "' + p.title.split(' ')[0] + '..." aplicada con datos de la Matriz', '#16a34a');
 }
 
 function setCustomCellText(si, colIdx, val) {
@@ -12461,6 +12674,9 @@ function updateCustomListPreview() {
     let minW = '110px';
     if (colType === 'check') minW = '80px';
     if (colType === 'firma') minW = '150px';
+    if (colType === 'mat_cedula') minW = '100px';
+    if (colType === 'mat_rep_telefono') minW = '125px';
+    if (colType === 'mat_rep_nombre') minW = '180px';
     thCols += '<th style="min-width:' + minW + ';text-align:center">' + escHTML(colName.toUpperCase()) + '</th>';
   }
 
@@ -12470,7 +12686,15 @@ function updateCustomListPreview() {
     let tdCols = '';
     for (let c = 0; c < count; c++) {
       const colType = list.colTypes[c] || 'texto';
-      const val = stData[c] || '';
+      let val = stData[c];
+      if (val === undefined || val === null || val === '') {
+        if (colType.startsWith('mat_')) {
+          val = getStudentMatrixValue(si, colType);
+        } else {
+          val = '';
+        }
+      }
+
       if (colType === 'check') {
         const isChecked = !!val;
         tdCols += '<td style="text-align:center;padding:3px">' +
@@ -12569,7 +12793,14 @@ function exportCustomListXLSX() {
     ];
     for (let c = 0; c < count; c++) {
       const colType = list.colTypes[c] || 'texto';
-      const val = stData[c] || '';
+      let val = stData[c];
+      if (val === undefined || val === null || val === '') {
+        if (colType.startsWith('mat_')) {
+          val = getStudentMatrixValue(si, colType);
+        } else {
+          val = '';
+        }
+      }
       let cellVal = val;
       if (colType === 'check') cellVal = val ? 'SÍ' : 'NO';
       row.push({ v: cellVal, t: 's', s: 'val' });
@@ -12677,19 +12908,22 @@ function onReunionMetaInput() {
 
 function autoFillReunionRepsFromStudents() {
   const reu = getCurrentReunion();
+  ensureStudentProfiles();
   const sorted = getSortedIndices();
   let filledCount = 0;
+
   sorted.forEach(si => {
     if (!reu.attendance[si]) reu.attendance[si] = { rep: '', ci: '', present: false, obs: '' };
-    if (S.studentsMeta && S.studentsMeta[si]) {
-      const meta = S.studentsMeta[si];
-      if (meta.rep) { reu.attendance[si].rep = meta.rep; filledCount++; }
-      if (meta.repCI) reu.attendance[si].ci = meta.repCI;
+    const p = S.studentProfiles && S.studentProfiles[si];
+    if (p) {
+      if (p.rep_nombre) { reu.attendance[si].rep = p.rep_nombre; filledCount++; }
+      if (p.rep_cedula) { reu.attendance[si].ci = p.rep_cedula; }
     }
   });
+
   updateReunionPreview();
   saveData();
-  toast(filledCount > 0 ? ('✔ ' + filledCount + ' representantes autocompletados') : 'ℹ️ Ingrese los nombres de los representantes directamente en la tabla', '#2563eb');
+  toast(filledCount > 0 ? ('✔ ' + filledCount + ' representantes autocompletados desde la Matriz') : 'ℹ️ Ingrese los nombres de los representantes directamente en la tabla', '#2563eb');
 }
 
 function setReunionRep(si, val) {
@@ -12798,7 +13032,7 @@ function updateReunionPreview() {
       '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
       '<div style="font-weight:800;font-size:0.95rem;color:#065f46;margin:2px 0">' + escHTML(titulo) + '</div>' +
       '<div style="font-size:0.78rem;color:#475569">ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:gap;gap:4px">' +
         '<span>Docente Tutor: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></span>' +
         '<span>Grado: <strong>' + escHTML(S.grado||'Séptimo de Básica C') + '</strong></span>' +
         '<span>Fecha: <strong>' + escHTML(fecha) + '</strong></span>' +
@@ -12896,12 +13130,19 @@ function populateAtencionStudentSelect() {
 }
 
 function onAtencionStudentChange(si) {
-  if (S.studentsMeta && S.studentsMeta[si]) {
-    const meta = S.studentsMeta[si];
-    const repEl = document.getElementById('atencionRepName');
-    const conEl = document.getElementById('atencionContacto');
-    if (repEl && meta.rep) repEl.value = meta.rep;
-    if (conEl && (meta.repCI || meta.telefono)) conEl.value = ((meta.repCI || '') + ' ' + (meta.telefono || '')).trim();
+  ensureStudentProfiles();
+  const p = S.studentProfiles && S.studentProfiles[si];
+  const repEl = document.getElementById('atencionRepName');
+  const conEl = document.getElementById('atencionContacto');
+
+  if (p) {
+    if (repEl && p.rep_nombre) repEl.value = p.rep_nombre;
+    if (conEl) {
+      const parts = [];
+      if (p.rep_cedula) parts.push('C.I. ' + p.rep_cedula);
+      if (p.rep_telefono) parts.push('Tel: ' + p.rep_telefono);
+      conEl.value = parts.join(' · ');
+    }
   }
   updateAtencionPreview();
 }
@@ -13047,11 +13288,13 @@ function updateAtencionPreview() {
   const sel = document.getElementById('atencionStudentSel');
   const si = parseInt(sel?.value || '0', 10);
   const stName = S.students[si] || 'Estudiante';
-  const repName = document.getElementById('atencionRepName')?.value.trim() || '_______________________________________';
+  const p = S.studentProfiles && S.studentProfiles[si];
+
+  const repName = document.getElementById('atencionRepName')?.value.trim() || (p?.rep_nombre) || '_______________________________________';
   const parentesco = document.getElementById('atencionParentesco')?.value || 'Madre de Familia';
   const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
   const motivo = document.getElementById('atencionMotivo')?.value || 'Bajo Rendimiento Académico';
-  const contacto = document.getElementById('atencionContacto')?.value.trim() || '___________________';
+  const contacto = document.getElementById('atencionContacto')?.value.trim() || (p?.rep_telefono ? ('Tel: ' + p.rep_telefono) : '') || '___________________';
   const hechos = document.getElementById('atencionHechos')?.value.trim() || 'Se convoca al representante legal para informar y coordinar acciones de apoyo pedagógico y comportamental con respecto al proceso educativo del estudiante.';
   const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '1. El representante legal se compromete a realizar el seguimiento diario de las tareas escolares y revisar los cuadernos.\n2. El docente tutor brindará acompañamiento pedagógico diferenciado.\n3. Se fija una reunión de seguimiento y evaluación de compromisos en 15 días hábiles.';
   const box = document.getElementById('atencionPreviewBox');
@@ -13119,6 +13362,7 @@ function onCitacionModoChange(val) {
 
 function updateCitacionesPreview() {
   ensureHerramientas();
+  ensureStudentProfiles();
   const modo = document.getElementById('citacionModo')?.value || 'individual';
   const fechaHora = document.getElementById('citacionFechaHora')?.value.trim() || 'Lunes 14 de Septiembre de 2026 a las 14:00';
   const lugar = document.getElementById('citacionLugar')?.value.trim() || 'Aula de Séptimo de Básica C';
@@ -13139,6 +13383,9 @@ function updateCitacionesPreview() {
   let html = '';
   studentsToRender.forEach(si => {
     const stName = S.students[si] || ('Estudiante ' + (si+1));
+    const p = S.studentProfiles && S.studentProfiles[si];
+    const repInfo = p?.rep_nombre ? ('Sr./Sra. <strong>' + escHTML(p.rep_nombre) + '</strong> (Representante Legal de: <strong>' + escHTML(stName) + '</strong>)') : ('Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>');
+
     html += '<div class="cut-slip">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">' +
         '<div>' +
@@ -13150,7 +13397,7 @@ function updateCitacionesPreview() {
         '</span>' +
       '</div>' +
       '<div style="font-size:0.78rem;color:#334155;line-height:1.5;margin-bottom:10px">' +
-        'Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>.<br>' +
+        repInfo + '.<br>' +
         'Se le convoca de manera obligatoria y puntual a una reunión con el Docente Tutor:' +
       '</div>' +
       '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.76rem;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">' +
@@ -13174,11 +13421,11 @@ function updateCitacionesPreview() {
           '<span><strong>Grado:</strong> ' + escHTML(S.grado||'7mo C') + '</span>' +
         '</div>' +
         '<div style="margin-bottom:6px">' +
-          'Yo, ____________________________________________, confirmo la recepción de la convocatoria para el día <strong>' + escHTML(fechaHora) + '</strong>.' +
+          'Yo, <strong>' + escHTML(p?.rep_nombre || '____________________________________________') + '</strong>, confirmo la recepción de la convocatoria para el día <strong>' + escHTML(fechaHora) + '</strong>.' +
         '</div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">' +
-          '<span>C.I.: ________________________</span>' +
-          '<span>Teléfono: ________________________</span>' +
+          '<span>C.I.: ' + escHTML(p?.rep_cedula || '________________________') + '</span>' +
+          '<span>Teléfono: ' + escHTML(p?.rep_telefono || '________________________') + '</span>' +
           '<span>Firma: ________________________</span>' +
         '</div>' +
       '</div>' +
