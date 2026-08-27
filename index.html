@@ -1898,6 +1898,141 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   font-weight: 600;
 }
 
+/* ══════════════════════════════════════════════════════
+   ESTILOS: EVALUACIÓN DIAGNÓSTICA & SISTEMA DE RESULTADOS
+   ══════════════════════════════════════════════════════ */
+.diag-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.diag-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .15s ease, box-shadow .15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.diag-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.diag-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--card-accent, var(--primary));
+}
+.diag-kpi-val {
+  font-size: 1.55rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+  line-height: 1.2;
+  margin: 4px 0 2px;
+}
+.diag-kpi-lbl {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.diag-kpi-sub {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.diag-subtabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-card);
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 14px;
+  overflow-x: auto;
+  align-items: center;
+}
+.diag-subtab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s ease;
+}
+.diag-subtab-btn:hover {
+  background: var(--bg-card-subtle);
+  color: var(--text-main);
+}
+.diag-subtab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+}
+
+.diag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+.diag-badge-da { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.diag-badge-aa { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.diag-badge-pa { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+.diag-badge-na { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+.diag-tutoring-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 12px;
+}
+.diag-tutoring-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.diag-dist-bar-wrap {
+  background: var(--bg-card-subtle);
+  border-radius: 99px;
+  height: 14px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  margin: 4px 0 6px;
+  border: 1px solid var(--border-subtle);
+}
+.diag-dist-seg {
+  height: 100%;
+  transition: width .3s ease;
+}
+
 @media print {
   header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
@@ -1908,7 +2043,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   th { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #1e3a8a !important; color: #fff !important; }
   #reportPanel { display: block !important; padding: 0; }
   #viewNotasPanel { display: block !important; }
+  #diagnosticoPanel { display: block !important; padding: 0; }
   .print-header { display: block !important; }
+  .no-print { display: none !important; }
   @page { margin: 1cm; size: landscape; }
 }
 </style>
@@ -2207,6 +2344,12 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span class="sidebar-btn-icon">📋</span>
         <span class="sidebar-btn-text">Calificaciones</span>
         <span class="sidebar-btn-badge">70/30</span>
+      </button>
+
+      <button id="viewDiagnostico" class="sidebar-btn" onclick="switchView('diagnostico')" title="Evaluación Diagnóstica y Sistema de Resultados Pedagógicos (Fases Conecta y Nivela)">
+        <span class="sidebar-btn-icon">🎯</span>
+        <span class="sidebar-btn-text">Eval. Diagnóstica</span>
+        <span class="sidebar-btn-badge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">Conecta/Nivela</span>
       </button>
 
       <button id="viewEstudiantes" class="sidebar-btn" onclick="switchView('estudiantes')" title="Matriz general de datos de estudiantes, representantes y fichas">
@@ -2756,6 +2899,289 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       <tbody id="piTb"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     VISTA: EVALUACIÓN DIAGNÓSTICA & SISTEMA DE RESULTADOS
+     (FASES CONECTA & NIVELA · MINEDEC 2026-2027 · UEF CALDERÓN 2)
+     ══════════════════════════════════════════════════════════════ -->
+<div id="diagnosticoPanel" style="display:none" class="content">
+
+  <!-- Banner Superior Institucional -->
+  <div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#0284c7 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:14px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-md)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+        🎯
+      </div>
+      <div>
+        <div style="font-size:1.18rem;font-weight:900;letter-spacing:0.3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span>Evaluación Diagnóstica & Sistema de Resultados</span>
+          <span style="font-size:0.7rem;background:rgba(255,255,255,0.22);padding:3px 10px;border-radius:99px;font-weight:800;border:1px solid rgba(255,255,255,0.35)">
+            Fases Conecta & Nivela
+          </span>
+        </div>
+        <div style="font-size:0.78rem;opacity:.92;margin-top:3px">
+          Diagnóstico de habilidades fundacionales, destrezas en alerta, semáforo de nivelación pedagógica y co-nivelación entre pares
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+      <button class="btn" style="background:#10b981;color:#fff;font-weight:800;border:none;box-shadow:0 2px 8px rgba(16,185,129,0.35)" onclick="exportDiagnosticoXLSX()" title="Descargar matriz y resultados diagnósticos en Excel">
+        📊 Excel Diagnóstico (.xlsx)
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-weight:800" onclick="printDiagnosticoInforme()" title="Imprimir informe consolidado para autoridades institucionales">
+        🖨️ Imprimir Informe
+      </button>
+      <button class="btn" style="background:#f59e0b;color:#78350f;font-weight:800;border:none;box-shadow:0 2px 8px rgba(245,158,11,0.3)" onclick="autoGenerateCoNivelacion()" title="Generar parejas automáticas de tutoría entre pares para la fase de nivelación">
+        ⚡ Co-Nivelación (Pares)
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.18);color:#fff;border:1.5px solid rgba(255,255,255,0.35)" onclick="openDiagnosticoConfigModal()" title="Configurar materias, destrezas e indicadores de diagnóstico">
+        ⚙️ Configurar
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de Pestañas Internas del Módulo -->
+  <div class="diag-subtabs no-print">
+    <button class="diag-subtab-btn active" id="btnDiagTabNotas" onclick="switchDiagTab('notas')">
+      <span>📝</span> <span>1. Calificaciones por Materia</span>
+    </button>
+    <button class="diag-subtab-btn" id="btnDiagTabConsolidado" onclick="switchDiagTab('consolidado')">
+      <span>📋</span> <span>2. Matriz Consolidada de Grado</span>
+    </button>
+    <button class="diag-subtab-btn" id="btnDiagTabDashboard" onclick="switchDiagTab('dashboard')">
+      <span>📊</span> <span>3. Tablero de Resultados & Analítica</span>
+    </button>
+    <button class="diag-subtab-btn" id="btnDiagTabCoNivelacion" onclick="switchDiagTab('conivelacion')">
+      <span>🤝</span> <span>4. Plan de Co-Nivelación (Fase NIVELA)</span>
+    </button>
+    <button class="diag-subtab-btn" id="btnDiagTabSocioemocional" onclick="switchDiagTab('socioemocional')">
+      <span>💙</span> <span>5. Fase CONECTA (Socioemocional)</span>
+    </button>
+    <button class="diag-subtab-btn" id="btnDiagTabInformes" onclick="switchDiagTab('informes')">
+      <span>📄</span> <span>6. Fichas Individuales & Reportes</span>
+    </button>
+  </div>
+
+  <!-- ════ SUB-PANEL 1: CALIFICACIONES POR MATERIA & DESTREZAS ════ -->
+  <div id="diagSubTabNotas" class="diag-subview">
+    <!-- Toolbar de Materia -->
+    <div class="module-toolbar no-print" style="margin-bottom:12px">
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Asignatura a Calificar:</span>
+        <select id="diagSubjectSel" class="sort-select" style="min-width:210px;font-weight:800" onchange="onDiagSubjectChange(this.value)"></select>
+      </div>
+
+      <div class="module-toolbar-group" style="margin-left:auto;gap:8px">
+        <button class="btn btn-teal" onclick="copyDiagSubjectColumn()" title="Copiar notas de esta materia al portapapeles">
+          📋 Copiar Columna
+        </button>
+        <button class="btn btn-primary" onclick="openDiagPasteModal()" title="Pegar notas de los estudiantes directamente desde Excel">
+          📥 Pegar desde Excel
+        </button>
+        <button class="btn btn-outline" onclick="resetDiagSubjectGrades()" style="color:#b91c1c;border-color:#fca5a5" title="Limpiar notas de la materia actual">
+          🧹 Limpiar
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de Información de Destrezas / Rúbrica de la Materia -->
+    <div id="diagSubjectInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:0.8rem;align-items:center"></div>
+
+    <!-- Leyenda de Escala Diagnóstica Ministerial -->
+    <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:0.75rem">
+      <span style="font-weight:800;color:var(--text-muted)">ESCALA MINISTERIAL:</span>
+      <span class="diag-badge diag-badge-da">DA: 9.00 - 10.00 (Domina / Tutor Potencial)</span>
+      <span class="diag-badge diag-badge-aa">AA: 7.00 - 8.99 (Alcanza Aprendizajes)</span>
+      <span class="diag-badge diag-badge-pa">PA: 4.01 - 6.99 (Próximo a Alcanzar · Requiere Nivelación)</span>
+      <span class="diag-badge diag-badge-na">NA: ≤ 4.00 (No Alcanza · Nivelación Prioritaria)</span>
+    </div>
+
+    <!-- Tabla de Calificaciones Diagnósticas -->
+    <div class="tw" style="max-height:calc(100vh - 330px)">
+      <table id="diagSubjectTable" style="width:100%">
+        <thead id="diagSubjectTh"></thead>
+        <tbody id="diagSubjectTb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════ SUB-PANEL 2: MATRIZ CONSOLIDADA DE GRADO ════ -->
+  <div id="diagSubTabConsolidado" class="diag-subview" style="display:none">
+    <div class="filter-bar no-print" style="margin-bottom:12px">
+      <div class="search-wrapper" style="max-width:380px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="diagConsolidadoSearch" class="search-input" placeholder="Buscar por estudiante..." oninput="filterDiagConsolidado(this.value)"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="diagConsolidadoFilter" class="sort-select" onchange="renderDiagConsolidatedTable()">
+          <option value="all">Todos los Estudiantes</option>
+          <option value="alertas">Requieren Nivelación (PA / NA en 1 o más materias)</option>
+          <option value="alerta-multiple">Alerta Múltiple (PA / NA en 2 o más materias)</option>
+          <option value="tutores">Candidatos a Tutores (DA: 9-10 en materias)</option>
+          <option value="dominio-total">Dominio Total en Todas las Materias</option>
+        </select>
+        <span id="diagConsolidadoCount" style="font-size:0.75rem;font-weight:700;color:var(--text-muted)"></span>
+      </div>
+    </div>
+
+    <div class="tw" style="max-height:calc(100vh - 290px)">
+      <table id="diagConsolidatedTable" style="width:100%">
+        <thead id="diagConsolidatedTh"></thead>
+        <tbody id="diagConsolidatedTb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════ SUB-PANEL 3: TABLERO DE RESULTADOS & ANALÍTICA (DASHBOARD) ════ -->
+  <div id="diagSubTabDashboard" class="diag-subview" style="display:none">
+    <!-- Tarjetas de KPIs -->
+    <div class="diag-kpi-grid" id="diagKpiContainer"></div>
+
+    <!-- Distribución y Comparativa por Materia -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;margin-bottom:16px">
+      <!-- Tarjeta 1: Gráficos de Distribución de Logros -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:4px;display:flex;align-items:center;gap:8px">
+          <span>📊 Distribución por Escala Ministerial en cada Asignatura</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:14px">
+          Porcentaje de estudiantes clasificados en DA (Verde), AA (Azul), PA (Amarillo) y NA (Rojo)
+        </div>
+        <div id="diagDistributionBars"></div>
+      </div>
+
+      <!-- Tarjeta 2: Semáforo de Riesgo Pedagógico & Nivelación Prioritaria -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow-xs)">
+        <div style="font-weight:900;font-size:0.95rem;color:#b91c1c;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+          <span>⚠️ Semáforo de Alerta Temprana (Fase NIVELA)</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">
+          Estudiantes que presentan dificultades prioritarias (PA / NA) en 2 o más asignaturas
+        </div>
+        <div id="diagSemaforoList" style="max-height:280px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- Tabla Resumen Ejecutivo de Asignaturas -->
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow-xs)">
+      <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:12px">
+        📈 Resumen Estadístico Institucional por Asignatura
+      </div>
+      <div class="tw">
+        <table id="diagStatsSummaryTable" style="width:100%">
+          <thead>
+            <tr>
+              <th style="text-align:left">Asignatura</th>
+              <th>Evaluados</th>
+              <th>Promedio</th>
+              <th>Escala General</th>
+              <th>% DA (Domina)</th>
+              <th>% AA (Alcanza)</th>
+              <th>% PA (En Proceso)</th>
+              <th>% NA (No Alcanza)</th>
+              <th>Foco Fase NIVELA</th>
+            </tr>
+          </thead>
+          <tbody id="diagStatsSummaryTb"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SUB-PANEL 4: PLAN DE CO-NIVELACIÓN (TUTORÍA ENTRE PARES) ════ -->
+  <div id="diagSubTabCoNivelacion" class="diag-subview" style="display:none">
+    <!-- Banner de Estrategia Ministerial -->
+    <div style="background:#ecfdf5;border:1.5px solid #86efac;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-weight:900;color:#065f46;font-size:0.98rem;display:flex;align-items:center;gap:8px">
+          <span>🤝 Estrategia de Co-nivelación — Tutoría entre Pares (MINEDEC · Semanas 2 y 3)</span>
+        </div>
+        <div style="font-size:0.78rem;color:#047857;margin-top:3px;max-width:760px;line-height:1.5">
+          Los estudiantes con destrezas consolidadas (<strong>DA: 9.00 - 10.00</strong>) actúan como tutores pedagógicos de compañeros en proceso (<strong>PA / NA</strong>), fomentando el aprendizaje cooperativo y la empatía sin segregar grupos.
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-success" onclick="autoGenerateCoNivelacion()" style="font-weight:800">
+          ⚡ Regenerar Parejas Automáticas
+        </button>
+      </div>
+    </div>
+
+    <!-- Selector de Asignatura para Co-Nivelación -->
+    <div class="module-toolbar no-print" style="margin-bottom:14px">
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Materia del Plan de Tutoría:</span>
+        <select id="diagCoNivelSubjectSel" class="sort-select" style="min-width:210px;font-weight:800" onchange="renderDiagCoNivelacion()"></select>
+      </div>
+    </div>
+
+    <!-- Lista de Equipos de Co-Nivelación -->
+    <div id="diagTutoringCardsContainer" class="diag-tutoring-grid"></div>
+  </div>
+
+  <!-- ════ SUB-PANEL 5: FASE CONECTA (SOCIOEMOCIONAL & METACOGNICIÓN) ════ -->
+  <div id="diagSubTabSocioemocional" class="diag-subview" style="display:none">
+    <!-- Banner de Preguntas Oficiales MINEDEC -->
+    <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:var(--radius-md);padding:14px 18px;margin-bottom:14px">
+      <div style="font-weight:900;color:#1e40af;font-size:0.95rem;margin-bottom:4px">
+        💬 Instrumento de Diagnóstico Socioemocional & Reflexión Metacognitiva (Semana 1 - Fase CONECTA)
+      </div>
+      <div style="font-size:0.78rem;color:#1e3a8a;line-height:1.5">
+        Guía de 4 preguntas oficiales para el reencuentro escolar: (1) ¿Qué aprendí en Lengua? (2) ¿Qué aprendí en Matemática? (3) ¿Cómo lo aplico en la vida cotidiana? (4) ¿Qué me falta por aprender y cómo puedo lograrlo?
+      </div>
+    </div>
+
+    <div class="tw" style="max-height:calc(100vh - 290px)">
+      <table id="diagSocioTable" style="width:100%">
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th style="min-width:180px;text-align:left">Estudiante</th>
+            <th style="min-width:140px">Estado de Ánimo Inicial</th>
+            <th style="min-width:130px">Hábitos & Autonomía</th>
+            <th style="min-width:130px">Convivencia / Pares</th>
+            <th style="min-width:130px">Apoyo Familiar</th>
+            <th style="min-width:110px">Alerta DECE</th>
+            <th style="min-width:200px">Observación / Compromiso</th>
+          </tr>
+        </thead>
+        <tbody id="diagSocioTb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════ SUB-PANEL 6: FICHAS INDIVIDUALES & REPORTES OFICIALES ════ -->
+  <div id="diagSubTabInformes" class="diag-subview" style="display:none">
+    <!-- Barra de Selección de Reporte -->
+    <div class="module-toolbar no-print" style="margin-bottom:14px">
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Tipo de Informe:</span>
+        <select id="diagReportTypeSel" class="sort-select" style="min-width:260px;font-weight:800" onchange="onDiagReportTypeChange(this.value)">
+          <option value="institucional">🏛️ Informe Diagnóstico Institucional (Consolidado Oficial)</option>
+          <option value="individual">👤 Ficha Diagnóstica Individual por Estudiante (Para Padres & WhatsApp)</option>
+        </select>
+      </div>
+
+      <div class="module-toolbar-group" id="diagStudentReportPickerWrap" style="display:none">
+        <span class="module-toolbar-label">Seleccionar Estudiante:</span>
+        <select id="diagStudentReportSel" class="sort-select" style="min-width:240px;font-weight:800" onchange="renderDiagInformes()"></select>
+      </div>
+
+      <div class="module-toolbar-group" style="margin-left:auto;gap:8px">
+        <button class="btn btn-success" id="btnDiagShareWhatsApp" style="display:none;font-weight:800" onclick="shareDiagnosticoWhatsApp()">
+          📲 Compartir por WhatsApp
+        </button>
+        <button class="btn btn-primary" onclick="printDiagnosticoSelectedDoc()" style="font-weight:800">
+          🖨️ Imprimir Documento
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenedor del Documento Renderizado (para Pantalla e Impresión) -->
+    <div id="diagReportDocView" style="background:#ffffff;color:#0f172a;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:24px 30px;box-shadow:var(--shadow-sm);max-width:900px;margin:0 auto"></div>
+  </div>
+
 </div>
 
 <!-- ══ VISTA: MATRIZ DE ESTUDIANTES ══ -->
@@ -4750,6 +5176,7 @@ function ensureMats() {
     }
   });
   if (S.am >= S.matsList.length) S.am = 0;
+  if (typeof ensureDiagnostico === 'function') ensureDiagnostico();
 }
 
 // ══════════════════════════════════════════════════════
@@ -6886,6 +7313,7 @@ function applySortOrder() {
 function switchView(v) {
   const panels = {
     'notas':       'viewNotasPanel',
+    'diagnostico': 'diagnosticoPanel',
     'estudiantes': 'studentsMatrixPanel',
     'asistencia':  'attendancePanel',
     'pi':          'piPanel',
@@ -6897,6 +7325,7 @@ function switchView(v) {
 
   const navBtns = {
     'notas':       'viewNotas',
+    'diagnostico': 'viewDiagnostico',
     'estudiantes': 'viewEstudiantes',
     'asistencia':  'viewAttendance',
     'pi':          'viewPi',
@@ -6925,6 +7354,7 @@ function switchView(v) {
   // Cerrar cajón móvil si estuviera abierto
   closeMobileSidebar();
 
+  if (v === 'diagnostico') renderDiagnostico();
   if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') rpShowAll();
   if (v === 'export') expInit();
@@ -9229,6 +9659,1458 @@ function exportPiXLSX() {
   XLSX.utils.book_append_sheet(wb, ws, 'PI');
   XLSX.writeFile(wb, `Proyecto_Interdisciplinario_${S.grado||'7mo'}.xlsx`);
   toast('📊 Excel del PI descargado', '#16a34a');
+}
+
+// ══════════════════════════════════════════════════════
+//  MÓDULO: EVALUACIÓN DIAGNÓSTICA & SISTEMA DE RESULTADOS
+//  (FASES CONECTA & NIVELA · MINEDEC 2026-2027)
+// ══════════════════════════════════════════════════════
+
+const DEFAULT_DIAG_MATS = [
+  {
+    id: 'matematicas',
+    name: 'Matemáticas',
+    icon: '📐',
+    color: '#1d4ed8',
+    skills: [
+      { id: 'D1', code: 'M.3.1.7',  name: 'Operaciones Fundacionales & Cálculo Mental', desc: 'Resuelve operaciones con números naturales (suma, resta, mult, div) y cálculo mental.', peso: 25 },
+      { id: 'D2', code: 'M.3.1.33', name: 'Fracciones y Expresiones Decimales', desc: 'Lee, escribe, representa y opera con fracciones simples y números decimales.', peso: 25 },
+      { id: 'D3', code: 'M.3.1.13', name: 'Resolución de Problemas Cotidianos', desc: 'Plantea y resuelve situaciones problémicas aplicando razonamiento lógico.', peso: 25 },
+      { id: 'D4', code: 'M.3.2.4',  name: 'Geometría, Medidas & Perímetros', desc: 'Reconoce figuras geométricas, cálculo de perímetro y conversión de unidades.', peso: 25 }
+    ]
+  },
+  {
+    id: 'lengua',
+    name: 'Lengua y Literatura',
+    icon: '📖',
+    color: '#7c3aed',
+    skills: [
+      { id: 'D1', code: 'LL.3.3.2',  name: 'Comprensión Lectora e Inferencia', desc: 'Comprende textos expositivos y narrativos; extrae ideas principales e implícitas.', peso: 25 },
+      { id: 'D2', code: 'LL.3.4.1',  name: 'Producción de Textos & Ortografía', desc: 'Redacta párrafos coherentes aplicando reglas ortográficas y signos de puntuación.', peso: 25 },
+      { id: 'D3', code: 'LL.3.4.10', name: 'Gramática: Sujeto, Predicado y Concordancia', desc: 'Identifica la estructura de la oración simple y concordancia de género/número.', peso: 25 },
+      { id: 'D4', code: 'LL.3.2.1',  name: 'Expresión Oral y Argumentación', desc: 'Comunica ideas de forma clara, respetando turnos de habla y enriqueciendo vocabulario.', peso: 25 }
+    ]
+  },
+  {
+    id: 'ccnn',
+    name: 'Ciencias Naturales',
+    icon: '🔬',
+    color: '#059669',
+    skills: [
+      { id: 'D1', code: 'CN.3.1.1', name: 'Ecosistemas, Fauna y Flora del Ecuador', desc: 'Identifica tipos de ecosistemas, adaptaciones y cadenas tróficas del Ecuador.', peso: 35 },
+      { id: 'D2', code: 'CN.3.2.3', name: 'Cuerpo Humano, Sistemas y Salud', desc: 'Reconoce los sistemas del cuerpo humano y prácticas de higiene y nutrición.', peso: 35 },
+      { id: 'D3', code: 'CN.3.3.1', name: 'Materia, Energía y Método Científico', desc: 'Distingue propiedades de la materia, tipos de energía y observación experimental.', peso: 30 }
+    ]
+  },
+  {
+    id: 'eess',
+    name: 'Estudios Sociales',
+    icon: '🌍',
+    color: '#d97706',
+    skills: [
+      { id: 'D1', code: 'CS.3.1.25', name: 'Historia y República del Ecuador', desc: 'Identifica los periodos históricos clave y hechos fundacionales de la República.', peso: 35 },
+      { id: 'D2', code: 'CS.3.2.4',  name: 'Geografía, Provincias y Regiones', desc: 'Reconoce las 4 regiones naturales, provincias del Ecuador y mapas temáticos.', peso: 35 },
+      { id: 'D3', code: 'CS.3.3.1',  name: 'Convivencia, Deberes y Derechos', desc: 'Comprende normas ciudadanas, derechos de la niñez y participación democrática.', peso: 30 }
+    ]
+  }
+];
+
+function ensureDiagnostico() {
+  if (!S.diagnostico) S.diagnostico = {};
+  if (!S.diagnostico.config) {
+    S.diagnostico.config = {
+      fecha: '01 al 18 de Septiembre de 2026',
+      periodo: 'Fase Conecta (Sem 1) & Fase Nivela (Sem 2 y 3)',
+      materias: JSON.parse(JSON.stringify(DEFAULT_DIAG_MATS)),
+      metaMinima: 7.00
+    };
+  }
+  if (!S.diagnostico.grades) S.diagnostico.grades = {};
+  if (!S.diagnostico.socioemocional) S.diagnostico.socioemocional = {};
+  if (!S.diagnostico.conivelacion) S.diagnostico.conivelacion = {};
+  if (!S.diagnostico.activeTab) S.diagnostico.activeTab = 'notas';
+  if (!S.diagnostico.activeSubject) S.diagnostico.activeSubject = 'matematicas';
+
+  // Asegurar materias y estudiantes en grades
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  mats.forEach(m => {
+    if (!S.diagnostico.grades[m.id]) S.diagnostico.grades[m.id] = {};
+    (S.students || []).forEach((_, si) => {
+      if (!S.diagnostico.grades[m.id][si]) S.diagnostico.grades[m.id][si] = {};
+    });
+  });
+
+  // Asegurar socioemocional
+  (S.students || []).forEach((_, si) => {
+    if (!S.diagnostico.socioemocional[si]) {
+      S.diagnostico.socioemocional[si] = {
+        animo: 'Tranquilo / Adaptado',
+        autonomia: 'Bueno',
+        convivencia: 'Bueno',
+        apoyo: 'Constante',
+        alertaDece: false,
+        obs: ''
+      };
+    }
+  });
+}
+
+function getDiagScale(score) {
+  if (score === null || score === undefined || isNaN(score)) {
+    return {
+      code: 'NE',
+      label: 'No Evaluado',
+      cls: 'diag-badge-na',
+      badgeHtml: '<span class="diag-badge" style="background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1">NE</span>',
+      color: '#64748b',
+      isAlert: false,
+      isTutor: false
+    };
+  }
+  const n = parseFloat(score);
+  if (n >= 9.00) {
+    return {
+      code: 'DA',
+      label: 'Domina los Aprendizajes',
+      cls: 'diag-badge-da',
+      badgeHtml: '<span class="diag-badge diag-badge-da">DA · 9-10</span>',
+      color: '#15803d',
+      isAlert: false,
+      isTutor: true
+    };
+  }
+  if (n >= 7.00) {
+    return {
+      code: 'AA',
+      label: 'Alcanza los Aprendizajes',
+      cls: 'diag-badge-aa',
+      badgeHtml: '<span class="diag-badge diag-badge-aa">AA · 7-8.9</span>',
+      color: '#1d4ed8',
+      isAlert: false,
+      isTutor: false
+    };
+  }
+  if (n > 4.00) {
+    return {
+      code: 'PA',
+      label: 'Próximo a Alcanzar (Requiere Nivelación)',
+      cls: 'diag-badge-pa',
+      badgeHtml: '<span class="diag-badge diag-badge-pa">PA · En Proceso</span>',
+      color: '#b45309',
+      isAlert: true,
+      isTutor: false
+    };
+  }
+  return {
+    code: 'NA',
+    label: 'No Alcanza (Nivelación Prioritaria)',
+    cls: 'diag-badge-na',
+    badgeHtml: '<span class="diag-badge diag-badge-na">NA · Prioritario</span>',
+    color: '#b91c1c',
+    isAlert: true,
+    isTutor: false
+  };
+}
+
+function getDiagScore(si, matId) {
+  ensureDiagnostico();
+  const mGrades = (S.diagnostico.grades[matId] && S.diagnostico.grades[matId][si]) ? S.diagnostico.grades[matId][si] : {};
+  const matObj = (S.diagnostico.config.materias || DEFAULT_DIAG_MATS).find(m => m.id === matId);
+  const skills = matObj ? (matObj.skills || []) : [];
+
+  if (mGrades._direct !== undefined && mGrades._direct !== '') {
+    const dVal = parseFloat(mGrades._direct);
+    if (!isNaN(dVal)) {
+      const sTrunc = trunc2(dVal);
+      const scale = getDiagScale(sTrunc);
+      return { score: parseFloat(sTrunc), formatted: sTrunc, scale: scale.code, scaleObj: scale, isDirect: true, indCount: 0 };
+    }
+  }
+
+  const indVals = [];
+  let weightedSum = 0;
+  let weightTotal = 0;
+
+  skills.forEach(sk => {
+    const v = mGrades[sk.id];
+    if (v !== undefined && v !== '' && !isNaN(parseFloat(v))) {
+      const num = parseFloat(v);
+      indVals.push(num);
+      const w = sk.peso || (100 / skills.length);
+      weightedSum += num * (w / 100);
+      weightTotal += w / 100;
+    }
+  });
+
+  if (indVals.length > 0) {
+    let finalScore = weightTotal > 0 ? (weightedSum / weightTotal) : (indVals.reduce((a,b)=>a+b,0)/indVals.length);
+    const sTrunc = trunc2(finalScore);
+    const scale = getDiagScale(sTrunc);
+    return { score: parseFloat(sTrunc), formatted: sTrunc, scale: scale.code, scaleObj: scale, isDirect: false, indCount: indVals.length };
+  }
+
+  return { score: null, formatted: '—', scale: 'NE', scaleObj: getDiagScale(null), isDirect: false, indCount: 0 };
+}
+
+function getDiagStudentGlobal(si) {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const scores = [];
+  let alertsCount = 0;
+  let hasDA = false;
+
+  mats.forEach(m => {
+    const res = getDiagScore(si, m.id);
+    if (res.score !== null) {
+      scores.push(res.score);
+      if (res.scale === 'PA' || res.scale === 'NA') alertsCount++;
+      if (res.scale === 'DA') hasDA = true;
+    }
+  });
+
+  const globalAvg = scores.length > 0 ? trunc2(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+  const scale = getDiagScale(globalAvg);
+  const isCandidateTutor = hasDA && (globalAvg !== null && parseFloat(globalAvg) >= 8.5);
+
+  return {
+    evaluatedCount: scores.length,
+    totalMats: mats.length,
+    globalAvg: globalAvg,
+    scale: scale.code,
+    scaleObj: scale,
+    alertsCount: alertsCount,
+    isCandidateTutor: isCandidateTutor,
+    requiresLeveling: alertsCount > 0
+  };
+}
+
+function getDiagSubjectStats(matId) {
+  ensureDiagnostico();
+  const stList = S.students || [];
+  let evaluated = 0;
+  let sum = 0;
+  let da = 0, aa = 0, pa = 0, na = 0;
+
+  stList.forEach((_, si) => {
+    const res = getDiagScore(si, matId);
+    if (res.score !== null) {
+      evaluated++;
+      sum += res.score;
+      if (res.scale === 'DA') da++;
+      else if (res.scale === 'AA') aa++;
+      else if (res.scale === 'PA') pa++;
+      else if (res.scale === 'NA') na++;
+    }
+  });
+
+  const total = stList.length || 1;
+  const avg = evaluated > 0 ? trunc2(sum / evaluated) : null;
+
+  return {
+    matId: matId,
+    totalStudents: stList.length,
+    evaluated: evaluated,
+    avg: avg,
+    scaleObj: getDiagScale(avg),
+    daCount: da,
+    aaCount: aa,
+    paCount: pa,
+    naCount: na,
+    daPct: Math.round((da / total) * 100),
+    aaPct: Math.round((aa / total) * 100),
+    paPct: Math.round((pa / total) * 100),
+    naPct: Math.round((na / total) * 100),
+    alertPct: Math.round(((pa + na) / total) * 100)
+  };
+}
+
+function getDiagGlobalStats() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const stList = S.students || [];
+  const globalAverages = [];
+  let totalEvaluatedStudents = 0;
+  let studentsWithAlerts = 0;
+  let studentsTutors = 0;
+
+  stList.forEach((_, si) => {
+    const stGlobal = getDiagStudentGlobal(si);
+    if (stGlobal.evaluatedCount > 0) {
+      totalEvaluatedStudents++;
+      if (stGlobal.globalAvg !== null) globalAverages.push(parseFloat(stGlobal.globalAvg));
+      if (stGlobal.alertsCount > 0) studentsWithAlerts++;
+      if (stGlobal.isCandidateTutor) studentsTutors++;
+    }
+  });
+
+  const overallAvg = globalAverages.length > 0 ? trunc2(globalAverages.reduce((a,b)=>a+b,0)/globalAverages.length) : null;
+  const overallScale = getDiagScale(overallAvg);
+
+  // Subject difficulty ranking
+  const subStats = mats.map(m => getDiagSubjectStats(m.id));
+  const sortedByAlert = [...subStats].filter(s => s.avg !== null).sort((a,b) => b.alertPct - a.alertPct);
+  const hardestMat = sortedByAlert[0] || null;
+  const bestMat = [...subStats].filter(s => s.avg !== null).sort((a,b) => parseFloat(b.avg) - parseFloat(a.avg))[0] || null;
+
+  return {
+    totalStudents: stList.length,
+    evaluatedStudents: totalEvaluatedStudents,
+    overallAvg: overallAvg,
+    overallScale: overallScale,
+    studentsWithAlerts: studentsWithAlerts,
+    studentsTutors: studentsTutors,
+    satisfactoryPct: totalEvaluatedStudents > 0 ? Math.round(((totalEvaluatedStudents - studentsWithAlerts) / totalEvaluatedStudents) * 100) : 0,
+    levelingPct: totalEvaluatedStudents > 0 ? Math.round((studentsWithAlerts / totalEvaluatedStudents) * 100) : 0,
+    hardestMat: hardestMat,
+    bestMat: bestMat,
+    subjectStats: subStats
+  };
+}
+
+function renderDiagnostico(tab) {
+  ensureDiagnostico();
+  const currentTab = tab || S.diagnostico.activeTab || 'notas';
+  switchDiagTab(currentTab, false);
+}
+
+function switchDiagTab(tabName, doSave = true) {
+  ensureDiagnostico();
+  S.diagnostico.activeTab = tabName;
+  if (doSave) saveData();
+
+  const tabBtns = {
+    'notas':          'btnDiagTabNotas',
+    'consolidado':    'btnDiagTabConsolidado',
+    'dashboard':      'btnDiagTabDashboard',
+    'conivelacion':   'btnDiagTabCoNivelacion',
+    'socioemocional': 'btnDiagTabSocioemocional',
+    'informes':       'btnDiagTabInformes'
+  };
+
+  const subviews = {
+    'notas':          'diagSubTabNotas',
+    'consolidado':    'diagSubTabConsolidado',
+    'dashboard':      'diagSubTabDashboard',
+    'conivelacion':   'diagSubTabCoNivelacion',
+    'socioemocional': 'diagSubTabSocioemocional',
+    'informes':       'diagSubTabInformes'
+  };
+
+  Object.keys(subviews).forEach(k => {
+    const el = document.getElementById(subviews[k]);
+    if (el) el.style.display = (k === tabName) ? 'block' : 'none';
+    const btn = document.getElementById(tabBtns[k]);
+    if (btn) {
+      if (k === tabName) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+
+  if (tabName === 'notas') renderDiagSubjectTable();
+  if (tabName === 'consolidado') renderDiagConsolidatedTable();
+  if (tabName === 'dashboard') renderDiagDashboard();
+  if (tabName === 'conivelacion') renderDiagCoNivelacion();
+  if (tabName === 'socioemocional') renderDiagSocioemocional();
+  if (tabName === 'informes') renderDiagInformes();
+}
+
+function onDiagSubjectChange(matId) {
+  ensureDiagnostico();
+  S.diagnostico.activeSubject = matId;
+  saveData();
+  renderDiagSubjectTable();
+}
+
+function renderDiagSubjectTable() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  let curMatId = S.diagnostico.activeSubject || mats[0].id;
+  let curMat = mats.find(m => m.id === curMatId);
+  if (!curMat) { curMat = mats[0]; curMatId = curMat.id; S.diagnostico.activeSubject = curMatId; }
+
+  // Populate select
+  const sel = document.getElementById('diagSubjectSel');
+  if (sel) {
+    sel.innerHTML = mats.map(m => `<option value="${m.id}" ${m.id===curMatId?'selected':''}>${m.icon||'📚'} ${escHTML(m.name)}</option>`).join('');
+  }
+
+  // Info bar
+  const infoBar = document.getElementById('diagSubjectInfoBar');
+  const stats = getDiagSubjectStats(curMatId);
+  const skills = curMat.skills || [];
+
+  if (infoBar) {
+    infoBar.innerHTML = `
+      <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">ASIGNATURA</span><br><strong style="font-size:0.95rem;color:${curMat.color||'var(--primary)'}">${curMat.icon||'📚'} ${escHTML(curMat.name)}</strong></div>
+      <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">PROMEDIO GRUPAL</span><br><strong style="font-size:0.95rem">${stats.avg || '—'}</strong> ${stats.scaleObj.badgeHtml}</div>
+      <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">EVALUADOS</span><br><strong>${stats.evaluated} / ${stats.totalStudents}</strong></div>
+      <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">REQUIEREN NIVELACIÓN</span><br><span style="color:#b91c1c;font-weight:800">${stats.paCount + stats.naCount} est. (${stats.alertPct}%)</span></div>
+      <div><span style="font-size:0.7rem;font-weight:800;color:var(--text-muted)">TUTORES POTENCIALES</span><br><span style="color:#15803d;font-weight:800">${stats.daCount} est. (DA: 9-10)</span></div>
+    `;
+  }
+
+  // Table Headers
+  const th = document.getElementById('diagSubjectTh');
+  let r1 = `<tr>
+    <th class="fxl" style="width:36px">#</th>
+    <th class="fxn" style="min-width:200px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
+
+  skills.forEach((sk, i) => {
+    r1 += `<th class="wh" title="${escHTML(sk.desc||sk.name)}" style="min-width:65px;max-width:90px;background:${curMat.color||'#1e40af'};border-color:${curMat.color||'#1e40af'}">
+      <div style="padding:1px 0">
+        <span style="font-weight:800;font-size:0.78rem;display:block">${sk.id}</span>
+        <span style="font-size:0.55rem;opacity:.9;display:block;white-space:normal;line-height:1.15;max-width:85px">${escHTML(sk.name)}</span>
+        <span style="font-size:0.55rem;opacity:.75">(${sk.peso||25}%)</span>
+      </div>
+    </th>`;
+  });
+
+  r1 += `<th class="th-trim" style="min-width:80px;background:#1e293b;border-color:#1e293b">PROMEDIO<br><span style="font-size:0.58rem;font-weight:400">DIAGNÓSTICO</span></th>`;
+  r1 += `<th style="min-width:90px;text-align:center">ESCALA MINEDEC</th>`;
+  r1 += `<th style="min-width:130px;text-align:center">PLAN NIVELA (SEM 2-3)</th>`;
+  r1 += `</tr>`;
+  if (th) th.innerHTML = r1;
+
+  // Table Body
+  const tb = document.getElementById('diagSubjectTb');
+  const sorted = getSortedIndices();
+
+  let bodyHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    const mGrades = (S.diagnostico.grades[curMatId] && S.diagnostico.grades[curMatId][si]) ? S.diagnostico.grades[curMatId][si] : {};
+    const scoreRes = getDiagScore(si, curMatId);
+
+    let skillCells = '';
+    skills.forEach(sk => {
+      const v = mGrades[sk.id] !== undefined ? mGrades[sk.id] : '';
+      const num = parseFloat(v);
+      const cls = v !== '' && !isNaN(num) ? (num < 7 ? 'glo' : 'ghi') : '';
+      skillCells += `<td>
+        <input class="gi ${cls}" type="text" inputmode="decimal"
+          value="${escVal(v)}"
+          placeholder="—"
+          onpaste="handleDiagPaste(event, ${si}, '${curMatId}', '${sk.id}')"
+          onchange="updDiagGrade(${si}, '${curMatId}', '${sk.id}', this.value)"
+          onfocus="this.select()"
+          onkeydown="navDiag(event, this, ${si}, '${curMatId}', '${sk.id}')"/>
+      </td>`;
+    });
+
+    // Direct / Final cell
+    const isDirect = scoreRes.isDirect;
+    const directVal = mGrades._direct !== undefined ? mGrades._direct : '';
+    const displayVal = directVal !== '' ? directVal : (scoreRes.score !== null ? scoreRes.formatted : '');
+    const scoreNum = parseFloat(displayVal);
+    const scoreCls = !isNaN(scoreNum) ? (scoreNum < 7 ? 'glo' : 'ghi') : '';
+
+    let levelingBadge = '';
+    if (scoreRes.score !== null) {
+      if (scoreRes.scale === 'DA') {
+        levelingBadge = `<span style="font-size:0.72rem;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:99px;font-weight:800">🤝 Tutor Sugerido</span>`;
+      } else if (scoreRes.scale === 'AA') {
+        levelingBadge = `<span style="font-size:0.72rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px;font-weight:700">✔ Consolidado</span>`;
+      } else if (scoreRes.scale === 'PA') {
+        levelingBadge = `<span style="font-size:0.72rem;background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:99px;font-weight:800">⚠️ Requiere Nivelación</span>`;
+      } else {
+        levelingBadge = `<span style="font-size:0.72rem;background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:99px;font-weight:800">🔴 Nivelación Urgente</span>`;
+      }
+    } else {
+      levelingBadge = `<span style="font-size:0.72rem;color:var(--text-light)">Pendiente</span>`;
+    }
+
+    return `<tr data-name="${escVal(name.toUpperCase())}">
+      <td class="ic">${rowPos+1}</td>
+      <td class="nc">${escHTML(name)}</td>
+      ${skillCells}
+      <td class="prom-wk" style="text-align:center">
+        <input class="gi ${scoreCls}" type="text" inputmode="decimal"
+          style="font-weight:900;text-align:center"
+          placeholder="—"
+          value="${escVal(displayVal)}"
+          onpaste="handleDiagPaste(event, ${si}, '${curMatId}', '_direct')"
+          onchange="updDiagDirect(${si}, '${curMatId}', this.value)"
+          onfocus="this.select()"
+          onkeydown="navDiag(event, this, ${si}, '${curMatId}', '_direct')"/>
+      </td>
+      <td style="text-align:center">${scoreRes.scaleObj.badgeHtml}</td>
+      <td style="text-align:center">${levelingBadge}</td>
+    </tr>`;
+  }).join('');
+
+  if (tb) tb.innerHTML = bodyHtml;
+}
+
+function updDiagGrade(si, matId, skillId, val) {
+  ensureDiagnostico();
+  if (!S.diagnostico.grades[matId]) S.diagnostico.grades[matId] = {};
+  if (!S.diagnostico.grades[matId][si]) S.diagnostico.grades[matId][si] = {};
+
+  let v = val.trim().replace(',', '.');
+  if (v === '') {
+    delete S.diagnostico.grades[matId][si][skillId];
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) { toast('⚠️ Ingresa una nota válida de 1.00 a 10.00', '#dc2626'); renderDiagSubjectTable(); return; }
+    if (n > 10) { n = 10; toast('⚠️ Ajustado al máximo (10.00)', '#d97706'); }
+    else if (n < 1) { n = 1; toast('⚠️ Ajustado al mínimo (1.00)', '#d97706'); }
+    S.diagnostico.grades[matId][si][skillId] = String(trunc2(n));
+  }
+  saveData();
+  renderDiagSubjectTable();
+}
+
+function updDiagDirect(si, matId, val) {
+  ensureDiagnostico();
+  if (!S.diagnostico.grades[matId]) S.diagnostico.grades[matId] = {};
+  if (!S.diagnostico.grades[matId][si]) S.diagnostico.grades[matId][si] = {};
+
+  let v = val.trim().replace(',', '.');
+  if (v === '') {
+    delete S.diagnostico.grades[matId][si]._direct;
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) { toast('⚠️ Ingresa una nota válida de 1.00 a 10.00', '#dc2626'); renderDiagSubjectTable(); return; }
+    if (n > 10) { n = 10; toast('⚠️ Ajustado al máximo (10.00)', '#d97706'); }
+    else if (n < 1) { n = 1; toast('⚠️ Ajustado al mínimo (1.00)', '#d97706'); }
+    S.diagnostico.grades[matId][si]._direct = String(trunc2(n));
+  }
+  saveData();
+  renderDiagSubjectTable();
+}
+
+function navDiag(event, el, si, matId, field) {
+  if (!['ArrowUp','ArrowDown','Enter'].includes(event.key)) return;
+  event.preventDefault();
+  const sorted = getSortedIndices();
+  const curPos = sorted.indexOf(si);
+  let nextPos = curPos;
+
+  if (event.key === 'ArrowUp') nextPos = Math.max(0, curPos - 1);
+  if (event.key === 'ArrowDown' || event.key === 'Enter') nextPos = Math.min(sorted.length - 1, curPos + 1);
+
+  if (nextPos !== curPos) {
+    const nextSi = sorted[nextPos];
+    const tb = document.getElementById('diagSubjectTb');
+    if (!tb) return;
+    const row = tb.children[nextPos];
+    if (row) {
+      const inputs = row.querySelectorAll('input.gi');
+      // match column index
+      const curRow = el.closest('tr');
+      const curInputs = Array.from(curRow.querySelectorAll('input.gi'));
+      const colIdx = curInputs.indexOf(el);
+      if (colIdx !== -1 && inputs[colIdx]) {
+        inputs[colIdx].focus();
+        inputs[colIdx].select();
+      }
+    }
+  }
+}
+
+function handleDiagPaste(event, startSi, matId, targetField) {
+  const clip = (event.clipboardData || window.clipboardData).getData('text');
+  if (!clip) return;
+  const lines = clip.trim().split(/\r?\n/).map(l => l.trim().replace(',', '.')).filter(l => l !== '');
+  if (lines.length <= 1) return; // let single paste proceed normally
+
+  event.preventDefault();
+  ensureDiagnostico();
+  const sorted = getSortedIndices();
+  const startPos = sorted.indexOf(startSi);
+  if (startPos === -1) return;
+
+  let filled = 0;
+  lines.forEach((line, i) => {
+    const pos = startPos + i;
+    if (pos < sorted.length) {
+      const si = sorted[pos];
+      const parts = line.split(/\t/);
+      const val = parseFloat(parts[0]);
+      if (!isNaN(val)) {
+        const bounded = Math.min(10, Math.max(1, val));
+        const valTrunc = String(trunc2(bounded));
+        if (!S.diagnostico.grades[matId]) S.diagnostico.grades[matId] = {};
+        if (!S.diagnostico.grades[matId][si]) S.diagnostico.grades[matId][si] = {};
+
+        if (targetField === '_direct') {
+          S.diagnostico.grades[matId][si]._direct = valTrunc;
+        } else {
+          S.diagnostico.grades[matId][si][targetField] = valTrunc;
+        }
+        filled++;
+      }
+    }
+  });
+
+  saveData();
+  renderDiagSubjectTable();
+  toast(`📥 Pegadas ${filled} notas diagnósticas con éxito`, '#16a34a');
+}
+
+function openDiagPasteModal() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMatId = S.diagnostico.activeSubject || mats[0].id;
+  const curMat = mats.find(m => m.id === curMatId) || mats[0];
+
+  showModal(
+    `📥 Pegar Notas Masivas para ${escHTML(curMat.name)}`,
+    `
+    <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px">
+      Copia la columna de calificaciones desde tu archivo de Excel (1 nota por fila) y pégalas en el cuadro inferior:
+    </div>
+    <textarea id="diagMassivePasteArea" rows="10" placeholder="Pega aquí la columna de calificaciones (Ej:\n8.50\n7.25\n9.00\n...)" style="width:100%;font-family:var(--font-mono);font-size:0.88rem;padding:10px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main)"></textarea>
+    <div style="font-size:0.75rem;color:var(--text-light);margin-top:8px">
+      💡 Las notas se asignarán a los estudiantes en el orden de la nómina oficial actual.
+    </div>
+    `,
+    '📥 Aplicar Notas',
+    () => {
+      const text = document.getElementById('diagMassivePasteArea')?.value || '';
+      const lines = text.trim().split(/\r?\n/).map(l => l.trim().replace(',', '.')).filter(l => l !== '');
+      if (!lines.length) { toast('⚠️ No ingresaste notas para pegar', '#d97706'); return; }
+
+      const sorted = getSortedIndices();
+      let count = 0;
+      lines.forEach((line, i) => {
+        if (i < sorted.length) {
+          const si = sorted[i];
+          const num = parseFloat(line);
+          if (!isNaN(num)) {
+            const bounded = Math.min(10, Math.max(1, num));
+            if (!S.diagnostico.grades[curMatId]) S.diagnostico.grades[curMatId] = {};
+            if (!S.diagnostico.grades[curMatId][si]) S.diagnostico.grades[curMatId][si] = {};
+            S.diagnostico.grades[curMatId][si]._direct = String(trunc2(bounded));
+            count++;
+          }
+        }
+      });
+      saveData();
+      renderDiagSubjectTable();
+      toast(`✔ ${count} notas asignadas a ${curMat.name}`, '#16a34a');
+    },
+    'btn-primary'
+  );
+}
+
+function copyDiagSubjectColumn() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMatId = S.diagnostico.activeSubject || mats[0].id;
+  const curMat = mats.find(m => m.id === curMatId) || mats[0];
+  const sorted = getSortedIndices();
+
+  const colValues = sorted.map(si => {
+    const res = getDiagScore(si, curMatId);
+    return res.score !== null ? res.formatted : '';
+  });
+
+  const tsv = colValues.join('\n');
+  navigator.clipboard.writeText(tsv).then(() => {
+    toast(`📋 Columna de ${curMat.name} copiada al portapapeles`, '#16a34a');
+  }).catch(() => {
+    toast('⚠️ No se pudo acceder al portapapeles', '#dc2626');
+  });
+}
+
+function resetDiagSubjectGrades() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const curMatId = S.diagnostico.activeSubject || mats[0].id;
+  const curMat = mats.find(m => m.id === curMatId) || mats[0];
+
+  if (confirm(`¿Estás seguro de que deseas borrar todas las calificaciones diagnósticas de ${curMat.name}?`)) {
+    S.diagnostico.grades[curMatId] = {};
+    saveData();
+    renderDiagSubjectTable();
+    toast(`🧹 Calificaciones de ${curMat.name} borradas`, '#16a34a');
+  }
+}
+
+// ════ 2. MATRIZ CONSOLIDADA DE GRADO ════
+let _diagConsolidadoFilterQuery = '';
+
+function filterDiagConsolidado(q) {
+  _diagConsolidadoFilterQuery = (q || '').trim().toLowerCase();
+  renderDiagConsolidatedTable();
+}
+
+function renderDiagConsolidatedTable() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const filterType = document.getElementById('diagConsolidadoFilter')?.value || 'all';
+
+  // Headers
+  const th = document.getElementById('diagConsolidatedTh');
+  let r1 = `<tr>
+    <th class="fxl" style="width:36px">#</th>
+    <th class="fxn" style="min-width:210px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
+
+  mats.forEach(m => {
+    r1 += `<th style="min-width:75px;background:${m.color||'#1e40af'};border-color:${m.color||'#1e40af'}">
+      <span>${m.icon||'📚'}</span><br>
+      <span style="font-size:0.68rem;font-weight:800">${escHTML(m.name)}</span>
+    </th>`;
+  });
+
+  r1 += `<th class="th-trim" style="min-width:80px;background:#0f172a;border-color:#0f172a">PROMEDIO<br><span style="font-size:0.58rem;font-weight:400">GLOBAL</span></th>`;
+  r1 += `<th style="min-width:90px;text-align:center">ESCALA</th>`;
+  r1 += `<th style="min-width:140px;text-align:center">CONDICIÓN DE NIVELACIÓN</th>`;
+  r1 += `</tr>`;
+  if (th) th.innerHTML = r1;
+
+  // Rows
+  const tb = document.getElementById('diagConsolidatedTb');
+  const sorted = getSortedIndices();
+  let shownCount = 0;
+
+  let bodyHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    if (_diagConsolidadoFilterQuery && !name.toLowerCase().includes(_diagConsolidadoFilterQuery)) return '';
+
+    const stGlobal = getDiagStudentGlobal(si);
+
+    // Apply filter
+    if (filterType === 'alertas' && stGlobal.alertsCount === 0) return '';
+    if (filterType === 'alerta-multiple' && stGlobal.alertsCount < 2) return '';
+    if (filterType === 'tutores' && !stGlobal.isCandidateTutor) return '';
+    if (filterType === 'dominio-total' && (stGlobal.scale !== 'DA' || stGlobal.alertsCount > 0)) return '';
+
+    shownCount++;
+
+    let matCells = '';
+    mats.forEach(m => {
+      const res = getDiagScore(si, m.id);
+      const num = res.score;
+      const cls = num !== null ? (num < 7 ? 'glo' : 'ghi') : '';
+      const bg = num !== null ? (num >= 9 ? 'rgba(22,163,74,0.08)' : (num < 7 ? 'rgba(220,38,38,0.08)' : '')) : '';
+      matCells += `<td style="text-align:center;font-weight:800;background:${bg}">
+        <span class="${cls}">${res.formatted}</span>
+      </td>`;
+    });
+
+    let statusBadge = '';
+    if (stGlobal.globalAvg !== null) {
+      if (stGlobal.isCandidateTutor) {
+        statusBadge = `<span style="font-size:0.72rem;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:99px;font-weight:800">🤝 Tutor Co-Nivelación</span>`;
+      } else if (stGlobal.alertsCount >= 2) {
+        statusBadge = `<span style="font-size:0.72rem;background:#fee2e2;color:#b91c1c;padding:3px 8px;border-radius:99px;font-weight:800">🔴 Alerta Múltiple (${stGlobal.alertsCount} mats)</span>`;
+      } else if (stGlobal.alertsCount === 1) {
+        statusBadge = `<span style="font-size:0.72rem;background:#fef3c7;color:#b45309;padding:3px 8px;border-radius:99px;font-weight:800">⚠️ Refuerzo en 1 mat</span>`;
+      } else {
+        statusBadge = `<span style="font-size:0.72rem;background:#dbeafe;color:#1e40af;padding:3px 8px;border-radius:99px;font-weight:700">✔ Aprendizajes Consolidados</span>`;
+      }
+    } else {
+      statusBadge = `<span style="font-size:0.72rem;color:var(--text-light)">Sin Registro</span>`;
+    }
+
+    const gNum = parseFloat(stGlobal.globalAvg);
+    const gCls = !isNaN(gNum) ? (gNum < 7 ? 'glo' : 'ghi') : '';
+
+    return `<tr data-name="${escVal(name.toUpperCase())}">
+      <td class="ic">${rowPos+1}</td>
+      <td class="nc">${escHTML(name)}</td>
+      ${matCells}
+      <td class="prom-wk ${gCls}" style="text-align:center;font-weight:900">${stGlobal.globalAvg || '—'}</td>
+      <td style="text-align:center">${stGlobal.scaleObj.badgeHtml}</td>
+      <td style="text-align:center">${statusBadge}</td>
+    </tr>`;
+  }).join('');
+
+  if (tb) tb.innerHTML = bodyHtml;
+  const countEl = document.getElementById('diagConsolidadoCount');
+  if (countEl) countEl.textContent = `Mostrando ${shownCount} de ${sorted.length} estudiantes`;
+}
+
+// ════ 3. TABLERO DE RESULTADOS & DASHBOARD ════
+function renderDiagDashboard() {
+  ensureDiagnostico();
+  const global = getDiagGlobalStats();
+  const kpiBox = document.getElementById('diagKpiContainer');
+
+  if (kpiBox) {
+    kpiBox.innerHTML = `
+      <div class="diag-kpi-card" style="--card-accent:#2563eb">
+        <span class="diag-kpi-lbl">Promedio Diagnóstico Grado</span>
+        <div class="diag-kpi-val" style="color:#1e40af">${global.overallAvg || '—'}</div>
+        <div class="diag-kpi-sub">${global.overallScale.badgeHtml} · Meta MINEDEC: 7.00</div>
+      </div>
+      <div class="diag-kpi-card" style="--card-accent:#10b981">
+        <span class="diag-kpi-lbl">Estudiantes Evaluados</span>
+        <div class="diag-kpi-val" style="color:#065f46">${global.evaluatedStudents} / ${global.totalStudents}</div>
+        <div class="diag-kpi-sub">${global.totalStudents > 0 ? Math.round((global.evaluatedStudents/global.totalStudents)*100) : 0}% de cobertura diagnóstica</div>
+      </div>
+      <div class="diag-kpi-card" style="--card-accent:#15803d">
+        <span class="diag-kpi-lbl">Dominio & Logro (DA + AA)</span>
+        <div class="diag-kpi-val" style="color:#15803d">${global.satisfactoryPct}%</div>
+        <div class="diag-kpi-sub">Estudiantes con destrezas consolidadas</div>
+      </div>
+      <div class="diag-kpi-card" style="--card-accent:#dc2626">
+        <span class="diag-kpi-lbl">Requieren Nivelación (PA + NA)</span>
+        <div class="diag-kpi-val" style="color:#b91c1c">${global.levelingPct}%</div>
+        <div class="diag-kpi-sub">${global.studentsWithAlerts} estudiantes para Fase NIVELA</div>
+      </div>
+      <div class="diag-kpi-card" style="--card-accent:#d97706">
+        <span class="diag-kpi-lbl">Asignatura con Mayor Desafío</span>
+        <div class="diag-kpi-val" style="font-size:1.15rem;color:#b45309">${global.hardestMat ? (global.hardestMat.matId.toUpperCase() + ' (' + global.hardestMat.avg + ')') : '—'}</div>
+        <div class="diag-kpi-sub">${global.hardestMat ? global.hardestMat.alertPct + '% en nivelación' : 'Sin datos'}</div>
+      </div>
+      <div class="diag-kpi-card" style="--card-accent:#7c3aed">
+        <span class="diag-kpi-lbl">Tutores para Co-Nivelación</span>
+        <div class="diag-kpi-val" style="color:#6d28d9">${global.studentsTutors} est.</div>
+        <div class="diag-kpi-sub">Candidatos para tutoría entre pares</div>
+      </div>
+    `;
+  }
+
+  // Distribution Bars
+  const barsBox = document.getElementById('diagDistributionBars');
+  if (barsBox) {
+    const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+    barsBox.innerHTML = mats.map(m => {
+      const s = getDiagSubjectStats(m.id);
+      return `
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;margin-bottom:2px">
+            <span style="font-weight:800">${m.icon||'📚'} ${escHTML(m.name)}</span>
+            <span style="font-weight:900;font-family:var(--font-mono)">Prom: ${s.avg||'—'} (${s.scaleObj.code})</span>
+          </div>
+          <div class="diag-dist-bar-wrap">
+            <div class="diag-dist-seg" style="width:${s.daPct}%;background:#16a34a" title="DA (Domina): ${s.daPct}% (${s.daCount} est.)"></div>
+            <div class="diag-dist-seg" style="width:${s.aaPct}%;background:#2563eb" title="AA (Alcanza): ${s.aaPct}% (${s.aaCount} est.)"></div>
+            <div class="diag-dist-seg" style="width:${s.paPct}%;background:#ca8a04" title="PA (En Proceso): ${s.paPct}% (${s.paCount} est.)"></div>
+            <div class="diag-dist-seg" style="width:${s.naPct}%;background:#dc2626" title="NA (No Alcanza): ${s.naPct}% (${s.naCount} est.)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text-muted)">
+            <span style="color:#15803d;font-weight:700">🟢 DA: ${s.daPct}%</span>
+            <span style="color:#1d4ed8;font-weight:700">🔵 AA: ${s.aaPct}%</span>
+            <span style="color:#b45309;font-weight:700">🟡 PA: ${s.paPct}%</span>
+            <span style="color:#b91c1c;font-weight:700">🔴 NA: ${s.naPct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Semáforo Early Warning List
+  const semBox = document.getElementById('diagSemaforoList');
+  if (semBox) {
+    const sorted = getSortedIndices();
+    const alertStudents = [];
+    sorted.forEach(si => {
+      const st = getDiagStudentGlobal(si);
+      if (st.alertsCount >= 2) {
+        alertStudents.push({ si, name: S.students[si], ...st });
+      }
+    });
+
+    if (alertStudents.length === 0) {
+      semBox.innerHTML = `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;text-align:center;color:#15803d;font-size:0.85rem;font-weight:700">
+        ✔ ¡Excelente! No se registran estudiantes con alerta múltiple (2 o más materias en nivelación).
+      </div>`;
+    } else {
+      semBox.innerHTML = alertStudents.map(item => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border-subtle);font-size:0.8rem">
+          <div>
+            <strong style="color:var(--text-main)">${escHTML(item.name)}</strong><br>
+            <span style="font-size:0.7rem;color:#b91c1c;font-weight:700">Dificultades en ${item.alertsCount} asignaturas</span>
+          </div>
+          <div style="text-align:right">
+            <span style="font-weight:900;font-family:var(--font-mono);font-size:0.88rem;color:#b91c1c">${item.globalAvg || '—'}</span>
+            ${item.scaleObj.badgeHtml}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Summary Table
+  const summaryTb = document.getElementById('diagStatsSummaryTb');
+  if (summaryTb) {
+    const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+    summaryTb.innerHTML = mats.map(m => {
+      const s = getDiagSubjectStats(m.id);
+      let focusText = 'Consolidación regular';
+      if (s.alertPct >= 35) focusText = 'Refuerzo prioritario e intensivo';
+      else if (s.alertPct >= 20) focusText = 'Tutoría entre pares & talleres';
+      return `
+        <tr>
+          <td style="font-weight:800;text-align:left">${m.icon||'📚'} ${escHTML(m.name)}</td>
+          <td style="text-align:center">${s.evaluated} / ${s.totalStudents}</td>
+          <td style="text-align:center;font-weight:900">${s.avg || '—'}</td>
+          <td style="text-align:center">${s.scaleObj.badgeHtml}</td>
+          <td style="text-align:center;color:#15803d;font-weight:700">${s.daPct}% (${s.daCount})</td>
+          <td style="text-align:center;color:#1d4ed8;font-weight:700">${s.aaPct}% (${s.aaCount})</td>
+          <td style="text-align:center;color:#b45309;font-weight:700">${s.paPct}% (${s.paCount})</td>
+          <td style="text-align:center;color:#b91c1c;font-weight:700">${s.naPct}% (${s.naCount})</td>
+          <td style="font-size:0.75rem;color:var(--text-muted)">${focusText}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+}
+
+// ════ 4. PLAN DE CO-NIVELACIÓN (TUTORÍA ENTRE PARES) ════
+function autoGenerateCoNivelacion() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const sorted = getSortedIndices();
+
+  mats.forEach(m => {
+    const tutors = [];
+    const needsHelp = [];
+
+    sorted.forEach(si => {
+      const res = getDiagScore(si, m.id);
+      if (res.score !== null) {
+        if (res.scale === 'DA') tutors.push(si);
+        else if (res.scale === 'PA' || res.scale === 'NA') needsHelp.push(si);
+      }
+    });
+
+    const teams = [];
+    if (tutors.length > 0) {
+      let tIdx = 0;
+      tutors.forEach(tSi => { teams.push({ tutorSi: tSi, students: [], estrategia: 'Lectura guiada y resolución cooperativa de ejercicios prácticos' }); });
+      needsHelp.forEach(stSi => {
+        teams[tIdx % teams.length].students.push(stSi);
+        tIdx++;
+      });
+    } else {
+      // If no DA, pick highest scores
+      const highScores = [...sorted].sort((a,b) => (getDiagScore(b,m.id).score||0) - (getDiagScore(a,m.id).score||0));
+      const fakeTutors = highScores.slice(0, Math.max(2, Math.floor(sorted.length / 5)));
+      fakeTutors.forEach(tSi => { teams.push({ tutorSi: tSi, students: [], estrategia: 'Tutoría orientada con apoyo directo del docente' }); });
+      needsHelp.forEach((stSi, idx) => {
+        if (!fakeTutors.includes(stSi)) {
+          teams[idx % teams.length].students.push(stSi);
+        }
+      });
+    }
+
+    S.diagnostico.conivelacion[m.id] = teams;
+  });
+
+  saveData();
+  renderDiagCoNivelacion();
+  toast('⚡ Parejas y equipos de Co-nivelación generados con éxito', '#16a34a');
+}
+
+function renderDiagCoNivelacion() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  let curMatId = document.getElementById('diagCoNivelSubjectSel')?.value || mats[0].id;
+  const curMat = mats.find(m => m.id === curMatId) || mats[0];
+
+  const sel = document.getElementById('diagCoNivelSubjectSel');
+  if (sel && sel.options.length === 0) {
+    sel.innerHTML = mats.map(m => `<option value="${m.id}" ${m.id===curMatId?'selected':''}>${m.icon||'📚'} ${escHTML(m.name)}</option>`).join('');
+  }
+
+  const container = document.getElementById('diagTutoringCardsContainer');
+  if (!container) return;
+
+  const teams = S.diagnostico.conivelacion[curMatId] || [];
+
+  if (teams.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:30px;background:var(--bg-card);border:1px dashed var(--border-color);border-radius:var(--radius-md)">
+        <div style="font-size:2rem;margin-bottom:8px">🤝</div>
+        <div style="font-weight:800;font-size:1rem;color:var(--text-main);margin-bottom:6px">Aún no se han generado los equipos de co-nivelación para ${escHTML(curMat.name)}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px">Presiona el botón superior para emparejar automáticamente a los tutores con sus compañeros.</div>
+        <button class="btn btn-success" onclick="autoGenerateCoNivelacion()" style="font-weight:800">⚡ Generar Equipos Ahora</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = teams.map((team, idx) => {
+    const tutorName = S.students[team.tutorSi] || `Estudiante ${team.tutorSi+1}`;
+    const tutorScore = getDiagScore(team.tutorSi, curMatId);
+
+    const membersHtml = (team.students || []).map(stSi => {
+      const stName = S.students[stSi] || `Estudiante ${stSi+1}`;
+      const stScore = getDiagScore(stSi, curMatId);
+      return `<li style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dashed var(--border-subtle)">
+        <span>${escHTML(stName)}</span>
+        <span style="font-size:0.75rem;font-weight:800;font-family:var(--font-mono);color:#b91c1c">${stScore.formatted} (${stScore.scale})</span>
+      </li>`;
+    }).join('');
+
+    return `
+      <div class="diag-tutoring-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border-subtle);padding-bottom:8px">
+          <div>
+            <span style="font-size:0.7rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">EQUIPO #${idx+1} · CO-NIVELACIÓN</span>
+            <div style="font-weight:900;font-size:0.95rem;color:#15803d;margin-top:2px">🌟 Tutor: ${escHTML(tutorName)}</div>
+          </div>
+          <span class="diag-badge diag-badge-da">${tutorScore.formatted} · DA</span>
+        </div>
+
+        <div>
+          <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted)">ESTUDIANTES ACOMPAÑADOS:</span>
+          <ul style="list-style:none;padding:0;margin:6px 0 0;font-size:0.8rem">
+            ${membersHtml || '<li style="color:var(--text-light);font-size:0.75rem">Sin acompañados asignados</li>'}
+          </ul>
+        </div>
+
+        <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);font-size:0.72rem;color:var(--text-muted)">
+          <strong>Estrategia recomendada:</strong> ${escHTML(team.estrategia || 'Tutoría entre pares')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ════ 5. FASE CONECTA (SOCIOEMOCIONAL & METACOGNICIÓN) ════
+function renderDiagSocioemocional() {
+  ensureDiagnostico();
+  const tb = document.getElementById('diagSocioTb');
+  if (!tb) return;
+  const sorted = getSortedIndices();
+
+  tb.innerHTML = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    const sData = S.diagnostico.socioemocional[si] || {};
+
+    return `
+      <tr data-name="${escVal(name.toUpperCase())}">
+        <td class="ic">${rowPos+1}</td>
+        <td class="nc">${escHTML(name)}</td>
+        <td>
+          <select style="font-size:0.78rem;padding:4px 6px;border-radius:6px;width:100%" onchange="updDiagSocio(${si}, 'animo', this.value)">
+            <option value="Tranquilo / Adaptado" ${sData.animo==='Tranquilo / Adaptado'?'selected':''}>😊 Tranquilo / Adaptado</option>
+            <option value="Motivado / Alegre" ${sData.animo==='Motivado / Alegre'?'selected':''}>⭐ Motivado / Alegre</option>
+            <option value="Inseguro / Tímido" ${sData.animo==='Inseguro / Tímido'?'selected':''}>😐 Inseguro / Tímido</option>
+            <option value="Ansioso / Preocupado" ${sData.animo==='Ansioso / Preocupado'?'selected':''}>😟 Ansioso / Preocupado</option>
+            <option value="Alerta DECE" ${sData.animo==='Alerta DECE'?'selected':''}>🔴 Alerta DECE</option>
+          </select>
+        </td>
+        <td>
+          <select style="font-size:0.78rem;padding:4px 6px;border-radius:6px;width:100%" onchange="updDiagSocio(${si}, 'autonomia', this.value)">
+            <option value="Excelente" ${sData.autonomia==='Excelente'?'selected':''}>Excelente</option>
+            <option value="Bueno" ${sData.autonomia==='Bueno'?'selected':''}>Bueno</option>
+            <option value="En Proceso" ${sData.autonomia==='En Proceso'?'selected':''}>En Proceso</option>
+            <option value="Requiere Apoyo" ${sData.autonomia==='Requiere Apoyo'?'selected':''}>Requiere Apoyo</option>
+          </select>
+        </td>
+        <td>
+          <select style="font-size:0.78rem;padding:4px 6px;border-radius:6px;width:100%" onchange="updDiagSocio(${si}, 'convivencia', this.value)">
+            <option value="Excelente" ${sData.convivencia==='Excelente'?'selected':''}>Excelente</option>
+            <option value="Bueno" ${sData.convivencia==='Bueno'?'selected':''}>Bueno</option>
+            <option value="Regular" ${sData.convivencia==='Regular'?'selected':''}>Regular</option>
+            <option value="Conflictivo" ${sData.convivencia==='Conflictivo'?'selected':''}>Conflictivo</option>
+          </select>
+        </td>
+        <td>
+          <select style="font-size:0.78rem;padding:4px 6px;border-radius:6px;width:100%" onchange="updDiagSocio(${si}, 'apoyo', this.value)">
+            <option value="Constante" ${sData.apoyo==='Constante'?'selected':''}>Constante</option>
+            <option value="Parcial" ${sData.apoyo==='Parcial'?'selected':''}>Parcial</option>
+            <option value="Escaso" ${sData.apoyo==='Escaso'?'selected':''}>Escaso</option>
+          </select>
+        </td>
+        <td style="text-align:center">
+          <input type="checkbox" ${sData.alertaDece?'checked':''} onchange="updDiagSocio(${si}, 'alertaDece', this.checked)" title="Marcar para seguimiento urgente con el DECE"/>
+        </td>
+        <td>
+          <input type="text" value="${escVal(sData.obs||'')}" placeholder="Compromiso o necesidad..." style="font-size:0.78rem;padding:4px 8px;border-radius:6px;width:100%" onchange="updDiagSocio(${si}, 'obs', this.value)"/>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function updDiagSocio(si, field, val) {
+  ensureDiagnostico();
+  if (!S.diagnostico.socioemocional[si]) S.diagnostico.socioemocional[si] = {};
+  S.diagnostico.socioemocional[si][field] = val;
+  saveData();
+}
+
+// ════ 6. INFORMES OFICIALES & FICHAS INDIVIDUALES ════
+function onDiagReportTypeChange(type) {
+  const picker = document.getElementById('diagStudentReportPickerWrap');
+  const waBtn = document.getElementById('btnDiagShareWhatsApp');
+  if (picker) picker.style.display = (type === 'individual') ? 'flex' : 'none';
+  if (waBtn) waBtn.style.display = (type === 'individual') ? 'inline-flex' : 'none';
+  renderDiagInformes();
+}
+
+function renderDiagInformes() {
+  ensureDiagnostico();
+  const type = document.getElementById('diagReportTypeSel')?.value || 'institucional';
+  const docView = document.getElementById('diagReportDocView');
+  if (!docView) return;
+
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const sorted = getSortedIndices();
+
+  // Populate student picker if needed
+  const stSel = document.getElementById('diagStudentReportSel');
+  if (stSel && stSel.options.length === 0) {
+    stSel.innerHTML = sorted.map(si => `<option value="${si}">${escHTML(S.students[si])}</option>`).join('');
+  }
+
+  if (type === 'institucional') {
+    const globalStats = getDiagGlobalStats();
+
+    docView.innerHTML = `
+      <div id="diagReportDoc" style="font-family:'Plus Jakarta Sans',Arial,sans-serif">
+        <!-- Encabezado Institucional -->
+        <div style="border-bottom:2px solid #1e3a8a;padding-bottom:12px;margin-bottom:18px;text-align:center">
+          <div style="font-size:1.15rem;font-weight:900;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+          <div style="font-size:0.95rem;font-weight:800;color:#0f172a;margin-top:2px">INFORME DE EVALUACIÓN DIAGNÓSTICA Y PLAN DE NIVELACIÓN PEDAGÓGICA</div>
+          <div style="font-size:0.8rem;color:#475569;margin-top:4px">
+            Año Lectivo: <strong>${escHTML(S.anio||'2026-2027')}</strong> · Grado: <strong>${escHTML(S.grado||'Séptimo C')}</strong> · Jornada: <strong>Vespertina</strong>
+          </div>
+          <div style="font-size:0.75rem;color:#64748b;margin-top:2px">
+            Normativa: Acuerdo MINEDUC-2024-00031-A · Fases Conecta (Semana 1) y Nivela (Semanas 2 y 3)
+          </div>
+        </div>
+
+        <!-- 1. Datos Generales y Resumen Ejecutivo -->
+        <div style="margin-bottom:18px">
+          <div style="font-weight:900;font-size:0.88rem;color:#1e3a8a;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">
+            1. RESUMEN EJECUTIVO DEL DIAGNÓSTICO
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:12px">
+            <tr>
+              <td style="padding:6px;border:1px solid #cbd5e1;background:#f8fafc"><strong>Estudiantes Matriculados:</strong> ${globalStats.totalStudents}</td>
+              <td style="padding:6px;border:1px solid #cbd5e1;background:#f8fafc"><strong>Estudiantes Evaluados:</strong> ${globalStats.evaluatedStudents}</td>
+              <td style="padding:6px;border:1px solid #cbd5e1;background:#f8fafc"><strong>Promedio Global:</strong> ${globalStats.overallAvg || '—'} (${globalStats.overallScale.code})</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;border:1px solid #cbd5e1;color:#15803d"><strong>Dominio & Logro (DA+AA):</strong> ${globalStats.satisfactoryPct}%</td>
+              <td style="padding:6px;border:1px solid #cbd5e1;color:#b91c1c"><strong>Requieren Nivelación (PA+NA):</strong> ${globalStats.levelingPct}% (${globalStats.studentsWithAlerts} est.)</td>
+              <td style="padding:6px;border:1px solid #cbd5e1;color:#6d28d9"><strong>Tutores para Co-Nivelación:</strong> ${globalStats.studentsTutors} est.</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 2. Resultados Consolidados por Asignatura -->
+        <div style="margin-bottom:18px">
+          <div style="font-weight:900;font-size:0.88rem;color:#1e3a8a;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">
+            2. RESULTADOS CUANTITATIVOS Y CUALITATIVOS POR ASIGNATURA
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.78rem;margin-bottom:12px">
+            <thead>
+              <tr style="background:#1e3a8a;color:#fff">
+                <th style="padding:6px;text-align:left;border:1px solid #1e3a8a">Asignatura</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">Promedio</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">Escala</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">% DA (9-10)</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">% AA (7-8.9)</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">% PA (4.1-6.9)</th>
+                <th style="padding:6px;text-align:center;border:1px solid #1e3a8a">% NA (≤4)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${mats.map(m => {
+                const s = getDiagSubjectStats(m.id);
+                return `<tr>
+                  <td style="padding:5px 8px;border:1px solid #cbd5e1;font-weight:800">${m.icon||'📚'} ${escHTML(m.name)}</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center;font-weight:800">${s.avg||'—'}</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center">${s.scaleObj.code}</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center;color:#15803d">${s.daPct}%</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center;color:#1d4ed8">${s.aaPct}%</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center;color:#b45309">${s.paPct}%</td>
+                  <td style="padding:5px;border:1px solid #cbd5e1;text-align:center;color:#b91c1c">${s.naPct}%</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3. Plan Remedial de Nivelación (Fase NIVELA) -->
+        <div style="margin-bottom:18px">
+          <div style="font-weight:900;font-size:0.88rem;color:#1e3a8a;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">
+            3. ESTRATEGIAS PEDAGÓGICAS PARA LA FASE NIVELA (SEMANAS 2 Y 3)
+          </div>
+          <div style="font-size:0.8rem;line-height:1.6;color:#334155">
+            <p><strong>a) Tutoría entre Pares (Co-nivelación):</strong> Se han conformado equipos cooperativos donde estudiantes con dominio (DA: 9-10) apoyan el refuerzo en lectura y cálculo.</p>
+            <p><strong>b) Refuerzo de Habilidades Fundacionales:</strong> Priorización de comprensión lectora, producción escrita, operaciones básicas y resolución de problemas cotidianos.</p>
+            <p><strong>c) Atención Diferenciada y Adaptaciones:</strong> Acompañamiento a los estudiantes con alertas múltiples y coordinación directa con el DECE.</p>
+          </div>
+        </div>
+
+        <!-- Firmas Institucionales -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:35px;text-align:center;font-size:0.78rem">
+          <div>
+            <div style="border-top:1px solid #334155;padding-top:6px;font-weight:800">${escHTML(S.docente || 'Docente de Grado')}</div>
+            <div style="color:#64748b">Docente Tutor / Responsable</div>
+          </div>
+          <div>
+            <div style="border-top:1px solid #334155;padding-top:6px;font-weight:800">Coordinación de Grado</div>
+            <div style="color:#64748b">Comisión Pedagógica</div>
+          </div>
+          <div>
+            <div style="border-top:1px solid #334155;padding-top:6px;font-weight:800">Vicerrectorado / DECE</div>
+            <div style="color:#64748b">U.E.F. "Calderón 2"</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // Individual student card
+    const si = parseInt(document.getElementById('diagStudentReportSel')?.value || '0', 10);
+    const stName = S.students[si] || `Estudiante ${si+1}`;
+    const stGlobal = getDiagStudentGlobal(si);
+    const socio = S.diagnostico.socioemocional[si] || {};
+
+    docView.innerHTML = `
+      <div id="diagFichaDoc" style="font-family:'Plus Jakarta Sans',Arial,sans-serif">
+        <div style="border-bottom:2px solid #1e3a8a;padding-bottom:12px;margin-bottom:16px;text-align:center">
+          <div style="font-size:1.1rem;font-weight:900;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+          <div style="font-size:0.95rem;font-weight:800;color:#0f172a">FICHA INDIVIDUAL DE EVALUACIÓN DIAGNÓSTICA</div>
+          <div style="font-size:0.78rem;color:#475569;margin-top:2px">Año Lectivo: ${escHTML(S.anio||'2026-2027')} · Grado: ${escHTML(S.grado||'Séptimo C')}</div>
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:16px">
+          <div style="font-size:1.05rem;font-weight:900;color:#1e40af">${escHTML(stName)}</div>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:0.8rem;margin-top:6px">
+            <span>Promedio Diagnóstico Global: <strong style="font-size:0.95rem">${stGlobal.globalAvg || '—'}</strong></span>
+            <span>Nivel de Logro: ${stGlobal.scaleObj.badgeHtml}</span>
+            <span>Estado: <strong>${stGlobal.requiresLeveling ? '⚠️ Requiere Nivelación en ' + stGlobal.alertsCount + ' materia(s)' : '✔ Desempeño Consolidado'}</strong></span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <div style="font-weight:800;font-size:0.85rem;color:#1e3a8a;margin-bottom:8px">DESGLOSE POR ASIGNATURAS EVALUADAS:</div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+            <thead>
+              <tr style="background:#1e3a8a;color:#fff">
+                <th style="padding:6px;text-align:left">Asignatura</th>
+                <th style="padding:6px;text-align:center">Calificación</th>
+                <th style="padding:6px;text-align:center">Escala</th>
+                <th style="padding:6px;text-align:left">Plan de Acción (Fase NIVELA)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${mats.map(m => {
+                const res = getDiagScore(si, m.id);
+                let accion = 'Consolidar destrezas';
+                if (res.scale === 'DA') accion = 'Estudiante Tutor en Co-nivelación';
+                else if (res.scale === 'PA') accion = 'Refuerzo de destrezas en semanas 2 y 3';
+                else if (res.scale === 'NA') accion = 'Acompañamiento prioritario y tutoría guiada';
+                return `<tr>
+                  <td style="padding:6px;border:1px solid #cbd5e1;font-weight:800">${m.icon||'📚'} ${escHTML(m.name)}</td>
+                  <td style="padding:6px;border:1px solid #cbd5e1;text-align:center;font-weight:800">${res.formatted}</td>
+                  <td style="padding:6px;border:1px solid #cbd5e1;text-align:center">${res.scaleObj.code}</td>
+                  <td style="padding:6px;border:1px solid #cbd5e1">${accion}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.78rem">
+          <strong>Recomendaciones para el Representante Legal:</strong>
+          <ul style="margin:4px 0 0 16px;padding:0;line-height:1.5">
+            <li>Establecer un horario diario de lectura de 20 minutos en casa.</li>
+            <li>Practicar cálculo mental y tablas de multiplicar de manera cotidiana.</li>
+            <li>Revisar diariamente el cuaderno y las actividades de la fase de nivelación.</li>
+          </ul>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:35px;font-size:0.78rem">
+          <div style="text-align:center;width:200px">
+            <div style="border-top:1px solid #334155;padding-top:4px;font-weight:800">${escHTML(S.docente || 'Docente Tutor')}</div>
+            <div style="color:#64748b">Docente de Grado</div>
+          </div>
+          <div style="text-align:center;width:200px">
+            <div style="border-top:1px solid #334155;padding-top:4px;font-weight:800">Representante Legal</div>
+            <div style="color:#64748b">Firma de Conocimiento</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function printDiagnosticoInforme() {
+  ensureDiagnostico();
+  switchView('diagnostico');
+  switchDiagTab('informes');
+  document.getElementById('diagReportTypeSel').value = 'institucional';
+  onDiagReportTypeChange('institucional');
+  setTimeout(() => { window.print(); }, 300);
+}
+
+function printDiagnosticoSelectedDoc() {
+  window.print();
+}
+
+function printDiagnosticoFicha(si) {
+  ensureDiagnostico();
+  switchView('diagnostico');
+  switchDiagTab('informes');
+  document.getElementById('diagReportTypeSel').value = 'individual';
+  onDiagReportTypeChange('individual');
+  if (document.getElementById('diagStudentReportSel')) {
+    document.getElementById('diagStudentReportSel').value = String(si);
+  }
+  renderDiagInformes();
+  setTimeout(() => { window.print(); }, 300);
+}
+
+function shareDiagnosticoWhatsApp(targetSi) {
+  ensureDiagnostico();
+  const si = targetSi !== undefined ? targetSi : parseInt(document.getElementById('diagStudentReportSel')?.value || '0', 10);
+  const name = S.students[si] || `Estudiante ${si+1}`;
+  const stGlobal = getDiagStudentGlobal(si);
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+
+  let matText = mats.map(m => {
+    const res = getDiagScore(si, m.id);
+    return `▪ *${m.name}:* ${res.formatted} (${res.scale})`;
+  }).join('\n');
+
+  const msg = `🏛️ *UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"*\n*INFORME DE EVALUACIÓN DIAGNÓSTICA 2026-2027*\n\nEstimado/a Representante Legal de *${name}* (${S.grado||'7mo C'}):\n\nLe compartimos el resultado oficial de la evaluación diagnóstica (Fases Conecta y Nivela):\n\n${matText}\n\n📊 *Promedio General Diagnóstico:* ${stGlobal.globalAvg || '—'} (${stGlobal.scale})\n📌 *Estado:* ${stGlobal.requiresLeveling ? 'Requiere refuerzo en la Fase NIVELA (Semanas 2 y 3)' : 'Desempeño consolidado'}\n\n_Agradecemos su compromiso en el acompañamiento diario de las tareas y refuerzo escolar en el hogar._\n\n*${S.docente || 'Docente Tutor'}* · UEF Calderón 2`;
+
+  // Get phone from profiles if available
+  let phone = '';
+  if (S.studentProfiles && S.studentProfiles[name]) {
+    const p = S.studentProfiles[name];
+    phone = (p.repTelefono || p.repTelEmergencia || '').replace(/\D/g, '');
+    if (phone.length === 9 && phone.startsWith('9')) phone = '593' + phone;
+    else if (phone.length === 10 && phone.startsWith('09')) phone = '593' + phone.substring(1);
+  }
+
+  const url = `https://api.whatsapp.com/send?${phone ? 'phone='+phone+'&' : ''}text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+function openDiagnosticoConfigModal() {
+  ensureDiagnostico();
+  const cfg = S.diagnostico.config;
+  const mats = cfg.materias || DEFAULT_DIAG_MATS;
+
+  const matsHtml = mats.map((m, i) => `
+    <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:8px;padding:10px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="font-size:0.85rem">${m.icon||'📚'} ${escHTML(m.name)}</strong>
+        <span style="font-size:0.7rem;color:var(--text-muted)">${(m.skills||[]).length} destrezas evaluadas</span>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-light)">
+        ${(m.skills||[]).map(sk => `<span style="display:inline-block;background:var(--bg-card);border:1px solid var(--border-color);border-radius:4px;padding:2px 6px;margin:2px 4px 2px 0"><strong>${sk.id}:</strong> ${escHTML(sk.name)} (${sk.peso||25}%)</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  showModal(
+    '⚙ Configurar Evaluación Diagnóstica',
+    `
+    <div>
+      <label>Periodo y Fases Pedagógicas</label>
+      <input type="text" id="diagCfgPeriodo" value="${escVal(cfg.periodo)}" style="width:100%;margin-bottom:10px"/>
+      
+      <label>Fechas de Aplicación</label>
+      <input type="text" id="diagCfgFecha" value="${escVal(cfg.fecha)}" style="width:100%;margin-bottom:14px"/>
+
+      <label style="margin-bottom:6px;display:block">Asignaturas y Destrezas Configuradas</label>
+      <div style="max-height:260px;overflow-y:auto">${matsHtml}</div>
+    </div>
+    `,
+    'Guardar Ajustes',
+    () => {
+      if (document.getElementById('diagCfgPeriodo')) cfg.periodo = document.getElementById('diagCfgPeriodo').value;
+      if (document.getElementById('diagCfgFecha')) cfg.fecha = document.getElementById('diagCfgFecha').value;
+      saveData();
+      renderDiagnostico();
+      toast('✔ Configuración diagnóstica actualizada', '#16a34a');
+    },
+    'btn-primary'
+  );
+}
+
+function exportDiagnosticoXLSX() {
+  ensureDiagnostico();
+  const mats = S.diagnostico.config.materias || DEFAULT_DIAG_MATS;
+  const sorted = getSortedIndices();
+  const globalStats = getDiagGlobalStats();
+
+  // Sheet 1: Matriz Consolidada
+  const sheet1Rows = [
+    [{ v: `EVALUACIÓN DIAGNÓSTICA CONSOLIDADA — ${S.grado||'7mo C'} (${S.anio||'2026-2027'})`, t: 's', s: 'title' }],
+    [{ v: `UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" · Fases Conecta y Nivela · MINEDEC`, t: 's', s: 'sub' }],
+    [],
+    [
+      { v: '#', t: 's', s: 'hdr' },
+      { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' },
+      ...mats.map(m => ({ v: m.name.toUpperCase(), t: 's', s: 'hdr_col' })),
+      { v: 'PROMEDIO GLOBAL', t: 's', s: 'hdr_prom' },
+      { v: 'ESCALA MINEDEC', t: 's', s: 'hdr_prom' },
+      { v: 'PLAN NIVELACIÓN', t: 's', s: 'hdr_prom' }
+    ]
+  ];
+
+  sorted.forEach((si, rowIdx) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    const stGlobal = getDiagStudentGlobal(si);
+    const row = [
+      { v: rowIdx + 1, t: 'n', s: 'num' },
+      { v: name, t: 's', s: 'name' }
+    ];
+
+    mats.forEach(m => {
+      const res = getDiagScore(si, m.id);
+      row.push({
+        v: res.score !== null ? res.score : '',
+        t: res.score !== null ? 'n' : 's',
+        s: res.score !== null ? (res.score < 7 ? 'low' : 'ok') : 'empty'
+      });
+    });
+
+    row.push(
+      { v: stGlobal.globalAvg !== null ? parseFloat(stGlobal.globalAvg) : '', t: stGlobal.globalAvg !== null ? 'n' : 's', s: 'hdr_prom' },
+      { v: stGlobal.scale, t: 's', s: stGlobal.scale === 'DA' ? 'ok' : (stGlobal.scale === 'PA' || stGlobal.scale === 'NA' ? 'low' : 'hdr_col') },
+      { v: stGlobal.isCandidateTutor ? 'Tutor Sugerido' : (stGlobal.alertsCount > 0 ? `Requiere Nivelación (${stGlobal.alertsCount} mats)` : 'Consolidado'), t: 's', s: 'hdr_col' }
+    );
+    sheet1Rows.push(row);
+  });
+
+  // Sheet 2: Resumen Estadístico
+  const sheet2Rows = [
+    [{ v: `RESUMEN ESTADÍSTICO INSTITUCIONAL — DIAGNÓSTICO ${S.grado||'7mo C'}`, t: 's', s: 'title' }],
+    [],
+    [
+      { v: 'ASIGNATURA', t: 's', s: 'hdr' },
+      { v: 'EVALUADOS', t: 's', s: 'hdr' },
+      { v: 'PROMEDIO', t: 's', s: 'hdr' },
+      { v: 'ESCALA', t: 's', s: 'hdr' },
+      { v: '% DA (DOMINA)', t: 's', s: 'hdr' },
+      { v: '% AA (ALCANZA)', t: 's', s: 'hdr' },
+      { v: '% PA (EN PROCESO)', t: 's', s: 'hdr' },
+      { v: '% NA (NO ALCANZA)', t: 's', s: 'hdr' }
+    ]
+  ];
+
+  mats.forEach(m => {
+    const s = getDiagSubjectStats(m.id);
+    sheet2Rows.push([
+      { v: m.name, t: 's', s: 'name' },
+      { v: s.evaluated, t: 'n', s: 'num' },
+      { v: s.avg !== null ? parseFloat(s.avg) : '', t: s.avg !== null ? 'n' : 's', s: 'num' },
+      { v: s.scaleObj.code, t: 's', s: 'hdr_col' },
+      { v: `${s.daPct}% (${s.daCount})`, t: 's', s: 'ok' },
+      { v: `${s.aaPct}% (${s.aaCount})`, t: 's', s: 'ok' },
+      { v: `${s.paPct}% (${s.paCount})`, t: 's', s: 'low' },
+      { v: `${s.naPct}% (${s.naCount})`, t: 's', s: 'low' }
+    ]);
+  });
+
+  const sheets = [
+    { name: 'Matriz_Consolidada', rows: sheet1Rows },
+    { name: 'Resumen_Estadistico', rows: sheet2Rows }
+  ];
+
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Evaluacion_Diagnostica_${(S.grado||'7mo').replace(/\s+/g,'_')}_${(S.anio||'2026-2027')}.xlsx`;
+  a.click();
+  toast('✔ Archivo Excel de Evaluación Diagnóstica descargado', '#16a34a');
 }
 
 // ══════════════════════════════════════════════════════
@@ -13708,6 +15590,9 @@ render();
           📂 Módulos del Sistema
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-outline" onclick="switchView('diagnostico');closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem;grid-column:1/-1;border-color:#3b82f6;background:#eff6ff;color:#1d4ed8;font-weight:800">
+            🎯 <span style="margin-left:4px">Evaluación Diagnóstica (Conecta / Nivela)</span>
+          </button>
           <button class="btn btn-outline" onclick="switchView('estudiantes');closeMobileTools()" style="justify-content:center;padding:10px;border-radius:10px;font-size:0.8rem">
             👥<br><span style="font-weight:800;margin-top:2px;display:block">Matriz Datos</span>
           </button>
