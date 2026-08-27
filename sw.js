@@ -1,5 +1,5 @@
 // Service Worker para PWA — Registro de Notas
-const CACHE_NAME = 'registro-notas-v24';
+const CACHE_NAME = 'registro-notas-v25';
 const ASSETS = [
   './',
   './index.html',
