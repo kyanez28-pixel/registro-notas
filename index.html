@@ -2033,8 +2033,100 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   transition: width .3s ease;
 }
 
+/* ══════════════════════════════════════════════════════
+   ESTILOS: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES
+   ══════════════════════════════════════════════════════ */
+.herramientas-subtabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-card);
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 14px;
+  overflow-x: auto;
+  align-items: center;
+}
+.herramientas-subtab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s ease;
+}
+.herramientas-subtab-btn:hover {
+  background: var(--bg-card-subtle);
+  color: var(--text-main);
+}
+.herramientas-subtab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+}
+
+.printable-sheet {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-top: 14px;
+}
+.dark-theme .printable-sheet {
+  background: #ffffff;
+  color: #0f172a;
+}
+.printable-sheet table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.printable-sheet th, .printable-sheet td {
+  border: 1px solid #cbd5e1;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+}
+.printable-sheet th {
+  background: #f1f5f9;
+  font-weight: 800;
+  text-align: center;
+  color: #1e293b;
+}
+
+.cut-slip {
+  border: 1.5px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background: #ffffff;
+  color: #0f172a;
+  page-break-inside: avoid;
+}
+.cut-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  margin: 12px 0;
+}
+.cut-line::before, .cut-line::after {
+  content: '';
+  flex: 1;
+  border-top: 1.5px dashed #94a3b8;
+}
+
 @media print {
-  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel { display: none !important; }
+  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel, .sidebar { display: none !important; }
   body { background: #fff; color: #000; font-size: 9pt; }
   .content { padding: 0; }
   .tw { box-shadow: none; max-height: none; overflow: visible; border: none; }
@@ -2044,9 +2136,11 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   #reportPanel { display: block !important; padding: 0; }
   #viewNotasPanel { display: block !important; }
   #diagnosticoPanel { display: block !important; padding: 0; }
+  #herramientasPanel { display: block !important; padding: 0; }
+  .printable-sheet { border: none !important; box-shadow: none !important; padding: 0 !important; }
   .print-header { display: block !important; }
   .no-print { display: none !important; }
-  @page { margin: 1cm; size: landscape; }
+  @page { margin: 0.8cm; size: auto; }
 }
 </style>
 </head>
@@ -2384,6 +2478,12 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span class="sidebar-btn-icon">🏛️</span>
         <span class="sidebar-btn-text">Cronograma & Agenda</span>
         <span class="sidebar-btn-badge" id="cronoProgressBadge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">En Vivo</span>
+      </button>
+
+      <button id="viewHerramientas" class="sidebar-btn" onclick="switchView('herramientas')" title="Herramientas de aula, formatos personalizables, reuniones, bitácora de atención y citaciones">
+        <span class="sidebar-btn-icon">🛠️</span>
+        <span class="sidebar-btn-text">Herramientas de Aula</span>
+        <span class="sidebar-btn-badge" style="background:#e0e7ff;color:#4338ca;border-color:#c7d2fe">Formatos</span>
       </button>
 
       <button id="viewConfig" class="sidebar-btn" onclick="switchView('config')" title="Configuración de trimestres, materias y respaldos">
@@ -3877,6 +3977,316 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
       </div>
     </div>
 
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     VISTA: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES
+     ══════════════════════════════════════════════════════ -->
+<div id="herramientasPanel" style="display:none" class="content">
+
+  <!-- Header Banner -->
+  <div style="background:linear-gradient(135deg,#312e81 0%,#4338ca 50%,#6366f1 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.8rem">🛠️</span>
+        <div>
+          <h2 style="margin:0;font-size:1.25rem;font-weight:900;letter-spacing:-0.3px;border:none;padding:0;color:#fff">
+            Herramientas de Aula &amp; Formatos Imprimibles
+          </h2>
+          <div style="font-size:0.8rem;opacity:.9;margin-top:2px">
+            En esta sección encontrará formatos como Registro de Asistencia, Reuniones, Atención a Padres, Convocatorias, Listados personalizados y Rúbricas.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="normative-pill" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.4)" id="herramientasCourseTag">
+        Séptimo EGB C · 2026-2027
+      </span>
+      <button class="btn" style="background:rgba(255,255,255,0.18);color:#fff;border:1.5px solid rgba(255,255,255,0.35)" onclick="printCurrentHerramientasView()" title="Imprimir el documento actualmente seleccionado">
+        🖨️ Imprimir Formato Activo
+      </button>
+    </div>
+  </div>
+
+  <!-- Sub-pestañas de Navegación -->
+  <div class="herramientas-subtabs no-print">
+    <button class="herramientas-subtab-btn active" id="btnHerramientasTabListados" onclick="switchHerramientasTab('listados')">
+      <span>📑</span> <span>1. Listados Personalizados</span>
+    </button>
+    <button class="herramientas-subtab-btn" id="btnHerramientasTabReuniones" onclick="switchHerramientasTab('reuniones')">
+      <span>👥</span> <span>2. Reuniones de Padres (Firmas &amp; Quórum)</span>
+    </button>
+    <button class="herramientas-subtab-btn" id="btnHerramientasTabAtencion" onclick="switchHerramientasTab('atencion')">
+      <span>💬</span> <span>3. Atención a Representantes (Bitácora)</span>
+    </button>
+    <button class="herramientas-subtab-btn" id="btnHerramientasTabCitaciones" onclick="switchHerramientasTab('citaciones')">
+      <span>✉️</span> <span>4. Convocatorias &amp; Citaciones Recortables</span>
+    </button>
+    <button class="herramientas-subtab-btn" id="btnHerramientasTabRubricas" onclick="switchHerramientasTab('rubricas')">
+      <span>📊</span> <span>5. Rúbricas de Aula (MINEDEC)</span>
+    </button>
+  </div>
+
+  <!-- ════ SUB-PANEL 1: LISTADOS PERSONALIZADOS ════ -->
+  <div id="herramientasViewListados" class="herramientas-view">
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid var(--primary)">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#e0e7ff;color:#4338ca">📑</div>
+        <div>
+          <div class="config-card-title">Configuración de Listado Personalizado</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Crea listas para control de uniformes, tareas, textos, aportes o cualquier actividad de aula</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('textos')">📚 Entrega Textos</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('tareas')">✍️ Control Tareas</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('comite')">💵 Aportes Comité</button>
+          <button class="btn btn-outline" style="font-size:0.75rem" onclick="applyListPreset('salidas')">🚌 Salida Pedagógica</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Título del Documento</label>
+          <input type="text" id="custDocTitle" value="LISTADO DE CONTROL DE ACTIVIDADES" oninput="updateCustomListPreview()" placeholder="Ej: REGISTRO DE ENTREGA DE TEXTOS ESCOLARES" style="width:100%;font-weight:700"/>
+        </div>
+        <div>
+          <label>Detalle / Asignatura / Indicador</label>
+          <input type="text" id="custDocSubtitle" value="" oninput="updateCustomListPreview()" placeholder="Ej: Lengua y Literatura / Primer Trimestre" style="width:100%"/>
+        </div>
+        <div>
+          <label>Orientación y Formato de Impresión</label>
+          <select id="custDocOrientation" onchange="updateCustomListPreview()" style="width:100%">
+            <option value="portrait">📄 Vertical (Retrato - Hasta 5 columnas)</option>
+            <option value="landscape">📑 Horizontal (Paisaje - Hasta 10 columnas)</option>
+          </select>
+        </div>
+        <div>
+          <label>¿Cuántas columnas necesita crear?</label>
+          <select id="custDocColCount" onchange="onCustomColCountChange(this.value)" style="width:100%;font-weight:800">
+            <option value="1">1 Columna</option>
+            <option value="2">2 Columnas</option>
+            <option value="3">3 Columnas</option>
+            <option value="4" selected>4 Columnas</option>
+            <option value="5">5 Columnas</option>
+            <option value="6">6 Columnas</option>
+            <option value="7">7 Columnas</option>
+            <option value="8">8 Columnas</option>
+            <option value="9">9 Columnas</option>
+            <option value="10">10 Columnas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Columnas configuradas dinámicas -->
+      <label style="margin-bottom:6px;display:block">Nombres y Tipos de las Columnas:</label>
+      <div id="custColsConfigContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:14px"></div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="printCustomList()">🖨️ Imprimir Listado Membretado</button>
+        <button class="btn btn-teal" onclick="exportCustomListXLSX()">📥 Exportar a Excel (.xlsx)</button>
+        <button class="btn btn-outline" onclick="resetCustomListForm()">🔄 Restablecer</button>
+        <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto">Nómina sincronizada: <strong id="custNominaCount">40 estudiantes</strong></span>
+      </div>
+    </div>
+
+    <!-- Vista Previa Imprimible de Listado -->
+    <div id="customListPreviewBox" class="printable-sheet"></div>
+  </div>
+
+  <!-- ════ SUB-PANEL 2: REUNIONES DE PADRES ════ -->
+  <div id="herramientasViewReuniones" class="herramientas-view" style="display:none">
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #059669">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#d1fae5;color:#065f46">👥</div>
+        <div>
+          <div class="config-card-title">Registro de Asistencia a Reunión de Padres</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Genera el acta de reunión con orden del día, registro de firmas y quórum</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Título de la Reunión</label>
+          <input type="text" id="reunionTitulo" value="I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO" oninput="updateReunionPreview()" style="width:100%;font-weight:700"/>
+        </div>
+        <div>
+          <label>Fecha de la Reunión</label>
+          <input type="text" id="reunionFecha" value="Viernes, 05 de Septiembre de 2026" oninput="updateReunionPreview()" style="width:100%"/>
+        </div>
+        <div>
+          <label>Hora y Lugar</label>
+          <input type="text" id="reunionHoraLugar" value="13:30 a 15:00 · Aula de Séptimo C" oninput="updateReunionPreview()" style="width:100%"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>Orden del Día / Temas Tratados (Puntos a tratar)</label>
+        <textarea id="reunionOrden" rows="3" oninput="updateReunionPreview()" style="width:100%;font-size:0.82rem">1. Saludo y bienvenida por parte del Docente Tutor.
+2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).
+3. Informe de la Fase CONECTA y diagnóstico socioemocional.
+4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).
+5. Asuntos varios y compromisos de los representantes.</textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-success" onclick="printReunionActa()">🖨️ Imprimir Acta y Registro de Firmas</button>
+        <button class="btn btn-teal" onclick="exportReunionXLSX()">📥 Exportar Lista a Excel (.xlsx)</button>
+      </div>
+    </div>
+
+    <!-- Vista Previa Imprimible de Reunión -->
+    <div id="reunionPreviewBox" class="printable-sheet"></div>
+  </div>
+
+  <!-- ════ SUB-PANEL 3: ATENCIÓN A REPRESENTANTES (BITÁCORA) ════ -->
+  <div id="herramientasViewAtencion" class="herramientas-view" style="display:none">
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #d97706">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#fef3c7;color:#92400e">💬</div>
+        <div>
+          <div class="config-card-title">Ficha Individual de Atención a Padres de Familia (Bitácora)</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Instrumento oficial de tutoría y respaldo para archivo DECE con acuerdos y firmas</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Estudiante Convocado/a</label>
+          <select id="atencionStudentSel" onchange="onAtencionStudentChange(this.value)" style="width:100%;font-weight:700"></select>
+        </div>
+        <div>
+          <label>Nombre del Representante que Asiste</label>
+          <input type="text" id="atencionRepName" placeholder="Nombres completos del representante" oninput="updateAtencionPreview()" style="width:100%"/>
+        </div>
+        <div>
+          <label>Parentesco / Relación</label>
+          <select id="atencionParentesco" onchange="updateAtencionPreview()" style="width:100%">
+            <option value="Madre de Familia">Madre de Familia</option>
+            <option value="Padre de Familia">Padre de Familia</option>
+            <option value="Representante Legal / Tutor">Representante Legal / Tutor</option>
+            <option value="Abuelo/a">Abuelo/a</option>
+            <option value="Familiar Autorizado">Familiar Autorizado</option>
+          </select>
+        </div>
+        <div>
+          <label>Fecha y Hora</label>
+          <input type="text" id="atencionFechaHora" value="" oninput="updateAtencionPreview()" style="width:100%"/>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Motivo de la Atención</label>
+          <select id="atencionMotivo" onchange="updateAtencionPreview()" style="width:100%;font-weight:700">
+            <option value="Bajo Rendimiento Académico / Alerta de Refuerzo">Bajo Rendimiento Académico / Alerta de Refuerzo</option>
+            <option value="Dificultades de Comportamiento / Convivencia">Dificultades de Comportamiento / Convivencia</option>
+            <option value="Inasistencias Reiteradas o Justificación de Faltas">Inasistencias Reiteradas o Justificación de Faltas</option>
+            <option value="Acompañamiento Socioemocional / Caso DECE">Acompañamiento Socioemocional / Caso DECE</option>
+            <option value="Solicitud de Información por parte del Representante">Solicitud de Información por parte del Representante</option>
+            <option value="Felicitación por Desempeño Sobresaliente">Felicitación por Desempeño Sobresaliente</option>
+          </select>
+        </div>
+        <div>
+          <label>Cédula y Contacto del Representante</label>
+          <input type="text" id="atencionContacto" placeholder="C.I. / Teléfono" oninput="updateAtencionPreview()" style="width:100%"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <label>Descripción de la Situación Tratada (Hechos / Antecedentes)</label>
+        <textarea id="atencionHechos" rows="3" oninput="updateAtencionPreview()" placeholder="Detallar la situación presentada en clase, tareas o convivencia..." style="width:100%;font-size:0.82rem"></textarea>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>Acuerdos y Compromisos Establecidos</label>
+        <textarea id="atencionCompromisos" rows="3" oninput="updateAtencionPreview()" placeholder="1. El representante se compromete a revisar los cuadernos diariamente...&#10;2. El docente brindará refuerzo pedagógico...&#10;3. Seguimiento conjunto en 15 días." style="width:100%;font-size:0.82rem"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-warning" onclick="printAtencionFicha()" style="font-weight:800">🖨️ Imprimir Ficha de Atención</button>
+      </div>
+    </div>
+
+    <!-- Vista Previa Imprimible de Ficha de Atención -->
+    <div id="atencionPreviewBox" class="printable-sheet"></div>
+  </div>
+
+  <!-- ════ SUB-PANEL 4: CONVOCATORIAS Y CITACIONES RECORTABLES ════ -->
+  <div id="herramientasViewCitaciones" class="herramientas-view" style="display:none">
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #7c3aed">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#ede9fe;color:#6d28d9">✉️</div>
+        <div>
+          <div class="config-card-title">Generador de Convocatorias &amp; Citaciones Recortables</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Boletas recortables optimizadas (3 citaciones por hoja A4) con talón de confirmación firmado</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
+        <div>
+          <label>Tipo de Citación</label>
+          <select id="citacionModo" onchange="onCitacionModoChange(this.value)" style="width:100%;font-weight:700">
+            <option value="individual">Estudiante Específico (1 boleta individual)</option>
+            <option value="masiva">Nómina Completa (Toda la clase para reunión)</option>
+          </select>
+        </div>
+        <div id="citacionSingleStudentWrap">
+          <label>Estudiante</label>
+          <select id="citacionStudentSel" onchange="updateCitacionesPreview()" style="width:100%"></select>
+        </div>
+        <div>
+          <label>Fecha y Hora de la Cita</label>
+          <input type="text" id="citacionFechaHora" value="" oninput="updateCitacionesPreview()" placeholder="Ej: Lunes 14 de Septiembre a las 14:00" style="width:100%"/>
+        </div>
+        <div>
+          <label>Lugar</label>
+          <input type="text" id="citacionLugar" value="Aula de Séptimo de Básica C" oninput="updateCitacionesPreview()" style="width:100%"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>Motivo / Asunto de la Convocatoria</label>
+        <input type="text" id="citacionMotivo" value="Tratar asuntos pedagógicos y comportamentales relacionados con su representado/a." oninput="updateCitacionesPreview()" style="width:100%"/>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="printCitaciones()">🖨️ Imprimir Citaciones Recortables</button>
+      </div>
+    </div>
+
+    <!-- Vista Previa de Citaciones Recortables -->
+    <div id="citacionesPreviewBox"></div>
+  </div>
+
+  <!-- ════ SUB-PANEL 5: RÚBRICAS DE AULA ════ -->
+  <div id="herramientasViewRubricas" class="herramientas-view" style="display:none">
+    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #0284c7">
+      <div class="config-card-header">
+        <div class="config-card-icon" style="background:#e0f2fe;color:#0284c7">📊</div>
+        <div>
+          <div class="config-card-title">Rúbricas Oficiales de Observación y Trabajo en Aula</div>
+          <div style="font-size:0.72rem;color:var(--text-muted)">Instrumentos cualitativos con escalas ministeriales (DA, AA, PA, NA) listos para imprimir</div>
+        </div>
+        <div style="margin-left:auto">
+          <select id="rubricaPresetSel" onchange="onRubricaPresetChange(this.value)" style="font-weight:700">
+            <option value="exposicion">🎤 Rúbrica: Exposición Oral y Discurso</option>
+            <option value="cooperativo">🤝 Rúbrica: Trabajo Cooperativo en Grupo</option>
+            <option value="cuaderno">📓 Rúbrica: Portafolio / Cuaderno de Trabajo</option>
+            <option value="convivencia">💙 Rúbrica: Convivencia y Clima de Aula</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="printRubrica()">🖨️ Imprimir Rúbrica Seleccionada</button>
+      </div>
+    </div>
+
+    <!-- Vista Previa de la Rúbrica -->
+    <div id="rubricaPreviewBox" class="printable-sheet"></div>
   </div>
 
 </div>
@@ -7336,27 +7746,29 @@ function applySortOrder() {
 
 function switchView(v) {
   const panels = {
-    'notas':       'viewNotasPanel',
-    'diagnostico': 'diagnosticoPanel',
-    'estudiantes': 'studentsMatrixPanel',
-    'asistencia':  'attendancePanel',
-    'pi':          'piPanel',
-    'reporte':     'reportPanel',
-    'export':      'exportPanel',
-    'config':      'configPanel',
-    'cronograma':  'cronogramaPanel'
+    'notas':        'viewNotasPanel',
+    'diagnostico':  'diagnosticoPanel',
+    'estudiantes':  'studentsMatrixPanel',
+    'asistencia':   'attendancePanel',
+    'pi':           'piPanel',
+    'reporte':      'reportPanel',
+    'export':       'exportPanel',
+    'config':       'configPanel',
+    'cronograma':   'cronogramaPanel',
+    'herramientas': 'herramientasPanel'
   };
 
   const navBtns = {
-    'notas':       'viewNotas',
-    'diagnostico': 'viewDiagnostico',
-    'estudiantes': 'viewEstudiantes',
-    'asistencia':  'viewAttendance',
-    'pi':          'viewPi',
-    'reporte':     'viewReporte',
-    'export':      'viewExport',
-    'config':      'viewConfig',
-    'cronograma':  'viewCronograma'
+    'notas':        'viewNotas',
+    'diagnostico':  'viewDiagnostico',
+    'estudiantes':  'viewEstudiantes',
+    'asistencia':   'viewAttendance',
+    'pi':           'viewPi',
+    'reporte':      'viewReporte',
+    'export':       'viewExport',
+    'config':       'viewConfig',
+    'cronograma':   'viewCronograma',
+    'herramientas': 'viewHerramientas'
   };
 
   Object.keys(panels).forEach(key => {
@@ -7385,6 +7797,7 @@ function switchView(v) {
   if (v === 'pi') renderPi();
   if (v === 'estudiantes') renderStudentsMatrix();
   if (v === 'cronograma') renderCronogramaModule();
+  if (v === 'herramientas') renderHerramientas();
 }
 
 function toggleSidebarCollapse() {
@@ -11508,6 +11921,785 @@ function exportDiagnosticoXLSX() {
   a.download = `Evaluacion_Diagnostica_${(S.grado||'7mo').replace(/\s+/g,'_')}_${(S.anio||'2026-2027')}.xlsx`;
   a.click();
   toast('✔ Archivo Excel de Evaluación Diagnóstica descargado', '#16a34a');
+}
+
+// ══════════════════════════════════════════════════════
+//  MÓDULO: HERRAMIENTAS DE AULA & FORMATOS IMPRIMIBLES
+//  (UEF CALDERÓN 2 · SÉPTIMO EGB MEDIA · MINEDEC)
+// ══════════════════════════════════════════════════════
+
+let _activeHerramientasTab = 'listados';
+const LIST_PRESETS = {
+  textos: {
+    title: 'REGISTRO DE ENTREGA DE TEXTOS ESCOLARES',
+    subtitle: 'Ministerio de Educación, Deporte y Cultura (MINEDEC) · Régimen Sierra-Amazonía',
+    cols: ['Lengua y Lit.', 'Matemáticas', 'C. Naturales', 'E. Sociales', 'Firma Representante', 'Observaciones'],
+    types: ['check', 'check', 'check', 'check', 'firma', 'texto']
+  },
+  tareas: {
+    title: 'CONTROL DE CUMPLIMIENTO DE TAREAS Y ACTIVIDADES',
+    subtitle: 'Evaluación Formativa Continua (70%) · Séptimo de Básica',
+    cols: ['Actividad 1', 'Actividad 2', 'Actividad 3', 'Actividad 4', 'Firma Tutor/a', 'Estado'],
+    types: ['check', 'check', 'check', 'check', 'firma', 'texto']
+  },
+  comite: {
+    title: 'REGISTRO DE APORTES VOLUNTARIOS DE COMITÉ DE PADRES',
+    subtitle: 'Comité Central de Padres de Familia · Séptimo de Básica C',
+    cols: ['Monto Aportado ($)', 'Número de Recibo', 'Firma de Conformidad', 'Saldo Pendiente', 'Observación'],
+    types: ['texto', 'texto', 'firma', 'texto', 'texto']
+  },
+  salidas: {
+    title: 'AUTORIZACIÓN Y REGISTRO DE SALIDA PEDAGÓGICA',
+    subtitle: 'Gira de Observación / Proyecto Interdisciplinario CREA',
+    cols: ['Autorización [SÍ/NO]', 'Cédula Representante', 'Teléfono de Contacto', 'Firma de Autorización', 'Observaciones Médicas'],
+    types: ['check', 'texto', 'texto', 'firma', 'texto']
+  }
+};
+
+function ensureHerramientas() {
+  if (!S.herramientas) S.herramientas = {};
+  if (!S.herramientas.listado) {
+    S.herramientas.listado = {
+      title: 'LISTADO DE CONTROL DE ACTIVIDADES',
+      subtitle: `${S.grado||'Séptimo de Básica C'} · Año Lectivo ${S.anio||'2026-2027'}`,
+      orientation: 'portrait',
+      colCount: 4,
+      cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
+      colTypes: ['texto', 'check', 'firma', 'texto']
+    };
+  }
+  if (!S.herramientas.reunion) {
+    S.herramientas.reunion = {
+      titulo: 'I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO',
+      fecha: 'Viernes, 05 de Septiembre de 2026',
+      horaLugar: '13:30 a 15:00 · Aula de Séptimo C',
+      orden: '1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.'
+    };
+  }
+  if (!S.herramientas.atencion) {
+    S.herramientas.atencion = {
+      studentIdx: 0,
+      repName: '',
+      parentesco: 'Madre de Familia',
+      fechaHora: 'Lunes, 14 de Septiembre de 2026 · 14:00',
+      motivo: 'Bajo Rendimiento Académico / Alerta de Refuerzo',
+      contacto: '',
+      hechos: '',
+      compromisos: ''
+    };
+  }
+  if (!S.herramientas.citaciones) {
+    S.herramientas.citaciones = {
+      modo: 'individual',
+      studentIdx: 0,
+      fechaHora: 'Lunes, 14 de Septiembre de 2026 a las 14:00',
+      lugar: 'Aula de Séptimo de Básica C',
+      motivo: 'Tratar asuntos pedagógicos y comportamentales relacionados con su representado/a.'
+    };
+  }
+  if (!S.herramientas.rubrica) {
+    S.herramientas.rubrica = { preset: 'exposicion' };
+  }
+}
+
+function renderHerramientas() {
+  ensureHerramientas();
+
+  // Actualizar indicador de curso
+  const cTag = document.getElementById('herramientasCourseTag');
+  if (cTag) cTag.textContent = `${S.grado || 'Séptimo EGB C'} · ${S.anio || '2026-2027'}`;
+
+  // Actualizar contador de nómina
+  const nCount = document.getElementById('custNominaCount');
+  if (nCount && S.students) nCount.textContent = `${S.students.length} estudiantes`;
+
+  populateAtencionStudentSelect();
+  populateCitacionStudentSelect();
+  renderCustomColsConfig();
+  switchHerramientasTab(_activeHerramientasTab);
+}
+
+function switchHerramientasTab(tabId) {
+  _activeHerramientasTab = tabId;
+
+  const views = {
+    'listados':   'herramientasViewListados',
+    'reuniones':  'herramientasViewReuniones',
+    'atencion':   'herramientasViewAtencion',
+    'citaciones': 'herramientasViewCitaciones',
+    'rubricas':   'herramientasViewRubricas'
+  };
+
+  const btns = {
+    'listados':   'btnHerramientasTabListados',
+    'reuniones':  'btnHerramientasTabReuniones',
+    'atencion':   'btnHerramientasTabAtencion',
+    'citaciones': 'btnHerramientasTabCitaciones',
+    'rubricas':   'btnHerramientasTabRubricas'
+  };
+
+  Object.keys(views).forEach(k => {
+    const el = document.getElementById(views[k]);
+    if (el) el.style.display = (k === tabId) ? 'block' : 'none';
+    const b = document.getElementById(btns[k]);
+    if (b) {
+      if (k === tabId) b.classList.add('active');
+      else b.classList.remove('active');
+    }
+  });
+
+  if (tabId === 'listados') updateCustomListPreview();
+  if (tabId === 'reuniones') updateReunionPreview();
+  if (tabId === 'atencion') updateAtencionPreview();
+  if (tabId === 'citaciones') updateCitacionesPreview();
+  if (tabId === 'rubricas') updateRubricaPreview();
+}
+
+function printCurrentHerramientasView() {
+  if (_activeHerramientasTab === 'listados') printCustomList();
+  else if (_activeHerramientasTab === 'reuniones') printReunionActa();
+  else if (_activeHerramientasTab === 'atencion') printAtencionFicha();
+  else if (_activeHerramientasTab === 'citaciones') printCitaciones();
+  else if (_activeHerramientasTab === 'rubricas') printRubrica();
+}
+
+// ── 1. LISTADOS PERSONALIZADOS ──
+function renderCustomColsConfig() {
+  ensureHerramientas();
+  const cfg = S.herramientas.listado;
+  const count = cfg.colCount || 4;
+  const container = document.getElementById('custColsConfigContainer');
+  if (!container) return;
+
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const colName = cfg.cols[i] || `Columna ${i+1}`;
+    const colType = cfg.colTypes[i] || 'texto';
+    html += `
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px 10px">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:4px">Columna #${i+1}</div>
+        <input type="text" id="custColName_${i}" value="${escVal(colName)}" oninput="onCustomColMetaChange(${i})" placeholder="Nombre de columna" style="width:100%;margin-bottom:6px;font-size:0.8rem;font-weight:700"/>
+        <select id="custColType_${i}" onchange="onCustomColMetaChange(${i})" style="width:100%;font-size:0.75rem">
+          <option value="texto" ${colType==='texto'?'selected':''}>📝 Texto / Datos</option>
+          <option value="check" ${colType==='check'?'selected':''}>☑️ Casilla Verificación</option>
+          <option value="firma" ${colType==='firma'?'selected':''}>✍️ Espacio para Firma</option>
+        </select>
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function onCustomColCountChange(val) {
+  ensureHerramientas();
+  const count = parseInt(val, 10) || 4;
+  S.herramientas.listado.colCount = count;
+  while (S.herramientas.listado.cols.length < count) {
+    const idx = S.herramientas.listado.cols.length + 1;
+    S.herramientas.listado.cols.push(`Columna ${idx}`);
+    S.herramientas.listado.colTypes.push('texto');
+  }
+  renderCustomColsConfig();
+  updateCustomListPreview();
+}
+
+function onCustomColMetaChange(idx) {
+  ensureHerramientas();
+  const nameEl = document.getElementById(`custColName_${idx}`);
+  const typeEl = document.getElementById(`custColType_${idx}`);
+  if (nameEl) S.herramientas.listado.cols[idx] = nameEl.value.trim() || `Col ${idx+1}`;
+  if (typeEl) S.herramientas.listado.colTypes[idx] = typeEl.value;
+  updateCustomListPreview();
+}
+
+function applyListPreset(key) {
+  const p = LIST_PRESETS[key];
+  if (!p) return;
+  ensureHerramientas();
+  S.herramientas.listado.title = p.title;
+  S.herramientas.listado.subtitle = p.subtitle;
+  S.herramientas.listado.colCount = p.cols.length;
+  S.herramientas.listado.cols = [...p.cols];
+  S.herramientas.listado.colTypes = [...p.types];
+
+  const tEl = document.getElementById('custDocTitle');
+  const sEl = document.getElementById('custDocSubtitle');
+  const cEl = document.getElementById('custDocColCount');
+  if (tEl) tEl.value = p.title;
+  if (sEl) sEl.value = p.subtitle;
+  if (cEl) cEl.value = p.cols.length;
+
+  renderCustomColsConfig();
+  updateCustomListPreview();
+  toast(`✔ Plantilla "${p.title.split(' ')[0]}..." aplicada`, '#16a34a');
+}
+
+function resetCustomListForm() {
+  ensureHerramientas();
+  S.herramientas.listado = {
+    title: 'LISTADO DE CONTROL DE ACTIVIDADES',
+    subtitle: `${S.grado||'Séptimo de Básica C'} · Año Lectivo ${S.anio||'2026-2027'}`,
+    orientation: 'portrait',
+    colCount: 4,
+    cols: ['Cédula', 'Cumplió [✓]', 'Firma de Registro', 'Observaciones'],
+    colTypes: ['texto', 'check', 'firma', 'texto']
+  };
+  const tEl = document.getElementById('custDocTitle');
+  const sEl = document.getElementById('custDocSubtitle');
+  const cEl = document.getElementById('custDocColCount');
+  if (tEl) tEl.value = S.herramientas.listado.title;
+  if (sEl) sEl.value = S.herramientas.listado.subtitle;
+  if (cEl) cEl.value = 4;
+  renderCustomColsConfig();
+  updateCustomListPreview();
+  toast('🔄 Listado restablecido', '#2563eb');
+}
+
+function updateCustomListPreview() {
+  ensureHerramientas();
+  const cfg = S.herramientas.listado;
+  const title = document.getElementById('custDocTitle')?.value.trim() || cfg.title || 'LISTADO DE CONTROL';
+  const subtitle = document.getElementById('custDocSubtitle')?.value.trim() || cfg.subtitle || '';
+  const count = cfg.colCount || 4;
+  const sorted = getSortedIndices();
+  const box = document.getElementById('customListPreviewBox');
+  if (!box) return;
+
+  let thCols = '';
+  for (let i = 0; i < count; i++) {
+    const colName = cfg.cols[i] || `Columna ${i+1}`;
+    const colType = cfg.colTypes[i] || 'texto';
+    let minW = '110px';
+    if (colType === 'check') minW = '70px';
+    if (colType === 'firma') minW = '160px';
+    thCols += `<th style="min-width:${minW};text-align:center">${escHTML(colName.toUpperCase())}</th>`;
+  }
+
+  let rowsHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    let tdCols = '';
+    for (let i = 0; i < count; i++) {
+      const colType = cfg.colTypes[i] || 'texto';
+      if (colType === 'check') {
+        tdCols += `<td style="text-align:center;font-size:1.1rem;color:#cbd5e1">▢</td>`;
+      } else if (colType === 'firma') {
+        tdCols += `<td style="height:26px;border-bottom:1px solid #cbd5e1"></td>`;
+      } else {
+        tdCols += `<td style="height:22px"></td>`;
+      }
+    }
+    return `<tr>
+      <td style="text-align:center;font-weight:800;width:36px">${rowPos+1}</td>
+      <td style="font-weight:700;padding-left:8px">${escHTML(name)}</td>
+      ${tdCols}
+    </tr>`;
+  }).join('');
+
+  box.innerHTML = `
+    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">
+      <div style="font-weight:900;font-size:1.05rem;letter-spacing:0.3px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+      <div style="font-weight:800;font-size:0.92rem;color:#1e3a8a;margin:2px 0">${escHTML(title)}</div>
+      ${subtitle ? `<div style="font-size:0.78rem;color:#475569">${escHTML(subtitle)}</div>` : ''}
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155">
+        <span>Docente / Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
+        <span>Grado: <strong>${escHTML(S.grado||'Séptimo C')}</strong></span>
+        <span>Año Lectivo: <strong>${escHTML(S.anio||'2026-2027')}</strong></span>
+        <span>Fecha: <strong>____ / ____ / 202__</strong></span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th style="min-width:220px;text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>
+          ${thCols}
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">DOCENTE / TUTOR</span>
+      </div>
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">DIRECTIVA / COORDINACIÓN</strong><br>
+        <span style="font-size:0.72rem;color:#475569">RECIBIDO / REVISADO</span>
+      </div>
+    </div>
+  `;
+}
+
+function printCustomList() {
+  updateCustomListPreview();
+  window.print();
+}
+
+function exportCustomListXLSX() {
+  ensureHerramientas();
+  const cfg = S.herramientas.listado;
+  const title = document.getElementById('custDocTitle')?.value.trim() || cfg.title;
+  const count = cfg.colCount || 4;
+  const sorted = getSortedIndices();
+
+  const headers = [
+    { v: '#', t: 's', s: 'hdr' },
+    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' }
+  ];
+  for (let i = 0; i < count; i++) {
+    headers.push({ v: (cfg.cols[i] || `Columna ${i+1}`).toUpperCase(), t: 's', s: 'hdr_col' });
+  }
+
+  const rows = [
+    [{ v: `UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"`, t: 's', s: 'title' }],
+    [{ v: title.toUpperCase(), t: 's', s: 'sub' }],
+    [{ v: `Docente: ${S.docente||'Lcdo. Kevin Yánez'} | Grado: ${S.grado||'7mo C'} | Año: ${S.anio||'2026-2027'}`, t: 's', s: 'sub' }],
+    [],
+    headers
+  ];
+
+  sorted.forEach((si, rowIdx) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    const row = [
+      { v: rowIdx + 1, t: 'n', s: 'num' },
+      { v: name, t: 's', s: 'name' }
+    ];
+    for (let i = 0; i < count; i++) {
+      row.push({ v: '', t: 's', s: 'empty' });
+    }
+    rows.push(row);
+  });
+
+  const sheets = [{ name: 'Listado_Personalizado', rows }];
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Listado_${title.replace(/\s+/g,'_')}_${(S.grado||'7mo').replace(/\s+/g,'_')}.xlsx`;
+  a.click();
+  toast('✔ Archivo Excel generado con éxito', '#16a34a');
+}
+
+// ── 2. REUNIONES DE PADRES (ACTA & ASISTENCIA) ──
+function updateReunionPreview() {
+  ensureHerramientas();
+  const titulo = document.getElementById('reunionTitulo')?.value.trim() || S.herramientas.reunion.titulo;
+  const fecha = document.getElementById('reunionFecha')?.value.trim() || S.herramientas.reunion.fecha;
+  const horaLugar = document.getElementById('reunionHoraLugar')?.value.trim() || S.herramientas.reunion.horaLugar;
+  const orden = document.getElementById('reunionOrden')?.value.trim() || S.herramientas.reunion.orden;
+  const sorted = getSortedIndices();
+  const box = document.getElementById('reunionPreviewBox');
+  if (!box) return;
+
+  const ordenListHtml = orden.split('\n').filter(l => l.trim() !== '').map(l => `<li style="margin-bottom:2px">${escHTML(l.replace(/^\d+\.\s*/, ''))}</li>`).join('');
+
+  const rowsHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    return `<tr>
+      <td style="text-align:center;font-weight:800;width:34px">${rowPos+1}</td>
+      <td style="font-weight:700;padding-left:8px;min-width:200px">${escHTML(name)}</td>
+      <td style="min-width:180px"></td>
+      <td style="width:110px;text-align:center"></td>
+      <td style="min-width:150px"></td>
+      <td style="min-width:110px"></td>
+    </tr>`;
+  }).join('');
+
+  box.innerHTML = `
+    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:12px">
+      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+      <div style="font-weight:800;font-size:0.92rem;color:#065f46;margin:2px 0">${escHTML(titulo)}</div>
+      <div style="font-size:0.78rem;color:#475569">ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</div>
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">
+        <span>Docente Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
+        <span>Grado: <strong>${escHTML(S.grado||'Séptimo de Básica C')}</strong></span>
+        <span>Fecha: <strong>${escHTML(fecha)}</strong></span>
+        <span>Hora/Lugar: <strong>${escHTML(horaLugar)}</strong></span>
+      </div>
+    </div>
+
+    <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem">
+      <strong style="color:#0f172a;display:block;margin-bottom:4px">📌 ORDEN DEL DÍA / PUNTOS TRATADOS:</strong>
+      <ol style="margin:0 0 0 16px;padding:0;line-height:1.5">${ordenListHtml}</ol>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:34px">#</th>
+          <th style="text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>
+          <th style="text-align:left;padding-left:8px">NOMBRE DEL REPRESENTANTE</th>
+          <th>CÉDULA DE IDENTIDAD</th>
+          <th>FIRMA DE ASISTENCIA</th>
+          <th>OBSERVACIONES</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <div style="margin-top:14px;font-size:0.78rem;display:flex;justify-content:space-between;background:#f8fafc;padding:8px 12px;border-radius:6px;border:1px solid #cbd5e1">
+      <span>Total Matriculados: <strong>${sorted.length}</strong></span>
+      <span>Presentes: <strong>_____</strong></span>
+      <span>Ausentes: <strong>_____</strong></span>
+      <span>Quórum: <strong>_____%</strong></span>
+    </div>
+
+    <div style="display:flex;justify-content:space-around;margin-top:40px;page-break-inside:avoid">
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR</span>
+      </div>
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">PRESIDENTE/A DEL COMITÉ</strong><br>
+        <span style="font-size:0.72rem;color:#475569">COMITÉ DE PADRES DE FAMILIA</span>
+      </div>
+    </div>
+  `;
+}
+
+function printReunionActa() {
+  updateReunionPreview();
+  window.print();
+}
+
+function exportReunionXLSX() {
+  ensureHerramientas();
+  const titulo = document.getElementById('reunionTitulo')?.value.trim() || S.herramientas.reunion.titulo;
+  const sorted = getSortedIndices();
+
+  const rows = [
+    [{ v: `UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"`, t: 's', s: 'title' }],
+    [{ v: titulo.toUpperCase(), t: 's', s: 'sub' }],
+    [{ v: `Docente: ${S.docente||'Lcdo. Kevin Yánez'} | Grado: ${S.grado||'7mo C'} | Año: ${S.anio||'2026-2027'}`, t: 's', s: 'sub' }],
+    [],
+    [
+      { v: '#', t: 's', s: 'hdr' },
+      { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' },
+      { v: 'NOMBRE DEL REPRESENTANTE', t: 's', s: 'hdr_col' },
+      { v: 'CÉDULA', t: 's', s: 'hdr_col' },
+      { v: 'FIRMA', t: 's', s: 'hdr_col' },
+      { v: 'OBSERVACIONES', t: 's', s: 'hdr_col' }
+    ]
+  ];
+
+  sorted.forEach((si, rowIdx) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    rows.push([
+      { v: rowIdx + 1, t: 'n', s: 'num' },
+      { v: name, t: 's', s: 'name' },
+      { v: '', t: 's', s: 'empty' },
+      { v: '', t: 's', s: 'empty' },
+      { v: '', t: 's', s: 'empty' },
+      { v: '', t: 's', s: 'empty' }
+    ]);
+  });
+
+  const sheets = [{ name: 'Asistencia_Reunion', rows }];
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Asistencia_Reunion_Padres_${(S.grado||'7mo').replace(/\s+/g,'_')}.xlsx`;
+  a.click();
+  toast('✔ Archivo Excel de reunión descargado', '#16a34a');
+}
+
+// ── 3. ATENCIÓN A REPRESENTANTES (BITÁCORA) ──
+function populateAtencionStudentSelect() {
+  const sel = document.getElementById('atencionStudentSel');
+  if (!sel || !S.students) return;
+  const sorted = getSortedIndices();
+  sel.innerHTML = sorted.map(si => `<option value="${si}">${si+1}. ${escHTML(S.students[si])}</option>`).join('');
+}
+
+function onAtencionStudentChange(si) {
+  updateAtencionPreview();
+}
+
+function updateAtencionPreview() {
+  ensureHerramientas();
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  const stName = S.students[si] || 'Estudiante';
+  const repName = document.getElementById('atencionRepName')?.value.trim() || '_______________________________________';
+  const parentesco = document.getElementById('atencionParentesco')?.value || 'Madre de Familia';
+  const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const motivo = document.getElementById('atencionMotivo')?.value || 'Bajo Rendimiento Académico';
+  const contacto = document.getElementById('atencionContacto')?.value.trim() || '___________________';
+  const hechos = document.getElementById('atencionHechos')?.value.trim() || 'Se convoca al representante legal para informar y coordinar acciones de apoyo pedagógico y comportamental con respecto al proceso educativo del estudiante.';
+  const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '1. El representante legal se compromete a realizar el seguimiento diario de las tareas escolares y revisar los cuadernos.\n2. El docente tutor brindará acompañamiento pedagógico diferenciado.\n3. Se fija una reunión de seguimiento y evaluación de compromisos en 15 días hábiles.';
+  const box = document.getElementById('atencionPreviewBox');
+  if (!box) return;
+
+  const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => `<p style="margin:4px 0">${escHTML(l)}</p>`).join('');
+  const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => `<li style="margin-bottom:4px">${escHTML(l.replace(/^\d+\.\s*/, ''))}</li>`).join('');
+
+  box.innerHTML = `
+    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">
+      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+      <div style="font-weight:800;font-size:0.92rem;color:#b45309;margin:2px 0">BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</div>
+      <div style="font-size:0.78rem;color:#475569">Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio||'2026-2027')}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;padding:12px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.8rem;margin-bottom:14px">
+      <div><strong>Estudiante:</strong> ${escHTML(stName)}</div>
+      <div><strong>Grado / Paralelo:</strong> ${escHTML(S.grado||'Séptimo EGB C')}</div>
+      <div><strong>Representante:</strong> ${escHTML(repName)}</div>
+      <div><strong>Parentesco:</strong> ${escHTML(parentesco)}</div>
+      <div><strong>Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
+      <div><strong>C.I. / Contacto:</strong> ${escHTML(contacto)}</div>
+      <div style="grid-column:1/-1"><strong>Motivo Principal:</strong> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:800">${escHTML(motivo)}</span></div>
+    </div>
+
+    <div style="border:1px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.8rem">
+      <strong style="color:#0f172a;display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">
+        1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):
+      </strong>
+      <div style="color:#334155;line-height:1.6">${hechosHtml}</div>
+    </div>
+
+    <div style="border:1.5px solid #059669;background:#f0fdf4;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem">
+      <strong style="color:#065f46;display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px">
+        2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:
+      </strong>
+      <ol style="margin:0 0 0 16px;padding:0;color:#065f46;line-height:1.6">${compListHtml}</ol>
+    </div>
+
+    <div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;line-height:1.4">
+      <em>Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:</em>
+    </div>
+
+    <div style="display:flex;justify-content:space-around;page-break-inside:avoid">
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(repName)}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>
+        <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span>
+      </div>
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>
+        <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
+      </div>
+    </div>
+  `;
+}
+
+function printAtencionFicha() {
+  updateAtencionPreview();
+  window.print();
+}
+
+// ── 4. CONVOCATORIAS & CITACIONES RECORTABLES ──
+function populateCitacionStudentSelect() {
+  const sel = document.getElementById('citacionStudentSel');
+  if (!sel || !S.students) return;
+  const sorted = getSortedIndices();
+  sel.innerHTML = sorted.map(si => `<option value="${si}">${si+1}. ${escHTML(S.students[si])}</option>`).join('');
+}
+
+function onCitacionModoChange(val) {
+  const wrap = document.getElementById('citacionSingleStudentWrap');
+  if (wrap) wrap.style.display = (val === 'individual') ? 'block' : 'none';
+  updateCitacionesPreview();
+}
+
+function updateCitacionesPreview() {
+  ensureHerramientas();
+  const modo = document.getElementById('citacionModo')?.value || 'individual';
+  const fechaHora = document.getElementById('citacionFechaHora')?.value.trim() || 'Lunes 14 de Septiembre de 2026 a las 14:00';
+  const lugar = document.getElementById('citacionLugar')?.value.trim() || 'Aula de Séptimo de Básica C';
+  const motivo = document.getElementById('citacionMotivo')?.value.trim() || 'Tratar asuntos pedagógicos y comportamentales de su representado/a.';
+  const box = document.getElementById('citacionesPreviewBox');
+  if (!box) return;
+
+  const sorted = getSortedIndices();
+  let studentsToRender = [];
+  if (modo === 'individual') {
+    const sel = document.getElementById('citacionStudentSel');
+    const si = parseInt(sel?.value || '0', 10);
+    studentsToRender = [si];
+  } else {
+    studentsToRender = sorted;
+  }
+
+  let html = '';
+  studentsToRender.forEach((si, idx) => {
+    const stName = S.students[si] || `Estudiante ${si+1}`;
+    html += `
+      <div class="cut-slip">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">
+          <div>
+            <strong style="font-size:0.88rem;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</strong><br>
+            <span style="font-size:0.75rem;font-weight:700;color:#0f172a">CONVOCATORIA / CITACIÓN A REPRESENTANTE LEGAL</span>
+          </div>
+          <span style="font-size:0.75rem;font-weight:800;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:99px">
+            ${escHTML(S.grado||'7mo EGB C')}
+          </span>
+        </div>
+
+        <div style="font-size:0.78rem;color:#334155;line-height:1.5;margin-bottom:10px">
+          Señor/a Representante Legal de: <strong>${escHTML(stName)}</strong>.<br>
+          Se le convoca de manera obligatoria y puntual a una reunión con el Docente Tutor:
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.76rem;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div><strong>📅 Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
+          <div><strong>📍 Lugar:</strong> ${escHTML(lugar)}</div>
+          <div style="grid-column:1/-1"><strong>📌 Asunto:</strong> ${escHTML(motivo)}</div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:0.72rem;margin-bottom:10px">
+          <div>
+            <span>Docente Tutor: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span><br>
+            <span style="color:#64748b">Firma y Sello Institucional</span>
+          </div>
+          <div style="text-align:right;color:#64748b">
+            <span>Favor portar su cédula de identidad</span>
+          </div>
+        </div>
+
+        <div class="cut-line">✂️ DESPRENDIBLE DE CONFIRMACIÓN (RECORTAR Y DEVOLVER FIRMADO) ✂️</div>
+
+        <div style="font-size:0.74rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span><strong>Estudiante:</strong> ${escHTML(stName)}</span>
+            <span><strong>Grado:</strong> ${escHTML(S.grado||'7mo C')}</span>
+          </div>
+          <div style="margin-bottom:6px">
+            Yo, ____________________________________________, confirmo la recepción de la convocatoria para el día <strong>${escHTML(fechaHora)}</strong>.
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+            <span>C.I.: ________________________</span>
+            <span>Teléfono: ________________________</span>
+            <span>Firma: ________________________</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  box.innerHTML = html;
+}
+
+function printCitaciones() {
+  updateCitacionesPreview();
+  window.print();
+}
+
+// ── 5. RÚBRICAS DE AULA ──
+function onRubricaPresetChange(val) {
+  ensureHerramientas();
+  S.herramientas.rubrica.preset = val;
+  updateRubricaPreview();
+}
+
+function updateRubricaPreview() {
+  ensureHerramientas();
+  const preset = document.getElementById('rubricaPresetSel')?.value || S.herramientas.rubrica.preset || 'exposicion';
+  const box = document.getElementById('rubricaPreviewBox');
+  if (!box) return;
+
+  let title = '';
+  let criteria = [];
+
+  if (preset === 'exposicion') {
+    title = 'RÚBRICA DE EVALUACIÓN: EXPOSICIÓN ORAL Y DISCURSO EN CLASE';
+    criteria = [
+      { num: '1', name: 'Dominio del Tema & Contenido', da: 'Demuestra dominio completo, explica con claridad y responde preguntas con precisión.', aa: 'Conoce bien el tema, explica adecuadamente aunque duda en aspectos secundarios.', pa: 'Demuestra conocimiento básico; lee constantemente sus notas de apoyo.', na: 'No domina el tema; presenta información errónea o insuficiente.' },
+      { num: '2', name: 'Estructura & Organización', da: 'Presenta introducción motivadora, desarrollo coherente y conclusión sintetizada.', aa: 'Sigue una secuencia lógica con inicio, desarrollo y cierre identificables.', pa: 'La estructura es confusa; salta entre ideas sin transición clara.', na: 'Desorganizado; no presenta secuencia lógica ni cierre del tema.' },
+      { num: '3', name: 'Expresión Oral & Lenguaje', da: 'Voz clara y modulada, vocabulario formal enriquecido y excelente dicción.', aa: 'Voz audible y vocabulario adecuado para el nivel educativo.', pa: 'Volumen bajo o monotonía; uso repetitivo de muletillas.', na: 'Inaudible o dicción incomprensible; vocabulario inadecuado.' },
+      { num: '4', name: 'Recursos de Apoyo & Creatividad', da: 'Utiliza material visual/digital innovador, ordenado y sin saturación de texto.', aa: 'Material visual ordenado y pertinente que apoya la comprensión.', pa: 'Material visual saturado de texto o poco legible para el aula.', na: 'No presenta material de apoyo o es inadecuado e incompleto.' }
+    ];
+  } else if (preset === 'cooperativo') {
+    title = 'RÚBRICA DE TRABAJO EN EQUIPO Y APRENDIZAJE COOPERATIVO';
+    criteria = [
+      { num: '1', name: 'Participación y Aporte Activo', da: 'Aporta ideas valiosas de forma constante y asume roles con entusiasmo.', aa: 'Participa activamente en la mayoría de actividades del equipo.', pa: 'Participación pasiva; solo colabora cuando se le solicita directamente.', na: 'No aporta al grupo; se distrae o entorpece el trabajo colectivo.' },
+      { num: '2', name: 'Escucha Activa & Respeto', da: 'Escucha con empatía, valora la opinión ajena y resuelve desacuerdos pacíficamente.', aa: 'Escucha y respeta las opiniones de todos sus compañeros.', pa: 'Interrumpe o muestra desinterés por las ideas de los demás.', na: 'Falta al respeto, impone sus criterios o genera conflictos.' },
+      { num: '3', name: 'Responsabilidad con la Tarea', da: 'Cumple a cabalidad su parte asignada antes del tiempo límite con excelencia.', aa: 'Cumple con su parte asignada dentro del plazo establecido.', pa: 'Entrega su parte incompleta o requiere recordatorios constantes.', na: 'No entrega su parte, afectando el resultado final del equipo.' },
+      { num: '4', name: 'Co-nivelación & Apoyo Mutuo', da: 'Apoya con paciencia y generosidad a compañeros que presentan dudas.', aa: 'Disposicion positiva para ayudar a sus pares cuando lo necesitan.', pa: 'Rara vez ayuda a sus compañeros; se enfoca solo en lo individual.', na: 'Se niega a colaborar o discrimina a compañeros en proceso.' }
+    ];
+  } else if (preset === 'cuaderno') {
+    title = 'RÚBRICA DE EVALUACIÓN: CUADERNO / PORTAFOLIO ESTUDIANTIL';
+    criteria = [
+      { num: '1', name: 'Completitud de Actividades', da: 'Contiene el 100% de actividades, talleres y deberes al día con fechas.', aa: 'Presenta entre el 80% y 99% de las actividades requeridas.', pa: 'Presenta entre el 50% y 79% de actividades; faltan tareas.', na: 'Menos del 50% de actividades presentadas; incompleto.' },
+      { num: '2', name: 'Orden, Aseo y Presentación', da: 'Impecable, con márgenes, buena caligrafía, títulos resaltados y sin tachones.', aa: 'Ordenado, limpio y legible con presentación adecuada.', pa: 'Presenta desorden ocasional, hojas dobladas o tachaduras.', na: 'Manchado, roto, desordenado o con caligrafía ilegible.' },
+      { num: '3', name: 'Corrección y Retroalimentación', da: 'Corrige todos los errores señalados por el docente con firma del representante.', aa: 'Realiza la mayoría de correcciones solicitadas por el docente.', pa: 'Pocas correcciones realizadas; no registra seguimiento en casa.', na: 'No realiza correcciones ni presenta firma del representante.' }
+    ];
+  } else {
+    title = 'RÚBRICA DE CONVIVENCIA, CIVISMO Y CLIMA DE AULA';
+    criteria = [
+      { num: '1', name: 'Puntualidad y Asistencia', da: 'Llega puntualmente a todas las jornadas y al Momento Cívico.', aa: 'Puntual en general; atrasos justificados oportunamente.', pa: 'Registra atrasos frecuentes sin justificación oportuna.', na: 'Inasistencias y atrasos reiterados sin justificar.' },
+      { num: '2', name: 'Cuidado del Entorno y Uniforme', da: 'Porta el uniforme con pulcritud y mantiene el aula y pupitre impecables.', aa: 'Uniforme correcto y colabora con la limpieza del aula.', pa: 'Descuidos frecuentes en el uniforme o en el orden de su espacio.', na: 'No respeta el uniforme institucional ni cuida los bienes del aula.' },
+      { num: '3', name: 'Relaciones Interpersonales', da: 'Promueve la inclusión, el respeto, la solidaridad y la empatía en el grupo.', aa: 'Trato cordial y respetuoso con docentes y compañeros.', pa: 'Ocasionalmente genera roces o interrumpe la concentración.', na: 'Conductas agresivas, discriminatorias o disruptivas en clase.' }
+    ];
+  }
+
+  const tableRows = criteria.map(c => `
+    <tr>
+      <td style="text-align:center;font-weight:800;width:30px">${c.num}</td>
+      <td style="font-weight:800;width:150px;background:#f8fafc">${escHTML(c.name)}</td>
+      <td style="font-size:0.75rem;padding:6px;background:#f0fdf4;border-color:#86efac"><strong style="color:#15803d">DA (9.00-10.00):</strong><br>${escHTML(c.da)}</td>
+      <td style="font-size:0.75rem;padding:6px;background:#eff6ff;border-color:#93c5fd"><strong style="color:#1e40af">AA (7.00-8.99):</strong><br>${escHTML(c.aa)}</td>
+      <td style="font-size:0.75rem;padding:6px;background:#fffbeb;border-color:#fde68a"><strong style="color:#b45309">PA (4.01-6.99):</strong><br>${escHTML(c.pa)}</td>
+      <td style="font-size:0.75rem;padding:6px;background:#fef2f2;border-color:#fca5a5"><strong style="color:#b91c1c">NA (≤ 4.00):</strong><br>${escHTML(c.na)}</td>
+    </tr>
+  `).join('');
+
+  box.innerHTML = `
+    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px">
+      <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+      <div style="font-weight:800;font-size:0.92rem;color:#0284c7;margin:2px 0">${title}</div>
+      <div style="font-size:0.78rem;color:#475569">Instrumento de Evaluación Cualitativa · Escala Oficial MINEDEC · Año Lectivo ${escHTML(S.anio||'2026-2027')}</div>
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-top:6px;font-weight:700;color:#334155;flex-wrap:wrap;gap:4px">
+        <span>Docente: <strong>${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong></span>
+        <span>Grado: <strong>${escHTML(S.grado||'Séptimo de Básica C')}</strong></span>
+        <span>Estudiante / Equipo: ____________________________________</span>
+        <span>Fecha: ____/____/202__</span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>CRITERIO DE EVALUACIÓN</th>
+          <th style="background:#dcfce7;color:#15803d">DOMINA (DA: 9-10)</th>
+          <th style="background:#dbeafe;color:#1e40af">ALCANZA (AA: 7-8.9)</th>
+          <th style="background:#fef3c7;color:#b45309">PRÓXIMO (PA: 4.1-6.9)</th>
+          <th style="background:#fee2e2;color:#b91c1c">NO ALCANZA (NA: ≤4)</th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+
+    <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:10px 16px;border-radius:8px;border:1px solid #cbd5e1;font-size:0.8rem">
+      <div><strong>Calificación Cualitativa / Cuantitativa Final:</strong> [ ________ / 10.00 ]</div>
+      <div><strong>Escala Obtenida:</strong> [ ___ DA ___ AA ___ PA ___ NA ]</div>
+    </div>
+
+    <div style="margin-top:12px;font-size:0.78rem;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">
+      <strong>Observaciones y Recomendaciones Pedagógicas:</strong><br>
+      <div style="height:35px"></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(S.docente||'Lcdo. Kevin Yánez')}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">DOCENTE EVALUADOR</span>
+      </div>
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">ESTUDIANTE / REPRESENTANTE</strong><br>
+        <span style="font-size:0.72rem;color:#475569">FIRMA DE CONFORMIDAD</span>
+      </div>
+    </div>
+  `;
+}
+
+function printRubrica() {
+  updateRubricaPreview();
+  window.print();
 }
 
 // ══════════════════════════════════════════════════════
