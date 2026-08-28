@@ -2192,8 +2192,8 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 }
 
 @media print {
-  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel, .sidebar, .no-print, .herramientas-subtabs, .config-card { display: none !important; }
-  body { background: #fff !important; color: #000 !important; font-size: 9pt; margin: 0 !important; padding: 0 !important; }
+  header, #mobileNav, nav, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel, .sidebar, .no-print, .herramientas-subtabs, .config-card, .mob-nav-btn, .mob-nav-icon, .mob-nav-label, #toast, .toast, .fab-menu, .floating-btn { display: none !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 8.5pt; margin: 0 !important; padding: 0 !important; }
   .content { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; }
   .tw { box-shadow: none !important; max-height: none !important; overflow: visible !important; border: none !important; }
   
@@ -2213,23 +2213,30 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     border-collapse: collapse !important;
     table-layout: auto !important;
     box-shadow: none !important;
-    margin-top: 6px !important;
+    margin-top: 4px !important;
   }
   .printable-sheet th {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
     border: 1px solid #475569 !important;
-    padding: 4px 6px !important;
+    padding: 3px 4px !important;
     font-weight: 800 !important;
+    font-size: 8pt !important;
   }
   .printable-sheet td {
     border: 1px solid #64748b !important;
-    padding: 3px 6px !important;
+    padding: 2.5px 4px !important;
     color: #000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+    font-size: 8pt !important;
+  }
+  .printable-sheet td.nc-cell {
+    padding-left: 6px !important;
+    min-width: 180px !important;
+    font-size: 8pt !important;
   }
   .printable-sheet tbody tr:nth-child(even) {
     background: #f8fafc !important;
@@ -2249,7 +2256,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   #herramientasViewReuniones { display: block !important; }
   #herramientasViewAtencion { display: block !important; }
   #herramientasViewRubricas { display: block !important; }
-  @page { margin: 0.6cm 0.7cm; size: auto; }
+  @page { margin: 8mm 6mm; size: auto; }
 }
 </style>
 </head>
@@ -4105,7 +4112,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 <div id="herramientasPanel" style="display:none" class="content">
 
   <!-- Header Banner -->
-  <div style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4338ca 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+  <div class="no-print" style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4338ca 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
     <div>
       <div style="display:flex;align-items:center;gap:12px">
         <span style="font-size:1.8rem;background:rgba(255,255,255,0.15);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid rgba(255,255,255,0.25)">🛠️</span>
