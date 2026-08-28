@@ -275,6 +275,97 @@ header {
 .font-zoom-btn:hover { background: rgba(255,255,255,0.35); transform: scale(1.1); }
 .font-zoom-btn:active { transform: scale(0.95); }
 
+/* ── ESTILOS DE COLAPSO Y EXPANSIÓN DE SECCIONES ── */
+header#mainAppHeader {
+  transition: all .2s ease;
+}
+header#mainAppHeader.is-collapsed {
+  padding: 6px 16px;
+  min-height: unset;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+header#mainAppHeader.is-collapsed .hdr-sub,
+header#mainAppHeader.is-collapsed .hi-input-group,
+header#mainAppHeader.is-collapsed .font-controller,
+header#mainAppHeader.is-collapsed .badge-saved {
+  display: none !important;
+}
+header#mainAppHeader.is-collapsed .hdr-logo {
+  font-size: 1.15rem;
+  width: 28px;
+  height: 28px;
+}
+header#mainAppHeader.is-collapsed h1 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.btn-hdr-toggle {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.32);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all .15s ease;
+}
+.btn-hdr-toggle:hover {
+  background: rgba(255,255,255,0.32);
+  transform: scale(1.05);
+}
+
+.module-toolbar {
+  transition: all .2s ease;
+}
+.module-toolbar.is-collapsed {
+  padding: 6px 14px;
+  margin-bottom: 8px;
+}
+.module-toolbar.is-collapsed .module-toolbar-body {
+  display: none !important;
+}
+
+#statsSection {
+  transition: all .2s ease;
+}
+#statsSection.is-collapsed .stats-grid {
+  display: none !important;
+}
+#statsSection.is-collapsed .stats-collapsed-summary {
+  display: flex !important;
+}
+.stats-collapsed-summary {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Semanas colapsadas en la tabla */
+th.wh.is-week-collapsed {
+  min-width: 68px !important;
+  max-width: 78px !important;
+  padding: 6px 4px !important;
+  opacity: 0.95;
+}
+th.sh.is-week-collapsed {
+  min-width: 68px !important;
+  max-width: 78px !important;
+  padding: 4px 4px !important;
+}
+
 /* ══════════════════════════════════════════════════════
    TOOLBAR (BARRA DE HERRAMIENTAS MODERNA & ELEVADA)
    ══════════════════════════════════════════════════════ */
@@ -2745,6 +2836,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
           style="padding:5px 11px;color:#fff;background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.3);font-size:1rem;border-radius:var(--radius-sm)">
           🌙
         </button>
+
+        <button id="btnToggleHdr" onclick="toggleHeaderCollapse()" data-tip="Colapsar o expandir encabezado principal" class="btn-hdr-toggle tip-down" title="Colapsar / Expandir Encabezado">
+          ▲
+        </button>
       </div>
     </header>
 
@@ -2784,75 +2879,108 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   </div>
 
   <!-- Toolbar Contextual de Calificaciones -->
-  <div class="module-toolbar">
-    <div class="module-toolbar-group">
-      <span class="module-toolbar-label">Actividades:</span>
-      <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
-        ➕ Actividad
-      </button>
-      <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
-        ➕ Semana
-      </button>
-      <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
-        🗑 Actividad
-      </button>
-      <button class="btn btn-outline" onclick="openEditColModal()" data-tip="Editar nombre y tipo de una actividad existente" style="border-color:#a78bfa;color:#a78bfa">
-        ✎ Actividad
-      </button>
-      <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
-        🗑 Semana
-      </button>
-      <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
-        ⇄ Mover Columnas
-      </button>
-      <button class="btn btn-warning" onclick="openFillColModal()" data-tip="Llenar rápidamente una columna entera con una nota (ej: 10.00) y editar solo excepciones" style="font-weight:800">
-        ⚡ Llenar Columna
-      </button>
-      <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
-        👁 Columnas
-      </button>
+  <div class="module-toolbar" id="mainModuleToolbar">
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:4px;border-bottom:1px solid var(--border-color);margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:0.78rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:5px">
+          🛠️ Acciones &amp; Herramientas de Calificación
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="btn btn-outline" onclick="toggleFocusMode()" data-tip="Modo Enfoque (maximiza la vista de la tabla colapsando paneles superiores)" style="padding:3px 9px;font-size:0.75rem;font-weight:800;background:var(--primary-light);color:var(--primary);border-color:var(--primary)">
+          👁️ Modo Enfoque
+        </button>
+        <button id="btnToggleToolbar" class="btn btn-outline" onclick="toggleToolbarCollapse()" style="padding:3px 9px;font-size:0.75rem;font-weight:800" title="Colapsar / Expandir barra de herramientas">
+          ▲ Ocultar
+        </button>
+      </div>
     </div>
 
-    <div class="toolbar-sep"></div>
+    <div class="module-toolbar-body" id="moduleToolbarBody" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%">
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Actividades:</span>
+        <button class="btn btn-primary" onclick="openAddCol()" data-tip="Agregar actividad Formativa (70%) o Sumativa / Proyecto (30%)">
+          ➕ Actividad
+        </button>
+        <button class="btn btn-teal" onclick="openAddWeek()" data-tip="Agregar una nueva semana a la materia activa">
+          ➕ Semana
+        </button>
+        <button class="btn btn-outline" onclick="openDelColModal()" data-tip="Eliminar una actividad de la materia activa">
+          🗑 Actividad
+        </button>
+        <button class="btn btn-outline" onclick="openEditColModal()" data-tip="Editar nombre y tipo de una actividad existente" style="border-color:#a78bfa;color:#a78bfa">
+          ✎ Actividad
+        </button>
+        <button class="btn btn-outline" onclick="openDelWeek()" data-tip="Eliminar una semana de la materia activa">
+          🗑 Semana
+        </button>
+        <button class="btn btn-teal" onclick="openManageColumns()" data-tip="Mover, reordenar y organizar todas las columnas de actividades y semanas">
+          ⇄ Mover Columnas
+        </button>
+        <button class="btn btn-warning" onclick="openFillColModal()" data-tip="Llenar rápidamente una columna entera con una nota (ej: 10.00) y editar solo excepciones" style="font-weight:800">
+          ⚡ Llenar Columna
+        </button>
+        <button class="btn btn-dark" onclick="openVisPanel()" data-tip="Ocultar o mostrar columnas y filas">
+          👁 Columnas
+        </button>
+      </div>
 
-    <div class="module-toolbar-group">
-      <span class="module-toolbar-label">Nómina:</span>
-      <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
-        ➕ Estudiante
-      </button>
-      <button class="btn btn-teal" onclick="openManageNomina()" data-tip="Gestionar, reordenar (▲/▼) y organizar nómina de estudiantes">
-        ⚙ Nómina
-      </button>
-    </div>
+      <div class="toolbar-sep"></div>
 
-    <div class="toolbar-sep"></div>
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Nómina:</span>
+        <button class="btn btn-success" onclick="openAddSt()" data-tip="Agregar o insertar un estudiante a la nómina">
+          ➕ Estudiante
+        </button>
+        <button class="btn btn-teal" onclick="openManageNomina()" data-tip="Gestionar, reordenar (▲/▼) y organizar nómina de estudiantes">
+          ⚙ Nómina
+        </button>
+      </div>
 
-    <div class="module-toolbar-group">
-      <span class="module-toolbar-label">Acciones:</span>
-      <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
-        📋 Copiar Columna
-      </button>
-      <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
-        📊 Excel Notas
-      </button>
-      <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir planilla de calificaciones">
-        🖨 Imprimir
-      </button>
-      <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar en la nube y caché local">
-        💾 Guardar
-      </button>
-      <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar calificaciones de la materia activa">
-        🧹 Limpiar
-      </button>
-    </div>
+      <div class="toolbar-sep"></div>
 
-    <div style="display:flex;gap:3px;margin-left:auto">
-      <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
-      <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
+      <div class="module-toolbar-group">
+        <span class="module-toolbar-label">Acciones:</span>
+        <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
+          📋 Copiar Columna
+        </button>
+        <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
+          📊 Excel Notas
+        </button>
+        <button class="btn btn-purple" onclick="printTable()" data-tip="Imprimir planilla de calificaciones">
+          🖨 Imprimir
+        </button>
+        <button class="btn btn-outline" onclick="saveData(true)" data-tip="Guardar en la nube y caché local">
+          💾 Guardar
+        </button>
+        <button class="btn btn-danger" onclick="doClearGrades()" data-tip="Limpiar calificaciones de la materia activa">
+          🧹 Limpiar
+        </button>
+      </div>
+
+      <div style="display:flex;gap:3px;margin-left:auto">
+        <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
+        <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
+      </div>
     </div>
   </div>
 
-  <div class="stats-grid" id="stats"></div>
+  <!-- Sección de Estadísticas Colapsable -->
+  <div id="statsSection" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:0.76rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">
+        📊 Resumen &amp; Estadísticas del Trimestre
+      </span>
+      <button id="btnToggleStats" class="btn btn-outline" onclick="toggleStatsCollapse()" style="padding:2px 8px;font-size:0.72rem;font-weight:800" title="Colapsar / Expandir estadísticas">
+        ▲ Ocultar
+      </button>
+    </div>
+    <div class="stats-grid" id="stats"></div>
+    <div class="stats-collapsed-summary" id="statsCollapsedSummary" onclick="toggleStatsCollapse(false)" style="cursor:pointer" title="Clic para expandir estadísticas">
+      <span id="statsCollapsedText">📊 Resumen de Calificaciones activo</span>
+      <span style="font-size:0.75rem;color:var(--primary);font-weight:800">▼ Expandir</span>
+    </div>
+  </div>
 
   <div class="filter-bar">
     <div class="search-wrapper">
@@ -6224,18 +6352,32 @@ function renderTable() {
     const wName = getWeekName(w);
     const wTitle = getWeekTitle(w);
     const c = mat.cols[wName] || [];
-    const span = (c.length || 1) + 1; // +1 por columna PROM
+    const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
+    const span = isWeekCol ? 1 : (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, wName, wi);
-    r1 += `<th class="wh" colspan="${span}"
-      onclick="handleWeekHeaderClick(${wi})"
-      ondblclick="editWeekName(${wi})"
-      oncontextmenu="openWeekContextMenu(event, ${wi})"
-      title="${escHTML(wTitle)} · Doble clic para editar tema y destreza"
-      style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
-      <div style="width:100%;text-align:center;pointer-events:none">
-        ${escHTML(wTitle)}
-      </div>
-    </th>`;
+
+    if (isWeekCol) {
+      r1 += `<th class="wh is-week-collapsed" colspan="1"
+        onclick="toggleWeekCollapse('${esc(wName)}')"
+        title="Semana colapsada: ${escHTML(wTitle)}. Clic para expandir"
+        style="background:${wc.h};border-color:${wc.h};font-size:0.82rem;font-weight:900;letter-spacing:0.2px;padding:6px 4px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+          <span style="font-size:0.75rem">➕</span> <span>${escHTML(wName)}</span>
+        </div>
+      </th>`;
+    } else {
+      r1 += `<th class="wh" colspan="${span}"
+        onclick="handleWeekHeaderClick(${wi})"
+        ondblclick="editWeekName(${wi})"
+        oncontextmenu="openWeekContextMenu(event, ${wi})"
+        title="${escHTML(wTitle)} · Doble clic para editar tema · Clic en ➖ para colapsar"
+        style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
+        <div style="display:flex;align-items:center;justify-content:center;position:relative">
+          <span style="font-size:0.75rem;opacity:0.85;margin-right:6px;cursor:pointer;background:rgba(0,0,0,0.25);padding:1px 5px;border-radius:4px" onclick="event.stopPropagation(); toggleWeekCollapse('${esc(wName)}')" title="Colapsar esta semana (mostrar solo promedio)">➖</span>
+          <span>${escHTML(wTitle)}</span>
+        </div>
+      </th>`;
+    }
   });
 
   if (!isQual) {
@@ -6254,6 +6396,13 @@ function renderTable() {
     const wName = getWeekName(w);
     const c = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
+    const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
+
+    if (isWeekCol) {
+      r2 += `<th class="sh is-week-collapsed" onclick="toggleWeekCollapse('${esc(wName)}')" title="Semana colapsada. Clic para expandir" style="background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.8rem;cursor:pointer;vertical-align:middle;padding:4px">PROM 📋</th>`;
+      return;
+    }
+
     if (!c.length) {
       r2 += `<th class="sh"
         onclick="handleEmptyColClick('${esc(wName)}')"
@@ -6305,6 +6454,7 @@ function renderTable() {
       const wName = getWeekName(w);
       const c = mat.cols[wName] || [];
       const wc = weekColor(mName, wName, wi);
+      const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
 
       // Promedio semanal
       const weekVals = c.map(col => {
@@ -6323,6 +6473,10 @@ function renderTable() {
       } else {
         wAvgDisp = weekAvg !== null ? weekAvg : '—';
         wAvgCls  = weekAvg !== null && parseFloat(weekAvg) < 7 ? 'glo' : (weekAvg !== null ? 'ghi' : '');
+      }
+
+      if (isWeekCol) {
+        return `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(wName)}" style="background:${wc.c}">${wAvgDisp}</td>`;
       }
 
       if (!c.length) {
@@ -6544,6 +6698,11 @@ function renderStats() {
       <div class="stat-sub">Sin redondeo (truncado)</div>
     </div>
   `;
+
+  const summaryEl = document.getElementById('statsCollapsedText');
+  if (summaryEl) {
+    summaryEl.innerHTML = `📊 <strong>${S.students.length} Estudiantes</strong> · Promedio: <strong style="color:${avgColor}">${avg}</strong> · Refuerzo (&lt;7.00): <strong style="color:#dc2626">${low}</strong> · Destacadas (≥9): <strong style="color:#16a34a">${hi}</strong> · Rango: <strong>${maxD} / ${minD}</strong>`;
+  }
 }
 
 function filterStudents(q) {
@@ -9522,6 +9681,77 @@ function changeFontSize(delta, absolute) {
   _fontSize = absolute !== undefined ? absolute : Math.min(22, Math.max(11, _fontSize + delta));
   localStorage.setItem('notas_fs', _fontSize);
   applyFontSize();
+}
+
+// ══════════════════════════════════════════════════════
+//  COLAPSAR / EXPANDIR SECCIONES (HEADER, TOOLBAR, STATS, SEMANAS, MODO ENFOQUE)
+// ══════════════════════════════════════════════════════
+function toggleHeaderCollapse(force) {
+  const hdr = document.getElementById('mainAppHeader');
+  if (!hdr) return;
+  const isCol = force !== undefined ? force : !hdr.classList.contains('is-collapsed');
+  hdr.classList.toggle('is-collapsed', isCol);
+  localStorage.setItem('notas_collapse_header', isCol ? '1' : '0');
+  const btn = document.getElementById('btnToggleHdr');
+  if (btn) {
+    btn.textContent = isCol ? '▼' : '▲';
+    btn.setAttribute('data-tip', isCol ? 'Expandir encabezado principal' : 'Colapsar encabezado principal');
+  }
+}
+
+function toggleToolbarCollapse(force) {
+  const tb = document.getElementById('mainModuleToolbar');
+  if (!tb) return;
+  const isCol = force !== undefined ? force : !tb.classList.contains('is-collapsed');
+  tb.classList.toggle('is-collapsed', isCol);
+  localStorage.setItem('notas_collapse_toolbar', isCol ? '1' : '0');
+  const btn = document.getElementById('btnToggleToolbar');
+  if (btn) {
+    btn.textContent = isCol ? '▼ Mostrar' : '▲ Ocultar';
+    btn.setAttribute('data-tip', isCol ? 'Expandir barra de herramientas' : 'Colapsar barra de herramientas');
+  }
+}
+
+function toggleStatsCollapse(force) {
+  const st = document.getElementById('statsSection');
+  if (!st) return;
+  const isCol = force !== undefined ? force : !st.classList.contains('is-collapsed');
+  st.classList.toggle('is-collapsed', isCol);
+  localStorage.setItem('notas_collapse_stats', isCol ? '1' : '0');
+  const btn = document.getElementById('btnToggleStats');
+  if (btn) {
+    btn.textContent = isCol ? '▼ Mostrar' : '▲ Ocultar';
+    btn.setAttribute('data-tip', isCol ? 'Expandir tarjetas de estadísticas' : 'Colapsar estadísticas');
+  }
+}
+
+function toggleFocusMode() {
+  const hdr = document.getElementById('mainAppHeader');
+  const tb = document.getElementById('mainModuleToolbar');
+  const st = document.getElementById('statsSection');
+  const allCollapsed = (hdr && hdr.classList.contains('is-collapsed')) &&
+                       (tb && tb.classList.contains('is-collapsed')) &&
+                       (st && st.classList.contains('is-collapsed'));
+  
+  const newState = !allCollapsed;
+  toggleHeaderCollapse(newState);
+  toggleToolbarCollapse(newState);
+  toggleStatsCollapse(newState);
+  toast(newState ? '👁️ Modo Enfoque Activado (Paneles colapsados para mayor visión)' : '👁️ Modo Completo Activado (Paneles expandidos)', '#2563eb');
+}
+
+function toggleWeekCollapse(wName) {
+  const mat = gm();
+  if (!mat) return;
+  if (!mat.collapsedWeeks) mat.collapsedWeeks = {};
+  mat.collapsedWeeks[wName] = !mat.collapsedWeeks[wName];
+  renderTable();
+}
+
+function loadUICollapseStates() {
+  if (localStorage.getItem('notas_collapse_header') === '1') toggleHeaderCollapse(true);
+  if (localStorage.getItem('notas_collapse_toolbar') === '1') toggleToolbarCollapse(true);
+  if (localStorage.getItem('notas_collapse_stats') === '1') toggleStatsCollapse(true);
 }
 
 // ══════════════════════════════════════════════════════
@@ -19184,6 +19414,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (btn) btn.textContent = '▶';
     }
   }
+
+  /* ══ Restore Header, Toolbar, Stats collapse state ══ */
+  loadUICollapseStates();
 
   /* ══ Auto-open Parent Portal if URL contains ?padres=1 or ?ficha=1 ══ */
   const urlParams = new URLSearchParams(window.location.search);
