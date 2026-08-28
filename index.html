@@ -668,8 +668,8 @@ th.th-rf { background: #15803d !important; font-size: 0.74rem; }
 
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-  body > *:not(#attReportPrint) { display: none !important; }
-  #attReportPrint { display: block !important; width: 100% !important; }
+  body.printing-att-report > *:not(#attReportPrint) { display: none !important; }
+  body.printing-att-report #attReportPrint { display: block !important; width: 100% !important; }
   .ar-P  { background: #bbf7d0 !important; color: #14532d !important; -webkit-print-color-adjust: exact; }
   .ar-F  { background: #fecaca !important; color: #7f1d1d !important; -webkit-print-color-adjust: exact; }
   .ar-T  { background: #fef08a !important; color: #713f12 !important; -webkit-print-color-adjust: exact; }
@@ -2192,9 +2192,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 }
 
 @media print {
-  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel, .sidebar, .no-print { display: none !important; }
-  body { background: #fff !important; color: #000 !important; font-size: 9pt; }
-  .content { padding: 0 !important; margin: 0 !important; }
+  header, .main-nav-bar, .module-toolbar, .toolbar, .tabs-container, .view-bar, .stats-grid, .filter-bar, .bt, th.ath, td.ac, #userBar, #bottom-scroll, #attendancePanel, #exportPanel, #configPanel, .sidebar, .no-print, .herramientas-subtabs, .config-card { display: none !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 9pt; margin: 0 !important; padding: 0 !important; }
+  .content { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; }
   .tw { box-shadow: none !important; max-height: none !important; overflow: visible !important; border: none !important; }
   
   .printable-sheet {
@@ -2206,6 +2206,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     color: #000 !important;
     width: 100% !important;
     max-width: 100% !important;
+    display: block !important;
   }
   .printable-sheet table {
     width: 100% !important;
@@ -2217,6 +2218,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   .printable-sheet th {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
     border: 1px solid #475569 !important;
     padding: 4px 6px !important;
     font-weight: 800 !important;
@@ -2227,6 +2229,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     color: #000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
   .printable-sheet tbody tr:nth-child(even) {
     background: #f8fafc !important;
@@ -2235,12 +2238,17 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   }
   
   .only-print { display: block !important; }
+  span.only-print { display: inline-block !important; }
   .print-header { display: block !important; }
   
   #reportPanel { display: block !important; padding: 0; }
   #viewNotasPanel { display: block !important; }
   #diagnosticoPanel { display: block !important; padding: 0; }
   #herramientasPanel { display: block !important; padding: 0; }
+  #herramientasViewListados { display: block !important; }
+  #herramientasViewReuniones { display: block !important; }
+  #herramientasViewAtencion { display: block !important; }
+  #herramientasViewRubricas { display: block !important; }
   @page { margin: 0.6cm 0.7cm; size: auto; }
 }
 </style>
@@ -9028,23 +9036,58 @@ function xe(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 function makeXLSX(sheets) {
   const STYLES = {
-    title: { font:'bold', size:12, bg:'1E3A8A', fg:'FFFFFF' },
-    hdr:   { font:'bold', size:10, bg:'1E3A8A', fg:'FFFFFF' },
-    hdr_col:{font:'bold', size:9,  bg:'2563EB', fg:'FFFFFF' },
-    hdr_prom:{font:'bold',size:9,  bg:'0D9488', fg:'FFFFFF' },
-    name:  { font:'normal',size:9, bg:'FFFFFF', fg:'0F172A' },
-    num:   { font:'normal',size:9, bg:'F8FAFC', fg:'64748B' },
-    ok:    { font:'normal',size:9, bg:'DCFCE7', fg:'16A34A' },
-    low:   { font:'bold',  size:9, bg:'FEE2E2', fg:'DC2626' },
-    prom:  { font:'bold',  size:9, bg:'F0FDF4', fg:'16A34A' },
-    empty: { font:'normal',size:9, bg:'FFFFFF', fg:'CBD5E1' }
+    // Existing base styles
+    title: { font:'bold', size:12, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
+    hdr:   { font:'bold', size:10, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
+    hdr_col:{font:'bold', size:9,  bg:'2563EB', fg:'FFFFFF', align:'center' },
+    hdr_prom:{font:'bold',size:9,  bg:'0D9488', fg:'FFFFFF', align:'center' },
+    name:  { font:'bold', size:9.5, bg:'FFFFFF', fg:'0F172A', align:'left' },
+    num:   { font:'bold', size:9, bg:'F8FAFC', fg:'1E3A8A', align:'center' },
+    ok:    { font:'bold', size:9, bg:'DCFCE7', fg:'16A34A', align:'center' },
+    low:   { font:'bold', size:9, bg:'FEE2E2', fg:'DC2626', align:'center' },
+    prom:  { font:'bold', size:9, bg:'F0FDF4', fg:'16A34A', align:'center' },
+    empty: { font:'normal',size:9, bg:'FFFFFF', fg:'CBD5E1', align:'center' },
+    
+    // Rich institutional header & format styles
+    inst_title: { font:'bold', size:13, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
+    inst_sub:   { font:'bold', size:11, bg:'1E40AF', fg:'93C5FD', align:'center' },
+    inst_sub2:  { font:'bold', size:9.5, bg:'2563EB', fg:'FFFFFF', align:'center' },
+    meta_left:  { font:'bold', size:9, bg:'F1F5F9', fg:'1E293B', align:'left' },
+    meta_right: { font:'bold', size:9, bg:'F1F5F9', fg:'1E293B', align:'right' },
+    
+    // Header columns with themes
+    hdr_num:    { font:'bold', size:9.5, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
+    hdr_name:   { font:'bold', size:9.5, bg:'1E3A8A', fg:'FFFFFF', align:'left' },
+    hdr_check:  { font:'bold', size:9.5, bg:'059669', fg:'FFFFFF', align:'center' },
+    hdr_blue:   { font:'bold', size:9.5, bg:'2563EB', fg:'FFFFFF', align:'center' },
+    hdr_purple: { font:'bold', size:9.5, bg:'7C3AED', fg:'FFFFFF', align:'center' },
+    hdr_amber:  { font:'bold', size:9.5, bg:'D97706', fg:'FFFFFF', align:'center' },
+    hdr_teal:   { font:'bold', size:9.5, bg:'0D9488', fg:'FFFFFF', align:'center' },
+    
+    // Zebra data rows
+    num_even:   { font:'bold', size:9, bg:'EFF6FF', fg:'1E3A8A', align:'center' },
+    num_odd:    { font:'bold', size:9, bg:'F8FAFC', fg:'1E3A8A', align:'center' },
+    name_even:  { font:'bold', size:9.5, bg:'FFFFFF', fg:'0F172A', align:'left' },
+    name_odd:   { font:'bold', size:9.5, bg:'F8FAFC', fg:'0F172A', align:'left' },
+    
+    // Badges & values
+    chk_yes:    { font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'center' },
+    chk_no:     { font:'normal', size:9, bg:'F8FAFC', fg:'64748B', align:'center' },
+    val_left_even:  { font:'normal', size:9, bg:'FFFFFF', fg:'0F172A', align:'left' },
+    val_left_odd:   { font:'normal', size:9, bg:'F8FAFC', fg:'0F172A', align:'left' },
+    val_center_even:{ font:'normal', size:9, bg:'FFFFFF', fg:'0F172A', align:'center' },
+    val_center_odd: { font:'normal', size:9, bg:'F8FAFC', fg:'0F172A', align:'center' },
+    
+    // Signatures
+    sign_bold:  { font:'bold', size:9, bg:'FFFFFF', fg:'0F172A', align:'center' },
+    sign_sub:   { font:'normal', size:8, bg:'FFFFFF', fg:'64748B', align:'center' }
   };
   const styleKeys = Object.keys(STYLES);
   const fonts = styleKeys.map(k => `<font><sz val="${STYLES[k].size}"/><color rgb="FF${STYLES[k].fg}"/><name val="Calibri"/>${STYLES[k].font==='bold'?'<b/>':''}</font>`).join('');
   const fills = styleKeys.map(k => `<fill><patternFill patternType="solid"><fgColor rgb="FF${STYLES[k].bg}"/></patternFill></fill>`).join('');
-  const xfs   = styleKeys.map((_, i) => `<xf numFmtId="0" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center" horizontal="center"/></xf>`).join('');
+  const xfs   = styleKeys.map((k, i) => `<xf numFmtId="0" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center" horizontal="${STYLES[k].align || 'center'}"/></xf>`).join('');
 
-  const styleXml = `<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="${styleKeys.length}">${fonts}</fonts><fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFE2E8F0"/></left><right style="thin"><color rgb="FFE2E8F0"/></right><top style="thin"><color rgb="FFE2E8F0"/></top><bottom style="thin"><color rgb="FFE2E8F0"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${styleKeys.length}">${xfs}</cellXfs></styleSheet>`;
+  const styleXml = `<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="${styleKeys.length}">${fonts}</fonts><fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${styleKeys.length}">${xfs}</cellXfs></styleSheet>`;
 
   const strMap = {}, strArr = [];
   function getStrIdx(v) {
@@ -9054,19 +9097,42 @@ function makeXLSX(sheets) {
   }
 
   const sheetXmls = sheets.map(sheet => {
-    let xml = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>`;
+    let xml = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">`;
+    
+    if (sheet.cols && sheet.cols.length) {
+      xml += `<cols>`;
+      sheet.cols.forEach((col, ci) => {
+        const w = col.width || col.wch || 12;
+        xml += `<col min="${ci+1}" max="${ci+1}" width="${w}" customWidth="1"/>`;
+      });
+      xml += `</cols>`;
+    }
+
+    xml += `<sheetData>`;
     sheet.rows.forEach((row, ri) => {
-      if (!row.length) { xml += `<row r="${ri+1}"/>`; return; }
-      xml += `<row r="${ri+1}" ht="24" customHeight="1">`;
+      if (!row || !row.length) { xml += `<row r="${ri+1}"/>`; return; }
+      const ht = row._ht || (row[0] && row[0]._ht) || 22;
+      xml += `<row r="${ri+1}" ht="${ht}" customHeight="1">`;
       row.forEach((cell, ci) => {
+        if (!cell) return;
         const addr = `${colName(ci+1)}${ri+1}`;
         const sIdx = Math.max(0, styleKeys.indexOf(cell.s || 'empty'));
-        if (cell.t === 'n') xml += `<c r="${addr}" s="${sIdx}" t="n"><v>${cell.v}</v></c>`;
-        else xml += `<c r="${addr}" s="${sIdx}" t="s"><v>${getStrIdx(cell.v)}</v></c>`;
+        if (cell.t === 'n') xml += `<c r="${addr}" s="${sIdx}" t="n"><v>${cell.v !== undefined && cell.v !== null ? cell.v : ''}</v></c>`;
+        else xml += `<c r="${addr}" s="${sIdx}" t="s"><v>${getStrIdx(cell.v !== undefined && cell.v !== null ? cell.v : '')}</v></c>`;
       });
       xml += `</row>`;
     });
-    xml += `</sheetData></worksheet>`;
+    xml += `</sheetData>`;
+
+    if (sheet.merges && sheet.merges.length) {
+      xml += `<mergeCells count="${sheet.merges.length}">`;
+      sheet.merges.forEach(m => {
+        xml += `<mergeCell ref="${m}"/>`;
+      });
+      xml += `</mergeCells>`;
+    }
+
+    xml += `</worksheet>`;
     return xml;
   });
 
@@ -13149,25 +13215,26 @@ function updateCustomListPreview() {
           '<button type="button" class="btn ' + (isChecked ? 'btn-success' : 'btn-outline') + ' no-print" onclick="toggleCustomCellCheck(' + si + ', ' + c + ')" style="padding:2px 8px;font-size:calc(' + fontSize + ' * 0.85);font-weight:800;border-radius:6px;width:100%;box-shadow:' + (isChecked ? '0 2px 6px rgba(22,163,74,0.3)' : 'none') + '">' +
             (isChecked ? '☑ SÍ' : '▢ NO') +
           '</button>' +
-          '<span class="only-print" style="font-size:1.2em;font-weight:900;text-align:center">' +
-            (isChecked ? '☑' : '☐') +
+          '<span class="only-print" style="display:inline-block;padding:2px 9px;border-radius:5px;font-size:calc(' + fontSize + ' * 0.85);font-weight:800;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;' +
+            (isChecked ? 'background:#16a34a !important;color:#ffffff !important;' : 'background:#f1f5f9 !important;color:#475569 !important;border:1px solid #cbd5e1 !important;') + '">' +
+            (isChecked ? '☑ SÍ' : '▢ NO') +
           '</span>' +
         '</td>';
       } else if (colType === 'firma') {
         tdCols += '<td style="padding:' + cellPadding + ';text-align:center;min-width:145px;background:' + theme.cellBg + '">' +
           '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="✍️ Firma / Aclaración" style="text-align:center;font-size:' + fontSize + ';padding:3px 6px"/>' +
-          '<span class="only-print" style="height:24px;border-bottom:1px solid #000;line-height:24px;font-size:' + fontSize + '">' + escHTML(val) + '</span>' +
+          '<span class="only-print" style="display:block;min-height:22px;border-bottom:1px solid #94a3b8;line-height:22px;font-size:' + fontSize + ';text-align:center;font-weight:600">' + escHTML(val || '') + '</span>' +
         '</td>';
       } else {
         tdCols += '<td style="padding:' + cellPadding + ';text-align:' + align + ';' + fontMono + ';background:' + theme.cellBg + '">' +
           '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="text-align:' + align + ';' + fontMono + ';font-size:' + fontSize + ';padding:3px 6px"/>' +
-          '<span class="only-print" style="font-size:' + fontSize + ';text-align:' + align + ';' + fontMono + '">' + escHTML(val) + '</span>' +
+          '<span class="only-print" style="display:block;min-height:20px;line-height:20px;font-size:' + fontSize + ';text-align:' + align + ';' + fontMono + ';font-weight:600">' + escHTML(val || '') + '</span>' +
         '</td>';
       }
     }
 
     return '<tr>' +
-      '<td style="text-align:center;font-weight:900;width:38px;color:#1e3a8a;background:#f8fafc;font-family:var(--font-mono);font-size:' + fontSize + ';padding:' + cellPadding + '">' + (rowPos+1) + '</td>' +
+      '<td style="text-align:center;font-weight:900;width:38px;color:#1e3a8a;background:#f8fafc;font-family:var(--font-mono);font-size:' + fontSize + ';padding:' + cellPadding + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">' + (rowPos+1) + '</td>' +
       '<td class="nc-cell" style="font-weight:700 !important;padding-left:12px;font-size:' + fontSize + ' !important;text-align:left;color:#0f172a;cursor:pointer;padding:' + cellPadding + ';min-width:240px">' + escHTML(name) + '</td>' +
       tdCols +
     '</tr>';
@@ -13181,15 +13248,18 @@ function updateCustomListPreview() {
   box.style.fontFamily = fontFamily;
   box.style.fontSize = fontSize;
 
-  box.innerHTML = '<div style="background:linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(30,58,138,0.25)">' +
+  const gradoAnioText = (S.grado || 'Séptimo C') + ' · Año Lectivo ' + (S.anio || '2026-2027');
+  const subHeading = subtitle ? (escHTML(subtitle) + ' · ' + escHTML(gradoAnioText)) : escHTML(gradoAnioText);
+
+  box.innerHTML = '<div style="background:linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;color:#ffffff !important;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(30,58,138,0.25);-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
         '<div>' +
-          '<div style="font-weight:900;font-size:1.1em;letter-spacing:0.5px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
-          '<div style="font-weight:800;font-size:0.98em;color:#93c5fd;margin-top:2px">' + escHTML(title) + '</div>' +
-          (subtitle ? '<div style="font-size:0.85em;color:#e2e8f0;margin-top:1px">' + escHTML(subtitle) + '</div>' : '') +
+          '<div style="font-weight:900;font-size:1.12em;letter-spacing:0.5px;color:#ffffff">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+          '<div style="font-weight:800;font-size:1.0em;color:#93c5fd;margin-top:2px">' + escHTML(title) + '</div>' +
+          '<div style="font-size:0.84em;color:#e2e8f0;margin-top:1px">' + subHeading + '</div>' +
         '</div>' +
-        '<div style="text-align:right;font-size:0.8em;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
-          '<div>Docente: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></div>' +
+        '<div style="text-align:right;font-size:0.8em;line-height:1.45;background:rgba(255,255,255,0.14) !important;color:#ffffff !important;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.28) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
+          '<div>Docente: <strong>' + escHTML(S.docente||'Lic. Klever Yánez') + '</strong></div>' +
           '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo C') + '</strong> · Año: <strong>' + escHTML(S.anio||'2026-2027') + '</strong></div>' +
           '<div>Fecha: <strong>' + new Date().toLocaleDateString('es-EC') + '</strong></div>' +
         '</div>' +
@@ -13211,9 +13281,9 @@ function updateCustomListPreview() {
     '<table style="font-family:' + fontFamily + ';font-size:' + fontSize + '">' +
       '<thead>' +
         '<tr>' +
-          '<th style="width:38px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff;border:1px solid rgba(255,255,255,0.25)">#</th>' +
-          '<th style="min-width:240px;text-align:left;padding-left:12px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff;border:1px solid rgba(255,255,255,0.25)">' +
-            '<div style="font-size:calc(' + fontSize + ' * 0.75);font-weight:900;background:rgba(255,255,255,0.2);color:#ffffff;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px">👥 NÓMINA OFICIAL</div>' +
+          '<th style="width:38px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff !important;border:1px solid rgba(255,255,255,0.28);-webkit-print-color-adjust:exact;print-color-adjust:exact">#</th>' +
+          '<th style="min-width:240px;text-align:left;padding-left:12px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff !important;border:1px solid rgba(255,255,255,0.28);-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
+            '<div style="font-size:calc(' + fontSize + ' * 0.75);font-weight:900;background:rgba(255,255,255,0.2) !important;color:#ffffff !important;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact">👥 NÓMINA OFICIAL</div>' +
             '<div style="font-size:calc(' + fontSize + ' * 0.95);font-weight:800;letter-spacing:0.2px">NÓMINA DE ESTUDIANTES</div>' +
           '</th>' +
           thCols +
@@ -13223,7 +13293,7 @@ function updateCustomListPreview() {
     '</table>' +
     '<div style="display:flex;justify-content:space-around;margin-top:35px;page-break-inside:avoid">' +
       '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
-        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lic. Klever Yánez') + '</strong><br>' +
         '<span style="font-size:0.72rem;color:#475569">DOCENTE / TUTOR</span>' +
       '</div>' +
       '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
@@ -13235,6 +13305,15 @@ function updateCustomListPreview() {
 
 function printCustomList() {
   updateCustomListPreview();
+  const list = getCurrentCustomList();
+  const orientation = list.orientation || 'portrait';
+  let styleEl = document.getElementById('customPrintOrientationStyle');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'customPrintOrientationStyle';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.innerHTML = '@page { size: ' + orientation + '; margin: 8mm 6mm; }';
   window.print();
 }
 
@@ -13242,32 +13321,99 @@ function exportCustomListXLSX() {
   const list = getCurrentCustomList();
   sanitizeListModel(list);
   const title = list.title || 'LISTADO DE CONTROL';
+  const subtitle = list.subtitle || (list.asignatura ? list.asignatura : '');
   const count = list.colCount;
   const sorted = getSortedIndices();
+  const totalCols = 2 + count;
+  const lastColLetter = colName(totalCols);
 
-  const headers = [
-    { v: '#', t: 's', s: 'hdr' },
-    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' }
+  // Column widths definition
+  const cols = [
+    { width: 6 },   // #
+    { width: 38 }   // Nómina de estudiantes
   ];
   for (let i = 0; i < count; i++) {
-    headers.push({ v: (list.cols[i] || ('Columna ' + (i+1))).toUpperCase(), t: 's', s: 'hdr_col' });
+    const colType = list.colTypes[i] || 'texto';
+    if (colType === 'check') cols.push({ width: 16 });
+    else if (colType === 'firma') cols.push({ width: 24 });
+    else cols.push({ width: 28 });
   }
 
-  const rows = [
-    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'title' }],
-    [{ v: title.toUpperCase(), t: 's', s: 'sub' }],
-    [{ v: 'Docente: ' + (S.docente||'Lcdo. Kevin Yánez') + ' | Grado: ' + (S.grado||'7mo C') + ' | Año: ' + (S.anio||'2026-2027'), t: 's', s: 'sub' }],
-    [],
-    headers
+  // Row 1: Institución
+  const row1 = [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'inst_title', _ht: 26 }];
+  for (let c = 1; c < totalCols; c++) row1.push({ v: '', t: 's', s: 'inst_title' });
+
+  // Row 2: Título del listado
+  const row2 = [{ v: title.toUpperCase(), t: 's', s: 'inst_sub', _ht: 22 }];
+  for (let c = 1; c < totalCols; c++) row2.push({ v: '', t: 's', s: 'inst_sub' });
+
+  // Row 3: Subtítulo / Grado / Año Lectivo
+  const subText = subtitle ? (subtitle + ' · ' + (S.grado||'Séptimo C') + ' · Año Lectivo ' + (S.anio||'2026-2027')) : ((S.grado||'Séptimo C') + ' · Año Lectivo ' + (S.anio||'2026-2027'));
+  const row3 = [{ v: subText, t: 's', s: 'inst_sub2', _ht: 18 }];
+  for (let c = 1; c < totalCols; c++) row3.push({ v: '', t: 's', s: 'inst_sub2' });
+
+  // Row 4: Datos del Docente & Fecha
+  const docenteText = 'Docente: ' + (S.docente || 'Lic. Klever Yánez') + ' | Grado: ' + (S.grado || 'Séptimo C') + ' · Año: ' + (S.anio || '2026-2027');
+  const fechaText = 'Fecha: ' + new Date().toLocaleDateString('es-EC');
+
+  const merges = [
+    'A1:' + lastColLetter + '1',
+    'A2:' + lastColLetter + '2',
+    'A3:' + lastColLetter + '3'
   ];
 
+  let row4 = [];
+  if (totalCols >= 3) {
+    const splitColLetter = colName(2);
+    const nextColLetter = colName(3);
+    merges.push('A4:' + splitColLetter + '4');
+    merges.push(nextColLetter + '4:' + lastColLetter + '4');
+
+    row4.push({ v: docenteText, t: 's', s: 'meta_left', _ht: 20 });
+    row4.push({ v: '', t: 's', s: 'meta_left' });
+    row4.push({ v: fechaText, t: 's', s: 'meta_right' });
+    for (let c = 3; c < totalCols; c++) row4.push({ v: '', t: 's', s: 'meta_right' });
+  } else {
+    merges.push('A4:' + lastColLetter + '4');
+    row4.push({ v: docenteText + ' | ' + fechaText, t: 's', s: 'meta_left', _ht: 20 });
+    row4.push({ v: '', t: 's', s: 'meta_left' });
+  }
+
+  // Row 5: Espaciador
+  const row5 = [];
+  row5._ht = 8;
+
+  // Row 6: Cabeceras de tabla
+  const headerRow = [
+    { v: '#', t: 's', s: 'hdr_num', _ht: 24 },
+    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }
+  ];
+  for (let i = 0; i < count; i++) {
+    const colNameStr = (list.cols[i] || ('Columna ' + (i+1))).toUpperCase();
+    const colType = list.colTypes[i] || 'texto';
+    let hdrStyle = 'hdr_blue';
+    if (colType === 'check') hdrStyle = 'hdr_check';
+    else if (colType === 'firma') hdrStyle = 'hdr_purple';
+    headerRow.push({ v: colNameStr, t: 's', s: hdrStyle });
+  }
+
+  const rows = [row1, row2, row3, row4, row5, headerRow];
+
+  // Filas de estudiantes
   sorted.forEach((si, rowIdx) => {
-    const name = S.students[si] || ('Estudiante ' + (si+1));
+    let name = S.students[si] || ('Estudiante ' + (si+1));
+    name = name.toUpperCase();
     const stData = list.data[si] || {};
+    const isEven = (rowIdx % 2 === 0);
+
+    const numStyle = isEven ? 'num_odd' : 'num_even';
+    const nameStyle = isEven ? 'name_odd' : 'name_even';
+
     const row = [
-      { v: rowIdx + 1, t: 'n', s: 'num' },
-      { v: name, t: 's', s: 'name' }
+      { v: rowIdx + 1, t: 'n', s: numStyle, _ht: 20 },
+      { v: name, t: 's', s: nameStyle }
     ];
+
     for (let c = 0; c < count; c++) {
       const colType = list.colTypes[c] || 'texto';
       let val = stData[c];
@@ -13278,21 +13424,58 @@ function exportCustomListXLSX() {
           val = '';
         }
       }
-      let cellVal = val;
-      if (colType === 'check') cellVal = val ? 'SÍ' : 'NO';
-      row.push({ v: cellVal, t: 's', s: 'val' });
+
+      if (colType === 'check') {
+        const isChecked = !!val;
+        row.push({ v: isChecked ? 'SÍ' : 'NO', t: 's', s: isChecked ? 'chk_yes' : 'chk_no' });
+      } else if (colType === 'firma') {
+        const style = isEven ? 'val_center_odd' : 'val_center_even';
+        row.push({ v: val || '', t: 's', s: style });
+      } else {
+        const style = isEven ? 'val_left_odd' : 'val_left_even';
+        row.push({ v: val || '', t: 's', s: style });
+      }
     }
     rows.push(row);
   });
 
-  const sheets = [{ name: 'Listado_Personalizado', rows }];
+  // Firmas al final
+  const emptyRow1 = []; emptyRow1._ht = 14;
+  const emptyRow2 = []; emptyRow2._ht = 18;
+  rows.push(emptyRow1);
+  rows.push(emptyRow2);
+
+  const signLineRow = [{ v: '', t: 's', s: 'empty' }, { v: '________________________________________', t: 's', s: 'sign_bold', _ht: 18 }];
+  const signNameRow = [{ v: '', t: 's', s: 'empty' }, { v: (S.docente || 'Lic. Klever Yánez').toUpperCase(), t: 's', s: 'sign_bold', _ht: 18 }];
+  const signRoleRow = [{ v: '', t: 's', s: 'empty' }, { v: 'DOCENTE / TUTOR', t: 's', s: 'sign_sub', _ht: 16 }];
+
+  if (totalCols >= 3) {
+    const rightColIdx = totalCols >= 4 ? 3 : 2;
+    for (let c = 2; c < totalCols; c++) {
+      if (c === rightColIdx) {
+        signLineRow.push({ v: '________________________________________', t: 's', s: 'sign_bold' });
+        signNameRow.push({ v: 'DIRECTIVA / COORDINACIÓN', t: 's', s: 'sign_bold' });
+        signRoleRow.push({ v: 'RECIBIDO / REVISADO', t: 's', s: 'sign_sub' });
+      } else {
+        signLineRow.push({ v: '', t: 's', s: 'empty' });
+        signNameRow.push({ v: '', t: 's', s: 'empty' });
+        signRoleRow.push({ v: '', t: 's', s: 'empty' });
+      }
+    }
+  }
+
+  rows.push(signLineRow);
+  rows.push(signNameRow);
+  rows.push(signRoleRow);
+
+  const sheets = [{ name: 'Listado_Personalizado', cols, merges, rows }];
   const zip = makeXLSX(sheets);
   const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'Listado_' + title.replace(/\s+/g,'_') + '_' + (S.grado||'7mo').replace(/\s+/g,'_') + '.xlsx';
   a.click();
-  toast('✔ Archivo Excel con datos generado con éxito', '#16a34a');
+  toast('✔ Archivo Excel estructurado y formateado con éxito', '#16a34a');
 }
 
 function getCurrentReunion() {
@@ -13564,42 +13747,114 @@ function exportReunionXLSX() {
   const titulo = reu.titulo || 'REUNIÓN DE PADRES';
   const sorted = getSortedIndices();
 
-  const rows = [
-    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'title' }],
-    [{ v: titulo.toUpperCase(), t: 's', s: 'sub' }],
-    [{ v: 'Docente: ' + (S.docente||'Lcdo. Kevin Yánez') + ' | Grado: ' + (S.grado||'7mo C') + ' | Fecha: ' + (reu.fecha||''), t: 's', s: 'sub' }],
-    [],
-    [
-      { v: '#', t: 's', s: 'hdr' },
-      { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr' },
-      { v: 'NOMBRE DEL REPRESENTANTE', t: 's', s: 'hdr_col' },
-      { v: 'CÉDULA', t: 's', s: 'hdr_col' },
-      { v: 'ASISTIÓ', t: 's', s: 'hdr_col' },
-      { v: 'OBSERVACIONES', t: 's', s: 'hdr_col' }
-    ]
+  const cols = [
+    { width: 6 },   // #
+    { width: 36 },  // Nómina de estudiantes
+    { width: 32 },  // Nombre del representante
+    { width: 16 },  // Cédula
+    { width: 14 },  // Asistió
+    { width: 28 }   // Observaciones
   ];
 
+  const merges = [
+    'A1:F1',
+    'A2:F2',
+    'A3:F3',
+    'A4:D4',
+    'E4:F4'
+  ];
+
+  const row1 = [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'inst_title', _ht: 26 }, { v:'', t:'s', s:'inst_title' }, { v:'', t:'s', s:'inst_title' }, { v:'', t:'s', s:'inst_title' }, { v:'', t:'s', s:'inst_title' }, { v:'', t:'s', s:'inst_title' }];
+  const row2 = [{ v: titulo.toUpperCase(), t: 's', s: 'inst_sub', _ht: 22 }, { v:'', t:'s', s:'inst_sub' }, { v:'', t:'s', s:'inst_sub' }, { v:'', t:'s', s:'inst_sub' }, { v:'', t:'s', s:'inst_sub' }, { v:'', t:'s', s:'inst_sub' }];
+  const row3 = [{ v: 'ACTA DE ASISTENCIA · ' + (S.grado||'Séptimo C') + ' · Año Lectivo ' + (S.anio||'2026-2027'), t: 's', s: 'inst_sub2', _ht: 18 }, { v:'', t:'s', s:'inst_sub2' }, { v:'', t:'s', s:'inst_sub2' }, { v:'', t:'s', s:'inst_sub2' }, { v:'', t:'s', s:'inst_sub2' }, { v:'', t:'s', s:'inst_sub2' }];
+  
+  const docenteText = 'Docente: ' + (S.docente || 'Lic. Klever Yánez') + ' | Grado: ' + (S.grado || 'Séptimo C') + ' | Hora: ' + (reu.horaLugar || '13:30');
+  const fechaText = 'Fecha: ' + (reu.fecha || new Date().toLocaleDateString('es-EC'));
+  const row4 = [
+    { v: docenteText, t: 's', s: 'meta_left', _ht: 20 },
+    { v: '', t: 's', s: 'meta_left' },
+    { v: '', t: 's', s: 'meta_left' },
+    { v: '', t: 's', s: 'meta_left' },
+    { v: fechaText, t: 's', s: 'meta_right' },
+    { v: '', t: 's', s: 'meta_right' }
+  ];
+
+  const row5 = []; row5._ht = 8;
+
+  const headerRow = [
+    { v: '#', t: 's', s: 'hdr_num', _ht: 24 },
+    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' },
+    { v: 'NOMBRE DEL REPRESENTANTE', t: 's', s: 'hdr_blue' },
+    { v: 'CÉDULA', t: 's', s: 'hdr_purple' },
+    { v: 'ASISTIÓ', t: 's', s: 'hdr_check' },
+    { v: 'OBSERVACIONES / FIRMA', t: 's', s: 'hdr_amber' }
+  ];
+
+  const rows = [row1, row2, row3, row4, row5, headerRow];
+
   sorted.forEach((si, rowIdx) => {
-    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const name = (S.students[si] || ('Estudiante ' + (si+1))).toUpperCase();
     const att = reu.attendance[si] || { rep: '', ci: '', present: false, obs: '' };
+    const isEven = (rowIdx % 2 === 0);
+
+    const numStyle = isEven ? 'num_odd' : 'num_even';
+    const nameStyle = isEven ? 'name_odd' : 'name_even';
+    const textStyle = isEven ? 'val_left_odd' : 'val_left_even';
+    const centerStyle = isEven ? 'val_center_odd' : 'val_center_even';
+
     rows.push([
-      { v: rowIdx + 1, t: 'n', s: 'num' },
-      { v: name, t: 's', s: 'name' },
-      { v: att.rep || '', t: 's', s: 'val' },
-      { v: att.ci || '', t: 's', s: 'val' },
-      { v: att.present ? 'SÍ' : 'NO', t: 's', s: 'val' },
-      { v: att.obs || '', t: 's', s: 'val' }
+      { v: rowIdx + 1, t: 'n', s: numStyle, _ht: 20 },
+      { v: name, t: 's', s: nameStyle },
+      { v: att.rep || '', t: 's', s: textStyle },
+      { v: att.ci || '', t: 's', s: centerStyle },
+      { v: att.present ? 'SÍ' : 'NO', t: 's', s: att.present ? 'chk_yes' : 'chk_no' },
+      { v: att.obs || '', t: 's', s: textStyle }
     ]);
   });
 
-  const sheets = [{ name: 'Asistencia_Reunion', rows }];
+  // Footer Signatures
+  const emptyRow1 = []; emptyRow1._ht = 14;
+  const emptyRow2 = []; emptyRow2._ht = 18;
+  rows.push(emptyRow1);
+  rows.push(emptyRow2);
+
+  const signLineRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: '________________________________________', t: 's', s: 'sign_bold', _ht: 18 },
+    { v: '', t: 's', s: 'empty' },
+    { v: '', t: 's', s: 'empty' },
+    { v: '________________________________________', t: 's', s: 'sign_bold' },
+    { v: '', t: 's', s: 'empty' }
+  ];
+  const signNameRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: (S.docente || 'Lic. Klever Yánez').toUpperCase(), t: 's', s: 'sign_bold', _ht: 18 },
+    { v: '', t: 's', s: 'empty' },
+    { v: '', t: 's', s: 'empty' },
+    { v: 'DIRECTIVA DE PADRES DE FAMILIA', t: 's', s: 'sign_bold' },
+    { v: '', t: 's', s: 'empty' }
+  ];
+  const signRoleRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: 'DOCENTE / TUTOR', t: 's', s: 'sign_sub', _ht: 16 },
+    { v: '', t: 's', s: 'empty' },
+    { v: '', t: 's', s: 'empty' },
+    { v: 'PRESIDENTE / SECRETARIO(A)', t: 's', s: 'sign_sub' },
+    { v: '', t: 's', s: 'empty' }
+  ];
+
+  rows.push(signLineRow);
+  rows.push(signNameRow);
+  rows.push(signRoleRow);
+
+  const sheets = [{ name: 'Asistencia_Reunion', cols, merges, rows }];
   const zip = makeXLSX(sheets);
   const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'Asistencia_Reunion_Padres_' + (S.grado||'7mo').replace(/\s+/g,'_') + '.xlsx';
   a.click();
-  toast('✔ Archivo Excel de reunión descargado', '#16a34a');
+  toast('✔ Archivo Excel estructurado de reunión generado con éxito', '#16a34a');
 }
 
 function populateAtencionStudentSelect() {
@@ -18577,10 +18832,14 @@ function printAttReport() {
 
   const printZone = document.getElementById('attReportPrint');
   printZone.innerHTML = pagesHTML;
+  document.body.classList.add('printing-att-report');
 
   window.print();
 
-  setTimeout(() => { printZone.innerHTML = ''; }, 1500);
+  setTimeout(() => {
+    document.body.classList.remove('printing-att-report');
+    printZone.innerHTML = '';
+  }, 1500);
 }
 
 
