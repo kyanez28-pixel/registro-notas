@@ -4200,6 +4200,75 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         </div>
       </div>
 
+      <!-- 🎨 BARRA DE PERSONALIZACIÓN TIPOGRÁFICA Y FORMATO VISUAL -->
+      <div style="background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);border:1.5px solid #cbd5e1;border-radius:10px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <div style="font-size:0.78rem;font-weight:900;color:#1e3a8a;display:flex;align-items:center;gap:6px">
+            <span>🎨</span>
+            <span>FORMATO DE TEXTO, TIPOGRAFÍA Y DISEÑO:</span>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button type="button" class="btn btn-outline" style="padding:2px 8px;font-size:0.75rem;font-weight:900" onclick="adjustCustomFontSize(-0.5)" title="Reducir tamaño de letra">A-</button>
+            <span id="custFontSizeBadge" style="font-size:0.72rem;font-weight:800;font-family:var(--font-mono);background:#e2e8f0;padding:2px 8px;border-radius:4px">8.5pt</span>
+            <button type="button" class="btn btn-outline" style="padding:2px 8px;font-size:0.75rem;font-weight:900" onclick="adjustCustomFontSize(0.5)" title="Aumentar tamaño de letra">A+</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+          <div>
+            <label style="font-size:0.74rem;font-weight:800">🔤 Tipo de Letra (Fuente):</label>
+            <select id="custFontFamilySel" onchange="onCustomStyleChange('fontFamily', this.value)" style="width:100%;font-size:0.78rem;font-weight:700">
+              <option value="'Inter', system-ui, sans-serif">✨ Inter / Segoe UI (Moderna Limpia)</option>
+              <option value="'Outfit', sans-serif">🌟 Outfit / Poppins (Redonda Elegante)</option>
+              <option value="'Arial', 'Helvetica', sans-serif">📋 Arial (Estándar Oficial)</option>
+              <option value="'Times New Roman', serif">🏛️ Times New Roman (Formal / Serif)</option>
+              <option value="'Roboto Mono', monospace">🔢 Monoespaciada (Numérica / Cédulas)</option>
+              <option value="'Comic Sans MS', cursive">🎈 Comic / Escolar (Primaria)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:0.74rem;font-weight:800">📏 Tamaño de Letra:</label>
+            <select id="custFontSizeSel" onchange="onCustomStyleChange('fontSize', this.value)" style="width:100%;font-size:0.78rem;font-weight:700">
+              <option value="7pt">7.0pt (Súper Compacta - 45+ alumnos/hoja)</option>
+              <option value="7.5pt">7.5pt (Muy Compacta)</option>
+              <option value="8.5pt" selected>8.5pt (Estándar Óptimo)</option>
+              <option value="9.5pt">9.5pt (Mediana Cómoda)</option>
+              <option value="10.5pt">10.5pt (Grande Legible)</option>
+              <option value="11.5pt">11.5pt (Extra Grande)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:0.74rem;font-weight:800">📐 Alto de Fila / Interlineado:</label>
+            <select id="custRowPaddingSel" onchange="onCustomStyleChange('rowPadding', this.value)" style="width:100%;font-size:0.78rem;font-weight:700">
+              <option value="compact">⚡ Compacta (Máximo espacio en hoja)</option>
+              <option value="medium" selected>⚖️ Media / Balanceada</option>
+              <option value="spacious">✍️ Espaciosa (Firmas / Letra grande)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:0.74rem;font-weight:800">🎨 Estilo de Color de Cabeceras:</label>
+            <select id="custColorThemeSel" onchange="onCustomStyleChange('colorTheme', this.value)" style="width:100%;font-size:0.78rem;font-weight:700">
+              <option value="vibrant" selected>🌈 Multicolor Vibrante (Estilo Notas)</option>
+              <option value="navy">🏛️ Azul Marino Institucional</option>
+              <option value="emerald">🌿 Verde Esmeralda</option>
+              <option value="purple">🔮 Púrpura Académico</option>
+              <option value="mono">📄 Escala de Grises (Fotocopias)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:0.74rem;font-weight:800">🔠 Formato de Nombres:</label>
+            <select id="custTextTransformSel" onchange="onCustomStyleChange('textTransform', this.value)" style="width:100%;font-size:0.78rem;font-weight:700">
+              <option value="uppercase" selected>MAYÚSCULAS (ALCIVAR MENDOZA...)</option>
+              <option value="capitalize">Tipo Título (Alcivar Mendoza...)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Columnas configuradas dinámicas -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
         <label style="margin:0;font-weight:800">Configuración de Encabezados y Origen de Datos:</label>
@@ -12147,18 +12216,32 @@ function exportDiagnosticoXLSX() {
 let _activeHerramientasTab = 'listados';
 let _customListSearchQuery = '';
 
-// Paleta de colores vibrantes y elegantes (Idéntica a la tabla principal de notas - Imagen 1)
-const LIST_COLUMN_THEMES = [
-  { bg: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', headerSolid: '#059669', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#f0fdf4', border: '#86efac', glow: '#059669', tag: '🌿 REGISTRO 1' },
-  { bg: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', headerSolid: '#2563eb', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#eff6ff', border: '#93c5fd', glow: '#2563eb', tag: '🌊 REGISTRO 2' },
-  { bg: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)', headerSolid: '#d97706', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fffbeb', border: '#fde68a', glow: '#d97706', tag: '🍊 REGISTRO 3' },
-  { bg: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', headerSolid: '#7c3aed', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#faf5ff', border: '#d8b4fe', glow: '#7c3aed', tag: '🔮 REGISTRO 4' },
-  { bg: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)', headerSolid: '#0891b2', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#ecfeff', border: '#a5f3fc', glow: '#0891b2', tag: '🐬 REGISTRO 5' },
-  { bg: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)', headerSolid: '#e11d48', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fff1f2', border: '#fecdd3', glow: '#e11d48', tag: '🌹 REGISTRO 6' },
-  { bg: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)', headerSolid: '#ca8a04', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fefce8', border: '#fef08a', glow: '#ca8a04', tag: '🟡 REGISTRO 7' },
-  { bg: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)', headerSolid: '#4f46e5', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#eef2ff', border: '#c7d2fe', glow: '#4f46e5', tag: '⚡ REGISTRO 8' },
-  { bg: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)', headerSolid: '#0d9488', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#f0fdfa', border: '#99f6e4', glow: '#0d9488', tag: '🌲 REGISTRO 9' }
-];
+// Temas de colores disponibles
+const THEMES_PRESETS = {
+  vibrant: [
+    { bg: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', headerSolid: '#059669', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#f0fdf4', border: '#86efac', glow: '#059669', tag: '🌿 REGISTRO 1' },
+    { bg: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)', headerSolid: '#2563eb', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#eff6ff', border: '#93c5fd', glow: '#2563eb', tag: '🌊 REGISTRO 2' },
+    { bg: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)', headerSolid: '#d97706', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fffbeb', border: '#fde68a', glow: '#d97706', tag: '🍊 REGISTRO 3' },
+    { bg: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)', headerSolid: '#7c3aed', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#faf5ff', border: '#d8b4fe', glow: '#7c3aed', tag: '🔮 REGISTRO 4' },
+    { bg: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)', headerSolid: '#0891b2', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#ecfeff', border: '#a5f3fc', glow: '#0891b2', tag: '🐬 REGISTRO 5' },
+    { bg: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)', headerSolid: '#e11d48', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fff1f2', border: '#fecdd3', glow: '#e11d48', tag: '🌹 REGISTRO 6' },
+    { bg: 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)', headerSolid: '#ca8a04', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#fefce8', border: '#fef08a', glow: '#ca8a04', tag: '🟡 REGISTRO 7' },
+    { bg: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)', headerSolid: '#4f46e5', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#eef2ff', border: '#c7d2fe', glow: '#4f46e5', tag: '⚡ REGISTRO 8' },
+    { bg: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)', headerSolid: '#0d9488', text: '#ffffff', pillBg: 'rgba(255,255,255,0.22)', cellBg: '#f0fdfa', border: '#99f6e4', glow: '#0d9488', tag: '🌲 REGISTRO 9' }
+  ],
+  navy: [
+    { bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', headerSolid: '#1e3a8a', text: '#ffffff', pillBg: 'rgba(255,255,255,0.2)', cellBg: '#f0f4ff', border: '#bfdbfe', glow: '#1e3a8a', tag: '🏛️ COL' }
+  ],
+  emerald: [
+    { bg: 'linear-gradient(135deg, #065f46 0%, #059669 100%)', headerSolid: '#059669', text: '#ffffff', pillBg: 'rgba(255,255,255,0.2)', cellBg: '#f0fdf4', border: '#86efac', glow: '#059669', tag: '🌿 COL' }
+  ],
+  purple: [
+    { bg: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)', headerSolid: '#7c3aed', text: '#ffffff', pillBg: 'rgba(255,255,255,0.2)', cellBg: '#faf5ff', border: '#d8b4fe', glow: '#7c3aed', tag: '🔮 COL' }
+  ],
+  mono: [
+    { bg: '#334155', headerSolid: '#334155', text: '#ffffff', pillBg: 'rgba(255,255,255,0.15)', cellBg: '#ffffff', border: '#cbd5e1', glow: '#475569', tag: '📄 COL' }
+  ]
+};
 
 // Mapeo de campos de la Matriz de Estudiantes
 const MATRIX_FIELD_MAP = {
@@ -12280,6 +12363,16 @@ function sanitizeListModel(list) {
     if (!list.colTypes[i]) list.colTypes[i] = 'texto';
   }
 
+  if (!list.style || typeof list.style !== 'object') {
+    list.style = {
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: '8.5pt',
+      rowPadding: 'medium',
+      colorTheme: 'vibrant',
+      textTransform: 'uppercase'
+    };
+  }
+
   if (!list.data || typeof list.data !== 'object') list.data = {};
 }
 
@@ -12297,6 +12390,13 @@ function ensureHerramientas() {
         colCount: 2,
         cols: ['Cédula de Identidad', 'Firma / Aclaración'],
         colTypes: ['mat_cedula', 'firma'],
+        style: {
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: '8.5pt',
+          rowPadding: 'medium',
+          colorTheme: 'vibrant',
+          textTransform: 'uppercase'
+        },
         data: {}
       }
     ];
@@ -12468,6 +12568,21 @@ function onSelectCustomList(listId) {
   if (oEl) oEl.value = list.orientation || 'portrait';
   if (cEl) cEl.value = list.colCount || 2;
 
+  // Actualizar controles de estilo
+  const fFamEl = document.getElementById('custFontFamilySel');
+  const fSizEl = document.getElementById('custFontSizeSel');
+  const fPadEl = document.getElementById('custRowPaddingSel');
+  const fThmEl = document.getElementById('custColorThemeSel');
+  const fTrnEl = document.getElementById('custTextTransformSel');
+  const fBadge = document.getElementById('custFontSizeBadge');
+
+  if (fFamEl) fFamEl.value = list.style.fontFamily || "'Inter', system-ui, sans-serif";
+  if (fSizEl) fSizEl.value = list.style.fontSize || '8.5pt';
+  if (fPadEl) fPadEl.value = list.style.rowPadding || 'medium';
+  if (fThmEl) fThmEl.value = list.style.colorTheme || 'vibrant';
+  if (fTrnEl) fTrnEl.value = list.style.textTransform || 'uppercase';
+  if (fBadge) fBadge.textContent = list.style.fontSize || '8.5pt';
+
   renderCustomColsConfig();
   updateCustomListPreview();
 }
@@ -12484,6 +12599,13 @@ function openNewCustomListModal() {
     colCount: 2,
     cols: ['Cédula de Identidad', 'Firma / Aclaración'],
     colTypes: ['mat_cedula', 'firma'],
+    style: {
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: '8.5pt',
+      rowPadding: 'medium',
+      colorTheme: 'vibrant',
+      textTransform: 'uppercase'
+    },
     data: {}
   };
   sanitizeListModel(newList);
@@ -12542,6 +12664,35 @@ function onCustomListOrientationChange(val) {
   updateCustomListPreview();
 }
 
+function onCustomStyleChange(prop, val) {
+  const list = getCurrentCustomList();
+  if (!list.style) list.style = {};
+  list.style[prop] = val;
+  const fBadge = document.getElementById('custFontSizeBadge');
+  if (prop === 'fontSize' && fBadge) {
+    fBadge.textContent = val;
+  }
+  updateCustomListPreview();
+  saveData();
+}
+
+function adjustCustomFontSize(delta) {
+  const list = getCurrentCustomList();
+  if (!list.style) list.style = {};
+  let cur = parseFloat(list.style.fontSize || '8.5') || 8.5;
+  cur = Math.max(6.0, Math.min(16.0, cur + delta));
+  const newSize = cur.toFixed(1).replace('.0','') + 'pt';
+  list.style.fontSize = newSize;
+
+  const fSizEl = document.getElementById('custFontSizeSel');
+  const fBadge = document.getElementById('custFontSizeBadge');
+  if (fSizEl) fSizEl.value = newSize;
+  if (fBadge) fBadge.textContent = newSize;
+
+  updateCustomListPreview();
+  saveData();
+}
+
 function addCustomCol() {
   const list = getCurrentCustomList();
   const newIdx = (list.colCount || 0) + 1;
@@ -12589,12 +12740,15 @@ function renderCustomColsConfig() {
   const container = document.getElementById('custColsConfigContainer');
   if (!container) return;
 
+  const themeKey = list.style?.colorTheme || 'vibrant';
+  const palette = THEMES_PRESETS[themeKey] || THEMES_PRESETS.vibrant;
+
   let html = '';
   for (let i = 0; i < count; i++) {
     const colName = list.cols[i] || ('Columna ' + (i+1));
     const colType = list.colTypes[i] || 'texto';
     const isMat = colType.startsWith('mat_');
-    const theme = LIST_COLUMN_THEMES[i % LIST_COLUMN_THEMES.length];
+    const theme = palette[i % palette.length];
 
     html += '<div style="background:var(--bg-card);border:2px solid ' + (isMat ? '#3b82f6' : 'var(--border-color)') + ';border-radius:10px;padding:10px 12px;position:relative;box-shadow:var(--shadow-xs)">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
@@ -12864,6 +13018,20 @@ function updateCustomListPreview() {
   const box = document.getElementById('customListPreviewBox');
   if (!box) return;
 
+  // Variables de estilo personalizadas
+  const st = list.style || {};
+  const fontFamily = st.fontFamily || "'Inter', system-ui, sans-serif";
+  const fontSize = st.fontSize || '8.5pt';
+  const rowPadding = st.rowPadding || 'medium';
+  const themeKey = st.colorTheme || 'vibrant';
+  const textTransform = st.textTransform || 'uppercase';
+
+  let cellPadding = '5px 8px';
+  if (rowPadding === 'compact') cellPadding = '2.5px 5px';
+  else if (rowPadding === 'spacious') cellPadding = '9px 10px';
+
+  const palette = THEMES_PRESETS[themeKey] || THEMES_PRESETS.vibrant;
+
   // Filtrado en vivo si hay término de búsqueda
   if (_customListSearchQuery) {
     sorted = sorted.filter(si => {
@@ -12875,13 +13043,13 @@ function updateCustomListPreview() {
     });
   }
 
-  // Generar cabeceras coloridas (Estilo Imagen 1)
+  // Generar cabeceras coloridas
   let thCols = '';
   for (let i = 0; i < count; i++) {
     const colName = list.cols[i] || ('Columna ' + (i+1));
     const colType = list.colTypes[i] || 'texto';
     const def = MATRIX_FIELD_MAP[colType];
-    const theme = LIST_COLUMN_THEMES[i % LIST_COLUMN_THEMES.length];
+    const theme = palette[i % palette.length];
     
     let align = 'center';
     let minW = '115px';
@@ -12899,26 +13067,32 @@ function updateCustomListPreview() {
       align = 'left'; minW = '125px'; pillTag = '📝 DATOS';
     }
 
-    thCols += '<th style="background:' + theme.bg + ' !important;color:#ffffff;min-width:' + minW + ';text-align:' + align + ';border:1px solid rgba(255,255,255,0.25);padding:8px 6px">' +
-      '<div style="font-size:0.64rem;font-weight:900;background:' + theme.pillBg + ';color:#ffffff;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px;letter-spacing:0.4px">' +
+    thCols += '<th style="background:' + theme.bg + ' !important;color:' + theme.text + ';min-width:' + minW + ';text-align:' + align + ';border:1px solid rgba(255,255,255,0.25);padding:8px 6px">' +
+      '<div style="font-size:calc(' + fontSize + ' * 0.75);font-weight:900;background:' + theme.pillBg + ';color:#ffffff;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px;letter-spacing:0.4px">' +
         escHTML(pillTag) +
       '</div>' +
-      '<div style="font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.2px;line-height:1.2">' +
+      '<div style="font-size:calc(' + fontSize + ' * 0.95);font-weight:800;text-transform:uppercase;letter-spacing:0.2px;line-height:1.2">' +
         escHTML(colName) +
       '</div>' +
     '</th>';
   }
 
-  // Generar filas con diseño interactivo, estilizado y colorido
+  // Generar filas
   let rowsHtml = sorted.map((si, rowPos) => {
-    const name = S.students[si] || ('Estudiante ' + (si+1));
+    let name = S.students[si] || ('Estudiante ' + (si+1));
+    if (textTransform === 'capitalize') {
+      name = name.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+    } else {
+      name = name.toUpperCase();
+    }
+
     const stData = list.data[si] || {};
     let tdCols = '';
 
     for (let c = 0; c < count; c++) {
       const colType = list.colTypes[c] || 'texto';
       const def = MATRIX_FIELD_MAP[colType];
-      const theme = LIST_COLUMN_THEMES[c % LIST_COLUMN_THEMES.length];
+      const theme = palette[c % palette.length];
       let val = stData[c];
       if (val === undefined || val === null || val === '') {
         if (def) {
@@ -12933,30 +13107,30 @@ function updateCustomListPreview() {
 
       if (colType === 'check') {
         const isChecked = !!val;
-        tdCols += '<td style="text-align:center;padding:4px;background:' + theme.cellBg + ';width:85px">' +
-          '<button type="button" class="btn ' + (isChecked ? 'btn-success' : 'btn-outline') + ' no-print" onclick="toggleCustomCellCheck(' + si + ', ' + c + ')" style="padding:3px 8px;font-size:0.75rem;font-weight:800;border-radius:6px;width:100%;box-shadow:' + (isChecked ? '0 2px 6px rgba(22,163,74,0.3)' : 'none') + '">' +
+        tdCols += '<td style="text-align:center;padding:' + cellPadding + ';background:' + theme.cellBg + ';width:85px">' +
+          '<button type="button" class="btn ' + (isChecked ? 'btn-success' : 'btn-outline') + ' no-print" onclick="toggleCustomCellCheck(' + si + ', ' + c + ')" style="padding:2px 8px;font-size:calc(' + fontSize + ' * 0.85);font-weight:800;border-radius:6px;width:100%;box-shadow:' + (isChecked ? '0 2px 6px rgba(22,163,74,0.3)' : 'none') + '">' +
             (isChecked ? '☑ SÍ' : '▢ NO') +
           '</button>' +
-          '<span class="only-print" style="font-size:1.15rem;font-weight:900;text-align:center;display:block">' +
+          '<span class="only-print" style="font-size:1.2em;font-weight:900;text-align:center;display:block">' +
             (isChecked ? '☑' : '☐') +
           '</span>' +
         '</td>';
       } else if (colType === 'firma') {
-        tdCols += '<td style="padding:4px;text-align:center;min-width:145px;background:' + theme.cellBg + '">' +
-          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="✍️ Firma / Aclaración" style="text-align:center;font-size:0.76rem"/>' +
+        tdCols += '<td style="padding:' + cellPadding + ';text-align:center;min-width:145px;background:' + theme.cellBg + '">' +
+          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="✍️ Firma / Aclaración" style="text-align:center;font-size:calc(' + fontSize + ' * 0.9);padding:3px 6px"/>' +
           '<span class="only-print" style="display:block;height:24px;border-bottom:1px solid #000;line-height:24px">' + escHTML(val) + '</span>' +
         '</td>';
       } else {
-        tdCols += '<td style="padding:4px;text-align:' + align + ';' + fontMono + ';background:' + theme.cellBg + '">' +
-          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="text-align:' + align + ';' + fontMono + '"/>' +
-          '<span class="only-print" style="font-size:0.82rem;display:block;text-align:' + align + ';' + fontMono + '">' + escHTML(val) + '</span>' +
+        tdCols += '<td style="padding:' + cellPadding + ';text-align:' + align + ';' + fontMono + ';background:' + theme.cellBg + '">' +
+          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="text-align:' + align + ';' + fontMono + ';font-size:calc(' + fontSize + ' * 0.95);padding:3px 6px"/>' +
+          '<span class="only-print" style="font-size:' + fontSize + ';display:block;text-align:' + align + ';' + fontMono + '">' + escHTML(val) + '</span>' +
         '</td>';
       }
     }
 
     return '<tr>' +
-      '<td style="text-align:center;font-weight:900;width:38px;color:#1e3a8a;background:#f8fafc;font-family:var(--font-mono);font-size:0.82rem">' + (rowPos+1) + '</td>' +
-      '<td class="nc-cell" style="font-weight:700;padding-left:12px;font-size:0.84rem;text-align:left;color:#0f172a;cursor:pointer">' + escHTML(name) + '</td>' +
+      '<td style="text-align:center;font-weight:900;width:38px;color:#1e3a8a;background:#f8fafc;font-family:var(--font-mono);font-size:' + fontSize + ';padding:' + cellPadding + '">' + (rowPos+1) + '</td>' +
+      '<td class="nc-cell" style="font-weight:700;padding-left:10px;font-size:' + fontSize + ';text-align:left;color:#0f172a;cursor:pointer;padding:' + cellPadding + '">' + escHTML(name) + '</td>' +
       tdCols +
     '</tr>';
   }).join('');
@@ -12965,15 +13139,18 @@ function updateCustomListPreview() {
     rowsHtml = '<tr><td colspan="' + (count + 2) + '" style="text-align:center;padding:24px;color:var(--text-muted);font-weight:700">No se encontraron estudiantes que coincidan con la búsqueda "' + escHTML(_customListSearchQuery) + '"</td></tr>';
   }
 
-  // Banner superior institucional
+  // Contenedor principal con la tipografía seleccionada
+  box.style.fontFamily = fontFamily;
+  box.style.fontSize = fontSize;
+
   box.innerHTML = '<div style="background:linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(30,58,138,0.25)">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
         '<div>' +
-          '<div style="font-weight:900;font-size:1.05rem;letter-spacing:0.5px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
-          '<div style="font-weight:800;font-size:0.92rem;color:#93c5fd;margin-top:2px">' + escHTML(title) + '</div>' +
-          (subtitle ? '<div style="font-size:0.75rem;color:#e2e8f0;margin-top:1px">' + escHTML(subtitle) + '</div>' : '') +
+          '<div style="font-weight:900;font-size:1.1em;letter-spacing:0.5px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
+          '<div style="font-weight:800;font-size:0.98em;color:#93c5fd;margin-top:2px">' + escHTML(title) + '</div>' +
+          (subtitle ? '<div style="font-size:0.85em;color:#e2e8f0;margin-top:1px">' + escHTML(subtitle) + '</div>' : '') +
         '</div>' +
-        '<div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
+        '<div style="text-align:right;font-size:0.8em;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
           '<div>Docente: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></div>' +
           '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo C') + '</strong> · Año: <strong>' + escHTML(S.anio||'2026-2027') + '</strong></div>' +
           '<div>Fecha: <strong>' + new Date().toLocaleDateString('es-EC') + '</strong></div>' +
@@ -12981,11 +13158,11 @@ function updateCustomListPreview() {
       '</div>' +
     '</div>' +
 
-    // Barra de Búsqueda y Filtro Rápido (Idéntica a la barra de búsqueda de la Imagen 1)
+    // Barra de Búsqueda y Filtro Rápido
     '<div class="no-print" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;background:#f8fafc;border:1px solid #cbd5e1;padding:8px 14px;border-radius:8px">' +
       '<div style="display:flex;align-items:center;gap:8px;flex:1">' +
         '<span style="font-size:0.95rem">🔍</span>' +
-        '<input type="text" value="' + escVal(_customListSearchQuery) + '" oninput="onCustomListSearchInput(this.value)" placeholder="Buscar estudiante por nombre o cédula..." style="width:100%;border:none;background:transparent;font-size:0.84rem;font-weight:700;outline:none;color:#0f172a"/>' +
+        '<input type="text" value="' + escVal(_customListSearchQuery) + '" oninput="onCustomListSearchInput(this.value)" placeholder="Buscar estudiante por nombre o cédula..." style="width:100%;border:none;background:transparent;font-size:0.85rem;font-weight:700;outline:none;color:#0f172a"/>' +
         (_customListSearchQuery ? '<button type="button" onclick="onCustomListSearchInput(\'\')" style="background:transparent;border:none;color:#dc2626;font-weight:900;cursor:pointer">✕</button>' : '') +
       '</div>' +
       '<div style="font-size:0.75rem;font-weight:800;color:#1e3a8a;white-space:nowrap;background:#dbeafe;padding:3px 10px;border-radius:99px">' +
@@ -12993,13 +13170,13 @@ function updateCustomListPreview() {
       '</div>' +
     '</div>' +
 
-    '<table>' +
+    '<table style="font-family:' + fontFamily + ';font-size:' + fontSize + '">' +
       '<thead>' +
         '<tr>' +
           '<th style="width:38px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff;border:1px solid rgba(255,255,255,0.25)">#</th>' +
           '<th style="min-width:210px;text-align:left;padding-left:12px;background:linear-gradient(135deg, #1e3a8a 0%, #172554 100%) !important;color:#fff;border:1px solid rgba(255,255,255,0.25)">' +
-            '<div style="font-size:0.64rem;font-weight:900;background:rgba(255,255,255,0.2);color:#ffffff;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px">👥 NÓMINA OFICIAL</div>' +
-            '<div style="font-size:0.8rem;font-weight:800;letter-spacing:0.2px">NÓMINA DE ESTUDIANTES</div>' +
+            '<div style="font-size:calc(' + fontSize + ' * 0.75);font-weight:900;background:rgba(255,255,255,0.2);color:#ffffff;border-radius:99px;padding:1.5px 7px;display:inline-block;margin-bottom:3px">👥 NÓMINA OFICIAL</div>' +
+            '<div style="font-size:calc(' + fontSize + ' * 0.95);font-weight:800;letter-spacing:0.2px">NÓMINA DE ESTUDIANTES</div>' +
           '</th>' +
           thCols +
         '</tr>' +
