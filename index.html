@@ -459,7 +459,13 @@ th.sh.is-week-collapsed {
   box-shadow: inset 0 0 0 1.5px rgba(29, 78, 216, 0.35);
 }
 
-.content { padding: 16px 20px; }
+.content {
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
 
 /* ── TARJETAS DE ESTADÍSTICAS (KPI CARDS PULIDAS) ── */
 .stats-grid {
@@ -478,16 +484,16 @@ th.sh.is-week-collapsed {
   font-size: 0.77rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;
   letter-spacing: 0.7px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;
 }
-.stat-val { font-family: var(--font-mono); font-size: 1.45rem; font-weight: 900; color: var(--card-text, var(--text-main)); }
-.stat-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 3px; font-weight: 600; }
+.stat-value { font-size: 1.5rem; font-weight: 900; color: var(--text-main); font-family: var(--font-mono); }
+.stat-sub { font-size: 0.72rem; color: var(--text-light); margin-top: 3px; font-weight: 600; }
 .stat-card-title { font-size: 0.77rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 5px; }
 .stat-card-val   { font-family: var(--font-mono); font-size: 1.45rem; font-weight: 900; color: var(--card-text, var(--text-main)); line-height: 1.15; }
 .stat-card-sub   { font-size: 0.76rem; color: var(--text-muted); margin-top: 3px; font-weight: 600; }
 
-/* ── BUSCADOR & FILTRO ── */
+/* ── BARRA DE BÚSQUEDA Y FILTROS ── */
 .filter-bar {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  margin-bottom: 12px; flex-wrap: wrap;
+  display: flex; gap: 10px; margin-bottom: 14px; align-items: center;
+  flex-wrap: wrap; justify-content: space-between;
 }
 .search-wrapper { position: relative; display: flex; align-items: center; flex: 1; max-width: 380px; }
 .search-wrapper svg { position: absolute; left: 12px; color: var(--text-light); pointer-events: none; }
@@ -4073,7 +4079,7 @@ body.in-focus-mode {
   </div>
 
   <!-- Contenedor con Botones Flotantes Laterales -->
-  <div style="position:relative">
+  <div style="position:relative;width:100%;max-width:100%;min-width:0;box-sizing:border-box">
     <button type="button" class="matrix-float-nav matrix-float-left" onclick="scrollMatrixHorizontal(-450)" title="Desplazar tabla a la izquierda (◀)">
       ◀
     </button>
@@ -4081,7 +4087,7 @@ body.in-focus-mode {
       ▶
     </button>
 
-    <div id="stMatrixContainer" class="tw" style="max-height:calc(100vh - 290px);overflow-x:auto;overflow-y:auto;cursor:grab">
+    <div id="stMatrixContainer" class="tw" style="width:100%;max-width:100%;min-width:0;box-sizing:border-box;max-height:calc(100vh - 290px);overflow-x:auto !important;overflow-y:auto !important;cursor:grab">
       <table id="stMatrixTable" style="width:max-content;min-width:100%;table-layout:auto">
         <thead id="stMatrixTh"></thead>
         <tbody id="stMatrixTb"></tbody>
