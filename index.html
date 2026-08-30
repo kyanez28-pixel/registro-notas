@@ -6563,6 +6563,7 @@ function ensureMats() {
 // ══════════════════════════════════════════════════════
 //  PERSISTENCIA & SINCRONIZACIÓN EN TIEMPO REAL
 // ══════════════════════════════════════════════════════
+var _isRemoteSyncing = false;
 let _saveTimeout = null;
 
 function saveData(manual) {
@@ -10761,7 +10762,6 @@ const db   = firebase.firestore();
 const _clientId = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 let _currentUser = null;
 let _unsubscribeSnapshot = null;
-let _isRemoteSyncing = false;
 let _lastLocalSaveTime = 0;
 let _syncRoomId = localStorage.getItem('notas_sync_room') || 'septimo_c';
 
@@ -15896,7 +15896,7 @@ function openEditPeriod() {
 // ══════════════════════════════════════════════════════
 //  DATOS PREDETERMINADOS DE MATRIZ DE ESTUDIANTES
 // ══════════════════════════════════════════════════════
-const DEFAULT_STUDENT_PROFILES = [
+var DEFAULT_STUDENT_PROFILES = [
   {
     "num": "1",
     "nombre": "ALCIVAR MENDOZA AMY SOFIA",
