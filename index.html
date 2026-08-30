@@ -16856,8 +16856,59 @@ function calculateAgeFromBirthDate(birthDateStr) {
   if (years < 0) return '';
   const strY = years === 1 ? '1 año' : `${years} años`;
   const strM = months === 1 ? '1 mes' : `${months} meses`;
-  const strD = days === 1 ? '1 día' : `${days} días`;
   return `${strY}, ${strM}, ${strD}`;
+}
+
+function calculateBirthdayCountdown(birthDateStr) {
+  const d = parseBirthDateLocal(birthDateStr);
+  if (!d) return { text: '—', daysTotal: 9999, isToday: false, isSoon: false };
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  let nextBday = new Date(today.getFullYear(), d.getMonth(), d.getDate());
+  if (nextBday < today) {
+    nextBday = new Date(today.getFullYear() + 1, d.getMonth(), d.getDate());
+  }
+
+  const diffMs = nextBday.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    return { text: '🎉 ¡Hoy Cumple Años!', daysTotal: 0, isToday: true, isSoon: true };
+  }
+  if (diffDays === 1) {
+    return { text: '🎂 ¡Mañana!', daysTotal: 1, isToday: false, isSoon: true };
+  }
+
+  let cur = new Date(today);
+  let months = 0;
+  while (true) {
+    const nextMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+    if (nextMonth <= nextBday) {
+      months++;
+      cur = nextMonth;
+    } else {
+      break;
+    }
+  }
+  const remDays = Math.round((nextBday.getTime() - cur.getTime()) / (1000 * 60 * 60 * 24));
+
+  let desc = '';
+  if (months === 0) {
+    desc = `${diffDays} día${diffDays === 1 ? '' : 's'}`;
+  } else if (remDays === 0) {
+    desc = `${months} mes${months === 1 ? '' : 'es'}`;
+  } else {
+    desc = `${months} mes${months === 1 ? '' : 'es'}, ${remDays} día${remDays === 1 ? '' : 's'}`;
+  }
+
+  return {
+    text: `🎂 Faltan ${desc}`,
+    daysTotal: diffDays,
+    isToday: false,
+    isSoon: diffDays <= 15
+  };
 }
 
 function repairSpanishText(str) {
@@ -16949,25 +17000,26 @@ function formatPhoneWhatsApp(phoneStr) {
 
 // ── Definición de columnas de la Matriz ──────────────────────────────────
 const MATRIX_COLS_DEF = [
-  { id:'cedula',       label:'Cédula',                group:'est',  bg:'#2563eb', minW:95  },
-  { id:'correo_inst',  label:'Correo Institucional',  group:'est',  bg:'#2563eb', minW:165 },
-  { id:'fecha_nac',    label:'Fecha Nac.',             group:'est',  bg:'#2563eb', minW:90  },
-  { id:'edad',         label:'Edad',                   group:'est',  bg:'#2563eb', minW:130 },
-  { id:'nnee',         label:'NN.EE.',                 group:'est',  bg:'#2563eb', minW:65  },
-  { id:'enfermedad',   label:'Enfermedad / Alergia',   group:'est',  bg:'#2563eb', minW:120 },
-  { id:'hermanos',     label:'Hermanos Inst.',          group:'est',  bg:'#2563eb', minW:115 },
-  { id:'rep_nombre',   label:'Nombre Representante',   group:'rep',  bg:'#16a34a', minW:175 },
-  { id:'rep_cedula',   label:'Cédula Rep.',            group:'rep',  bg:'#16a34a', minW:95  },
-  { id:'rep_telefono', label:'Teléfono / WhatsApp',    group:'rep',  bg:'#16a34a', minW:130 },
-  { id:'direccion',    label:'Dirección Domiciliaria', group:'rep',  bg:'#16a34a', minW:180 },
-  { id:'rep_email',    label:'Correo Personal Rep.',   group:'rep',  bg:'#16a34a', minW:155 },
-  { id:'tel_emerg',    label:'Tel. Emergencia',        group:'rep',  bg:'#16a34a', minW:125 },
-  { id:'madre_nombre', label:'Nombre Madre',           group:'madre',bg:'#9333ea', minW:175 },
-  { id:'madre_cedula', label:'Cédula Madre',           group:'madre',bg:'#9333ea', minW:95  },
-  { id:'madre_tel',    label:'Teléfono Madre',         group:'madre',bg:'#9333ea', minW:115 },
-  { id:'padre_nombre', label:'Nombre Padre',           group:'padre',bg:'#ea580c', minW:175 },
-  { id:'padre_cedula', label:'Cédula Padre',           group:'padre',bg:'#ea580c', minW:95  },
-  { id:'padre_tel',    label:'Teléfono Padre',         group:'padre',bg:'#ea580c', minW:115 },
+  { id:'cedula',        label:'Cédula',                 group:'est',  bg:'#2563eb', minW:95  },
+  { id:'correo_inst',   label:'Correo Institucional',   group:'est',  bg:'#2563eb', minW:165 },
+  { id:'fecha_nac',     label:'Fecha Nac.',              group:'est',  bg:'#2563eb', minW:90  },
+  { id:'edad',          label:'Edad',                    group:'est',  bg:'#2563eb', minW:130 },
+  { id:'cumple_cuenta', label:'Próximo Cumpleaños',     group:'est',  bg:'#2563eb', minW:160 },
+  { id:'nnee',          label:'NN.EE.',                  group:'est',  bg:'#2563eb', minW:65  },
+  { id:'enfermedad',    label:'Enfermedad / Alergia',    group:'est',  bg:'#2563eb', minW:120 },
+  { id:'hermanos',      label:'Hermanos Inst.',           group:'est',  bg:'#2563eb', minW:115 },
+  { id:'rep_nombre',    label:'Nombre Representante',    group:'rep',  bg:'#16a34a', minW:175 },
+  { id:'rep_cedula',    label:'Cédula Rep.',             group:'rep',  bg:'#16a34a', minW:95  },
+  { id:'rep_telefono',  label:'Teléfono / WhatsApp',     group:'rep',  bg:'#16a34a', minW:130 },
+  { id:'direccion',     label:'Dirección Domiciliaria',  group:'rep',  bg:'#16a34a', minW:180 },
+  { id:'rep_email',     label:'Correo Personal Rep.',    group:'rep',  bg:'#16a34a', minW:155 },
+  { id:'tel_emerg',     label:'Tel. Emergencia',         group:'rep',  bg:'#16a34a', minW:125 },
+  { id:'madre_nombre',  label:'Nombre Madre',            group:'madre',bg:'#9333ea', minW:175 },
+  { id:'madre_cedula',  label:'Cédula Madre',            group:'madre',bg:'#9333ea', minW:95  },
+  { id:'madre_tel',     label:'Teléfono Madre',          group:'madre',bg:'#9333ea', minW:115 },
+  { id:'padre_nombre',  label:'Nombre Padre',            group:'padre',bg:'#ea580c', minW:175 },
+  { id:'padre_cedula',  label:'Cédula Padre',            group:'padre',bg:'#ea580c', minW:95  },
+  { id:'padre_tel',     label:'Teléfono Padre',          group:'padre',bg:'#ea580c', minW:115 },
 ];
 
 let _currentMatrixSection = 'all';
@@ -17248,6 +17300,17 @@ function getCellValue(p, colId, si) {
     case 'edad': {
       const ageVal = calculateAgeFromBirthDate(p.fecha_nacimiento) || p.edad || '—';
       return `<span title="Calculado automáticamente a la fecha de hoy" style="font-size:0.75rem;font-weight:600;color:var(--text-main);white-space:nowrap">${escHTML(ageVal)}</span>`;
+    }
+    case 'cumple_cuenta': {
+      if (!p.fecha_nacimiento) return '<span style="color:var(--text-light);font-size:0.75rem">—</span>';
+      const info = calculateBirthdayCountdown(p.fecha_nacimiento);
+      if (info.isToday) {
+        return `<span style="background:#fef08a;color:#854d0e;border:1.5px solid #eab308;padding:2px 8px;border-radius:12px;font-weight:900;font-size:0.72rem;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 4px rgba(234,179,8,0.3)">🎉 ¡HOY CUMPLE AÑOS!</span>`;
+      }
+      if (info.isSoon) {
+        return `<span style="background:#ffedd5;color:#9a3412;border:1px solid #fdba74;padding:2px 8px;border-radius:12px;font-weight:800;font-size:0.72rem;display:inline-flex;align-items:center;gap:3px">${escHTML(info.text)}</span>`;
+      }
+      return `<span style="font-size:0.75rem;font-weight:600;color:var(--text-main);white-space:nowrap">${escHTML(info.text)}</span>`;
     }
     case 'nnee': {
       const si2 = (p.nnee||'').trim().toUpperCase().startsWith('S');
@@ -18197,7 +18260,7 @@ function printStudentsMatrix() {
 function exportStudentsMatrixXLSX() {
   ensureStudentProfiles();
   const baseHeaders = [
-    'N°', 'NOMBRES Y APELLIDOS DEL ESTUDIANTE', 'N° CÉDULA', 'CORREO INSTITUCIONAL', 'FECHA DE NACIMIENTO', 'EDAD',
+    'N°', 'NOMBRES Y APELLIDOS DEL ESTUDIANTE', 'N° CÉDULA', 'CORREO INSTITUCIONAL', 'FECHA DE NACIMIENTO', 'EDAD', 'PRÓXIMO CUMPLEAÑOS (CUENTA REGRESIVA)',
     'TIENE NN.EE ASOCIADA O NO A LA DISCAPACIDAD', 'TIENE ALGUNA ENFERMEDAD', 'TIENE OTROS HERMANOS EN LA INSTITUCIÓN EN QUE AÑO Y PARALELO',
     'NOMBRES Y APELLIDOS DEL REPRESENTANTE LEGAL', 'N° CÉDULA', 'NUMEROS TELEFÓNICOS', 'DIRECCION DOMICILIARIA',
     'CORREO ELECTRONICO', 'NUMEROS TELEFÓNICOS EN CASO DE EMERGENCIA',
@@ -18210,6 +18273,7 @@ function exportStudentsMatrixXLSX() {
   const headers = [...baseHeaders, ...customHeaders];
 
   const rows = S.studentProfiles.map((p, idx) => {
+    const bdayInfo = calculateBirthdayCountdown(p.fecha_nacimiento);
     const baseRow = [
       (idx + 1).toString(),
       p.nombre || S.students[idx] || '',
@@ -18217,6 +18281,7 @@ function exportStudentsMatrixXLSX() {
       p.correo_institucional || '',
       p.fecha_nacimiento || '',
       p.edad || calculateAgeFromBirthDate(p.fecha_nacimiento) || '',
+      bdayInfo.text || '',
       p.nnee || 'NO',
       p.enfermedad || 'NO',
       p.hermanos_inst || 'NO',
