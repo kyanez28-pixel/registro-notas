@@ -4089,6 +4089,22 @@ body.in-focus-mode {
       </table>
     </div>
   </div>
+
+  <!-- Barra Inferior de Navegación y Salto a Columnas -->
+  <div class="matrix-bottom-bar" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:8px 14px;border-radius:0 0 var(--radius-md) var(--radius-md);margin-top:4px;border:1px solid var(--border-color);flex-wrap:wrap;gap:8px;box-shadow:var(--shadow-md)">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:0.75rem;font-weight:800;color:#94a3b8">Saltar a:</span>
+      <button type="button" class="btn btn-sm" style="background:#2563eb;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('start')">👤 Estudiante</button>
+      <button type="button" class="btn btn-sm" style="background:#16a34a;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('rep')">🟢 Representante</button>
+      <button type="button" class="btn btn-sm" style="background:#9333ea;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('madre')">🟣 Madre</button>
+      <button type="button" class="btn btn-sm" style="background:#ea580c;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('padre')">🟠 Padre</button>
+      <button type="button" class="btn btn-sm" style="background:#0284c7;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('end')">📋 Ficha</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button type="button" class="btn btn-sm" style="background:#3b82f6;color:#fff;font-size:0.8rem;padding:4px 14px;font-weight:800;border:none" onclick="scrollMatrixHorizontal(-400)">◀ Izquierda</button>
+      <button type="button" class="btn btn-sm" style="background:#3b82f6;color:#fff;font-size:0.8rem;padding:4px 14px;font-weight:800;border:none" onclick="scrollMatrixHorizontal(400)">Derecha ▶</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
@@ -17161,54 +17177,59 @@ function renderStudentsMatrix() {
   enableDragToScroll(document.getElementById('stMatrixContainer'));
 }
 
+function getMatrixContainer() {
+  return document.getElementById('stMatrixContainer') || 
+         document.querySelector('#studentsMatrixPanel .tw') || 
+         document.querySelector('#studentsMatrixPanel table')?.parentElement ||
+         document.querySelector('.tw');
+}
+
 function scrollMatrixHorizontal(action) {
-  const container = document.getElementById('stMatrixContainer') || document.querySelector('#stMatrixPanel .tw');
+  const container = getMatrixContainer();
   if (!container) return;
   if (action === 'start') {
-    container.scrollTo({ left: 0, behavior: 'smooth' });
+    container.scrollLeft = 0;
   } else if (action === 'end') {
-    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    container.scrollLeft = container.scrollWidth;
   } else if (typeof action === 'number') {
-    container.scrollBy({ left: action, behavior: 'smooth' });
+    container.scrollLeft += action;
   }
 }
+window.scrollMatrixHorizontal = scrollMatrixHorizontal;
 
 function jumpMatrixTo(section) {
-  const container = document.getElementById('stMatrixContainer') || document.querySelector('#stMatrixPanel .tw');
+  const container = getMatrixContainer();
   if (!container) return;
   const table = document.getElementById('stMatrixTable');
-  if (!table) return;
 
   if (section === 'start') {
-    container.scrollTo({ left: 0, behavior: 'smooth' });
+    container.scrollLeft = 0;
   } else if (section === 'end') {
-    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    container.scrollLeft = container.scrollWidth;
   } else if (section === 'rep') {
-    const th = table.querySelector('th[data-mx-group="rep"]');
+    const th = table ? table.querySelector('th[data-mx-group="rep"]') : null;
     if (th) {
-      const left = th.offsetLeft - 230;
-      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+      container.scrollLeft = Math.max(0, th.offsetLeft - 160);
     } else {
-      container.scrollTo({ left: 700, behavior: 'smooth' });
+      container.scrollLeft = 650;
     }
   } else if (section === 'madre') {
-    const th = table.querySelector('th[data-mx-group="madre"]');
+    const th = table ? table.querySelector('th[data-mx-group="madre"]') : null;
     if (th) {
-      const left = th.offsetLeft - 230;
-      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+      container.scrollLeft = Math.max(0, th.offsetLeft - 160);
     } else {
-      container.scrollTo({ left: 1450, behavior: 'smooth' });
+      container.scrollLeft = 1450;
     }
   } else if (section === 'padre') {
-    const th = table.querySelector('th[data-mx-group="padre"]');
+    const th = table ? table.querySelector('th[data-mx-group="padre"]') : null;
     if (th) {
-      const left = th.offsetLeft - 230;
-      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+      container.scrollLeft = Math.max(0, th.offsetLeft - 160);
     } else {
-      container.scrollTo({ left: 1900, behavior: 'smooth' });
+      container.scrollLeft = 1900;
     }
   }
 }
+window.jumpMatrixTo = jumpMatrixTo;
 
 function enableDragToScroll(container) {
   if (!container || container._hasDragScroll) return;
@@ -17236,10 +17257,20 @@ function enableDragToScroll(container) {
     const walk = (x - startX) * 1.5;
     container.scrollLeft = scrollLeft - walk;
   });
+
+  // Shift + Wheel horizontal scroll support
+  container.addEventListener('wheel', (e) => {
+    if (e.shiftKey) {
+      e.preventDefault();
+      container.scrollLeft += e.deltaY * 1.5;
+    } else if (Math.abs(e.deltaX) > 0) {
+      container.scrollLeft += e.deltaX;
+    }
+  }, { passive: false });
 }
 
 function toggleStickyMatrixNames() {
-  const container = document.getElementById('stMatrixContainer');
+  const container = getMatrixContainer();
   const btn = document.getElementById('btnToggleStickyMatrix');
   if (!container) return;
   container.classList.toggle('free-scroll');
@@ -17250,6 +17281,7 @@ function toggleStickyMatrixNames() {
   }
   toast(isFree ? '↔ Desplazamiento libre activado (pantalla completa para ver todos los datos)' : '📌 Nombres fijados a la izquierda', '#3b82f6');
 }
+window.toggleStickyMatrixNames = toggleStickyMatrixNames;
 
 function syncMatrixBottomScroll() {
   const container = document.getElementById('stMatrixContainer');
