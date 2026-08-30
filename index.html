@@ -1167,10 +1167,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
   /* Barra de usuario */
   #userBar {
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: none !important;
   }
 
   /* ── Toolbar Táctil Horizontal (Carrusel de Acciones) ── */
@@ -1233,17 +1230,17 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
   /* ── Barra de Vistas (Calificaciones, Asistencia, Matriz, etc.) ── */
   .view-bar {
-    padding: 6px 12px;
+    display: flex !important;
+    padding: 6px 10px;
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 4px;
+    gap: 6px;
     background: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
   }
   .view-bar::-webkit-scrollbar { display: none; }
-
   .view-btn {
     flex-shrink: 0;
     padding: 8px 14px;
@@ -1311,7 +1308,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   }
   table { font-size: 0.8rem; }
   
-  /* ── Columnas Fijas en Celular (Compactas para dejar más del 60% de pantalla visible para notas) ── */
+  /* ── Columnas Fijas en Celular (Compactas para dejar más del 65% de pantalla visible para notas) ── */
   th.fxl, td.ic {
     position: sticky !important;
     left: 0 !important;
@@ -1326,9 +1323,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   th.fxn {
     position: sticky !important;
     left: 22px !important;
-    width: 118px !important;
+    width: 115px !important;
     min-width: 100px !important;
-    max-width: 125px !important;
+    max-width: 120px !important;
     font-size: 0.74rem !important;
     padding: 5px 6px !important;
     white-space: nowrap !important;
@@ -1339,9 +1336,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   td.nc {
     position: sticky !important;
     left: 22px !important;
-    width: 118px !important;
+    width: 115px !important;
     min-width: 100px !important;
-    max-width: 125px !important;
+    max-width: 120px !important;
     font-size: 0.75rem !important;
     padding: 5px 6px !important;
     white-space: nowrap !important;
@@ -1377,9 +1374,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
   /* Input de Notas en Celular: tamaño adecuado para toque */
   input.gi {
-    font-size: 0.88rem !important;
+    font-size: 0.9rem !important;
     min-width: 34px;
-    min-height: 30px;
+    min-height: 32px;
     padding: 4px 2px;
     border-radius: 4px;
   }
@@ -1506,28 +1503,6 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   .toolbar {
     display: none;
   }
-
-  /* Ocultar userBar en mobile (info ya en header) */
-  #userBar {
-    display: none !important;
-  }
-
-  /* Barra de vistas en mobile: carrusel deslizable horizontal elegante */
-  .view-bar {
-    display: flex !important;
-    padding: 6px 10px;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 6px;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-  }
-  .view-bar::-webkit-scrollbar { display: none; }
-  .view-btn {
-    flex-shrink: 0;
-  }
 }
 
 /* ── OCULTAR ENCABEZADO DE IMPRESIÓN EN PANTALLA NORMAL ── */
@@ -1547,10 +1522,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   overflow-x: hidden;
 }
 
-/* Sidebar */
+/* Sidebar Principal */
 .app-sidebar {
-  width: 280px;
-  min-width: 280px;
+  width: 290px;
+  min-width: 290px;
   background: var(--bg-card);
   border-right: 1.5px solid var(--border-color);
   display: flex;
@@ -1559,14 +1534,14 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   top: 0;
   height: 100vh;
   z-index: 1000;
-  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.03);
   user-select: none;
 }
 
 /* Sidebar Header */
 .sidebar-header {
-  padding: 16px 14px;
+  padding: 14px 14px;
   border-bottom: 1.5px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -1582,15 +1557,15 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   overflow: hidden;
 }
 .sidebar-logo {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
@@ -1599,55 +1574,106 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   white-space: nowrap;
 }
 .sidebar-inst-title {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 900;
   color: var(--text-main);
   letter-spacing: -0.2px;
   line-height: 1.2;
 }
 .sidebar-inst-sub {
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   font-weight: 700;
   color: var(--primary);
   margin-top: 2px;
 }
 
-.sidebar-collapse-btn {
+.sidebar-header-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sidebar-collapse-btn, .sidebar-close-mobile-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-muted);
   cursor: pointer;
   padding: 6px 9px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 800;
   transition: all .15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.sidebar-collapse-btn:hover {
+.sidebar-collapse-btn:hover, .sidebar-close-mobile-btn:hover {
   background: var(--primary-light);
   color: var(--primary);
   border-color: #93c5fd;
 }
+.sidebar-close-mobile-btn {
+  display: none;
+  font-size: 1rem;
+  padding: 4px 9px;
+}
+
+/* Fila de Acciones Rápidas (Power Grid) en Sidebar */
+.sidebar-power-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 10px 10px 6px;
+  background: var(--bg-card-subtle);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.sidebar-power-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .15s ease;
+  justify-content: center;
+}
+.sidebar-power-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+.sidebar-power-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #1d4ed8;
+}
 
 /* Nav Label & List */
 .sidebar-nav-title {
-  font-size: 0.7rem;
-  font-weight: 800;
+  font-size: 0.68rem;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.9px;
   color: var(--text-light);
-  padding: 14px 18px 6px;
+  padding: 12px 14px 4px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0 10px;
+  gap: 3px;
+  padding: 0 8px 14px;
   overflow-y: auto;
   flex: 1;
 }
@@ -1663,13 +1689,13 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 10px;
+  gap: 9px;
+  padding: 8px 11px;
+  border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-main);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -1689,7 +1715,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 .sidebar-btn-icon {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -1707,9 +1733,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   letter-spacing: -0.1px;
 }
 .sidebar-btn-badge {
-  font-size: 0.65rem;
+  font-size: 0.63rem;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 99px;
   background: var(--bg-card-subtle);
   border: 1px solid var(--border-color);
@@ -1722,25 +1748,58 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   color: #ffffff;
 }
 
+/* Herramientas de Calificación en Sidebar */
+.sidebar-tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 2px 4px 8px;
+}
+.sidebar-tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .12s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-tool-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #93c5fd;
+}
+.sidebar-tool-btn:active {
+  transform: scale(0.97);
+}
+
 /* Sidebar Footer */
 .sidebar-footer {
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-top: 1.5px solid var(--border-color);
   background: var(--bg-card-subtle);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 .sidebar-sync-bar {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   border-radius: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--text-muted);
   cursor: pointer;
@@ -1754,19 +1813,19 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 
 .sidebar-util-row {
   display: flex;
-  gap: 6px;
+  gap: 5px;
 }
 .sidebar-util-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 7px 8px;
-  border-radius: 8px;
+  padding: 6px 6px;
+  border-radius: 6px;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
   color: var(--text-main);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   transition: all .15s ease;
@@ -1777,7 +1836,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   border-color: #93c5fd;
 }
 
-/* Collapsed Sidebar */
+/* Collapsed Sidebar en Desktop */
 .app-sidebar.collapsed {
   width: 68px;
   min-width: 68px;
@@ -1786,9 +1845,11 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
 .app-sidebar.collapsed .sidebar-nav-title,
 .app-sidebar.collapsed .sidebar-btn-text,
 .app-sidebar.collapsed .sidebar-btn-badge,
+.app-sidebar.collapsed .sidebar-power-grid,
+.app-sidebar.collapsed .sidebar-tools-grid,
 .app-sidebar.collapsed .sidebar-sync-bar span,
 .app-sidebar.collapsed .sidebar-util-btn span {
-  display: none;
+  display: none !important;
 }
 .app-sidebar.collapsed .sidebar-btn {
   justify-content: center;
@@ -1811,27 +1872,209 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   overflow-x: hidden;
 }
 
+/* ══════════════════════════════════════════════════════
+   BARRA SUPERIOR UNIVERSAL MÓVIL (MOBILE TOP BAR)
+   ══════════════════════════════════════════════════════ */
+.mobile-top-bar {
+  display: none;
+  background: var(--bg-header);
+  color: #ffffff;
+  padding: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 990;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.mob-top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mob-menu-btn {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s ease;
+}
+.mob-menu-btn:active {
+  transform: scale(0.94);
+  background: rgba(255,255,255,0.3);
+}
+.mob-menu-icon { font-size: 1.1rem; line-height: 1; }
+.mob-menu-text { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.4px; }
+
+.mob-top-center {
+  flex: 1;
+  text-align: center;
+  padding: 0 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.mob-top-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+}
+.mob-top-sub {
+  font-size: 0.68rem;
+  opacity: 0.85;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-top-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.mob-act-btn {
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s ease;
+}
+.mob-act-btn:active {
+  transform: scale(0.92);
+  background: rgba(255,255,255,0.32);
+}
+.mob-act-btn.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* ══════════════════════════════════════════════════════
+   MODO ENFOQUE Y BOTÓN FLOTANTE (FOCUS MODE HUD)
+   ══════════════════════════════════════════════════════ */
+.focus-mode-hud {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 99px;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5), 0 0 0 1.5px rgba(255,255,255,0.35);
+  font-size: 0.84rem;
+  font-weight: 800;
+  z-index: 10005;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  animation: pulseFocusHUD 2.5s infinite;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.focus-mode-hud:hover {
+  transform: translateX(-50%) scale(1.04);
+  filter: brightness(1.1);
+}
+.focus-mode-hud:active {
+  transform: translateX(-50%) scale(0.97);
+}
+.focus-hud-badge {
+  background: rgba(255,255,255,0.22);
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+@keyframes pulseFocusHUD {
+  0%, 100% { box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5), 0 0 0 1.5px rgba(255,255,255,0.35); }
+  50% { box-shadow: 0 12px 30px rgba(37, 99, 235, 0.8), 0 0 0 3px rgba(255,255,255,0.6); }
+}
+
+/* Reglas de Modo Enfoque en Pantalla Completa */
+body.in-focus-mode #mainAppHeader,
+body.in-focus-mode #userBar,
+body.in-focus-mode #mainModuleToolbar,
+body.in-focus-mode #statsSection,
+body.in-focus-mode .filter-bar {
+  display: none !important;
+}
+body.in-focus-mode #mobileTopBar {
+  padding: 4px 10px;
+}
+body.in-focus-mode .content {
+  padding: 6px 10px !important;
+}
+body.in-focus-mode .tw {
+  max-height: calc(100vh - 75px) !important;
+  height: calc(100vh - 75px) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+body.in-focus-mode #mobileNav {
+  transform: translateY(120%);
+  transition: transform .25s ease;
+}
+body.in-focus-mode {
+  padding-bottom: 20px !important;
+}
+
 /* Mobile Sidebar Drawer */
 @media (max-width: 900px) {
+  .mobile-top-bar {
+    display: flex;
+  }
   .app-sidebar {
     position: fixed;
-    left: -290px;
+    left: 0;
     top: 0;
     bottom: 0;
-    width: 270px;
+    width: min(320px, 86vw);
+    min-width: 0;
+    transform: translateX(-105%);
     z-index: 10000;
+    box-shadow: none;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .app-sidebar.mobile-open {
-    left: 0;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    transform: translateX(0);
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.5);
+  }
+  .sidebar-collapse-btn {
+    display: none;
+  }
+  .sidebar-close-mobile-btn {
+    display: flex;
   }
   .sidebar-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.55);
     z-index: 9999;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
   .sidebar-backdrop.active {
     display: block;
@@ -2631,6 +2874,13 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   <!-- Backdrop para el menú móvil -->
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
 
+  <!-- ── HUD FLOTANTE DE MODO ENFOQUE ── -->
+  <div id="focusModeFloatingHUD" class="focus-mode-hud" onclick="toggleFocusMode()" style="display:none" title="Salir del Modo Enfoque y restaurar vista completa">
+    <span class="focus-hud-icon">👁️</span>
+    <span class="focus-hud-text">MODO ENFOQUE ACTIVO</span>
+    <span class="focus-hud-badge">✕ SALIR</span>
+  </div>
+
   <!-- ══════════════════════════════════════════════════════
        BARRA LATERAL IZQUIERDA (SIDEBAR MODULAR PROFESIONAL)
        ══════════════════════════════════════════════════════ -->
@@ -2638,24 +2888,46 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     
     <!-- Encabezado de la Barra Lateral -->
     <div class="sidebar-header">
-      <div class="sidebar-brand">
+      <div class="sidebar-brand" onclick="switchView('notas')">
         <div class="sidebar-logo">🏛️</div>
         <div class="sidebar-brand-text">
           <div class="sidebar-inst-title">U.E.F. CALDERÓN 2</div>
           <div class="sidebar-inst-sub" id="sidebarInstSub">7mo "C" · 2026-2027</div>
         </div>
       </div>
-      <button class="sidebar-collapse-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Colapsar o expandir barra lateral">
-        ◀
-      </button>
+      <div class="sidebar-header-btns">
+        <button class="sidebar-collapse-btn" id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" title="Colapsar o expandir barra lateral">
+          ◀
+        </button>
+        <button class="sidebar-close-mobile-btn" id="sidebarCloseBtn" onclick="closeMobileSidebar()" title="Cerrar barra lateral">
+          ✕
+        </button>
+      </div>
     </div>
 
-    <!-- Título de Sección -->
-    <div class="sidebar-nav-title">Módulos del Sistema</div>
+    <!-- Barra de Acciones Rápidas (Power Grid) -->
+    <div class="sidebar-power-grid">
+      <button class="sidebar-power-btn" id="sbFocusModeBtn" onclick="toggleFocusMode(); closeMobileSidebar();" title="Maximizar área de calificaciones">
+        👁️ <span>Enfoque</span>
+      </button>
+      <button class="sidebar-power-btn" onclick="toggleFullscreenMode();" title="Pantalla completa">
+        ⛶ <span>Completa</span>
+      </button>
+      <button class="sidebar-power-btn" onclick="saveData(true);" title="Guardar cambios">
+        💾 <span>Guardar</span>
+      </button>
+      <button class="sidebar-power-btn" onclick="toggleDark();" title="Alternar tema">
+        🌙 <span>Tema</span>
+      </button>
+    </div>
 
     <!-- Navegación de Secciones / Módulos -->
     <nav class="sidebar-nav" role="navigation" aria-label="Módulos del Sistema">
       
+      <div class="sidebar-nav-title">
+        <span>Módulos del Sistema</span>
+      </div>
+
       <button id="viewNotas" class="sidebar-btn active" onclick="switchView('notas')" title="Registro de Notas Formativas (70%) y Sumativas (30%)">
         <span class="sidebar-btn-icon">📋</span>
         <span class="sidebar-btn-text">Calificaciones</span>
@@ -2691,11 +2963,6 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span class="sidebar-btn-text">Libretas &amp; WhatsApp</span>
       </button>
 
-      <button id="viewExport" class="sidebar-btn" onclick="switchView('export')" title="Exportar notas a sistemas ministeriales y Excel">
-        <span class="sidebar-btn-icon">📤</span>
-        <span class="sidebar-btn-text">Exportar al Sistema</span>
-      </button>
-
       <button id="viewCronograma" class="sidebar-btn" onclick="switchView('cronograma')" title="Agenda y Cronograma Oficial Calderón 2 con seguimiento en vivo y checklist interactivo">
         <span class="sidebar-btn-icon">🏛️</span>
         <span class="sidebar-btn-text">Cronograma &amp; Agenda</span>
@@ -2708,10 +2975,71 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span class="sidebar-btn-badge" style="background:#e0e7ff;color:#4338ca;border-color:#c7d2fe">Formatos</span>
       </button>
 
+      <button id="viewExport" class="sidebar-btn" onclick="switchView('export')" title="Exportar notas a sistemas ministeriales y Excel">
+        <span class="sidebar-btn-icon">📤</span>
+        <span class="sidebar-btn-text">Exportar al Sistema</span>
+      </button>
+
       <button id="viewConfig" class="sidebar-btn" onclick="switchView('config')" title="Configuración de trimestres, materias y respaldos">
         <span class="sidebar-btn-icon">⚙️</span>
         <span class="sidebar-btn-text">Configuración</span>
       </button>
+
+      <!-- Herramientas Rápidas de Calificación -->
+      <div class="sidebar-nav-title" style="margin-top:8px">
+        <span>Herramientas de Notas</span>
+      </div>
+      <div class="sidebar-tools-grid" id="sbToolsNotasSection">
+        <button class="sidebar-tool-btn" onclick="openAddCol(); closeMobileSidebar();" title="Agregar actividad">
+          ➕ Actividad
+        </button>
+        <button class="sidebar-tool-btn" onclick="openAddWeek(); closeMobileSidebar();" title="Agregar semana">
+          ➕ Semana
+        </button>
+        <button class="sidebar-tool-btn" onclick="openManageColumns(); closeMobileSidebar();" title="Reordenar columnas">
+          ⇄ Columnas
+        </button>
+        <button class="sidebar-tool-btn" onclick="openFillColModal(); closeMobileSidebar();" title="Llenar columna entera">
+          ⚡ Llenar
+        </button>
+        <button class="sidebar-tool-btn" onclick="openVisPanel(); closeMobileSidebar();" title="Visibilidad de columnas">
+          👁 Ocultar/Ver
+        </button>
+        <button class="sidebar-tool-btn" onclick="openManageMats(); closeMobileSidebar();" title="Gestionar asignaturas">
+          ⚙ Materias
+        </button>
+        <button class="sidebar-tool-btn" onclick="openAddSt(); closeMobileSidebar();" title="Agregar estudiante">
+          ➕ Estudiante
+        </button>
+        <button class="sidebar-tool-btn" onclick="openManageNomina(); closeMobileSidebar();" title="Gestionar nómina">
+          ⚙ Nómina
+        </button>
+        <button class="sidebar-tool-btn" onclick="exportCSV(); closeMobileSidebar();" title="Descargar planilla Excel">
+          📊 Excel (.xlsx)
+        </button>
+        <button class="sidebar-tool-btn" onclick="printTable(); closeMobileSidebar();" title="Imprimir planilla">
+          🖨️ Imprimir
+        </button>
+      </div>
+
+      <!-- Respaldos y Datos -->
+      <div class="sidebar-nav-title" style="margin-top:6px">
+        <span>Respaldos &amp; Nube</span>
+      </div>
+      <button class="sidebar-btn" onclick="exportJSON(); closeMobileSidebar();" title="Descargar copia de seguridad en JSON">
+        <span class="sidebar-btn-icon">📁</span>
+        <span class="sidebar-btn-text">Descargar Respaldo</span>
+        <span class="sidebar-btn-badge">JSON</span>
+      </button>
+      <button class="sidebar-btn" onclick="document.getElementById('importFile').click(); closeMobileSidebar();" title="Restaurar copia de seguridad">
+        <span class="sidebar-btn-icon">📥</span>
+        <span class="sidebar-btn-text">Restaurar Copia</span>
+      </button>
+      <button class="sidebar-btn" onclick="openNewYearWizard(); closeMobileSidebar();" title="Asistente para nuevo año lectivo">
+        <span class="sidebar-btn-icon">✨</span>
+        <span class="sidebar-btn-text">Asistente Nuevo Año</span>
+      </button>
+
     </nav>
 
     <!-- Footer de Sidebar con estado y utilidades -->
@@ -2721,7 +3049,7 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
         <span id="sbSyncText">⚡ En Vivo (PC/Móvil)</span>
       </div>
       <div class="sidebar-util-row">
-        <button class="sidebar-util-btn" onclick="openNewYearWizard()" title="Asistente de Nuevo Año">✨ <span>Nuevo</span></button>
+        <button class="sidebar-util-btn" onclick="signOutUser()" title="Cerrar sesión de usuario">🔒 <span>Salir</span></button>
         <button class="sidebar-util-btn" onclick="toggleDark()" title="Alternar modo oscuro / claro">🌙 <span>Tema</span></button>
         <button class="sidebar-util-btn" onclick="saveData(true)" title="Guardar todos los cambios">💾 <span>Guardar</span></button>
       </div>
@@ -2733,7 +3061,32 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
        ══════════════════════════════════════════════════════ -->
   <div class="app-main-area" id="appMainArea">
 
-    <!-- ── BARRA DE USUARIO & SYNC (STATUS BAR MODERNA) ── -->
+    <!-- ── BARRA SUPERIOR UNIVERSAL MÓVIL (TOP APP BAR) ── -->
+    <div id="mobileTopBar" class="mobile-top-bar">
+      <div class="mob-top-left">
+        <button class="mob-menu-btn" id="mobMenuBtnTop" onclick="openMobileSidebar()" aria-label="Abrir Menú Lateral">
+          <span class="mob-menu-icon">☰</span>
+          <span class="mob-menu-text">MENÚ</span>
+        </button>
+      </div>
+      <div class="mob-top-center" onclick="openMobileSidebar()">
+        <div class="mob-top-title" id="mobTopTitle">📋 Calificaciones</div>
+        <div class="mob-top-sub" id="mobTopSub">7mo "C" · 1er Trimestre</div>
+      </div>
+      <div class="mob-top-right">
+        <button class="mob-act-btn" id="mobFocusBtnTop" onclick="toggleFocusMode()" title="Modo Enfoque (Maximiza la tabla)">
+          👁️
+        </button>
+        <button class="mob-act-btn mob-sync-btn" id="mobSyncBtnTop" onclick="openSyncModal()" title="Sincronización en Vivo">
+          ⚡
+        </button>
+        <button class="mob-act-btn" id="mobThemeBtnTop" onclick="toggleDark()" title="Alternar Modo Oscuro / Claro">
+          🌙
+        </button>
+      </div>
+    </div>
+
+    <!-- ── BARRA DE USUARIO & SYNC (STATUS BAR MODERNA EN DESKTOP) ── -->
     <div id="userBar" style="background:var(--bg-card);border-bottom:1px solid var(--border-color);padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;color:var(--text-muted);box-shadow:var(--shadow-xs);position:relative;z-index:100">
       <div style="display:flex;align-items:center;gap:12px">
         <button class="btn btn-outline mobile-menu-btn" id="btnMobileSidebar" onclick="openMobileSidebar()" title="Abrir menú lateral" style="padding:4px 9px;font-size:1.05rem;display:none;align-items:center;justify-content:center">
@@ -2849,6 +3202,10 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <span class="mob-nav-icon">📋</span>
     <span class="mob-nav-label">Notas</span>
   </button>
+  <button class="mob-nav-btn" id="mnDiagnostico" onclick="mobileSwitchView('diagnostico')">
+    <span class="mob-nav-icon">🎯</span>
+    <span class="mob-nav-label">Diagnóstico</span>
+  </button>
   <button class="mob-nav-btn" id="mnEstudiantes" onclick="mobileSwitchView('estudiantes')">
     <span class="mob-nav-icon">👥</span>
     <span class="mob-nav-label">Matriz</span>
@@ -2857,13 +3214,9 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
     <span class="mob-nav-icon">📅</span>
     <span class="mob-nav-label">Asistencia</span>
   </button>
-  <button class="mob-nav-btn" id="mnReporte" onclick="mobileSwitchView('reporte')">
-    <span class="mob-nav-icon">📊</span>
-    <span class="mob-nav-label">Libretas</span>
-  </button>
-  <button class="mob-nav-btn" id="mnHerramientas" onclick="mobileSwitchView('herramientas')">
-    <span class="mob-nav-icon">⚙️</span>
-    <span class="mob-nav-label">Ajustes</span>
+  <button class="mob-nav-btn" id="mnMenuSidebar" onclick="openMobileSidebar()">
+    <span class="mob-nav-icon">☰</span>
+    <span class="mob-nav-label">Menú</span>
   </button>
 </nav>
 
@@ -6330,6 +6683,34 @@ function switchM(i) {
 }
 
 // ══════════════════════════════════════════════════════
+//  HELPERS DE VISIBILIDAD DE COLUMNAS Y FILAS
+// ══════════════════════════════════════════════════════
+function isColumnHidden(mName, wName, col) {
+  if (!S.hiddenCols) return false;
+  if (!col) return false;
+  const colName = typeof col === 'string' ? col : (col.name || '');
+  const colDesc = typeof col === 'object' ? (col.desc || '') : '';
+
+  if (colName && S.hiddenCols[`${mName}||${wName}||${colName}`]) return true;
+  if (colDesc && S.hiddenCols[`${mName}||${wName}||${colDesc}`]) return true;
+  if (colName && S.hiddenCols[`${wName}||${colName}`]) return true;
+  if (colDesc && S.hiddenCols[`${wName}||${colDesc}`]) return true;
+  if (colName && S.hiddenCols[`${mName}||${colName}`]) return true;
+  if (colDesc && S.hiddenCols[`${mName}||${colDesc}`]) return true;
+  if (colName && S.hiddenCols[colName]) return true;
+  if (colDesc && S.hiddenCols[colDesc]) return true;
+
+  return false;
+}
+
+function isRowHidden(studentName) {
+  if (!S.hiddenRows) return false;
+  if (!studentName) return false;
+  const trimmed = studentName.trim();
+  return !!(S.hiddenRows[trimmed] || S.hiddenRows[studentName]);
+}
+
+// ══════════════════════════════════════════════════════
 //  TABLA DE CALIFICACIONES
 // ══════════════════════════════════════════════════════
 function renderTable() {
@@ -6337,6 +6718,8 @@ function renderTable() {
   if (!mat) return;
   const mName = curMatName();
   const isQual = isQualitativeMat(mName);
+  if (!S.hiddenCols) S.hiddenCols = {};
+  if (!S.hiddenRows) S.hiddenRows = {};
 
   // Fila 1: Semanas y Bloques Ponderados
   let r1 = `<tr>
@@ -6346,21 +6729,25 @@ function renderTable() {
       <span style="font-size:0.58rem;opacity:.7;display:block;font-weight:400">✎ doble clic para editar</span>
     </th>`;
 
-  // Fila 1: Semanas y Bloques Ponderados
-  // Fila 1: Semanas y Bloques Ponderados
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
     const wTitle = getWeekTitle(w);
     const c = mat.cols[wName] || [];
     const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
-    const span = isWeekCol ? 1 : (c.length || 1) + 1; // +1 por columna PROM
     const wc = weekColor(mName, wName, wi);
+
+    // Contar columnas visibles de esta semana
+    const isPromHidden = !!S.hiddenCols[`${mName}||${wName}||PROM`];
+    const visColsCount = c.filter(col => !isColumnHidden(mName, wName, col)).length;
+    const isWholeWeekHidden = (c.length > 0 && visColsCount === 0 && isPromHidden);
+    const span = isWeekCol ? 1 : Math.max(1, (c.length === 0 ? 1 : visColsCount) + (isPromHidden ? 0 : 1));
+    const weekStyle = isWholeWeekHidden ? 'display:none;' : '';
 
     if (isWeekCol) {
       r1 += `<th class="wh is-week-collapsed" colspan="1"
         onclick="toggleWeekCollapse('${esc(wName)}')"
         title="Semana colapsada: ${escHTML(wTitle)}. Clic para expandir"
-        style="background:${wc.h};border-color:${wc.h};font-size:0.82rem;font-weight:900;letter-spacing:0.2px;padding:6px 4px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
+        style="${weekStyle}background:${wc.h};border-color:${wc.h};font-size:0.82rem;font-weight:900;letter-spacing:0.2px;padding:6px 4px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
         <div style="display:flex;align-items:center;justify-content:center;gap:3px">
           <span style="font-size:0.75rem">➕</span> <span>${escHTML(wName)}</span>
         </div>
@@ -6371,7 +6758,7 @@ function renderTable() {
         ondblclick="editWeekName(${wi})"
         oncontextmenu="openWeekContextMenu(event, ${wi})"
         title="${escHTML(wTitle)} · Doble clic para editar tema · Clic en ➖ para colapsar"
-        style="background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
+        style="${weekStyle}background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
         <div style="display:flex;align-items:center;justify-content:center;position:relative">
           <span style="font-size:0.75rem;opacity:0.85;margin-right:6px;cursor:pointer;background:rgba(0,0,0,0.25);padding:1px 5px;border-radius:4px" onclick="event.stopPropagation(); toggleWeekCollapse('${esc(wName)}')" title="Colapsar esta semana (mostrar solo promedio)">➖</span>
           <span>${escHTML(wTitle)}</span>
@@ -6380,23 +6767,28 @@ function renderTable() {
     }
   });
 
+  const formHidden = !!S.hiddenCols[`${mName}||__SUMMARY__||FORM`];
+  const sumHidden  = !!S.hiddenCols[`${mName}||__SUMMARY__||SUM`];
+  const trimHidden = !!S.hiddenCols[`${mName}||__SUMMARY__||TRIM`];
+
   if (!isQual) {
-    r1 += `<th class="th-form" rowspan="2" onclick="copyMainColumn('form','','70% FORMATIVO')" title="Clic para copiar la columna 70% Formativo para Excel/Word" style="min-width:56px;cursor:pointer">70% 📋<br><span style="font-size:0.58rem;font-weight:400">FORMATIVO</span></th>
-           <th class="th-sum"  rowspan="2" onclick="copyMainColumn('sum','','30% SUMATIVO')" title="Clic para copiar la columna 30% Sumativo para Excel/Word" style="min-width:56px;cursor:pointer">30% 📋<br><span style="font-size:0.58rem;font-weight:400">SUMATIVO</span></th>
-           <th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','NOTA TRIMESTRE')" title="Clic para copiar la columna Nota Trimestre para Excel/Word" style="min-width:60px;cursor:pointer">NOTA 📋<br><span style="font-size:0.58rem;font-weight:400">TRIMESTRE</span></th>`;
+    r1 += `<th class="th-form" rowspan="2" onclick="copyMainColumn('form','','70% FORMATIVO')" title="Clic para copiar la columna 70% Formativo para Excel/Word" style="${formHidden?'display:none;':''}min-width:56px;cursor:pointer">70% 📋<br><span style="font-size:0.58rem;font-weight:400">FORMATIVO</span></th>
+           <th class="th-sum"  rowspan="2" onclick="copyMainColumn('sum','','30% SUMATIVO')" title="Clic para copiar la columna 30% Sumativo para Excel/Word" style="${sumHidden?'display:none;':''}min-width:56px;cursor:pointer">30% 📋<br><span style="font-size:0.58rem;font-weight:400">SUMATIVO</span></th>
+           <th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','NOTA TRIMESTRE')" title="Clic para copiar la columna Nota Trimestre para Excel/Word" style="${trimHidden?'display:none;':''}min-width:60px;cursor:pointer">NOTA 📋<br><span style="font-size:0.58rem;font-weight:400">TRIMESTRE</span></th>`;
   } else {
-    r1 += `<th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','EVALUACIÓN CUALITATIVA')" title="Clic para copiar la columna Evaluación Cualitativa para Excel/Word" style="min-width:60px;cursor:pointer">EVALUACIÓN 📋<br><span style="font-size:0.58rem;font-weight:400">CUALITATIVA</span></th>`;
+    r1 += `<th class="th-trim" rowspan="2" onclick="copyMainColumn('trim','','EVALUACIÓN CUALITATIVA')" title="Clic para copiar la columna Evaluación Cualitativa para Excel/Word" style="${trimHidden?'display:none;':''}min-width:60px;cursor:pointer">EVALUACIÓN 📋<br><span style="font-size:0.58rem;font-weight:400">CUALITATIVA</span></th>`;
   }
 
   r1 += `<th rowspan="2" class="ath" style="min-width:48px;width:48px">Acc.</th></tr>`;
 
-  // Fila 2: Subcolumnas (Actividad en GRANDE -> Fecha -> De qué se trata)
+  // Fila 2: Subcolumnas
   let r2 = '<tr>';
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
     const c = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
     const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
+    const isPromHidden = !!S.hiddenCols[`${mName}||${wName}||PROM`];
 
     if (isWeekCol) {
       r2 += `<th class="sh is-week-collapsed" onclick="toggleWeekCollapse('${esc(wName)}')" title="Semana colapsada. Clic para expandir" style="background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.8rem;cursor:pointer;vertical-align:middle;padding:4px">PROM 📋</th>`;
@@ -6415,13 +6807,12 @@ function renderTable() {
         const at = actType(col.type);
         const bg = col.color || at.color;
         const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
+        const isColHidden = isColumnHidden(mName, wName, col);
 
-        // Mostrar la descripción (o nombre si no tiene) como texto principal en grande y limpio
         const displayName = col.desc || col.name;
         const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal;pointer-events:none">${escHTML(displayName)}</div>`;
         const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px;pointer-events:none">${escHTML(col.date)}</div>` : '';
         const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2;pointer-events:none">${escHTML(at.label)}${catBadge}</div>`;
-
         const fullTitle = `${escHTML(displayName)} (${escHTML(at.label)}) ${col.date ? '· ' + col.date : ''}`;
 
         r2 += `<th class="sh"
@@ -6429,7 +6820,7 @@ function renderTable() {
           ondblclick="editColName(${wi},${ci})"
           oncontextmenu="openColContextMenu(event, ${wi}, ${ci}, '${esc(wName)}', '${esc(col.name)}')"
           title="${fullTitle} · Doble clic para editar · Clic derecho para opciones"
-          style="background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none">
+          style="${isColHidden?'display:none;':''}background:${bg};border-color:${bg};min-width:115px;padding:8px 8px;vertical-align:middle;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none">
           <div style="width:100%;text-align:center;pointer-events:none">
             ${actNameHTML}
             ${dateHTML}
@@ -6438,7 +6829,7 @@ function renderTable() {
         </th>`;
       });
     }
-    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')" title="Clic para copiar los promedios de ${escHTML(wName)} para Excel o Word" style="background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.85rem;cursor:pointer;vertical-align:middle">PROM 📋</th>`;
+    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')" title="Clic para copiar los promedios de ${escHTML(wName)} para Excel o Word" style="${isPromHidden?'display:none;':''}background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.85rem;cursor:pointer;vertical-align:middle">PROM 📋</th>`;
   });
   r2 += '</tr>';
 
@@ -6449,12 +6840,14 @@ function renderTable() {
   document.getElementById('tb').innerHTML = sorted.map((si, rowPos) => {
     const name = S.students[si] || `Estudiante ${si+1}`;
     const g = mat.grades[si] || {};
+    const isRowH = isRowHidden(name);
 
     const cells = mat.weeks.map((w, wi) => {
       const wName = getWeekName(w);
       const c = mat.cols[wName] || [];
       const wc = weekColor(mName, wName, wi);
       const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
+      const isPromHidden = !!S.hiddenCols[`${mName}||${wName}||PROM`];
 
       // Promedio semanal
       const weekVals = c.map(col => {
@@ -6481,23 +6874,22 @@ function renderTable() {
 
       if (!c.length) {
         return `<td style="color:var(--text-light);background:${wc.c}">—</td>
-                <td class="prom-wk ${wAvgCls}" style="background:${wc.c}">${wAvgDisp}</td>`;
+                <td class="prom-wk ${wAvgCls}" style="${isPromHidden?'display:none;':''}background:${wc.c}">${wAvgDisp}</td>`;
       }
 
-
       const inputs = c.map(col => {
+        const isColHidden = isColumnHidden(mName, wName, col);
         const at = actType(col.type);
         const cellBg = col.color ? hexToRgba(col.color, 0.08) : at.cell;
         const k = wName + '||' + col.name;
         const v = g[k] !== undefined ? g[k] : '';
 
         if (isQual) {
-          // Input numérico con conversión automática a escala cualitativa
           const numV = parseFloat(v);
           const dispNum = !isNaN(numV) ? v : '';
           const qVal = !isNaN(numV) ? numToQual(numV) : (v && ['A','EP','I','NE'].includes(String(v).toUpperCase()) ? String(v).toUpperCase() : 'NE');
           const qObj = QUAL_SCALE.find(q => q.val === qVal) || QUAL_SCALE[3];
-          return `<td style="background:${cellBg};padding:2px 4px">
+          return `<td style="${isColHidden?'display:none;':''}background:${cellBg};padding:2px 4px">
             <div style="display:flex;align-items:center;gap:4px">
               <input class="gi" type="text" inputmode="decimal" placeholder="—"
                 value="${escVal(dispNum)}"
@@ -6511,14 +6903,13 @@ function renderTable() {
           </td>`;
         }
 
-
         const n = parseFloat(v);
         const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
         const specCls = specialCls(v);
         const tdCls = specCls ? specCls : (v !== '' && !isNaN(n) ? (n < 7 ? 'cell-low' : (isRecovered(si, wName, col.name) ? 'cell-rec' : '')) : '');
         const tdBg = tdCls ? '' : cellBg;
 
-        return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="background:${tdBg}">
+        return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="${isColHidden?'display:none;':''}background:${tdBg}">
           <input class="gi ${specCls ? '' : cls}" type="text" inputmode="decimal"
             value="${escVal(v)}"
             onchange="upd(${si},'${esc(wName)}','${esc(col.name)}',this.value)"
@@ -6528,7 +6919,7 @@ function renderTable() {
         </td>`;
       }).join('');
 
-      return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(wName)}" style="background:${wc.c}">${wAvgDisp}</td>`;
+      return inputs + `<td class="prom-wk ${wAvgCls}" data-si="${si}" data-week="${escVal(wName)}" style="${isPromHidden?'display:none;':''}background:${wc.c}">${wAvgDisp}</td>`;
     }).join('');
 
     const calc = getStudentTrimestreCalc(si, mName);
@@ -6537,17 +6928,17 @@ function renderTable() {
     if (!isQual) {
       const trimCls = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7 ? 'glo' : '';
       summaryCells = `
-        <td class="td-form">${calc.formWeighted}</td>
-        <td class="td-sum">${calc.sumWeighted}</td>
-        <td class="td-trim ${trimCls}">${calc.trimAvg}</td>
+        <td class="td-form" style="${formHidden?'display:none;':''}">${calc.formWeighted}</td>
+        <td class="td-sum" style="${sumHidden?'display:none;':''}">${calc.sumWeighted}</td>
+        <td class="td-trim ${trimCls}" style="${trimHidden?'display:none;':''}">${calc.trimAvg}</td>
       `;
     } else {
       const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
       const numDisp = calc.numAvg ? `<span style="font-size:0.75rem;color:var(--text-muted);margin-left:4px">(${calc.numAvg})</span>` : '';
-      summaryCells = `<td class="td-trim"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span>${numDisp}</td>`;
+      summaryCells = `<td class="td-trim" style="${trimHidden?'display:none;':''}"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span>${numDisp}</td>`;
     }
 
-    return `<tr data-name="${escVal(name.toLowerCase())}">
+    return `<tr data-name="${escVal(name.toLowerCase())}" style="${isRowH?'display:none;':''}">
       <td class="ic">${rowPos+1}</td>
       <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}</td>
       ${cells}
@@ -8001,6 +8392,9 @@ function openColContextMenu(e, wi, ci, weekName, colName) {
     <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('activity','${esc(weekName)}','${esc(colName)}')">
       📋 Copiar Columna (Excel/Word)
     </div>
+    <div class="ctx-item" onclick="closeCtxMenu();toggleCol('','${esc(curMatName())}','${esc(weekName)}','${esc(col.name)}','${esc(col.desc||'')}')">
+      👁️ Ocultar / Mostrar Columna
+    </div>
     <div class="ctx-sep"></div>
     <div class="ctx-item" onclick="closeCtxMenu();moveColStep(${wi},${ci},-1)">
       ◀ Mover a la Izquierda
@@ -8022,7 +8416,7 @@ function openColContextMenu(e, wi, ci, weekName, colName) {
 
   menu.style.display = 'block';
   const menuWidth = 240;
-  const menuHeight = 250;
+  const menuHeight = 280;
   let left = e.clientX;
   let top = e.clientY;
   if (left + menuWidth > window.innerWidth) left = window.innerWidth - menuWidth - 10;
@@ -8048,14 +8442,18 @@ function openWeekContextMenu(e, wi) {
     <div style="padding:8px 14px;font-size:0.78rem;font-weight:800;color:var(--text-main);border-bottom:1px solid var(--border-color);background:var(--bg-card-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">
       📅 ${escHTML(wTitle)}
     </div>
+    <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')">
+      📋 Copiar Promedios de Semana
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();toggleWeekVis('${esc(wName)}')">
+      👁️ Ocultar / Mostrar Toda la Semana
+    </div>
+    <div class="ctx-sep"></div>
     <div class="ctx-item" onclick="closeCtxMenu();moveWeekStep(${wi},-1)">
       ◀ Mover Semana a la Izquierda
     </div>
     <div class="ctx-item" onclick="closeCtxMenu();moveWeekStep(${wi},1)">
       ▶ Mover Semana a la Derecha
-    </div>
-    <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')">
-      📋 Copiar Promedios de Semana
     </div>
     <div class="ctx-sep"></div>
     <div class="ctx-item" onclick="closeCtxMenu();addColToWeek('${esc(wName)}')">
@@ -8072,7 +8470,7 @@ function openWeekContextMenu(e, wi) {
 
   menu.style.display = 'block';
   const menuWidth = 240;
-  const menuHeight = 240;
+  const menuHeight = 280;
   let left = e.clientX;
   let top = e.clientY;
   if (left + menuWidth > window.innerWidth) left = window.innerWidth - menuWidth - 10;
@@ -8257,6 +8655,39 @@ function switchView(v) {
     }
   });
 
+  // Actualizar títulos e información en la barra superior móvil
+  const viewMeta = {
+    'notas':        { title: '📋 Calificaciones', sub: '70% Form. + 30% Sum.' },
+    'diagnostico':  { title: '🎯 Eval. Diagnóstica', sub: 'Fases Conecta y Nivela' },
+    'estudiantes':  { title: '👥 Matriz Estudiantes', sub: 'Fichas y Representantes' },
+    'asistencia':   { title: '📅 Control Asistencia', sub: 'Registro Diario y Faltas' },
+    'pi':           { title: '📚 Proyecto Interdisc.', sub: 'Fase CREA (30%)' },
+    'reporte':      { title: '📊 Libretas & WhatsApp', sub: 'Informes y Cuadro de Honor' },
+    'cronograma':   { title: '🏛️ Cronograma Oficial', sub: 'Agenda y Seguimiento 2026' },
+    'herramientas': { title: '🛠️ Herramientas Aula', sub: 'Listados, Reuniones y Rúbricas' },
+    'export':       { title: '📤 Exportar Sistema', sub: 'Planillas y Sistemas MINEDEC' },
+    'config':       { title: '⚙️ Configuración', sub: 'Periodos, Materias y Respaldos' }
+  };
+  const meta = viewMeta[v] || { title: '📚 Registro de Notas', sub: S.grado || 'Séptimo C' };
+  const mobTitle = document.getElementById('mobTopTitle');
+  const mobSub   = document.getElementById('mobTopSub');
+  if (mobTitle) mobTitle.textContent = meta.title;
+  if (mobSub)   mobSub.textContent   = `${S.grado || '7mo C'} · ${S.periodo || '1er Trimestre'}`;
+
+  // Sincronizar barra de navegación inferior móvil
+  const bottomNavMap = {
+    'notas': 'mnNotas',
+    'diagnostico': 'mnDiagnostico',
+    'estudiantes': 'mnEstudiantes',
+    'asistencia': 'mnAsistencia'
+  };
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const activeBtnId = bottomNavMap[v];
+  if (activeBtnId) {
+    const b = document.getElementById(activeBtnId);
+    if (b) b.classList.add('active');
+  }
+
   // Mostrar el header principal de notas solo en la vista de notas
   const mainHdr = document.getElementById('mainAppHeader');
   if (mainHdr) mainHdr.style.display = (v === 'notas') ? 'flex' : 'none';
@@ -8273,7 +8704,7 @@ function switchView(v) {
     sbCount.textContent = `${S.students.length} est.`;
   }
 
-  // Cerrar cajón móvil si estuviera abierto
+  // Cerrar cajón móvil al cambiar de módulo
   closeMobileSidebar();
 
   if (v === 'diagnostico') renderDiagnostico();
@@ -8302,6 +8733,7 @@ function openMobileSidebar() {
   const bd = document.getElementById('sidebarBackdrop');
   if (sb) sb.classList.add('mobile-open');
   if (bd) bd.classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeMobileSidebar() {
@@ -8309,6 +8741,7 @@ function closeMobileSidebar() {
   const bd = document.getElementById('sidebarBackdrop');
   if (sb) sb.classList.remove('mobile-open');
   if (bd) bd.classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 function printTable() {
@@ -9563,42 +9996,14 @@ function initBottomScrollbar() {
 }
 
 function applyColVisibility() {
-  const table = document.getElementById('mainTable');
-  if (!table) return;
-  const mat = gm();
-  const mName = curMatName();
-
-  const row2ths = Array.from(table.querySelectorAll('thead tr:nth-child(2) th'));
-  let ci = 0;
-  mat.weeks.forEach(w => {
-    const cols = mat.cols[w] || [];
-    cols.forEach(col => {
-      const key = `${mName}||${w}||${col.name}`;
-      const hidden = !!S.hiddenCols[key];
-      const th = row2ths[ci];
-      if (th) th.style.display = hidden ? 'none' : '';
-      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
-        td.style.display = hidden ? 'none' : '';
-      });
-      ci++;
-    });
-    if (cols.length > 0) {
-      const key = `${mName}||${w}||PROM`;
-      const hidden = !!S.hiddenCols[key];
-      const th = row2ths[ci];
-      if (th) th.style.display = hidden ? 'none' : '';
-      table.querySelectorAll(`#tb tr td:nth-child(${ci + 3})`).forEach(td => {
-        td.style.display = hidden ? 'none' : '';
-      });
-      ci++;
-    } else { ci++; }
-  });
+  renderTable();
 }
 
 function applyRowVisibility() {
+  if (!S.hiddenRows) S.hiddenRows = {};
   document.querySelectorAll('#tb tr').forEach((tr) => {
-    const name = tr.querySelector('td.nc')?.textContent;
-    if (name) tr.style.display = S.hiddenRows[name] ? 'none' : '';
+    const name = tr.querySelector('td.nc')?.getAttribute('title') || tr.querySelector('td.nc')?.textContent?.trim();
+    if (name) tr.style.display = isRowHidden(name) ? 'none' : '';
   });
 }
 
@@ -9607,9 +10012,16 @@ function openVisPanel() {
   document.getElementById('visPanel').style.display   = 'flex';
   document.getElementById('visOverlay').style.display = 'block';
 }
+
 function closeVisPanel() {
   document.getElementById('visPanel').style.display   = 'none';
   document.getElementById('visOverlay').style.display = 'none';
+}
+
+let _visPanelFilter = '';
+function filterVisPanel(val) {
+  _visPanelFilter = (val || '').toLowerCase().trim();
+  refreshVisPanel();
 }
 
 function refreshVisPanel() {
@@ -9618,37 +10030,313 @@ function refreshVisPanel() {
   const mat = gm();
   if (!mat) return;
   const mName = curMatName();
+  if (!S.hiddenCols) S.hiddenCols = {};
+  if (!S.hiddenRows) S.hiddenRows = {};
 
-  let html = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Alternar visibilidad de columnas y estudiantes:</div>`;
+  const q = _visPanelFilter;
 
-  (mat.weeks || []).forEach((w) => {
+  let html = `
+    <!-- Barra de búsqueda rápida -->
+    <div style="margin-bottom:12px;position:relative">
+      <input type="text" placeholder="🔍 Filtrar columnas o estudiantes..."
+        value="${escVal(q)}"
+        oninput="filterVisPanel(this.value)"
+        style="width:100%;padding:7px 10px;font-size:0.8rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main)"/>
+    </div>
+
+    <!-- Botones de Acción Rápida -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
+      <button class="btn btn-outline" style="padding:5px 8px;font-size:0.75rem;display:flex;align-items:center;justify-content:center;gap:4px" onclick="showAllVis()">
+        👁️ <span>Mostrar Todo</span>
+      </button>
+      <button class="btn btn-outline" style="padding:5px 8px;font-size:0.75rem;display:flex;align-items:center;justify-content:center;gap:4px" onclick="hideAllCols()">
+        🙈 <span>Ocultar Cols</span>
+      </button>
+      <button class="btn btn-outline" style="padding:5px 8px;font-size:0.75rem;display:flex;align-items:center;justify-content:center;gap:4px" onclick="showAllRows()">
+        👥 <span>Todos Est.</span>
+      </button>
+      <button class="btn btn-outline" style="padding:5px 8px;font-size:0.75rem;display:flex;align-items:center;justify-content:center;gap:4px" onclick="hideAllRows()">
+        🙈 <span>Sin Estudiantes</span>
+      </button>
+    </div>
+  `;
+
+  // 1. Columnas y Semanas
+  html += `<div style="font-weight:800;font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border-color)">
+    📅 Semanas y Actividades (${escHTML(mName)})
+  </div>`;
+
+  (mat.weeks || []).forEach((w, wi) => {
     const wName = getWeekName(w);
+    const wTitle = getWeekTitle(w);
     const cols = (mat.cols && mat.cols[wName]) || [];
-    html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:8px 0 4px">${escHTML(getWeekTitle(w))}</div>`;
+    const wc = weekColor(mName, wName, wi);
+
+    const matchWeek = !q || wTitle.toLowerCase().includes(q) || wName.toLowerCase().includes(q);
+    const matchingCols = cols.filter(c => !q || (c.desc||c.name).toLowerCase().includes(q));
+
+    if (!matchWeek && matchingCols.length === 0) return;
+
+    html += `
+      <div style="margin-bottom:10px;background:var(--bg-card-subtle);border-radius:var(--radius-sm);border:1px solid var(--border-color);overflow:hidden">
+        <div style="background:${wc.h};color:#fff;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:0.78rem">
+          <div style="display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            <span>${escHTML(wTitle)}</span>
+          </div>
+          <button onclick="toggleWeekVis('${esc(wName)}')" style="background:rgba(0,0,0,0.25);border:none;color:#fff;border-radius:4px;padding:2px 6px;font-size:0.7rem;cursor:pointer" title="Alternar toda la semana">
+            ⇄ Alternar
+          </button>
+        </div>
+        <div style="padding:4px 6px">
+    `;
+
     cols.forEach(col => {
+      const at = actType(col.type);
       const key = `${mName}||${wName}||${col.name}`;
-      const vis = !S.hiddenCols[key];
-      html += `<div onclick="toggleCol('${esc(key)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px;user-select:none">
-        <span>${vis?'👁':'🙈'}</span> <span style="font-size:0.75rem">${escHTML(col.desc || col.name)}</span>
-      </div>`;
+      const vis = !isColumnHidden(mName, wName, col);
+      const displayName = col.desc || col.name;
+      const colDesc = col.desc || '';
+
+      if (q && !displayName.toLowerCase().includes(q) && !wTitle.toLowerCase().includes(q)) return;
+
+      html += `
+        <div onclick="toggleCol('${esc(key)}','${esc(mName)}','${esc(wName)}','${esc(col.name)}','${esc(colDesc)}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vis ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            <span style="font-size:0.95rem">${vis ? '👁️' : '🙈'}</span>
+            <div style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              <span style="font-size:0.8rem;font-weight:${vis?'700':'400'};color:${vis?'var(--text-main)':'var(--text-muted)'}">${escHTML(displayName)}</span>
+              <span style="font-size:0.65rem;color:var(--text-muted);display:block">${escHTML(at.label)} ${col.date ? '· ' + escHTML(col.date) : ''}</span>
+            </div>
+          </div>
+          <span style="font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:4px;background:${vis ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vis ? 'Visible' : 'Oculto'}</span>
+        </div>
+      `;
     });
+
+    // Toggle Promedio Semanal
+    const promKey = `${mName}||${wName}||PROM`;
+    const promVis = !S.hiddenCols[promKey];
+    html += `
+      <div onclick="toggleCol('${esc(promKey)}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 8px;margin-top:4px;border-top:1px dashed var(--border-color);cursor:pointer;user-select:none">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:0.85rem">${promVis ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.74rem;font-weight:700;color:var(--text-muted)">Promedio ${escHTML(wName)}</span>
+        </div>
+        <span style="font-size:0.65rem;color:var(--text-muted)">${promVis ? 'Visible' : 'Oculto'}</span>
+      </div>
+    </div>
+    </div>`;
   });
 
-  html += `<div style="font-weight:700;font-size:0.78rem;color:var(--primary);margin:12px 0 4px">Estudiantes</div>`;
-  (S.students || []).forEach(name => {
-    const vis = !S.hiddenRows[name];
-    html += `<div onclick="toggleRow('${esc(name)}')" style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:4px;user-select:none">
-      <span>${vis?'👁':'🙈'}</span> <span style="font-size:0.75rem">${escHTML(name)}</span>
-    </div>`;
+  // 2. Bloque de Evaluación Sumativa / Resumen
+  const isQual = isQualitativeMat(mName);
+  html += `<div style="font-weight:800;font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border-color)">
+    📊 Columnas de Resumen y Trimestre
+  </div>`;
+
+  if (!isQual) {
+    const kForm = `${mName}||__SUMMARY__||FORM`;
+    const kSum  = `${mName}||__SUMMARY__||SUM`;
+    const kTrim = `${mName}||__SUMMARY__||TRIM`;
+    const vForm = !S.hiddenCols[kForm];
+    const vSum  = !S.hiddenCols[kSum];
+    const vTrim = !S.hiddenCols[kTrim];
+
+    html += `
+      <div onclick="toggleCol('${esc(kForm)}')" style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vForm ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${vForm ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.78rem;font-weight:${vForm?'700':'400'}">70% FORMATIVO</span>
+        </div>
+        <span style="font-size:0.68rem;padding:2px 6px;border-radius:4px;background:${vForm ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vForm ? 'Visible' : 'Oculto'}</span>
+      </div>
+      <div onclick="toggleCol('${esc(kSum)}')" style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vSum ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${vSum ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.78rem;font-weight:${vSum?'700':'400'}">30% SUMATIVO</span>
+        </div>
+        <span style="font-size:0.68rem;padding:2px 6px;border-radius:4px;background:${vSum ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vSum ? 'Visible' : 'Oculto'}</span>
+      </div>
+      <div onclick="toggleCol('${esc(kTrim)}')" style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vTrim ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${vTrim ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.78rem;font-weight:${vTrim?'700':'400'}">NOTA TRIMESTRE</span>
+        </div>
+        <span style="font-size:0.68rem;padding:2px 6px;border-radius:4px;background:${vTrim ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vTrim ? 'Visible' : 'Oculto'}</span>
+      </div>
+    `;
+  } else {
+    const kTrim = `${mName}||__SUMMARY__||TRIM`;
+    const vTrim = !S.hiddenCols[kTrim];
+    html += `
+      <div onclick="toggleCol('${esc(kTrim)}')" style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vTrim ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span>${vTrim ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.78rem;font-weight:${vTrim?'700':'400'}">EVALUACIÓN CUALITATIVA</span>
+        </div>
+        <span style="font-size:0.68rem;padding:2px 6px;border-radius:4px;background:${vTrim ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vTrim ? 'Visible' : 'Oculto'}</span>
+      </div>
+    `;
+  }
+
+  // 3. Estudiantes
+  html += `<div style="font-weight:800;font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border-color)">
+    👥 Estudiantes (${(S.students||[]).length})
+  </div>`;
+
+  (S.students || []).forEach((name, idx) => {
+    if (q && !name.toLowerCase().includes(q)) return;
+    const vis = !isRowHidden(name);
+    html += `
+      <div onclick="toggleRow('${esc(name)}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;margin:2px 0;border-radius:4px;cursor:pointer;user-select:none;background:${vis ? 'transparent' : 'rgba(239,68,68,0.08)'}">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <span style="font-size:0.85rem">${vis ? '👁️' : '🙈'}</span>
+          <span style="font-size:0.76rem;font-weight:${vis?'700':'400'};color:${vis?'var(--text-main)':'var(--text-muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${idx+1}. ${escHTML(name)}</span>
+        </div>
+        <span style="font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:4px;background:${vis ? '#dcfce7;color:#15803d' : '#fee2e2;color:#b91c1c'}">${vis ? 'Visible' : 'Oculto'}</span>
+      </div>
+    `;
   });
 
   body.innerHTML = html;
 }
 
-function toggleCol(k) { S.hiddenCols[k] = !S.hiddenCols[k]; saveData(); applyColVisibility(); refreshVisPanel(); }
-function toggleRow(k) { S.hiddenRows[k] = !S.hiddenRows[k]; saveData(); applyRowVisibility(); refreshVisPanel(); }
-function showAllVis() { S.hiddenCols = {}; S.hiddenRows = {}; saveData(); applyColVisibility(); applyRowVisibility(); refreshVisPanel(); }
-function hideAllRows() { S.students.forEach(n => S.hiddenRows[n] = true); saveData(); applyRowVisibility(); refreshVisPanel(); }
+function toggleCol(k, mName, wName, colName, colDesc) {
+  if (!S.hiddenCols) S.hiddenCols = {};
+  if (mName && wName && colName) {
+    const colObj = { name: colName, desc: colDesc };
+    const isHidden = isColumnHidden(mName, wName, colObj);
+    const primaryKey = `${mName}||${wName}||${colName}`;
+    const keys = [
+      primaryKey,
+      colDesc ? `${mName}||${wName}||${colDesc}` : null,
+      `${wName}||${colName}`,
+      colDesc ? `${wName}||${colDesc}` : null,
+      `${mName}||${colName}`,
+      colDesc ? `${mName}||${colDesc}` : null,
+      colName,
+      colDesc
+    ].filter(Boolean);
+
+    if (!isHidden) {
+      S.hiddenCols[primaryKey] = true;
+      if (colDesc) S.hiddenCols[`${mName}||${wName}||${colDesc}`] = true;
+    } else {
+      keys.forEach(key => { delete S.hiddenCols[key]; });
+    }
+  } else {
+    if (S.hiddenCols[k]) {
+      delete S.hiddenCols[k];
+    } else {
+      S.hiddenCols[k] = true;
+    }
+  }
+
+  saveData();
+  renderTable();
+  refreshVisPanel();
+}
+
+function toggleWeekVis(wName) {
+  const mat = gm();
+  if (!mat) return;
+  const mName = curMatName();
+  const cols = (mat.cols && mat.cols[wName]) || [];
+  if (!S.hiddenCols) S.hiddenCols = {};
+
+  const allHidden = cols.every(c => isColumnHidden(mName, wName, c));
+  const shouldHide = !allHidden;
+
+  cols.forEach(c => {
+    const primaryKey = `${mName}||${wName}||${c.name}`;
+    const keys = [
+      primaryKey,
+      c.desc ? `${mName}||${wName}||${c.desc}` : null,
+      `${wName}||${c.name}`,
+      c.desc ? `${wName}||${c.desc}` : null,
+      `${mName}||${c.name}`,
+      c.desc ? `${mName}||${c.desc}` : null,
+      c.name,
+      c.desc
+    ].filter(Boolean);
+
+    if (shouldHide) {
+      S.hiddenCols[primaryKey] = true;
+      if (c.desc) S.hiddenCols[`${mName}||${wName}||${c.desc}`] = true;
+    } else {
+      keys.forEach(k => { delete S.hiddenCols[k]; });
+    }
+  });
+
+  const promKey = `${mName}||${wName}||PROM`;
+  if (shouldHide) S.hiddenCols[promKey] = true;
+  else delete S.hiddenCols[promKey];
+
+  saveData();
+  renderTable();
+  refreshVisPanel();
+}
+
+function toggleRow(name) {
+  if (!S.hiddenRows) S.hiddenRows = {};
+  const isHidden = isRowHidden(name);
+  const trimmed = name.trim();
+  if (!isHidden) {
+    S.hiddenRows[trimmed] = true;
+  } else {
+    delete S.hiddenRows[trimmed];
+    delete S.hiddenRows[name];
+  }
+  saveData();
+  applyRowVisibility();
+  refreshVisPanel();
+}
+
+function showAllVis() {
+  S.hiddenCols = {};
+  S.hiddenRows = {};
+  saveData();
+  applyColVisibility();
+  applyRowVisibility();
+  refreshVisPanel();
+  toast('👁️ Todas las columnas y estudiantes son ahora visibles', '#16a34a');
+}
+
+function hideAllCols() {
+  const mat = gm();
+  if (!mat) return;
+  const mName = curMatName();
+  if (!S.hiddenCols) S.hiddenCols = {};
+  (mat.weeks || []).forEach(w => {
+    const wName = getWeekName(w);
+    const cols = (mat.cols && mat.cols[wName]) || [];
+    cols.forEach(c => {
+      S.hiddenCols[`${mName}||${wName}||${c.name}`] = true;
+      if (c.desc) S.hiddenCols[`${mName}||${wName}||${c.desc}`] = true;
+    });
+    S.hiddenCols[`${mName}||${wName}||PROM`] = true;
+  });
+  saveData();
+  applyColVisibility();
+  refreshVisPanel();
+}
+
+function showAllRows() {
+  S.hiddenRows = {};
+  saveData();
+  applyRowVisibility();
+  refreshVisPanel();
+  toast('👥 Todos los estudiantes son visibles', '#16a34a');
+}
+
+function hideAllRows() {
+  if (!S.hiddenRows) S.hiddenRows = {};
+  (S.students || []).forEach(n => { S.hiddenRows[n] = true; });
+  saveData();
+  applyRowVisibility();
+  refreshVisPanel();
+  toast('🙈 Estudiantes ocultados temporalmente', '#f59e0b');
+}
 
 // ══════════════════════════════════════════════════════
 //  MODO OSCURO & TAMAÑO DE FUENTE
@@ -9725,19 +10413,55 @@ function toggleStatsCollapse(force) {
   }
 }
 
-function toggleFocusMode() {
-  const hdr = document.getElementById('mainAppHeader');
-  const tb = document.getElementById('mainModuleToolbar');
-  const st = document.getElementById('statsSection');
-  const allCollapsed = (hdr && hdr.classList.contains('is-collapsed')) &&
-                       (tb && tb.classList.contains('is-collapsed')) &&
-                       (st && st.classList.contains('is-collapsed'));
+function toggleFocusMode(force) {
+  const isFocus = (typeof force === 'boolean') ? force : !document.body.classList.contains('in-focus-mode');
   
-  const newState = !allCollapsed;
-  toggleHeaderCollapse(newState);
-  toggleToolbarCollapse(newState);
-  toggleStatsCollapse(newState);
-  toast(newState ? '👁️ Modo Enfoque Activado (Paneles colapsados para mayor visión)' : '👁️ Modo Completo Activado (Paneles expandidos)', '#2563eb');
+  if (isFocus) {
+    document.body.classList.add('in-focus-mode');
+  } else {
+    document.body.classList.remove('in-focus-mode');
+  }
+
+  // Actualizar HUD Flotante
+  const hud = document.getElementById('focusModeFloatingHUD');
+  if (hud) hud.style.display = isFocus ? 'flex' : 'none';
+
+  // Actualizar botones de topbar y sidebar
+  const mobFocusBtn = document.getElementById('mobFocusBtnTop');
+  if (mobFocusBtn) {
+    if (isFocus) mobFocusBtn.classList.add('active');
+    else mobFocusBtn.classList.remove('active');
+  }
+  const sbFocusBtn = document.getElementById('sbFocusModeBtn');
+  if (sbFocusBtn) {
+    if (isFocus) sbFocusBtn.classList.add('active');
+    else sbFocusBtn.classList.remove('active');
+  }
+
+  // Sincronizar colapsos para desktop
+  toggleHeaderCollapse(isFocus);
+  toggleToolbarCollapse(isFocus);
+  toggleStatsCollapse(isFocus);
+
+  localStorage.setItem('notas_focus_mode', isFocus ? '1' : '0');
+  toast(isFocus ? '👁️ Modo Enfoque Activado: Máximo espacio de trabajo' : '👁️ Modo Completo: Paneles restaurados', '#2563eb');
+}
+
+function toggleFullscreenMode() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      toast('⛶ Pantalla Completa Activada', '#2563eb');
+    }).catch(() => {
+      toast('👁️ Modo Enfoque Maximizado', '#2563eb');
+      toggleFocusMode(true);
+    });
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().then(() => {
+        toast('⛶ Saliste de Pantalla Completa', '#2563eb');
+      });
+    }
+  }
 }
 
 function toggleWeekCollapse(wName) {
@@ -9752,6 +10476,7 @@ function loadUICollapseStates() {
   if (localStorage.getItem('notas_collapse_header') === '1') toggleHeaderCollapse(true);
   if (localStorage.getItem('notas_collapse_toolbar') === '1') toggleToolbarCollapse(true);
   if (localStorage.getItem('notas_collapse_stats') === '1') toggleStatsCollapse(true);
+  if (localStorage.getItem('notas_focus_mode') === '1') toggleFocusMode(true);
 }
 
 // ══════════════════════════════════════════════════════
@@ -19356,10 +20081,10 @@ render();
 </div>
 
 <script>
-/* ══ MOBILE BOTTOM NAV LOGIC ══ */
+/* ══ MOBILE BOTTOM NAV & GESTURE LOGIC ══ */
 function mobileSwitchView(view) {
-  if (view === 'herramientas') {
-    document.getElementById('mobileToolsPanel').classList.add('open');
+  if (view === 'menu' || view === 'sidebar') {
+    openMobileSidebar();
     return;
   }
 
@@ -19370,39 +20095,35 @@ function mobileSwitchView(view) {
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
   const btnMap = {
     'notas': 'mnNotas',
+    'diagnostico': 'mnDiagnostico',
     'estudiantes': 'mnEstudiantes',
-    'asistencia': 'mnAsistencia',
-    'reporte': 'mnReporte'
+    'asistencia': 'mnAsistencia'
   };
   const btnId = btnMap[view];
   if (btnId) document.getElementById(btnId)?.classList.add('active');
 }
 
-function closeMobileTools() {
-  const panel = document.getElementById('mobileToolsPanel');
-  if (panel) panel.classList.remove('open');
-}
-
-/* ══ Sync Bottom Nav with view switches ══ */
+/* ══ Touch Gestures & Mobile Init ══ */
 document.addEventListener('DOMContentLoaded', function() {
-  const origFn = window.switchView;
-  if (origFn) {
-    window.switchView = function(v) {
-      origFn(v);
-      // Sync bottom nav
-      const navMap = {
-        'notas': 'mnNotas',
-        'estudiantes': 'mnEstudiantes',
-        'asistencia': 'mnAsistencia',
-        'reporte': 'mnReporte',
-        'export': 'mnHerramientas',
-        'pi': 'mnHerramientas',
-        'config': 'mnHerramientas'
-      };
-      document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-      const target = navMap[v];
-      if (target) document.getElementById(target)?.classList.add('active');
-    };
+  /* ══ Swipe Left on Sidebar to Close ══ */
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const sbEl = document.getElementById('appSidebar');
+  if (sbEl) {
+    sbEl.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    sbEl.addEventListener('touchend', function(e) {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchStartX - touchEndX;
+      const diffY = Math.abs(touchStartY - touchEndY);
+      // Si desliza hacia la izquierda más de 45px
+      if (diffX > 45 && diffY < 120) {
+        closeMobileSidebar();
+      }
+    }, { passive: true });
   }
 
   /* ══ Restore sidebar collapse state ══ */
@@ -19415,7 +20136,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  /* ══ Restore Header, Toolbar, Stats collapse state ══ */
+  /* ══ Restore Header, Toolbar, Stats collapse state & Focus Mode ══ */
   loadUICollapseStates();
 
   /* ══ Auto-open Parent Portal if URL contains ?padres=1 or ?ficha=1 ══ */
