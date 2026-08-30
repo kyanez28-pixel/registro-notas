@@ -595,6 +595,63 @@ td.nc:hover { background: var(--primary-light) !important; color: var(--primary)
   box-shadow: none !important;
 }
 
+/* Botones Flotantes de Navegación Lateral */
+.matrix-float-nav {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  z-index: 12;
+  width: 44px;
+  height: 64px;
+  background: #2563eb;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  transition: all .2s ease;
+  opacity: 0.88;
+}
+.matrix-float-nav:hover {
+  opacity: 1;
+  background: #1d4ed8;
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.55);
+}
+.matrix-float-left {
+  left: 6px;
+}
+.matrix-float-right {
+  right: 6px;
+}
+body.dark .matrix-float-nav {
+  border-color: #38bdf8;
+}
+
+/* Scrollbar Gruesa y Visible para Tablas */
+.tw::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+.tw::-webkit-scrollbar-track {
+  background: var(--bg-card-subtle);
+  border-top: 1.5px solid var(--border-color);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+.tw::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 8px;
+  border: 2.5px solid var(--bg-card);
+}
+.tw::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}
+
 /* Celdas de Resultados Ministeriales */
 td.td-form { background: #e8f5fe !important; font-family: var(--font-mono); font-weight: 800; color: #0369a1; font-size: 0.9rem; }
 td.td-sum  { background: #f5eeff !important; font-family: var(--font-mono); font-weight: 800; color: #6d28d9; font-size: 0.9rem; }
@@ -3980,21 +4037,57 @@ body.in-focus-mode {
     </div>
   </div>
 
-  <!-- Barra Guía Visual de Desplazamiento -->
-  <div class="tw-hint" id="stMatrixHint" style="margin-bottom:8px">
-    <div style="display:flex;align-items:center;gap:6px;flex:1">
-      <span>👆 Desliza horizontalmente</span>
-      <span class="tw-hint-arrow">← ← ←  → → →</span>
-      <span style="opacity:0.85">para ver todas las columnas de representantes, teléfonos WhatsApp, dirección, datos de la madre y del padre</span>
+  <!-- Barra de Navegación Rápida por Secciones y Desplazamiento Horizontal (Siempre Visible) -->
+  <div class="matrix-jump-ribbon" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border:1.5px solid #2563eb;border-radius:var(--radius-md);padding:8px 12px;margin-bottom:10px;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow-md);position:sticky;top:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:0.8rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:4px">
+        🧭 <span>Ir a columna:</span>
+      </span>
+      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('start')" style="font-size:0.75rem;padding:4px 10px;font-weight:800" title="Ver Datos del Estudiante">
+        👤 1. Estudiante
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('rep')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#16a34a;border-color:#86efac;background:rgba(34,197,94,0.08)" title="Ver Representante y Contactos WhatsApp">
+        🟢 2. Representante
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('madre')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#9333ea;border-color:#d8b4fe;background:rgba(147,51,234,0.08)" title="Ver Datos de la Madre">
+        🟣 3. Madre
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('padre')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#ea580c;border-color:#fdba74;background:rgba(234,88,12,0.08)" title="Ver Datos del Padre">
+        🟠 4. Padre
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('end')" style="font-size:0.75rem;padding:4px 10px;font-weight:800" title="Ver Ficha y WhatsApp">
+        📋 5. Ficha
+      </button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <button type="button" class="btn btn-sm btn-primary" onclick="scrollMatrixHorizontal(-380)" style="font-size:0.82rem;font-weight:800;padding:5px 14px;box-shadow:var(--shadow-sm)" title="Desplazar tabla a la izquierda">
+        ◀ Izquierda
+      </button>
+      <button type="button" class="btn btn-sm btn-primary" onclick="scrollMatrixHorizontal(380)" style="font-size:0.82rem;font-weight:800;padding:5px 14px;box-shadow:var(--shadow-sm)" title="Desplazar tabla a la derecha">
+        Derecha ▶
+      </button>
+      <button type="button" id="btnToggleStickyMatrix" class="btn btn-sm btn-outline" style="font-size:0.75rem;font-weight:700;padding:5px 10px" onclick="toggleStickyMatrixNames()" title="Alternar entre fijar columna de nombres o desplazar libremente toda la pantalla">
+        📌 Nombres: Fijos
+      </button>
     </div>
   </div>
 
-  <!-- Tabla Matriz de Estudiantes -->
-  <div id="stMatrixContainer" class="tw" style="max-height:calc(100vh - 290px);overflow-x:auto;overflow-y:auto">
-    <table id="stMatrixTable" style="width:max-content;min-width:100%;table-layout:auto">
-      <thead id="stMatrixTh"></thead>
-      <tbody id="stMatrixTb"></tbody>
-    </table>
+  <!-- Contenedor con Botones Flotantes Laterales -->
+  <div style="position:relative">
+    <button type="button" class="matrix-float-nav matrix-float-left" onclick="scrollMatrixHorizontal(-450)" title="Desplazar tabla a la izquierda (◀)">
+      ◀
+    </button>
+    <button type="button" class="matrix-float-nav matrix-float-right" onclick="scrollMatrixHorizontal(450)" title="Desplazar tabla a la derecha (▶)">
+      ▶
+    </button>
+
+    <div id="stMatrixContainer" class="tw" style="max-height:calc(100vh - 290px);overflow-x:auto;overflow-y:auto;cursor:grab">
+      <table id="stMatrixTable" style="width:max-content;min-width:100%;table-layout:auto">
+        <thead id="stMatrixTh"></thead>
+        <tbody id="stMatrixTb"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -16911,7 +17004,7 @@ function renderStudentsMatrix() {
   const groupBgs    = { est:'#1e40af', rep:'#15803d', madre:'#7e22ce', padre:'#c2410c' };
 
   const row1Groups = groups.map(g =>
-    `<th colspan="${g.count}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px;position:sticky;top:0;z-index:4;border-bottom:1px solid rgba(255,255,255,0.2)">${groupLabels[g.group]||''}</th>`
+    `<th colspan="${g.count}" data-mx-group="${g.group}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px;position:sticky;top:0;z-index:4;border-bottom:1px solid rgba(255,255,255,0.2)">${groupLabels[g.group]||''}</th>`
   ).join('');
 
   const row2Ths = orderedCols.map((col, ci) => {
@@ -17065,6 +17158,7 @@ function renderStudentsMatrix() {
   }
 
   syncMatrixBottomScroll();
+  enableDragToScroll(document.getElementById('stMatrixContainer'));
 }
 
 function scrollMatrixHorizontal(action) {
@@ -17077,6 +17171,71 @@ function scrollMatrixHorizontal(action) {
   } else if (typeof action === 'number') {
     container.scrollBy({ left: action, behavior: 'smooth' });
   }
+}
+
+function jumpMatrixTo(section) {
+  const container = document.getElementById('stMatrixContainer') || document.querySelector('#stMatrixPanel .tw');
+  if (!container) return;
+  const table = document.getElementById('stMatrixTable');
+  if (!table) return;
+
+  if (section === 'start') {
+    container.scrollTo({ left: 0, behavior: 'smooth' });
+  } else if (section === 'end') {
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+  } else if (section === 'rep') {
+    const th = table.querySelector('th[data-mx-group="rep"]');
+    if (th) {
+      const left = th.offsetLeft - 230;
+      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    } else {
+      container.scrollTo({ left: 700, behavior: 'smooth' });
+    }
+  } else if (section === 'madre') {
+    const th = table.querySelector('th[data-mx-group="madre"]');
+    if (th) {
+      const left = th.offsetLeft - 230;
+      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    } else {
+      container.scrollTo({ left: 1450, behavior: 'smooth' });
+    }
+  } else if (section === 'padre') {
+    const th = table.querySelector('th[data-mx-group="padre"]');
+    if (th) {
+      const left = th.offsetLeft - 230;
+      container.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    } else {
+      container.scrollTo({ left: 1900, behavior: 'smooth' });
+    }
+  }
+}
+
+function enableDragToScroll(container) {
+  if (!container || container._hasDragScroll) return;
+  container._hasDragScroll = true;
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  container.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button, input, select, a, .col-resizer, .btn')) return;
+    isDown = true;
+    startX = e.pageX - container.offsetLeft;
+    scrollLeft = container.scrollLeft;
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    container.scrollLeft = scrollLeft - walk;
+  });
 }
 
 function toggleStickyMatrixNames() {
