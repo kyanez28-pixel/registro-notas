@@ -4037,39 +4037,38 @@ body.in-focus-mode {
     </div>
   </div>
 
-  <!-- Barra de Navegación Rápida por Secciones y Desplazamiento Horizontal (Siempre Visible) -->
-  <div class="matrix-jump-ribbon" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border:1.5px solid #2563eb;border-radius:var(--radius-md);padding:8px 12px;margin-bottom:10px;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow-md);position:sticky;top:0;z-index:20">
+  <!-- Barra de Vistas y Secciones de la Matriz (Segmented Tabs & Slider) -->
+  <div class="matrix-sections-bar" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:25">
+    
+    <!-- Pestañas de Vista Rápida -->
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <span style="font-size:0.8rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:4px">
-        🧭 <span>Ir a columna:</span>
-      </span>
-      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('start')" style="font-size:0.75rem;padding:4px 10px;font-weight:800" title="Ver Datos del Estudiante">
-        👤 1. Estudiante
+      <span style="font-size:0.78rem;font-weight:900;color:var(--text-muted);margin-right:2px">👁️ VISTA:</span>
+      <button type="button" id="btnMxViewAll" class="btn btn-sm btn-primary" onclick="setMatrixSectionFilter('all')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px" title="Ver todas las 19 columnas de la matriz">
+        🌐 Toda la Matriz
       </button>
-      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('rep')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#16a34a;border-color:#86efac;background:rgba(34,197,94,0.08)" title="Ver Representante y Contactos WhatsApp">
-        🟢 2. Representante
+      <button type="button" id="btnMxViewEst" class="btn btn-sm btn-outline" onclick="setMatrixSectionFilter('est')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px;color:#2563eb;border-color:#93c5fd" title="Ver solo datos del estudiante">
+        👤 Datos Estudiante
       </button>
-      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('madre')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#9333ea;border-color:#d8b4fe;background:rgba(147,51,234,0.08)" title="Ver Datos de la Madre">
-        🟣 3. Madre
+      <button type="button" id="btnMxViewRep" class="btn btn-sm btn-outline" onclick="setMatrixSectionFilter('rep')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px;color:#16a34a;border-color:#86efac" title="Ver Representante Legal, teléfonos, WhatsApp, dirección y correos">
+        🟢 Representante Legal
       </button>
-      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('padre')" style="font-size:0.75rem;padding:4px 10px;font-weight:800;color:#ea580c;border-color:#fdba74;background:rgba(234,88,12,0.08)" title="Ver Datos del Padre">
-        🟠 4. Padre
+      <button type="button" id="btnMxViewMadre" class="btn btn-sm btn-outline" onclick="setMatrixSectionFilter('madre')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px;color:#9333ea;border-color:#d8b4fe" title="Ver datos de la Madre y teléfonos WhatsApp">
+        🟣 Datos de la Madre
       </button>
-      <button type="button" class="btn btn-sm btn-outline" onclick="jumpMatrixTo('end')" style="font-size:0.75rem;padding:4px 10px;font-weight:800" title="Ver Ficha y WhatsApp">
-        📋 5. Ficha
+      <button type="button" id="btnMxViewPadre" class="btn btn-sm btn-outline" onclick="setMatrixSectionFilter('padre')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px;color:#ea580c;border-color:#fdba74" title="Ver datos del Padre y teléfonos WhatsApp">
+        🟠 Datos del Padre
+      </button>
+      <button type="button" id="btnMxViewContactos" class="btn btn-sm btn-outline" onclick="setMatrixSectionFilter('contactos')" style="font-size:0.78rem;padding:5px 12px;font-weight:800;border-radius:6px;color:#0284c7;border-color:#7dd3fc" title="Ver todos los teléfonos WhatsApp juntos">
+        📞 Central WhatsApp
       </button>
     </div>
 
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <button type="button" class="btn btn-sm btn-primary" onclick="scrollMatrixHorizontal(-380)" style="font-size:0.82rem;font-weight:800;padding:5px 14px;box-shadow:var(--shadow-sm)" title="Desplazar tabla a la izquierda">
-        ◀ Izquierda
-      </button>
-      <button type="button" class="btn btn-sm btn-primary" onclick="scrollMatrixHorizontal(380)" style="font-size:0.82rem;font-weight:800;padding:5px 14px;box-shadow:var(--shadow-sm)" title="Desplazar tabla a la derecha">
-        Derecha ▶
-      </button>
-      <button type="button" id="btnToggleStickyMatrix" class="btn btn-sm btn-outline" style="font-size:0.75rem;font-weight:700;padding:5px 10px" onclick="toggleStickyMatrixNames()" title="Alternar entre fijar columna de nombres o desplazar libremente toda la pantalla">
-        📌 Nombres: Fijos
-      </button>
+    <!-- Deslizador de Navegación y Botones de Paso -->
+    <div id="stMatrixSliderWrapper" style="display:flex;align-items:center;gap:8px;flex:1;min-width:240px;max-width:420px;background:var(--bg-card-subtle);padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+      <button type="button" class="btn btn-sm" style="padding:2px 8px;font-size:0.75rem;font-weight:800;background:#2563eb;color:#fff;border:none" onclick="scrollMatrixHorizontal(-350)" title="Mover a la izquierda">◀</button>
+      <input type="range" id="stMatrixRangeSlider" min="0" max="100" value="0" style="flex:1;height:6px;accent-color:#2563eb;cursor:pointer" oninput="onMatrixSliderInput(this.value)" title="Arrastra para deslizar toda la tabla">
+      <button type="button" class="btn btn-sm" style="padding:2px 8px;font-size:0.75rem;font-weight:800;background:#2563eb;color:#fff;border:none" onclick="scrollMatrixHorizontal(350)" title="Mover a la derecha">▶</button>
+      <button type="button" id="btnToggleStickyMatrix" class="btn btn-sm btn-outline" style="font-size:0.72rem;font-weight:700;padding:2px 7px" onclick="toggleStickyMatrixNames()" title="Alternar entre fijar columna de nombres o libre">📌 Fijo</button>
     </div>
   </div>
 
@@ -4093,12 +4092,13 @@ body.in-focus-mode {
   <!-- Barra Inferior de Navegación y Salto a Columnas -->
   <div class="matrix-bottom-bar" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:8px 14px;border-radius:0 0 var(--radius-md) var(--radius-md);margin-top:4px;border:1px solid var(--border-color);flex-wrap:wrap;gap:8px;box-shadow:var(--shadow-md)">
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <span style="font-size:0.75rem;font-weight:800;color:#94a3b8">Saltar a:</span>
-      <button type="button" class="btn btn-sm" style="background:#2563eb;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('start')">👤 Estudiante</button>
-      <button type="button" class="btn btn-sm" style="background:#16a34a;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('rep')">🟢 Representante</button>
-      <button type="button" class="btn btn-sm" style="background:#9333ea;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('madre')">🟣 Madre</button>
-      <button type="button" class="btn btn-sm" style="background:#ea580c;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('padre')">🟠 Padre</button>
-      <button type="button" class="btn btn-sm" style="background:#0284c7;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="jumpMatrixTo('end')">📋 Ficha</button>
+      <span style="font-size:0.75rem;font-weight:800;color:#94a3b8">Ver sección:</span>
+      <button type="button" class="btn btn-sm" style="background:#2563eb;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('all')">🌐 Todo</button>
+      <button type="button" class="btn btn-sm" style="background:#1e40af;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('est')">👤 Estudiante</button>
+      <button type="button" class="btn btn-sm" style="background:#16a34a;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('rep')">🟢 Representante</button>
+      <button type="button" class="btn btn-sm" style="background:#9333ea;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('madre')">🟣 Madre</button>
+      <button type="button" class="btn btn-sm" style="background:#ea580c;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('padre')">🟠 Padre</button>
+      <button type="button" class="btn btn-sm" style="background:#0284c7;color:#fff;font-size:0.75rem;padding:4px 10px;font-weight:700;border:none" onclick="setMatrixSectionFilter('contactos')">📞 Contactos</button>
     </div>
     <div style="display:flex;align-items:center;gap:6px">
       <button type="button" class="btn btn-sm" style="background:#3b82f6;color:#fff;font-size:0.8rem;padding:4px 14px;font-weight:800;border:none" onclick="scrollMatrixHorizontal(-400)">◀ Izquierda</button>
@@ -16903,6 +16903,8 @@ const MATRIX_COLS_DEF = [
   { id:'padre_tel',    label:'Teléfono Padre',         group:'padre',bg:'#ea580c', minW:115 },
 ];
 
+let _currentMatrixSection = 'all';
+
 function getMatrixColOrder() {
   if (!S.matrixColOrder || S.matrixColOrder.length !== MATRIX_COLS_DEF.length) {
     S.matrixColOrder = MATRIX_COLS_DEF.map(c => c.id);
@@ -16912,8 +16914,61 @@ function getMatrixColOrder() {
 
 function getOrderedMatrixCols() {
   const order = getMatrixColOrder();
-  return order.map(id => MATRIX_COLS_DEF.find(c => c.id === id)).filter(Boolean);
+  let cols = order.map(id => MATRIX_COLS_DEF.find(c => c.id === id)).filter(Boolean);
+
+  if (_currentMatrixSection === 'est') {
+    cols = cols.filter(c => c.group === 'est');
+  } else if (_currentMatrixSection === 'rep') {
+    cols = cols.filter(c => c.group === 'rep');
+  } else if (_currentMatrixSection === 'madre') {
+    cols = cols.filter(c => c.group === 'madre');
+  } else if (_currentMatrixSection === 'padre') {
+    cols = cols.filter(c => c.group === 'padre');
+  } else if (_currentMatrixSection === 'contactos') {
+    cols = cols.filter(c => ['rep_nombre', 'rep_telefono', 'madre_nombre', 'madre_tel', 'padre_nombre', 'padre_tel', 'tel_emerg'].includes(c.id));
+  }
+  return cols;
 }
+
+function setMatrixSectionFilter(groupKey) {
+  _currentMatrixSection = groupKey || 'all';
+  
+  // Highlight active button
+  const keys = ['all', 'est', 'rep', 'madre', 'padre', 'contactos'];
+  keys.forEach(k => {
+    const btn = document.getElementById('btnMxView' + (k.charAt(0).toUpperCase() + k.slice(1)));
+    if (btn) {
+      if (k === _currentMatrixSection) {
+        btn.className = 'btn btn-sm btn-primary';
+        btn.style.boxShadow = '0 2px 8px rgba(37,99,235,0.4)';
+      } else {
+        btn.className = 'btn btn-sm btn-outline';
+        btn.style.boxShadow = 'none';
+      }
+    }
+  });
+
+  const slider = document.getElementById('stMatrixSliderWrapper');
+  if (slider) {
+    slider.style.display = _currentMatrixSection === 'all' ? 'flex' : 'none';
+  }
+
+  renderStudentsMatrix();
+  
+  const container = getMatrixContainer();
+  if (container) container.scrollLeft = 0;
+}
+window.setMatrixSectionFilter = setMatrixSectionFilter;
+
+function onMatrixSliderInput(val) {
+  const container = getMatrixContainer();
+  if (!container) return;
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  if (maxScroll > 0) {
+    container.scrollLeft = (parseFloat(val) / 100) * maxScroll;
+  }
+}
+window.onMatrixSliderInput = onMatrixSliderInput;
 
 function getCellValue(p, colId, si) {
   const name = p.nombre || `Estudiante ${si+1}`;
