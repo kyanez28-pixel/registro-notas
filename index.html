@@ -4004,6 +4004,9 @@ body.in-focus-mode {
       <button class="btn btn-success" onclick="openAddStudentMatrixModal()" style="font-weight:800">
         ➕ Nuevo Estudiante
       </button>
+      <button class="btn" style="background:#8b5cf6;color:#fff;font-weight:800;border:none;box-shadow:0 2px 8px rgba(139,92,246,0.3)" onclick="openAddMatrixColModal()" title="Agregar una nueva columna editable a la matriz">
+        ➕ Agregar Columna
+      </button>
       <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="exportStudentsMatrixXLSX()">
         📊 Descargar Excel
       </button>
@@ -6198,6 +6201,60 @@ body.in-focus-mode {
     <div class="ma">
       <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-success" id="mOk">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: AGREGAR / EDITAR COLUMNA PERSONALIZADA DE MATRIZ ── -->
+<div class="mo" id="addMatrixColModal" style="z-index:10020" onclick="if(event.target===this)closeAddMatrixColModal()">
+  <div class="md" style="max-width:480px;width:95%;border-radius:18px;padding:24px;box-shadow:var(--shadow-xl)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1.5px solid var(--border-color);padding-bottom:10px">
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px">
+        <span id="mxColModalTitle">➕ Nueva Columna en Matriz</span>
+      </div>
+      <button onclick="closeAddMatrixColModal()" class="btn btn-outline" style="padding:3px 8px;font-size:0.85rem">✕</button>
+    </div>
+
+    <input type="hidden" id="matrixColEditId" value="">
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.8rem;font-weight:800;color:var(--text-main);display:block;margin-bottom:4px">
+        Nombre de la Columna: *
+      </label>
+      <input type="text" id="matrixColLabelInput" class="search-input" placeholder="Ej: Tipo de Sangre, Barrio / Sector, Observaciones..." style="padding-left:12px">
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.8rem;font-weight:800;color:var(--text-main);display:block;margin-bottom:4px">
+        Sección / Categoría:
+      </label>
+      <select id="matrixColGroupSelect" class="sort-select" style="width:100%">
+        <option value="est">👤 Datos del Estudiante (Azul)</option>
+        <option value="rep">🟢 Representante Legal (Verde)</option>
+        <option value="madre">🟣 Datos de la Madre (Morado)</option>
+        <option value="padre">🟠 Datos del Padre (Naranja)</option>
+        <option value="gen">📋 Información General / Personalizada (Celeste)</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <label style="font-size:0.8rem;font-weight:800;color:var(--text-main);display:block;margin-bottom:6px">
+        Color del Encabezado:
+      </label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#0284c7" checked> <span style="display:inline-block;width:22px;height:22px;background:#0284c7;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#2563eb"> <span style="display:inline-block;width:22px;height:22px;background:#2563eb;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#16a34a"> <span style="display:inline-block;width:22px;height:22px;background:#16a34a;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#9333ea"> <span style="display:inline-block;width:22px;height:22px;background:#9333ea;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#ea580c"> <span style="display:inline-block;width:22px;height:22px;background:#ea580c;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#db2777"> <span style="display:inline-block;width:22px;height:22px;background:#db2777;border-radius:6px"></span></label>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="mxColColor" value="#475569"> <span style="display:inline-block;width:22px;height:22px;background:#475569;border-radius:6px"></span></label>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;border-top:1.5px solid var(--border-color);padding-top:14px">
+      <button type="button" class="btn btn-outline" onclick="closeAddMatrixColModal()">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="saveCustomMatrixCol()" style="font-weight:800;padding:8px 18px">💾 Guardar Columna</button>
     </div>
   </div>
 </div>
@@ -16904,16 +16961,36 @@ const MATRIX_COLS_DEF = [
 
 let _currentMatrixSection = 'all';
 
+function getAllMatrixColsDef() {
+  const custom = (S.customMatrixCols || []).map(c => ({
+    id: c.id,
+    label: c.label,
+    group: c.group || 'gen',
+    bg: c.bg || '#0284c7',
+    minW: c.minW || 130,
+    isCustom: true
+  }));
+  return [...MATRIX_COLS_DEF, ...custom];
+}
+
 function getMatrixColOrder() {
-  if (!S.matrixColOrder || S.matrixColOrder.length !== MATRIX_COLS_DEF.length) {
-    S.matrixColOrder = MATRIX_COLS_DEF.map(c => c.id);
+  const allDefs = getAllMatrixColsDef();
+  if (!S.matrixColOrder) {
+    S.matrixColOrder = allDefs.map(c => c.id);
+  } else {
+    allDefs.forEach(c => {
+      if (!S.matrixColOrder.includes(c.id)) S.matrixColOrder.push(c.id);
+    });
+    const allIds = new Set(allDefs.map(c => c.id));
+    S.matrixColOrder = S.matrixColOrder.filter(id => allIds.has(id));
   }
   return S.matrixColOrder;
 }
 
 function getOrderedMatrixCols() {
+  const allDefs = getAllMatrixColsDef();
   const order = getMatrixColOrder();
-  let cols = order.map(id => MATRIX_COLS_DEF.find(c => c.id === id)).filter(Boolean);
+  let cols = order.map(id => allDefs.find(c => c.id === id)).filter(Boolean);
 
   if (_currentMatrixSection === 'est') {
     cols = cols.filter(c => c.group === 'est');
@@ -16969,7 +17046,158 @@ function onMatrixSliderInput(val) {
 }
 window.onMatrixSliderInput = onMatrixSliderInput;
 
+function openAddMatrixColModal() {
+  const modal = document.getElementById('addMatrixColModal');
+  if (!modal) return;
+  document.getElementById('mxColModalTitle').textContent = '➕ Nueva Columna en Matriz';
+  document.getElementById('matrixColEditId').value = '';
+  document.getElementById('matrixColLabelInput').value = '';
+  document.getElementById('matrixColGroupSelect').value = 'gen';
+  modal.style.display = 'flex';
+  setTimeout(() => { document.getElementById('matrixColLabelInput')?.focus(); }, 50);
+}
+window.openAddMatrixColModal = openAddMatrixColModal;
+
+function openEditCustomColModal(colId) {
+  const col = (S.customMatrixCols || []).find(c => c.id === colId);
+  if (!col) return;
+  const modal = document.getElementById('addMatrixColModal');
+  if (!modal) return;
+  document.getElementById('mxColModalTitle').textContent = '✎ Editar Columna de Matriz';
+  document.getElementById('matrixColEditId').value = colId;
+  document.getElementById('matrixColLabelInput').value = col.label;
+  document.getElementById('matrixColGroupSelect').value = col.group || 'gen';
+  const colorRadio = modal.querySelector(`input[name="mxColColor"][value="${col.bg}"]`);
+  if (colorRadio) colorRadio.checked = true;
+  modal.style.display = 'flex';
+  setTimeout(() => { document.getElementById('matrixColLabelInput')?.focus(); }, 50);
+}
+window.openEditCustomColModal = openEditCustomColModal;
+
+function closeAddMatrixColModal() {
+  const modal = document.getElementById('addMatrixColModal');
+  if (modal) modal.style.display = 'none';
+}
+window.closeAddMatrixColModal = closeAddMatrixColModal;
+
+function saveCustomMatrixCol() {
+  const labelInput = document.getElementById('matrixColLabelInput');
+  const label = (labelInput?.value || '').trim();
+  if (!label) {
+    toast('⚠️ Ingrese un nombre para la columna', '#f59e0b');
+    labelInput?.focus();
+    return;
+  }
+  const editId = document.getElementById('matrixColEditId')?.value;
+  const group = document.getElementById('matrixColGroupSelect')?.value || 'gen';
+  const colorRadio = document.querySelector('input[name="mxColColor"]:checked');
+  const bg = colorRadio ? colorRadio.value : '#0284c7';
+
+  if (!S.customMatrixCols) S.customMatrixCols = [];
+
+  if (editId) {
+    const col = S.customMatrixCols.find(c => c.id === editId);
+    if (col) {
+      col.label = label;
+      col.group = group;
+      col.bg = bg;
+      toast(`✔ Columna "${label}" actualizada`, '#10b981');
+    }
+  } else {
+    const newId = 'cst_' + Date.now();
+    const newCol = {
+      id: newId,
+      label: label,
+      group: group,
+      bg: bg,
+      minW: 130
+    };
+    S.customMatrixCols.push(newCol);
+    if (!S.matrixColOrder) S.matrixColOrder = getAllMatrixColsDef().map(c => c.id);
+    else S.matrixColOrder.push(newId);
+    toast(`✔ Columna "${label}" agregada a la matriz`, '#10b981');
+  }
+
+  saveData();
+  closeAddMatrixColModal();
+  renderStudentsMatrix();
+}
+window.saveCustomMatrixCol = saveCustomMatrixCol;
+
+function deleteCustomMatrixCol(colId) {
+  const col = (S.customMatrixCols || []).find(c => c.id === colId);
+  const name = col ? col.label : 'esta columna';
+  cf(`¿Está seguro de eliminar la columna "${name}" de la matriz? Los datos ingresados en ella se descartarán.`, () => {
+    S.customMatrixCols = (S.customMatrixCols || []).filter(c => c.id !== colId);
+    if (S.matrixColOrder) {
+      S.matrixColOrder = S.matrixColOrder.filter(id => id !== colId);
+    }
+    (S.studentProfiles || []).forEach(p => {
+      if (p.customData && p.customData[colId] !== undefined) {
+        delete p.customData[colId];
+      }
+      if (p[colId] !== undefined) {
+        delete p[colId];
+      }
+    });
+    saveData();
+    renderStudentsMatrix();
+    toast(`🗑 Columna "${name}" eliminada`, '#ef4444');
+  });
+}
+window.deleteCustomMatrixCol = deleteCustomMatrixCol;
+
+function editMatrixCell(si, colId, cellDiv) {
+  if (cellDiv.querySelector('input')) return;
+  const p = S.studentProfiles[si];
+  if (!p) return;
+  p.customData = p.customData || {};
+  const currentVal = p.customData[colId] !== undefined ? p.customData[colId] : (p[colId] || '');
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = currentVal;
+  input.className = 'search-input';
+  input.style.cssText = 'width:100%;font-size:0.78rem;padding:2px 6px;height:24px;border:1.5px solid #2563eb;background:var(--bg-card);color:var(--text-main);border-radius:4px;box-shadow:0 0 6px rgba(37,99,235,0.4);outline:none;text-align:center';
+  
+  cellDiv.innerHTML = '';
+  cellDiv.appendChild(input);
+  input.focus();
+  input.select();
+
+  let saved = false;
+  const save = () => {
+    if (saved) return;
+    saved = true;
+    const newVal = input.value.trim();
+    p.customData[colId] = newVal;
+    p[colId] = newVal;
+    saveData();
+    cellDiv.innerHTML = `<span style="font-size:0.78rem;font-weight:600">${newVal ? escHTML(newVal) : '<span style="color:var(--text-light);font-size:0.72rem;font-style:italic">✎ Escribir...</span>'}</span>`;
+    cellDiv.style.background = 'rgba(34,197,94,0.2)';
+    setTimeout(() => { cellDiv.style.background = ''; }, 600);
+  };
+
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      save();
+    } else if (e.key === 'Escape') {
+      input.value = currentVal;
+      save();
+    }
+  });
+}
+window.editMatrixCell = editMatrixCell;
+
 function getCellValue(p, colId, si) {
+  if (colId && colId.startsWith('cst_')) {
+    const val = (p.customData && p.customData[colId] !== undefined) ? p.customData[colId] : (p[colId] || '');
+    return `<div class="mx-custom-cell" onclick="event.stopPropagation();editMatrixCell(${si}, '${colId}', this)" title="Clic para editar" style="cursor:pointer;padding:3px 6px;min-height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:background .15s ease">
+      <span style="font-size:0.78rem;font-weight:600">${val ? escHTML(val) : '<span style="color:var(--text-light);font-size:0.72rem;font-style:italic">✎ Escribir...</span>'}</span>
+    </div>`;
+  }
+
   const name = p.nombre || `Estudiante ${si+1}`;
   switch(colId) {
     case 'cedula':       return `<span style="font-family:var(--font-mono);font-size:0.75rem">${escHTML(p.cedula||'—')}</span>`;
@@ -17070,15 +17298,35 @@ function renderStudentsMatrix() {
       groups[groups.length - 1].count++;
     }
   });
-  const groupLabels = { est:'DATOS DEL ESTUDIANTE', rep:'REPRESENTANTE LEGAL', madre:'DATOS DE LA MADRE', padre:'DATOS DEL PADRE' };
-  const groupBgs    = { est:'#1e40af', rep:'#15803d', madre:'#7e22ce', padre:'#c2410c' };
+  const groupLabels = { 
+    est:'DATOS DEL ESTUDIANTE', 
+    rep:'REPRESENTANTE LEGAL', 
+    madre:'DATOS DE LA MADRE', 
+    padre:'DATOS DEL PADRE',
+    gen:'INFORMACIÓN PERSONALIZADA'
+  };
+  const groupBgs = { 
+    est:'#1e40af', 
+    rep:'#15803d', 
+    madre:'#7e22ce', 
+    padre:'#c2410c',
+    gen:'#0369a1'
+  };
 
   const row1Groups = groups.map(g =>
-    `<th colspan="${g.count}" data-mx-group="${g.group}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px;position:sticky;top:0;z-index:4;border-bottom:1px solid rgba(255,255,255,0.2)">${groupLabels[g.group]||''}</th>`
+    `<th colspan="${g.count}" data-mx-group="${g.group}" style="background:${groupBgs[g.group]||g.bg};font-size:0.85rem;font-weight:900;letter-spacing:0.3px;padding:6px;position:sticky;top:0;z-index:4;border-bottom:1px solid rgba(255,255,255,0.2)">${groupLabels[g.group]||'PERSONALIZADO'}</th>`
   ).join('');
 
   const row2Ths = orderedCols.map((col, ci) => {
     const w = S.colWidths[`matrix||${col.id}`] || col.minW;
+    const isCustom = col.isCustom || (col.id && col.id.startsWith('cst_'));
+    const labelContent = isCustom
+      ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%">
+          <span onclick="event.stopPropagation();openEditCustomColModal('${col.id}')" title="Clic para renombrar columna" style="cursor:pointer;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(col.label)} ✎</span>
+          <button type="button" onclick="event.stopPropagation();deleteCustomMatrixCol('${col.id}')" title="Eliminar columna" style="background:rgba(0,0,0,0.35);color:#fff;border:none;border-radius:3px;font-size:0.65rem;padding:1px 4px;cursor:pointer">✕</button>
+        </div>`
+      : `${escHTML(col.label)}`;
+
     return `<th class="sh" data-mx-col="${col.id}" data-mx-ci="${ci}"
       draggable="true"
       title="⇄ Arrastra para mover · Borde derecho para redimensionar"
@@ -17088,7 +17336,7 @@ function renderStudentsMatrix() {
       ondragleave="_mxColDragLeave(event)"
       ondrop="_mxColDrop(event,'${col.id}')"
       ondragend="_mxColDragEnd(event)"
-    >${escHTML(col.label)}<div class="col-resizer" data-mx-resize="${col.id}"></div></th>`;
+    >${labelContent}<div class="col-resizer" data-mx-resize="${col.id}"></div></th>`;
   }).join('');
 
   const nomW = S.colWidths && S.colWidths['matrix||nombres'] ? S.colWidths['matrix||nombres'] : 210;
@@ -17906,8 +18154,8 @@ function printStudentsMatrix() {
 
 function exportStudentsMatrixXLSX() {
   ensureStudentProfiles();
-  const headers = [
-    'N°', 'NOMBRES Y APELLIDOS DEL ESTUDIANTE', 'N° CÉDULA', 'FECHA DE NACIMIENTO', 'EDAD',
+  const baseHeaders = [
+    'N°', 'NOMBRES Y APELLIDOS DEL ESTUDIANTE', 'N° CÉDULA', 'CORREO INSTITUCIONAL', 'FECHA DE NACIMIENTO', 'EDAD',
     'TIENE NN.EE ASOCIADA O NO A LA DISCAPACIDAD', 'TIENE ALGUNA ENFERMEDAD', 'TIENE OTROS HERMANOS EN LA INSTITUCIÓN EN QUE AÑO Y PARALELO',
     'NOMBRES Y APELLIDOS DEL REPRESENTANTE LEGAL', 'N° CÉDULA', 'NUMEROS TELEFÓNICOS', 'DIRECCION DOMICILIARIA',
     'CORREO ELECTRONICO', 'NUMEROS TELEFÓNICOS EN CASO DE EMERGENCIA',
@@ -17915,28 +18163,37 @@ function exportStudentsMatrixXLSX() {
     'NOMBRE Y APELLIDO DEL PADRE', 'N° DE CÉDULA', 'TELÉFONO'
   ];
 
-  const rows = S.studentProfiles.map((p, idx) => [
-    (idx + 1).toString(),
-    p.nombre || S.students[idx] || '',
-    p.cedula || '',
-    p.fecha_nacimiento || '',
-    p.edad || calculateAgeFromBirthDate(p.fecha_nacimiento) || '',
-    p.nnee || 'NO',
-    p.enfermedad || 'NO',
-    p.hermanos_inst || 'NO',
-    p.rep_nombre || '',
-    p.rep_cedula || '',
-    p.rep_telefono || '',
-    p.direccion || '',
-    p.rep_email || '',
-    p.tel_emergencia || '',
-    p.madre_nombre || '',
-    p.madre_cedula || '',
-    p.madre_telefono || '',
-    p.padre_nombre || '',
-    p.padre_cedula || '',
-    p.padre_telefono || ''
-  ]);
+  const customCols = S.customMatrixCols || [];
+  const customHeaders = customCols.map(c => c.label.toUpperCase());
+  const headers = [...baseHeaders, ...customHeaders];
+
+  const rows = S.studentProfiles.map((p, idx) => {
+    const baseRow = [
+      (idx + 1).toString(),
+      p.nombre || S.students[idx] || '',
+      p.cedula || '',
+      p.correo_institucional || '',
+      p.fecha_nacimiento || '',
+      p.edad || calculateAgeFromBirthDate(p.fecha_nacimiento) || '',
+      p.nnee || 'NO',
+      p.enfermedad || 'NO',
+      p.hermanos_inst || 'NO',
+      p.rep_nombre || '',
+      p.rep_cedula || '',
+      p.rep_telefono || '',
+      p.direccion || '',
+      p.rep_email || '',
+      p.tel_emergencia || '',
+      p.madre_nombre || '',
+      p.madre_cedula || '',
+      p.madre_telefono || '',
+      p.padre_nombre || '',
+      p.padre_cedula || '',
+      p.padre_telefono || ''
+    ];
+    const customValues = customCols.map(c => (p.customData && p.customData[c.id] !== undefined) ? p.customData[c.id] : (p[c.id] || ''));
+    return [...baseRow, ...customValues];
+  });
 
   const sheets = [{
     name: 'MATRIZ ESTUDIANTES',
