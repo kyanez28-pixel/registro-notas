@@ -6690,15 +6690,43 @@ function isColumnHidden(mName, wName, col) {
   if (!col) return false;
   const colName = typeof col === 'string' ? col : (col.name || '');
   const colDesc = typeof col === 'object' ? (col.desc || '') : '';
+  const wn = getWeekName(wName);
+  const wt = getWeekTitle(wName);
 
-  if (colName && S.hiddenCols[`${mName}||${wName}||${colName}`]) return true;
-  if (colDesc && S.hiddenCols[`${mName}||${wName}||${colDesc}`]) return true;
-  if (colName && S.hiddenCols[`${wName}||${colName}`]) return true;
-  if (colDesc && S.hiddenCols[`${wName}||${colDesc}`]) return true;
-  if (colName && S.hiddenCols[`${mName}||${colName}`]) return true;
-  if (colDesc && S.hiddenCols[`${mName}||${colDesc}`]) return true;
-  if (colName && S.hiddenCols[colName]) return true;
-  if (colDesc && S.hiddenCols[colDesc]) return true;
+  const keysToCheck = [
+    `${mName}||${wn}||${colName}`,
+    `${mName}||${wt}||${colName}`,
+    `${mName}||${wn}||${colDesc}`,
+    `${mName}||${wt}||${colDesc}`,
+    `${wn}||${colName}`,
+    `${wt}||${colName}`,
+    `${wn}||${colDesc}`,
+    `${wt}||${colDesc}`,
+    `${mName}||${colName}`,
+    `${mName}||${colDesc}`,
+    colName,
+    colDesc
+  ];
+
+  for (const k of keysToCheck) {
+    if (k && S.hiddenCols[k]) return true;
+  }
+
+  // Comprobar si hay alguna clave en hiddenCols para esta materia que termine con esta columna o descripción
+  const colUpper = (colName || '').toUpperCase().trim();
+  const descUpper = (colDesc || '').toUpperCase().trim();
+  if (colUpper || descUpper) {
+    for (const k in S.hiddenCols) {
+      if (!S.hiddenCols[k]) continue;
+      if (k.startsWith(mName + '||')) {
+        const parts = k.split('||');
+        const lastPart = parts[parts.length - 1]?.toUpperCase()?.trim();
+        if (lastPart && (lastPart === colUpper || (descUpper && lastPart === descUpper))) {
+          return true;
+        }
+      }
+    }
+  }
 
   return false;
 }
@@ -10203,28 +10231,40 @@ function refreshVisPanel() {
 
 function toggleCol(k, mName, wName, colName, colDesc) {
   if (!S.hiddenCols) S.hiddenCols = {};
-  if (mName && wName && colName) {
-    const colObj = { name: colName, desc: colDesc };
-    const isHidden = isColumnHidden(mName, wName, colObj);
-    const primaryKey = `${mName}||${wName}||${colName}`;
-    const keys = [
-      primaryKey,
-      colDesc ? `${mName}||${wName}||${colDesc}` : null,
-      `${wName}||${colName}`,
-      colDesc ? `${wName}||${colDesc}` : null,
-      `${mName}||${colName}`,
-      colDesc ? `${mName}||${colDesc}` : null,
-      colName,
-      colDesc
-    ].filter(Boolean);
+  const currentM = mName || curMatName();
+
+  if (currentM && (colName || colDesc)) {
+    const targetName = colName || colDesc;
+    const colObj = { name: targetName, desc: colDesc || targetName };
+    const isHidden = isColumnHidden(currentM, wName, colObj);
+    const wn = getWeekName(wName);
+    const wt = getWeekTitle(wName);
+    const primaryKey = `${currentM}||${wn}||${targetName}`;
 
     if (!isHidden) {
+      // Ocultar
       S.hiddenCols[primaryKey] = true;
-      if (colDesc) S.hiddenCols[`${mName}||${wName}||${colDesc}`] = true;
+      if (colDesc && colDesc !== targetName) S.hiddenCols[`${currentM}||${wn}||${colDesc}`] = true;
+      if (wt && wt !== wn) S.hiddenCols[`${currentM}||${wt}||${targetName}`] = true;
     } else {
-      keys.forEach(key => { delete S.hiddenCols[key]; });
+      // Mostrar: eliminar todas las variantes
+      const colUpper = targetName.toUpperCase().trim();
+      const descUpper = (colDesc || '').toUpperCase().trim();
+
+      Object.keys(S.hiddenCols).forEach(existingKey => {
+        if (existingKey.startsWith(currentM + '||') || !existingKey.includes('||')) {
+          const parts = existingKey.split('||');
+          const lastPart = parts[parts.length - 1]?.toUpperCase()?.trim();
+          if (lastPart && (lastPart === colUpper || (descUpper && lastPart === descUpper))) {
+            delete S.hiddenCols[existingKey];
+          }
+        }
+      });
+      if (k) delete S.hiddenCols[k];
+      delete S.hiddenCols[primaryKey];
+      if (wt) delete S.hiddenCols[`${currentM}||${wt}||${targetName}`];
     }
-  } else {
+  } else if (k) {
     if (S.hiddenCols[k]) {
       delete S.hiddenCols[k];
     } else {
