@@ -588,6 +588,13 @@ td.nc {
 }
 td.nc:hover { background: var(--primary-light) !important; color: var(--primary); }
 
+/* Modo de desplazamiento libre global (permite deslizar toda la tabla completa sin columnas pegajosas) */
+.free-scroll th.fxl, .free-scroll td.ic,
+.free-scroll th.fxn, .free-scroll td.nc {
+  position: static !important;
+  box-shadow: none !important;
+}
+
 /* Celdas de Resultados Ministeriales */
 td.td-form { background: #e8f5fe !important; font-family: var(--font-mono); font-weight: 800; color: #0369a1; font-size: 0.9rem; }
 td.td-sum  { background: #f5eeff !important; font-family: var(--font-mono); font-weight: 800; color: #6d28d9; font-size: 0.9rem; }
@@ -3946,13 +3953,13 @@ body.in-focus-mode {
   <!-- Tarjetas de Estadísticas / Resumen -->
   <div id="stMatrixStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px"></div>
 
-  <!-- Barra de Búsqueda y Filtros -->
-  <div class="filter-bar" style="margin-bottom:12px">
-    <div class="search-wrapper" style="max-width:380px">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="stMatrixSearch" class="search-input" placeholder="Buscar por estudiante, cédula, representante, teléfono..." oninput="filterStudentsMatrix(this.value)"/>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+  <!-- Barra de Búsqueda, Filtros y Desplazamiento Horizontal Rápido -->
+  <div class="filter-bar" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1">
+      <div class="search-wrapper" style="max-width:320px;width:100%">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="stMatrixSearch" class="search-input" placeholder="Buscar por estudiante, cédula, representante, teléfono..." oninput="filterStudentsMatrix(this.value)"/>
+      </div>
       <select id="stMatrixFilterNnee" class="sort-select" onchange="renderStudentsMatrix()">
         <option value="all">Todos los Estudiantes</option>
         <option value="nnee-si">Con NN.EE. / Discapacidad</option>
@@ -3961,11 +3968,30 @@ body.in-focus-mode {
       </select>
       <span id="stMatrixCount" style="font-size:0.75rem;font-weight:700;color:var(--text-muted)"></span>
     </div>
+
+    <!-- Botones de Navegación Horizontal -->
+    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:var(--bg-card-subtle);padding:4px 8px;border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+      <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin-right:2px">Desplazamiento:</span>
+      <button type="button" class="btn btn-sm" style="padding:4px 8px;font-size:0.75rem;font-weight:700" onclick="scrollMatrixHorizontal('start')" title="Ir al inicio de la tabla (Nómina / Cédula)">⏮ Inicio</button>
+      <button type="button" class="btn btn-sm btn-primary" style="padding:4px 10px;font-size:0.75rem;font-weight:700" onclick="scrollMatrixHorizontal(-380)" title="Desplazar hacia la izquierda">◀ Izquierda</button>
+      <button type="button" class="btn btn-sm btn-primary" style="padding:4px 10px;font-size:0.75rem;font-weight:700" onclick="scrollMatrixHorizontal(380)" title="Desplazar hacia la derecha">Derecha ▶</button>
+      <button type="button" class="btn btn-sm" style="padding:4px 8px;font-size:0.75rem;font-weight:700" onclick="scrollMatrixHorizontal('end')" title="Ir al final de la tabla (Madre / Padre / Ficha)">⏭ Final</button>
+      <button type="button" id="btnToggleStickyMatrix" class="btn btn-sm btn-outline" style="padding:4px 9px;font-size:0.75rem;font-weight:700;margin-left:4px" onclick="toggleStickyMatrixNames()" title="Alternar entre fijar columna de nombres o desplazar libremente toda la pantalla">📌 Nombres: Fijos</button>
+    </div>
+  </div>
+
+  <!-- Barra Guía Visual de Desplazamiento -->
+  <div class="tw-hint" id="stMatrixHint" style="margin-bottom:8px">
+    <div style="display:flex;align-items:center;gap:6px;flex:1">
+      <span>👆 Desliza horizontalmente</span>
+      <span class="tw-hint-arrow">← ← ←  → → →</span>
+      <span style="opacity:0.85">para ver todas las columnas de representantes, teléfonos WhatsApp, dirección, datos de la madre y del padre</span>
+    </div>
   </div>
 
   <!-- Tabla Matriz de Estudiantes -->
-  <div class="tw" style="max-height:calc(100vh - 280px)">
-    <table id="stMatrixTable" style="width:100%">
+  <div id="stMatrixContainer" class="tw" style="max-height:calc(100vh - 290px);overflow-x:auto;overflow-y:auto">
+    <table id="stMatrixTable" style="width:max-content;min-width:100%;table-layout:auto">
       <thead id="stMatrixTh"></thead>
       <tbody id="stMatrixTb"></tbody>
     </table>
@@ -17036,6 +17062,64 @@ function renderStudentsMatrix() {
   if (countSpan) {
     const visibleCount = tb.querySelectorAll('tr').length;
     countSpan.textContent = `Mostrando ${visibleCount} de ${total} estudiantes`;
+  }
+
+  syncMatrixBottomScroll();
+}
+
+function scrollMatrixHorizontal(action) {
+  const container = document.getElementById('stMatrixContainer') || document.querySelector('#stMatrixPanel .tw');
+  if (!container) return;
+  if (action === 'start') {
+    container.scrollTo({ left: 0, behavior: 'smooth' });
+  } else if (action === 'end') {
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+  } else if (typeof action === 'number') {
+    container.scrollBy({ left: action, behavior: 'smooth' });
+  }
+}
+
+function toggleStickyMatrixNames() {
+  const container = document.getElementById('stMatrixContainer');
+  const btn = document.getElementById('btnToggleStickyMatrix');
+  if (!container) return;
+  container.classList.toggle('free-scroll');
+  const isFree = container.classList.contains('free-scroll');
+  if (btn) {
+    btn.textContent = isFree ? '↔ Todo Libre' : '📌 Nombres: Fijos';
+    btn.className = isFree ? 'btn btn-teal' : 'btn btn-outline';
+  }
+  toast(isFree ? '↔ Desplazamiento libre activado (pantalla completa para ver todos los datos)' : '📌 Nombres fijados a la izquierda', '#3b82f6');
+}
+
+function syncMatrixBottomScroll() {
+  const container = document.getElementById('stMatrixContainer');
+  if (!container) return;
+  let bar = document.getElementById('stMatrixBottomScroll');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'stMatrixBottomScroll';
+    bar.style.cssText = 'overflow-x:auto;overflow-y:hidden;height:12px;background:var(--bg-card-subtle);border-radius:0 0 8px 8px;border-top:1px solid var(--border-color);margin-top:-1px';
+    const inner = document.createElement('div');
+    inner.id = 'stMatrixBottomScrollInner';
+    inner.style.cssText = 'height:1px';
+    bar.appendChild(inner);
+    container.parentElement.insertBefore(bar, container.nextSibling);
+
+    let syncing = false;
+    bar.addEventListener('scroll', () => {
+      if (syncing) return; syncing = true;
+      container.scrollLeft = bar.scrollLeft; syncing = false;
+    });
+    container.addEventListener('scroll', () => {
+      if (syncing) return; syncing = true;
+      bar.scrollLeft = container.scrollLeft; syncing = false;
+    });
+  }
+  const inner = document.getElementById('stMatrixBottomScrollInner');
+  const table = document.getElementById('stMatrixTable');
+  if (inner && table) {
+    inner.style.width = table.scrollWidth + 'px';
   }
 }
 
