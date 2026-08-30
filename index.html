@@ -6237,7 +6237,7 @@ body.in-focus-mode {
       </select>
     </div>
 
-    <div style="margin-bottom:18px">
+    <div style="margin-bottom:14px">
       <label style="font-size:0.8rem;font-weight:800;color:var(--text-main);display:block;margin-bottom:6px">
         Color del Encabezado:
       </label>
@@ -6252,9 +6252,20 @@ body.in-focus-mode {
       </div>
     </div>
 
-    <div style="display:flex;justify-content:flex-end;gap:8px;border-top:1.5px solid var(--border-color);padding-top:14px">
-      <button type="button" class="btn btn-outline" onclick="closeAddMatrixColModal()">Cancelar</button>
-      <button type="button" class="btn btn-primary" onclick="saveCustomMatrixCol()" style="font-weight:800;padding:8px 18px">💾 Guardar Columna</button>
+    <div style="margin-bottom:18px">
+      <label style="font-size:0.8rem;font-weight:800;color:var(--text-main);display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span>📋 Pegar datos masivos (Opcional):</span>
+        <span style="font-size:0.7rem;font-weight:600;color:var(--text-muted)">Un dato por fila en orden de lista</span>
+      </label>
+      <textarea id="matrixColBatchInput" class="search-input" rows="4" placeholder="Pega aquí valores copiados de Excel (ej: 100, 101, 102...) para llenar las 40 filas a la vez..." style="padding:8px 12px;font-family:var(--font-mono);font-size:0.78rem;resize:vertical"></textarea>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid var(--border-color);padding-top:14px">
+      <button type="button" id="btnDeleteCustomColModal" class="btn btn-danger" onclick="deleteCustomColFromModal()" style="display:none;font-weight:700;padding:6px 14px">🗑 Eliminar</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button type="button" class="btn btn-outline" onclick="closeAddMatrixColModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="saveCustomMatrixCol()" style="font-weight:800;padding:8px 18px">💾 Guardar Columna</button>
+      </div>
     </div>
   </div>
 </div>
@@ -17053,6 +17064,9 @@ function openAddMatrixColModal() {
   document.getElementById('matrixColEditId').value = '';
   document.getElementById('matrixColLabelInput').value = '';
   document.getElementById('matrixColGroupSelect').value = 'gen';
+  document.getElementById('matrixColBatchInput').value = '';
+  const delBtn = document.getElementById('btnDeleteCustomColModal');
+  if (delBtn) delBtn.style.display = 'none';
   modal.style.display = 'flex';
   setTimeout(() => { document.getElementById('matrixColLabelInput')?.focus(); }, 50);
 }
@@ -17067,12 +17081,23 @@ function openEditCustomColModal(colId) {
   document.getElementById('matrixColEditId').value = colId;
   document.getElementById('matrixColLabelInput').value = col.label;
   document.getElementById('matrixColGroupSelect').value = col.group || 'gen';
+  document.getElementById('matrixColBatchInput').value = '';
   const colorRadio = modal.querySelector(`input[name="mxColColor"][value="${col.bg}"]`);
   if (colorRadio) colorRadio.checked = true;
+  const delBtn = document.getElementById('btnDeleteCustomColModal');
+  if (delBtn) delBtn.style.display = 'inline-block';
   modal.style.display = 'flex';
   setTimeout(() => { document.getElementById('matrixColLabelInput')?.focus(); }, 50);
 }
 window.openEditCustomColModal = openEditCustomColModal;
+
+function deleteCustomColFromModal() {
+  const colId = document.getElementById('matrixColEditId')?.value;
+  if (!colId) return;
+  closeAddMatrixColModal();
+  deleteCustomMatrixCol(colId);
+}
+window.deleteCustomColFromModal = deleteCustomColFromModal;
 
 function closeAddMatrixColModal() {
   const modal = document.getElementById('addMatrixColModal');
@@ -17092,8 +17117,11 @@ function saveCustomMatrixCol() {
   const group = document.getElementById('matrixColGroupSelect')?.value || 'gen';
   const colorRadio = document.querySelector('input[name="mxColColor"]:checked');
   const bg = colorRadio ? colorRadio.value : '#0284c7';
+  const batchText = (document.getElementById('matrixColBatchInput')?.value || '').trim();
 
   if (!S.customMatrixCols) S.customMatrixCols = [];
+
+  let targetId = editId;
 
   if (editId) {
     const col = S.customMatrixCols.find(c => c.id === editId);
@@ -17105,6 +17133,7 @@ function saveCustomMatrixCol() {
     }
   } else {
     const newId = 'cst_' + Date.now();
+    targetId = newId;
     const newCol = {
       id: newId,
       label: label,
@@ -17118,6 +17147,19 @@ function saveCustomMatrixCol() {
     toast(`✔ Columna "${label}" agregada a la matriz`, '#10b981');
   }
 
+  // Populate batch rows if provided
+  if (batchText && targetId) {
+    const lines = batchText.split(/\r?\n/);
+    lines.forEach((line, si) => {
+      if (S.studentProfiles[si]) {
+        S.studentProfiles[si].customData = S.studentProfiles[si].customData || {};
+        S.studentProfiles[si].customData[targetId] = line.trim();
+        S.studentProfiles[si][targetId] = line.trim();
+      }
+    });
+    toast(`✔ Columna guardada y ${Math.min(lines.length, S.studentProfiles.length)} filas llenadas con éxito`, '#10b981');
+  }
+
   saveData();
   closeAddMatrixColModal();
   renderStudentsMatrix();
@@ -17127,7 +17169,7 @@ window.saveCustomMatrixCol = saveCustomMatrixCol;
 function deleteCustomMatrixCol(colId) {
   const col = (S.customMatrixCols || []).find(c => c.id === colId);
   const name = col ? col.label : 'esta columna';
-  cf(`¿Está seguro de eliminar la columna "${name}" de la matriz? Los datos ingresados en ella se descartarán.`, () => {
+  confirm2('🗑 Eliminar Columna', `¿Está seguro de eliminar la columna <strong>${escHTML(name)}</strong> de la matriz? Los datos ingresados en ella se descartarán.`, () => {
     S.customMatrixCols = (S.customMatrixCols || []).filter(c => c.id !== colId);
     if (S.matrixColOrder) {
       S.matrixColOrder = S.matrixColOrder.filter(id => id !== colId);
