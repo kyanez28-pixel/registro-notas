@@ -11733,10 +11733,17 @@ try {
 })();
 
 function getActiveSyncDocRef() {
-  if (_currentUser) {
+  const params = new URLSearchParams(window.location.search);
+  const uidParam = params.get('u');
+  if (uidParam) {
+    return db.collection('usuarios').doc(uidParam).collection('datos').doc('estado');
+  }
+  const isParentMode = params.get('padres') === '1' || params.get('ficha') === '1';
+  if (_currentUser && !isParentMode) {
     return db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
   }
-  const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  const roomParam = params.get('room') || params.get('sync') || _syncRoomId || 'septimo_c';
+  const cleanRoom = roomParam.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
   return db.collection('aulas_sincronizadas').doc(cleanRoom);
 }
 
@@ -11797,7 +11804,10 @@ function applyRemoteState(newState, updatedAt, source) {
           sel.appendChild(opt);
         });
       }
-      if (currentVal) sel.value = currentVal;
+      if (currentVal !== '' && currentVal !== null && currentVal !== undefined) {
+        sel.value = currentVal;
+        onParentStandaloneSelectStudent(currentVal);
+      }
     }
   }
 
@@ -11929,9 +11939,6 @@ function setSyncStatus(msg, type) {
 
 async function saveToFirestore() {
   if (_isRemoteSyncing) return;
-  const docRef = getActiveSyncDocRef();
-  if (!docRef) return;
-
   const now = Date.now();
   _lastLocalSaveTime = now;
 
@@ -11949,8 +11956,18 @@ async function saveToFirestore() {
     } catch(e) {}
   }
 
+  const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+
   try {
-    await docRef.set(payload);
+    // 1. Guardar SIEMPRE en la sala compartida en la nube para acceso público de padres
+    const roomRef = db.collection('aulas_sincronizadas').doc(cleanRoom);
+    await roomRef.set(payload);
+
+    // 2. Si hay cuenta Google del docente conectada, guardar también en su cuenta privada
+    if (_currentUser) {
+      const userRef = db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
+      await userRef.set(payload);
+    }
     setSyncStatus('⚡ En Vivo', 'online');
   } catch(e) {
     console.warn('Error guardando en Firestore:', e);
@@ -18413,7 +18430,11 @@ let _parentFormFotoData = null;
 let _pendingParentsImport = [];
 
 function getParentFormBaseUrl(stIndex = null) {
-  let url = window.location.protocol + '//' + window.location.host + window.location.pathname + '?padres=1';
+  const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  let url = window.location.protocol + '//' + window.location.host + window.location.pathname + `?padres=1&room=${encodeURIComponent(cleanRoom)}`;
+  if (_currentUser) {
+    url += `&u=${encodeURIComponent(_currentUser.uid)}`;
+  }
   if (stIndex !== null && stIndex !== undefined) {
     url += `&st=${stIndex}`;
   }
