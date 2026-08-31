@@ -14107,30 +14107,68 @@ function renderDiagInformes() {
   }
 }
 
+function printDiagnosticoSelectedDoc() {
+  ensureDiagnostico();
+  renderDiagInformes();
+  const docView = document.getElementById('diagReportDocView');
+  if (!docView) return;
+  const content = docView.innerHTML;
+  if (!content) return;
+
+  const repType = document.getElementById('diagReportTypeSel')?.value || 'institucional';
+  const docTitle = repType === 'institucional' 
+    ? 'Informe Diagnóstico Institucional — UEF Calderón 2' 
+    : 'Ficha Individual de Evaluación Diagnóstica — UEF Calderón 2';
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>${escHTML(docTitle)}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #0f172a; line-height: 1.45; font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.8rem; }
+        th { border: 1px solid #cbd5e1; padding: 6px 8px; font-weight: 700; }
+        td { border: 1px solid #cbd5e1; padding: 6px 8px; }
+        @media print {
+          body { padding: 0; }
+          @page { size: portrait; margin: 12mm 10mm; }
+          table { page-break-inside: avoid; }
+        }
+      </style>
+    </head>
+    <body>
+      ${content}
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
+}
+
 function printDiagnosticoInforme() {
   ensureDiagnostico();
   switchView('diagnostico');
   switchDiagTab('informes');
-  document.getElementById('diagReportTypeSel').value = 'institucional';
+  const sel = document.getElementById('diagReportTypeSel');
+  if (sel) sel.value = 'institucional';
   onDiagReportTypeChange('institucional');
-  setTimeout(() => { window.print(); }, 300);
-}
-
-function printDiagnosticoSelectedDoc() {
-  window.print();
+  printDiagnosticoSelectedDoc();
 }
 
 function printDiagnosticoFicha(si) {
   ensureDiagnostico();
   switchView('diagnostico');
   switchDiagTab('informes');
-  document.getElementById('diagReportTypeSel').value = 'individual';
+  const sel = document.getElementById('diagReportTypeSel');
+  if (sel) sel.value = 'individual';
   onDiagReportTypeChange('individual');
   if (document.getElementById('diagStudentReportSel')) {
     document.getElementById('diagStudentReportSel').value = String(si);
   }
-  renderDiagInformes();
-  setTimeout(() => { window.print(); }, 300);
+  printDiagnosticoSelectedDoc();
 }
 
 function shareDiagnosticoWhatsApp(targetSi) {
