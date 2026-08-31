@@ -3450,33 +3450,60 @@ body.in-focus-mode {
 
 <!-- ── VISTA: ASISTENCIA ── -->
 <div id="attendancePanel" style="display:none" class="content att-panel">
-  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-xs)">
-    <div>
-      <label style="font-size:0.75rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:3px">📅 Fecha de Registro</label>
-      <div style="display:flex;gap:4px;align-items:center">
-        <input type="date" id="attDate" style="padding:7px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-main);font-size:0.88rem;font-family:var(--font-main);font-weight:600;outline:none" onchange="renderAttendance()"/>
-        <button class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:7px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2">🗑️ Borrar Día</button>
+  <!-- Barra de Herramientas de Asistencia -->
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:14px 18px;box-shadow:var(--shadow-sm)">
+    
+    <!-- Fila 1: Control de Fecha y Botones de Acción -->
+    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      
+      <!-- Selector de Fecha -->
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card-subtle);border:1.5px solid var(--border-color);border-radius:10px;padding:4px 8px">
+        <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;gap:4px">
+          📅 Fecha:
+        </label>
+        <input type="date" id="attDate" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-card);color:var(--text-main);font-size:0.86rem;font-family:var(--font-main);font-weight:700;outline:none" onchange="renderAttendance()"/>
+        <button class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:6px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2;font-size:0.76rem;font-weight:800;border-radius:6px">
+          🗑️ Borrar Día
+        </button>
+      </div>
+
+      <!-- Botones de Marcado Rápido y Herramientas -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-success" onclick="attMarkAll('P')" style="font-weight:800;font-size:0.8rem;padding:7px 12px;border-radius:8px" data-tip="Marcar toda la nómina como Presentes">
+          ✔ Todos Presentes
+        </button>
+        <button class="btn btn-warning" onclick="attMarkAll('F')" style="font-weight:800;font-size:0.8rem;padding:7px 12px;border-radius:8px" data-tip="Marcar toda la nómina como Falta">
+          ✗ Todos Falta
+        </button>
+        <button class="btn btn-teal" onclick="exportAttendanceXLSX()" style="font-weight:800;font-size:0.8rem;padding:7px 12px;border-radius:8px" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">
+          📊 Excel Asistencia
+        </button>
+        <button class="btn" onclick="openCalendarModal()" title="Configurar rango del trimestre, días sin clase y gestionar fechas" style="background:#fef3c7;color:#92400e;border:1.5px solid #fde047;font-weight:800;font-size:0.8rem;padding:7px 12px;border-radius:8px">
+          📆 Configurar Período
+        </button>
+        <button class="btn" onclick="openCronogramaModal()" title="Ver distribución de 200 días laborables y fases pedagógicas de la U.E.F. Calderón 2" style="background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;font-weight:800;font-size:0.8rem;padding:7px 12px;border-radius:8px">
+          🏛️ Cronograma 200 Días
+        </button>
+      </div>
+
+      <!-- Reportes Oficiales & Búsqueda -->
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;align-items:center;background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:3px 6px">
+          <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-right:2px">📋 Reporte:</span>
+          <button class="att-report-btn week" onclick="openAttReport('week')" style="padding:5px 10px;font-size:0.76rem;border-radius:6px">📅 Semanal</button>
+          <button class="att-report-btn month" onclick="openAttReport('month')" style="padding:5px 10px;font-size:0.76rem;border-radius:6px">📆 Mensual</button>
+          <button class="att-report-btn trim" onclick="openAttReport('trim')" style="padding:5px 10px;font-size:0.76rem;border-radius:6px">📊 Trimestral</button>
+        </div>
+
+        <div class="search-wrapper" style="max-width:220px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="attSearchInp" class="search-input" placeholder="Buscar estudiante..." oninput="renderAttendance()" style="padding:7px 12px 7px 34px;font-size:0.82rem;border-radius:8px"/>
+        </div>
       </div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-success" onclick="attMarkAll('P')" data-tip="Marcar toda la nómina como Presentes">✔ Todos Presentes</button>
-      <button class="btn btn-warning" onclick="attMarkAll('F')" data-tip="Marcar toda la nómina como Falta">✗ Todos Falta</button>
-      <button class="btn btn-teal"    onclick="exportAttendanceXLSX()" data-tip="Descargar registro de asistencia acumulada en Excel (.xlsx)">📊 Excel Asistencia</button>
-      <button class="btn btn-outline" onclick="openCalendarModal()" title="Configurar rango del trimestre, días sin clase y gestionar fechas" style="border-color:#f59e0b;color:#92400e;background:#fef3c7">📆 Configurar Período</button>
-      <button class="btn btn-outline" onclick="openCronogramaModal()" title="Ver distribución de 200 días laborables y fases pedagógicas de la U.E.F. Calderón 2" style="border-color:#3b82f6;color:#1d4ed8;background:#eff6ff;font-weight:700">🏛️ Cronograma 200 Días</button>
-    </div>
-    <!-- Reportes -->
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-left:2px solid var(--border-color);padding-left:12px">
-      <span style="font-size:0.74rem;font-weight:800;color:var(--text-muted);white-space:nowrap">📋 Reporte:</span>
-      <button class="att-report-btn week"  onclick="openAttReport('week')" >📅 Semanal</button>
-      <button class="att-report-btn month" onclick="openAttReport('month')">📆 Mensual</button>
-      <button class="att-report-btn trim"  onclick="openAttReport('trim')" >📊 Trimestral</button>
-    </div>
-    <div class="search-wrapper" style="max-width:250px;margin-left:auto">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="attSearchInp" class="search-input" placeholder="Buscar estudiante..." oninput="renderAttendance()" style="padding:7px 12px 7px 34px;font-size:0.82rem"/>
-    </div>
-    <div id="attSummary" style="width:100%;font-size:0.84rem;font-weight:700;color:var(--text-muted);padding-top:6px;border-top:1px solid var(--border-color);display:flex;gap:12px;flex-wrap:wrap"></div>
+
+    <!-- Fila 2: Resumen Estadístico KPI en Tiempo Real -->
+    <div id="attSummary" style="width:100%;padding-top:10px;border-top:1px solid var(--border-color);display:flex;gap:10px;align-items:center;flex-wrap:wrap"></div>
   </div>
 
   <!-- Contadores de inasistencias por estudiante -->
@@ -10152,10 +10179,24 @@ function renderAttendance() {
   const sumEl = document.getElementById('attSummary');
   if (sumEl) {
     sumEl.innerHTML = `
-      <span style="color:#16a34a;font-weight:800">🟢 Presentes: ${pCount}</span> &nbsp;|&nbsp; 
-      <span style="color:#dc2626;font-weight:800">🔴 Faltas: ${fCount}</span> &nbsp;|&nbsp; 
-      <span style="color:#d97706;font-weight:800">🟡 Tardanzas: ${tCount}</span> &nbsp;|&nbsp; 
-      <span style="color:#2563eb;font-weight:800">🔵 Justificadas: ${jCount}</span>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%">
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a"></span>
+          Presentes: ${pCount}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+          <span style="width:8px;height:8px;border-radius:50%;background:#dc2626"></span>
+          Faltas: ${fCount}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#fef3c7;color:#92400e;border:1px solid #fde047;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+          <span style="width:8px;height:8px;border-radius:50%;background:#d97706"></span>
+          Tardanzas: ${tCount}
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+          <span style="width:8px;height:8px;border-radius:50%;background:#2563eb"></span>
+          Justificadas: ${jCount}
+        </span>
+      </div>
     `;
   }
 }
@@ -20679,7 +20720,7 @@ function ensureCalendar() {
       noclassDays: [...CALDERON2_FERIADOS]
     };
   }
-  if (!S.calendar.trimStart) S.calendar.trimStart = '2026-09-01';
+  if (!S.calendar.trimStart || S.calendar.trimStart === '2026-09-01') S.calendar.trimStart = '2026-09-03';
   if (!S.calendar.trimEnd)   S.calendar.trimEnd   = '2026-12-01';
   if (!Array.isArray(S.calendar.noclassDays)) S.calendar.noclassDays = [...CALDERON2_FERIADOS];
   else if (S.calendar.noclassDays.length === 0) {
@@ -20690,7 +20731,7 @@ function ensureCalendar() {
 function openCalendarModal() {
   ensureCalendar();
   const m = document.getElementById('calendarModal');
-  document.getElementById('calTrimStart').value = S.calendar.trimStart || '2026-09-01';
+  document.getElementById('calTrimStart').value = S.calendar.trimStart || '2026-09-03';
   document.getElementById('calTrimEnd').value   = S.calendar.trimEnd   || '2026-12-01';
   document.getElementById('calNoclassDate').value  = getTodayDateStr();
   document.getElementById('calNoclassLabel').value = '';
@@ -20709,16 +20750,20 @@ function renderRecordedDatesList() {
   if (!S.asistencia) S.asistencia = {};
   const dates = Object.keys(S.asistencia).filter(d => Object.keys(S.asistencia[d] || {}).length > 0).sort();
   if (!dates.length) {
-    el.innerHTML = '<em style="font-size:0.8rem;color:var(--text-light)">No hay días de asistencia guardados aún.</em>';
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.82rem;font-style:italic">📝 No hay días con asistencia registrada aún.</div>';
     return;
   }
   el.innerHTML = dates.map(d => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:6px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:4px">
-      <span style="font-size:0.82rem;font-weight:700">
-        <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;margin-right:6px">📅 ${formatDate(d)}</span>
-        <span style="font-size:0.75rem;color:var(--text-muted)">(${Object.keys(S.asistencia[d]||{}).length} registros)</span>
-      </span>
-      <button onclick="deleteAttDate('${d}')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:4px;padding:2px 7px;font-size:0.72rem;cursor:pointer;font-weight:800" title="Eliminar registro de esta fecha">🗑️ Borrar</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-radius:8px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.03);transition:all 0.15s ease">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <span style="background:var(--primary-light);color:var(--primary);border:1px solid rgba(37,99,235,0.25);padding:3px 10px;border-radius:14px;font-size:0.78rem;font-weight:800;white-space:nowrap">
+          📅 ${formatDate(d)}
+        </span>
+        <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700">
+          (${Object.keys(S.asistencia[d]||{}).length} estudiantes registrados)
+        </span>
+      </div>
+      <button onclick="deleteAttDate('${d}')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-weight:800;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s ease" title="Eliminar registro de esta fecha">🗑️ Borrar</button>
     </div>
   `).join('');
 }
@@ -20728,17 +20773,21 @@ function renderNoclassList() {
   const el = document.getElementById('calNoclassList');
   if (!el) return;
   if (!S.calendar.noclassDays.length) {
-    el.innerHTML = '<em style="font-size:0.8rem;color:var(--text-light)">No hay días sin clases registrados.</em>';
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.82rem;font-style:italic">🍃 No hay días sin clases registrados para este trimestre.</div>';
     return;
   }
   const sorted = [...S.calendar.noclassDays].sort((a, b) => a.date.localeCompare(b.date));
   el.innerHTML = sorted.map((d, idx) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:5px">
-      <span style="font-size:0.82rem;font-weight:700">
-        <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;margin-right:8px">${formatDate(d.date)}</span>
-        ${escHTML(d.label || 'Sin clase')}
-      </span>
-      <button onclick="removeNoclassDay(${idx})" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:4px;padding:2px 7px;font-size:0.75rem;cursor:pointer;font-weight:800">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-radius:8px;background:var(--bg-card);border:1px solid var(--border-color);margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.03);transition:all 0.15s ease">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <span style="background:#fef3c7;color:#92400e;border:1px solid #fde047;padding:3px 10px;border-radius:14px;font-size:0.78rem;font-weight:800;white-space:nowrap">
+          📅 ${formatDate(d.date)}
+        </span>
+        <span style="font-size:0.84rem;font-weight:700;color:var(--text-main)">
+          ${escHTML(d.label || 'Sin clase')}
+        </span>
+      </div>
+      <button onclick="removeNoclassDay(${idx})" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:6px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;cursor:pointer;font-weight:800;transition:all 0.15s ease" title="Eliminar este día de la lista">✕</button>
     </div>
   `).join('');
 }
@@ -21175,44 +21224,99 @@ render();
 
 <!-- ══ MODAL: CONFIGURAR CALENDARIO DEL TRIMESTRE ══ -->
 <div id="calendarModal" class="mo" onclick="if(event.target===this)closeCalendarModal()">
-  <div class="mc" style="max-width:580px;width:100%">
-    <div class="mh"><span>📆 Configurar Período del Trimestre</span><button class="mc-close" onclick="closeCalendarModal()">✕</button></div>
-    <div class="mb" style="padding:20px">
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px">Define el rango de fechas del trimestre y registra los días que <strong>no hubo clases</strong> (feriados, eventos, etc.). Estos días se excluyen del conteo de asistencia.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+  <div class="mc" style="max-width:660px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.3);background:var(--bg-main)">
+    
+    <!-- Encabezado con Gradiente -->
+    <div class="mh" style="background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);color:#ffffff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.3rem">📆</span>
         <div>
-          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Inicio del Trimestre</label>
-          <input type="date" id="calTrimStart" style="width:100%;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
-        </div>
-        <div>
-          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Fin del Trimestre</label>
-          <input type="date" id="calTrimEnd" style="width:100%;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
+          <div style="font-size:1.05rem;font-weight:900;letter-spacing:0.3px">Configurar Período del Trimestre</div>
+          <div style="font-size:0.75rem;color:#bfdbfe">Fechas oficiales, cronograma escalonado y días sin clases</div>
         </div>
       </div>
-      <div style="margin-bottom:14px">
-        <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:6px">🚫 Agregar Día Sin Clases</label>
-        <div style="display:flex;gap:8px">
-          <input type="date" id="calNoclassDate" style="flex:1;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
-          <input type="text" id="calNoclassLabel" placeholder="Motivo (opcional)" style="flex:2;padding:8px 12px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:var(--font-main);font-size:0.88rem;background:var(--bg-card);color:var(--text-main)"/>
-          <button class="btn btn-primary" onclick="addNoclassDay()" style="white-space:nowrap">➕ Agregar</button>
+      <button class="mc-close" onclick="closeCalendarModal()" style="color:#ffffff;opacity:0.85;font-size:1.2rem">✕</button>
+    </div>
+
+    <div class="mb" style="padding:20px;max-height:80vh;overflow-y:auto">
+      
+      <!-- Cuadro Oficial: Cronograma Escalonado MINEDUC -->
+      <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:1.5px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,0.03)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:0.84rem;font-weight:900;color:#166534;display:flex;align-items:center;gap:6px">
+            🏫 CRONOGRAMA ESCALONADO DE INICIO DE CLASES (MINEDUC)
+          </span>
+          <span style="font-size:0.7rem;background:#15803d;color:#fff;font-weight:800;padding:2px 8px;border-radius:12px">OFICIAL</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:0.76rem">
+          <div style="background:#ffffff;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;text-align:center">
+            <div style="font-weight:900;color:#15803d;font-size:0.85rem">1 de Septiembre</div>
+            <div style="color:#475569;margin-top:2px;line-height:1.2">Inicial (3 y 4 años)<br>Bachillerato (1°, 2°, 3°)</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;text-align:center">
+            <div style="font-weight:900;color:#15803d;font-size:0.85rem">2 de Septiembre</div>
+            <div style="color:#475569;margin-top:2px;line-height:1.2">Preparatoria (1° grado)<br>EGB Superior (8°, 9°, 10°)</div>
+          </div>
+          <div style="background:#fef9c3;border:1.5px solid #facc15;border-radius:8px;padding:8px 10px;text-align:center;box-shadow:0 1px 4px rgba(234,179,8,0.2)">
+            <div style="font-weight:900;color:#a16207;font-size:0.85rem">⭐ 3 de Septiembre</div>
+            <div style="color:#854d0e;font-weight:800;margin-top:2px;line-height:1.2">EGB Elemental (2°, 3°, 4°)<br>EGB Media (5°, 6°, 7° C)</div>
+          </div>
         </div>
       </div>
-      <div id="calNoclassList" style="max-height:200px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px;background:var(--bg-card-subtle)">
-        <em style="font-size:0.8rem;color:var(--text-light)">No hay días sin clases registrados.</em>
-      </div>
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted)">📋 Días con Asistencia Guardada</label>
-          <button class="btn btn-outline" onclick="cleanAttBefore('2026-09-03')" style="padding:3px 8px;font-size:0.72rem;color:#b91c1c;border-color:#fca5a5;background:#fee2e2" title="Eliminar automáticamente días registrados antes del 3 de Septiembre">🧹 Limpiar antes del 03/Sep</button>
+
+      <!-- Tarjeta 1: Rango de Fechas del Trimestre -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+        <div style="font-size:0.85rem;font-weight:900;color:var(--text-main);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span>📅 Rango de Fechas del 1er Trimestre</span>
         </div>
-        <div id="calRecordedDatesList" style="max-height:130px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:8px;background:var(--bg-card-subtle)">
-          <em style="font-size:0.8rem;color:var(--text-light)">Cargando registros...</em>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Inicio de Clases (7mo EGB):</label>
+            <input type="date" id="calTrimStart" style="width:100%;padding:9px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-family:var(--font-main);font-size:0.88rem;font-weight:700;background:var(--bg-card);color:var(--text-main);outline:none"/>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:5px">📅 Fin del 1er Trimestre:</label>
+            <input type="date" id="calTrimEnd" style="width:100%;padding:9px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-family:var(--font-main);font-size:0.88rem;font-weight:700;background:var(--bg-card);color:var(--text-main);outline:none"/>
+          </div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-color)">
-        <button class="btn btn-outline" onclick="closeCalendarModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveCalendarConfig()">💾 Guardar Configuración</button>
+
+      <!-- Tarjeta 2: Días Sin Clases (Feriados y Eventos) -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+        <div style="font-size:0.85rem;font-weight:900;color:var(--text-main);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span>🚫 Días Sin Clases (Feriados / Asuetos)</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <input type="date" id="calNoclassDate" style="flex:1;min-width:140px;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-family:var(--font-main);font-size:0.86rem;font-weight:700;background:var(--bg-card);color:var(--text-main);outline:none"/>
+          <input type="text" id="calNoclassLabel" placeholder="Motivo (ej: Independencia de Guayaquil)" style="flex:2;min-width:180px;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-family:var(--font-main);font-size:0.86rem;background:var(--bg-card);color:var(--text-main);outline:none"/>
+          <button class="btn btn-primary" onclick="addNoclassDay()" style="white-space:nowrap;font-weight:800;padding:8px 16px;border-radius:8px">➕ Agregar Día</button>
+        </div>
+        <div id="calNoclassList" style="max-height:180px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:8px;background:var(--bg-card-subtle)">
+          <div style="text-align:center;padding:14px;color:var(--text-muted);font-size:0.8rem;font-style:italic">Cargando días sin clases...</div>
+        </div>
       </div>
+
+      <!-- Tarjeta 3: Días con Asistencia Guardada -->
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:0.85rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:6px">
+            <span>📋 Fechas con Asistencia Guardada</span>
+          </div>
+          <button class="btn btn-outline" onclick="cleanAttBefore('2026-09-03')" style="padding:4px 10px;font-size:0.75rem;font-weight:800;color:#b91c1c;border-color:#fca5a5;background:#fee2e2;border-radius:6px" title="Eliminar automáticamente días registrados antes del inicio de clases de 7mo">
+            🧹 Limpiar antes del 03/Sep
+          </button>
+        </div>
+        <div id="calRecordedDatesList" style="max-height:150px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:8px;background:var(--bg-card-subtle)">
+          <div style="text-align:center;padding:14px;color:var(--text-muted);font-size:0.8rem;font-style:italic">Cargando fechas...</div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:14px;border-top:1px solid var(--border-color)">
+        <button class="btn btn-outline" onclick="closeCalendarModal()" style="font-weight:800;padding:8px 18px;border-radius:8px">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveCalendarConfig()" style="font-weight:800;padding:8px 20px;border-radius:8px;box-shadow:0 2px 8px rgba(37,99,235,0.35)">💾 Guardar Configuración</button>
+      </div>
+
     </div>
   </div>
 </div>
