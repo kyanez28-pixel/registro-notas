@@ -12561,6 +12561,20 @@ async function saveToFirestore() {
       const userRef = db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
       await userRef.set(payload);
     }
+
+    // 3. Si el portal de padres fue abierto con ?u=UID del docente,
+    //    guardar TAMBIÉN en el documento privado del docente para sincronización en tiempo real
+    try {
+      const _urlParamsFS = new URLSearchParams(window.location.search);
+      const _uidParam = _urlParamsFS.get('u');
+      if (_uidParam && (!_currentUser || _currentUser.uid !== _uidParam)) {
+        const teacherRef = db.collection('usuarios').doc(_uidParam).collection('datos').doc('estado');
+        await teacherRef.set(payload);
+      }
+    } catch(e2) {
+      console.warn('[Sync] No se pudo guardar en doc privado del docente:', e2);
+    }
+
     setSyncStatus('⚡ En Vivo', 'online');
   } catch(e) {
     console.warn('Error guardando en Firestore:', e);
