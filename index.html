@@ -2900,6 +2900,14 @@ body.in-focus-mode {
         </div>
       </div>
 
+      <!-- SECCIÓN F: PREGUNTAS Y DATOS ADICIONALES DEL AULA -->
+      <div id="psCustomFieldsCard" style="display:none;background:#ffffff;border:1.5px solid #0284c7;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(2,132,199,0.08)">
+        <div style="font-weight:900;font-size:1rem;color:#0369a1;margin-bottom:14px;border-bottom:2px solid #e0f2fe;padding-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span>📋 INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</span>
+        </div>
+        <div id="psCustomFieldsList" style="display:flex;flex-direction:column;gap:14px"></div>
+      </div>
+
       <!-- Botón de Guardado Principal -->
       <div style="margin-bottom:30px">
         <button id="btnSaveStandaloneParent" onclick="saveParentStandaloneData()" class="btn btn-success" style="width:100%;font-size:1.1rem;padding:16px 20px;font-weight:900;border-radius:14px;box-shadow:0 6px 20px rgba(22,163,74,0.35);justify-content:center;letter-spacing:0.2px;background:#16a34a;color:#ffffff;border:none">
@@ -6174,6 +6182,14 @@ body.in-focus-mode {
               📁 Subir Foto del Estudiante
             </button>
           </div>
+        </div>
+
+        <!-- SECCIÓN F: PREGUNTAS Y DATOS ADICIONALES DEL AULA -->
+        <div id="pfCustomFieldsCard" style="display:none;background:var(--bg-card);border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-weight:800;font-size:0.85rem;color:#0284c7;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <span>📋 INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</span>
+          </div>
+          <div id="pfCustomFieldsList" style="display:flex;flex-direction:column;gap:12px"></div>
         </div>
 
       </div>
@@ -14512,6 +14528,12 @@ function getStudentMatrixValue(si, fieldKey) {
   ensureStudentProfiles();
   const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
   if (!p) return '';
+
+  if (fieldKey && fieldKey.startsWith('mat_cst_')) {
+    const colId = fieldKey.replace('mat_cst_', '');
+    return (p.customData && p.customData[colId] !== undefined) ? p.customData[colId] : (p[colId] || '');
+  }
+
   const def = MATRIX_FIELD_MAP[fieldKey];
   if (!def) return '';
   if (def.isAge) {
@@ -15044,6 +15066,7 @@ function renderCustomColsConfig() {
           '<option value="mat_nnee" ' + (colType==='mat_nnee'?'selected':'') + '>♿ NN.EE. / Discapacidad</option>' +
           '<option value="mat_enfermedad" ' + (colType==='mat_enfermedad'?'selected':'') + '>🩺 Enfermedad / Alergia</option>' +
           '<option value="mat_hermanos" ' + (colType==='mat_hermanos'?'selected':'') + '>👥 Hermanos en la Institución</option>' +
+          ((S.customMatrixCols || []).map(c => '<option value="mat_cst_' + c.id + '" ' + (colType === 'mat_cst_' + c.id ? 'selected' : '') + '>📋 ' + escHTML(c.label) + '</option>').join('')) +
         '</optgroup>' +
       '</select>' +
     '</div>';
@@ -15060,11 +15083,22 @@ function onCustomColTypeSelect(idx, val) {
   const list = getCurrentCustomList();
   list.colTypes[idx] = val;
 
-  if (MATRIX_FIELD_MAP[val]) {
+  if (val && val.startsWith('mat_cst_')) {
+    const colId = val.replace('mat_cst_', '');
+    const cDef = (S.customMatrixCols || []).find(c => c.id === colId);
+    if (cDef) {
+      const curName = list.cols[idx] || '';
+      if (!curName || curName.startsWith('Columna') || curName.startsWith('Col ')) {
+        list.cols[idx] = cDef.label;
+      }
+      toast('✔ Columna #' + (idx+1) + ' vinculada a: ' + cDef.label, '#2563eb');
+    }
+  } else if (MATRIX_FIELD_MAP[val]) {
     const curName = list.cols[idx] || '';
     if (!curName || curName.startsWith('Columna') || curName.startsWith('Col ')) {
       list.cols[idx] = MATRIX_FIELD_MAP[val].label;
     }
+    toast('✔ Columna #' + (idx+1) + ' vinculada a: ' + MATRIX_FIELD_MAP[val].label, '#2563eb');
   }
 
   const sorted = getSortedIndices();
@@ -15077,9 +15111,6 @@ function onCustomColTypeSelect(idx, val) {
   renderCustomColsConfig();
   updateCustomListPreview();
   saveData();
-  if (MATRIX_FIELD_MAP[val]) {
-    toast('✔ Columna #' + (idx+1) + ' vinculada a ' + MATRIX_FIELD_MAP[val].label, '#2563eb');
-  }
 }
 
 function onCustomColCountChange(val) {
@@ -17933,6 +17964,24 @@ function openStudentProfileModal(si) {
         </div>
       </div>
 
+      <!-- Bloque 4: Preguntas y Columnas Personalizadas -->
+      ${(S.customMatrixCols && S.customMatrixCols.length > 0) ? `
+      <div style="background:var(--bg-card-subtle);border:1.5px solid #0284c7;border-radius:var(--radius-md);padding:14px">
+        <div style="font-weight:800;font-size:0.9rem;color:#0369a1;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span>📋 INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+          ${S.customMatrixCols.map(col => {
+            const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+            return `
+              <div>
+                <label>${escHTML(col.label)}</label>
+                <input type="text" id="mProf_cst_${col.id}" value="${escVal(currentVal)}" placeholder="Escribir información..." style="font-weight:600"/>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
     </div>
 
     <!-- Botonera inferior -->
@@ -18007,6 +18056,18 @@ function openStudentProfileModal(si) {
       p.padre_nombre = document.getElementById('mProfPadreNombre').value.trim();
       p.padre_cedula = document.getElementById('mProfPadreCedula').value.trim();
       p.padre_telefono = document.getElementById('mProfPadreTelefono').value.trim();
+
+      // Guardar preguntas / columnas personalizadas
+      if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+        p.customData = p.customData || {};
+        S.customMatrixCols.forEach(col => {
+          const inp = document.getElementById(`mProf_cst_${col.id}`);
+          if (inp) {
+            p.customData[col.id] = inp.value.trim();
+            p[col.id] = inp.value.trim();
+          }
+        });
+      }
 
       // Sincronizar con S.students si cambió el nombre
       if (S.students[si] !== nvName) {
@@ -18243,6 +18304,17 @@ function printSingleStudentProfile(si) {
           <div><div class="fld-label">Teléfono Padre</div><div class="fld-val">${escHTML(p.padre_telefono || '—')}</div></div>
         </div>
       </div>
+
+      ${(S.customMatrixCols && S.customMatrixCols.length > 0) ? `
+      <div class="card">
+        <div class="card-title" style="color:#0369a1">4. INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</div>
+        <div class="grid">
+          ${S.customMatrixCols.map(col => {
+            const val = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '—');
+            return `<div><div class="fld-label">${escHTML(col.label)}</div><div class="fld-val">${escHTML(val || '—')}</div></div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
 
       <div style="margin-top:40px;display:flex;justify-content:space-around;text-align:center;font-size:0.8rem">
         <div>
@@ -18621,6 +18693,28 @@ function onParentSelectStudent(val) {
       fotoBox.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted);text-align:center">Sin foto</span>';
     }
   }
+
+  // Preguntas / Columnas personalizadas
+  const customList = document.getElementById('pfCustomFieldsList');
+  const customCard = document.getElementById('pfCustomFieldsCard');
+  if (customList && customCard) {
+    if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+      customCard.style.display = 'block';
+      customList.innerHTML = S.customMatrixCols.map(col => {
+        const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+        return `
+          <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-left:4px solid ${col.bg || '#0284c7'};border-radius:8px;padding:10px 12px">
+            <label style="font-weight:800;font-size:0.8rem;color:var(--text-main);display:block;margin-bottom:4px">
+              ${escHTML(col.label)}
+            </label>
+            <input type="text" id="pf_cst_${col.id}" value="${escVal(currentVal)}" placeholder="Escriba su respuesta o información aquí..." style="padding:8px 12px;font-size:0.88rem;font-weight:600;width:100%"/>
+          </div>`;
+      }).join('');
+    } else {
+      customCard.style.display = 'none';
+      customList.innerHTML = '';
+    }
+  }
 }
 
 function calcParentFormAge() {
@@ -18715,6 +18809,18 @@ function saveParentPortalData() {
   // Hermanos
   const isHnos = document.getElementById('pfHermanosSelect').value === 'SÍ';
   p.hermanos_inst = isHnos ? (document.getElementById('pfHermanosDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Guardar preguntas / columnas personalizadas
+  if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+    p.customData = p.customData || {};
+    S.customMatrixCols.forEach(col => {
+      const inp = document.getElementById(`pf_cst_${col.id}`);
+      if (inp) {
+        p.customData[col.id] = inp.value.trim();
+        p[col.id] = inp.value.trim();
+      }
+    });
+  }
 
   if (_parentFormFotoData) {
     p.foto = _parentFormFotoData;
@@ -18876,6 +18982,28 @@ function onParentStandaloneSelectStudent(val) {
     }
   }
 
+  // Preguntas / Columnas personalizadas
+  const customList = document.getElementById('psCustomFieldsList');
+  const customCard = document.getElementById('psCustomFieldsCard');
+  if (customList && customCard) {
+    if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+      customCard.style.display = 'block';
+      customList.innerHTML = S.customMatrixCols.map(col => {
+        const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+        return `
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid ${col.bg || '#0284c7'};border-radius:10px;padding:12px 14px">
+            <label style="font-weight:800;font-size:0.88rem;color:#0f172a;display:block;margin-bottom:6px">
+              ${escHTML(col.label)}
+            </label>
+            <input type="text" id="ps_cst_${col.id}" value="${escVal(currentVal)}" placeholder="Escriba su respuesta o información aquí..." style="background:#ffffff;color:#0f172a;font-size:0.95rem;font-weight:700;padding:10px 14px;border:1.5px solid #cbd5e1;border-radius:8px;width:100%"/>
+          </div>`;
+      }).join('');
+    } else {
+      customCard.style.display = 'none';
+      customList.innerHTML = '';
+    }
+  }
+
   // Scroll suave al formulario
   fieldsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -18974,6 +19102,18 @@ function saveParentStandaloneData() {
   // Hermanos
   const isHnos = document.getElementById('psHermanosSelect').value === 'SÍ';
   p.hermanos_inst = isHnos ? (document.getElementById('psHermanosDetalle').value.trim() || 'SÍ') : 'NO';
+
+  // Guardar preguntas / columnas personalizadas
+  if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+    p.customData = p.customData || {};
+    S.customMatrixCols.forEach(col => {
+      const inp = document.getElementById(`ps_cst_${col.id}`);
+      if (inp) {
+        p.customData[col.id] = inp.value.trim();
+        p[col.id] = inp.value.trim();
+      }
+    });
+  }
 
   if (_parentStandaloneFotoData) {
     p.foto = _parentStandaloneFotoData;
