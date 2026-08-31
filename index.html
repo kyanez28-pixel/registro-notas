@@ -15854,11 +15854,13 @@ function updateReunionQuorumStats() {
 }
 
 function updateReunionPreview() {
+  ensureHerramientas();
+  ensureStudentProfiles();
   const reu = getCurrentReunion();
-  const titulo = reu.titulo || 'REUNIÓN DE PADRES';
-  const fecha = reu.fecha || '';
-  const horaLugar = reu.horaLugar || '';
-  const orden = reu.orden || '';
+  const titulo = reu.titulo || 'I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO';
+  const fecha = reu.fecha || 'Viernes, 05 de Septiembre de 2026';
+  const horaLugar = reu.horaLugar || '13:30 a 15:00 · Aula de Séptimo C';
+  const orden = reu.orden || '1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.';
   const sorted = getSortedIndices();
   const box = document.getElementById('reunionPreviewBox');
   if (!box) return;
@@ -15871,31 +15873,34 @@ function updateReunionPreview() {
   const rowsHtml = sorted.map((si, rowPos) => {
     const name = S.students[si] || ('Estudiante ' + (si+1));
     const att = reu.attendance[si] || { rep: '', ci: '', present: false, obs: '' };
+    const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+    const repName = (att.rep !== undefined && att.rep !== '') ? att.rep : (p ? (p.rep_nombre || '') : '');
+    const repCi = (att.ci !== undefined && att.ci !== '') ? att.ci : (p ? (p.rep_cedula || '') : '');
     if (att.present) presentCount++;
 
     return '<tr>' +
       '<td style="text-align:center;font-weight:900;width:38px;color:#065f46;background:#f0fdf4;font-family:var(--font-mono)">' + (rowPos+1) + '</td>' +
       '<td class="nc-cell" style="font-weight:700;padding-left:10px;font-size:0.82rem;min-width:190px;color:#0f172a">' + escHTML(name) + '</td>' +
       '<td style="padding:4px;min-width:180px;background:#f0fdf4">' +
-        '<input type="text" class="list-cell-input no-print" value="' + escVal(att.rep) + '" onchange="setReunionRep(' + si + ', this.value)" placeholder="Nombre del representante" style="font-size:0.78rem"/>' +
-        '<span class="only-print" style="font-size:0.8rem">' + escHTML(att.rep) + '</span>' +
+        '<input type="text" class="list-cell-input no-print" value="' + escVal(repName) + '" onchange="setReunionRep(' + si + ', this.value)" placeholder="Nombre del representante" style="font-size:0.78rem"/>' +
+        '<span class="only-print" style="font-size:0.8rem">' + escHTML(repName || '—') + '</span>' +
       '</td>' +
       '<td style="padding:4px;width:115px;text-align:center;background:#eff6ff">' +
-        '<input type="text" class="list-cell-input no-print" value="' + escVal(att.ci) + '" onchange="setReunionCI(' + si + ', this.value)" placeholder="C.I." style="font-size:0.78rem;text-align:center;font-family:var(--font-mono)"/>' +
-        '<span class="only-print" style="font-size:0.8rem;font-family:var(--font-mono)">' + escHTML(att.ci) + '</span>' +
+        '<input type="text" class="list-cell-input no-print" value="' + escVal(repCi) + '" onchange="setReunionCI(' + si + ', this.value)" placeholder="C.I." style="font-size:0.78rem;text-align:center;font-family:var(--font-mono)"/>' +
+        '<span class="only-print" style="font-size:0.8rem;font-family:var(--font-mono)">' + escHTML(repCi || '—') + '</span>' +
       '</td>' +
       '<td style="text-align:center;padding:4px;width:125px;background:#fffbeb">' +
         '<label class="no-print" style="display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:0.75rem;font-weight:800">' +
           '<input type="checkbox" ' + (att.present ? 'checked' : '') + ' onchange="toggleReunionAttendance(' + si + ', this.checked)" style="transform:scale(1.25)"/>' +
           '<span style="color:' + (att.present ? '#15803d' : '#dc2626') + '">' + (att.present ? 'PRESENTE' : 'AUSENTE') + '</span>' +
         '</label>' +
-        '<span class="only-print" style="font-size:1rem;height:24px;border-bottom:1px solid #000;line-height:24px">' +
+        '<span class="only-print" style="font-size:0.82rem;font-weight:bold">' +
           (att.present ? '☑ PRESENTE' : '☐') +
         '</span>' +
       '</td>' +
       '<td style="padding:4px;min-width:115px;background:#faf5ff">' +
-        '<input type="text" class="list-cell-input no-print" value="' + escVal(att.obs) + '" onchange="setReunionObs(' + si + ', this.value)" placeholder="Observaciones" style="font-size:0.78rem"/>' +
-        '<span class="only-print" style="font-size:0.78rem">' + escHTML(att.obs) + '</span>' +
+        '<input type="text" class="list-cell-input no-print" value="' + escVal(att.obs || '') + '" onchange="setReunionObs(' + si + ', this.value)" placeholder="Observaciones" style="font-size:0.78rem"/>' +
+        '<span class="only-print" style="font-size:0.78rem">' + escHTML(att.obs || '') + '</span>' +
       '</td>' +
     '</tr>';
   }).join('');
@@ -15912,8 +15917,8 @@ function updateReunionPreview() {
           '<div style="font-size:0.75rem;color:#e2e8f0;margin-top:1px">ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</div>' +
         '</div>' +
         '<div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
-          '<div>Docente: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></div>' +
-          '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo de Básica C') + '</strong></div>' +
+          '<div>Docente: <strong>' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong></div>' +
+          '<div>Grado: <strong>' + escHTML(S.grado || 'Séptimo de Básica C') + '</strong></div>' +
           '<div>Fecha: <strong>' + escHTML(fecha) + '</strong> · Lugar: <strong>' + escHTML(horaLugar) + '</strong></div>' +
         '</div>' +
       '</div>' +
@@ -15943,7 +15948,7 @@ function updateReunionPreview() {
     '</div>' +
     '<div style="display:flex;justify-content:space-around;margin-top:40px;page-break-inside:avoid">' +
       '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
-        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong><br>' +
         '<span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR</span>' +
       '</div>' +
       '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
@@ -15954,8 +15959,129 @@ function updateReunionPreview() {
 }
 
 function printReunionActa() {
-  updateReunionPreview();
-  window.print();
+  ensureHerramientas();
+  ensureStudentProfiles();
+  const reu = getCurrentReunion();
+  const titulo = reu.titulo || 'I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO';
+  const fecha = reu.fecha || 'Viernes, 05 de Septiembre de 2026';
+  const horaLugar = reu.horaLugar || '13:30 a 15:00 · Aula de Séptimo C';
+  const orden = reu.orden || '1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.';
+  const sorted = getSortedIndices();
+
+  const ordenListHtml = orden.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:3px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
+
+  let presentCount = 0;
+  const rowsHtml = sorted.map((si, rowPos) => {
+    const name = S.students[si] || ('Estudiante ' + (si+1));
+    const att = (reu.attendance && reu.attendance[si]) ? reu.attendance[si] : {};
+    const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+    const repName = (att.rep !== undefined && att.rep !== '') ? att.rep : (p ? (p.rep_nombre || '') : '');
+    const repCi = (att.ci !== undefined && att.ci !== '') ? att.ci : (p ? (p.rep_cedula || '') : '');
+    const isPres = !!att.present;
+    if (isPres) presentCount++;
+    const obs = att.obs || '';
+
+    return `
+      <tr>
+        <td style="text-align:center;font-weight:bold;font-family:monospace;padding:4px">${rowPos + 1}</td>
+        <td style="font-weight:600;padding-left:8px;text-align:left;padding:4px">${escHTML(name)}</td>
+        <td style="padding-left:8px;text-align:left;padding:4px">${escHTML(repName || '—')}</td>
+        <td style="text-align:center;font-family:monospace;padding:4px">${escHTML(repCi || '—')}</td>
+        <td style="text-align:center;font-weight:bold;color:${isPres ? '#15803d' : '#475569'};padding:4px">${isPres ? '☑ PRESENTE' : '☐ ___________'}</td>
+        <td style="padding-left:6px;text-align:left;padding:4px">${escHTML(obs)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  const total = sorted.length;
+  const absentCount = total - presentCount;
+  const pct = total > 0 ? ((presentCount / total) * 100).toFixed(1) : '0.0';
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Acta de Asistencia — ${escHTML(titulo)}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #0f172a; line-height: 1.4; }
+        .hdr { text-align: center; border-bottom: 2.5px solid #065f46; padding-bottom: 10px; margin-bottom: 12px; }
+        .hdr h2 { margin: 0 0 4px 0; color: #065f46; font-size: 1.3rem; text-transform: uppercase; }
+        .hdr h3 { margin: 2px 0; color: #047857; font-size: 1.05rem; }
+        .hdr p { margin: 2px 0; font-size: 0.85rem; color: #334155; }
+        .meta-box { display: flex; justify-content: space-between; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 14px; font-size: 0.85rem; margin-bottom: 12px; }
+        .orden-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.82rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.78rem; }
+        th { background: #065f46; color: #ffffff; border: 1px solid #047857; padding: 6px 4px; font-weight: 700; text-align: center; }
+        td { border: 1px solid #cbd5e1; padding: 5px 4px; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .quorum-box { margin-top: 14px; display: flex; justify-content: space-between; background: #f0fdf4; border: 1.5px solid #059669; border-radius: 8px; padding: 8px 14px; font-size: 0.82rem; font-weight: 700; color: #065f46; }
+        .signatures { display: flex; justify-content: space-around; margin-top: 45px; page-break-inside: avoid; }
+        .sig-col { text-align: center; width: 230px; border-top: 1.5px solid #000000; padding-top: 6px; font-size: 0.8rem; }
+        @media print {
+          body { padding: 0; }
+          @page { size: portrait; margin: 8mm 6mm; }
+          tr { page-break-inside: avoid; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="hdr">
+        <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
+        <h3>${escHTML(titulo)}</h3>
+        <p>ACTA Y REGISTRO OFICIAL DE ASISTENCIA Y QUÓRUM DE REPRESENTANTES LEGALES</p>
+      </div>
+
+      <div class="meta-box">
+        <div><strong>Docente Tutor:</strong> ${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</div>
+        <div><strong>Grado:</strong> ${escHTML(S.grado || 'Séptimo EGB C')} · <strong>Año:</strong> ${escHTML(S.anio || '2026-2027')}</div>
+        <div><strong>Fecha:</strong> ${escHTML(fecha)} · <strong>Lugar/Hora:</strong> ${escHTML(horaLugar)}</div>
+      </div>
+
+      <div class="orden-box">
+        <strong style="color:#065f46;display:block;margin-bottom:4px">📌 ORDEN DEL DÍA / PUNTOS TRATADOS:</strong>
+        <ol style="margin:0 0 0 18px;padding:0">${ordenListHtml}</ol>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th style="text-align:left;padding-left:8px">NÓMINA DE ESTUDIANTES</th>
+            <th style="text-align:left;padding-left:8px">NOMBRE DEL REPRESENTANTE</th>
+            <th style="width:95px">CÉDULA IDENTIDAD</th>
+            <th style="width:115px">ASISTENCIA / FIRMA</th>
+            <th style="width:120px;text-align:left;padding-left:6px">OBSERVACIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+
+      <div class="quorum-box">
+        <span>Total Matriculados: <strong>${total}</strong></span>
+        <span>Presentes: <strong>${presentCount}</strong></span>
+        <span>Ausentes: <strong>${absentCount}</strong></span>
+        <span>Quórum Alcanzado: <strong>${pct}%</strong></span>
+      </div>
+
+      <div class="signatures">
+        <div class="sig-col">
+          <strong>${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong><br>
+          <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span>
+        </div>
+        <div class="sig-col">
+          <strong>DIRECTIVA DE PADRES DE FAMILIA</strong><br>
+          <span style="font-size:0.72rem;color:#475569">PRESIDENTE / SECRETARIO(A)</span>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
 }
 
 function exportReunionXLSX() {
@@ -16262,7 +16388,7 @@ function updateAtencionPreview() {
           '<div style="font-size:0.75rem;color:#fef3c7;margin-top:1px">Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ' + escHTML(S.anio||'2026-2027') + '</div>' +
         '</div>' +
         '<div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
-          '<div>Docente Tutor: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></div>' +
+          '<div>Docente Tutor: <strong>' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong></div>' +
           '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo EGB C') + '</strong></div>' +
         '</div>' +
       '</div>' +
@@ -16294,7 +16420,7 @@ function updateAtencionPreview() {
         '<span style="font-size:0.68rem;color:#64748b">C.I.: ' + escHTML(contacto) + '</span>' +
       '</div>' +
       '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
-        '<strong style="font-size:0.8rem">' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong><br>' +
+        '<strong style="font-size:0.8rem">' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong><br>' +
         '<span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>' +
         '<span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>' +
       '</div>' +
@@ -16302,8 +16428,92 @@ function updateAtencionPreview() {
 }
 
 function printAtencionFicha() {
-  updateAtencionPreview();
-  window.print();
+  ensureHerramientas();
+  ensureStudentProfiles();
+  const si = parseInt(document.getElementById('atencionStudentSel')?.value || '0', 10);
+  const stName = (S.students && S.students[si]) ? S.students[si] : ('Estudiante ' + (si+1));
+  const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+
+  const repName = document.getElementById('atencionRepNombre')?.value.trim() || p?.rep_nombre || 'Representante Legal';
+  const parentesco = document.getElementById('atencionParentesco')?.value.trim() || 'Madre / Padre';
+  const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleString('es-EC');
+  const contacto = document.getElementById('atencionContacto')?.value.trim() || p?.rep_cedula || p?.rep_telefono || '—';
+  const motivo = document.getElementById('atencionMotivo')?.value.trim() || 'Acompañamiento Pedagógico';
+  const hechos = document.getElementById('atencionHechos')?.value.trim() || 'Se convoca al representante para dialogar sobre el rendimiento académico.';
+  const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '1. Apoyar en las tareas diarias.\n2. Asistir a las convocatorias de la institución.';
+
+  const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => '<p style="margin:4px 0">' + escHTML(l) + '</p>').join('');
+  const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:3px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Ficha de Atención a Padres — ${escHTML(stName)}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #0f172a; line-height: 1.5; font-size: 0.88rem; }
+        .hdr { text-align: center; border-bottom: 2.5px solid #d97706; padding-bottom: 10px; margin-bottom: 14px; }
+        .hdr h2 { margin: 0 0 4px 0; color: #b45309; font-size: 1.25rem; }
+        .hdr h3 { margin: 2px 0; color: #92400e; font-size: 1.02rem; }
+        .hdr p { margin: 2px 0; font-size: 0.82rem; color: #475569; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.84rem; }
+        .box { border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
+        .box-green { border: 1.5px solid #059669; background: #f0fdf4; }
+        .signatures { display: flex; justify-content: space-around; margin-top: 50px; page-break-inside: avoid; }
+        .sig-col { text-align: center; width: 230px; border-top: 1.5px solid #000; padding-top: 6px; font-size: 0.8rem; }
+        @media print { body { padding: 0; } @page { size: portrait; margin: 12mm 10mm; } }
+      </style>
+    </head>
+    <body>
+      <div class="hdr">
+        <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
+        <h3>BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</h3>
+        <p>Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio || '2026-2027')}</p>
+      </div>
+
+      <div class="info-grid">
+        <div><strong>Estudiante:</strong> ${escHTML(stName)}</div>
+        <div><strong>Grado / Paralelo:</strong> ${escHTML(S.grado || 'Séptimo EGB C')}</div>
+        <div><strong>Representante:</strong> ${escHTML(repName)}</div>
+        <div><strong>Parentesco:</strong> ${escHTML(parentesco)}</div>
+        <div><strong>Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
+        <div><strong>C.I. / Contacto:</strong> ${escHTML(contacto)}</div>
+        <div style="grid-column:1/-1"><strong>Motivo Principal:</strong> ${escHTML(motivo)}</div>
+      </div>
+
+      <div class="box">
+        <strong style="display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;color:#0f172a">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>
+        <div style="color:#334155">${hechosHtml}</div>
+      </div>
+
+      <div class="box box-green">
+        <strong style="display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px;color:#065f46">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>
+        <ol style="margin:0 0 0 18px;padding:0;color:#065f46">${compListHtml}</ol>
+      </div>
+
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;font-style:italic">
+        Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:
+      </div>
+
+      <div class="signatures">
+        <div class="sig-col">
+          <strong>${escHTML(repName)}</strong><br>
+          <span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>
+          <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span>
+        </div>
+        <div class="sig-col">
+          <strong>${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong><br>
+          <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>
+          <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
 }
 
 function populateCitacionStudentSelect() {
@@ -16395,8 +16605,100 @@ function updateCitacionesPreview() {
 }
 
 function printCitaciones() {
-  updateCitacionesPreview();
-  window.print();
+  ensureHerramientas();
+  ensureStudentProfiles();
+  const modo = document.getElementById('citacionModo')?.value || 'individual';
+  const fechaHora = document.getElementById('citacionFechaHora')?.value.trim() || 'Lunes 14 de Septiembre de 2026 a las 14:00';
+  const lugar = document.getElementById('citacionLugar')?.value.trim() || 'Aula de Séptimo de Básica C';
+  const motivo = document.getElementById('citacionMotivo')?.value.trim() || 'Tratar asuntos pedagógicos y comportamentales de su representado/a.';
+
+  const sorted = getSortedIndices();
+  let studentsToRender = [];
+  if (modo === 'individual') {
+    const sel = document.getElementById('citacionStudentSel');
+    const si = parseInt(sel?.value || '0', 10);
+    studentsToRender = [si];
+  } else {
+    studentsToRender = sorted;
+  }
+
+  let html = '';
+  studentsToRender.forEach(si => {
+    const stName = S.students[si] || ('Estudiante ' + (si+1));
+    const p = S.studentProfiles && S.studentProfiles[si];
+    const repInfo = p?.rep_nombre ? ('Sr./Sra. <strong>' + escHTML(p.rep_nombre) + '</strong> (Representante Legal de: <strong>' + escHTML(stName) + '</strong>)') : ('Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>');
+
+    html += `
+      <div class="cut-slip" style="border:1.5px solid #1e3a8a;border-radius:10px;padding:14px 18px;margin-bottom:20px;page-break-inside:avoid;background:#ffffff">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">
+          <div>
+            <strong style="font-size:0.95rem;color:#1e3a8a">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</strong><br>
+            <span style="font-size:0.8rem;font-weight:700;color:#0f172a">CONVOCATORIA / CITACIÓN A REPRESENTANTE LEGAL</span>
+          </div>
+          <span style="font-size:0.8rem;font-weight:800;background:#dbeafe;color:#1e40af;padding:3px 10px;border-radius:99px">
+            ${escHTML(S.grado || '7mo EGB C')}
+          </span>
+        </div>
+        <div style="font-size:0.84rem;color:#334155;line-height:1.5;margin-bottom:10px">
+          ${repInfo}.<br>
+          Se le convoca de manera obligatoria y puntual a una reunión con el Docente Tutor:
+        </div>
+        <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.82rem;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div><strong>📅 Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
+          <div><strong>📍 Lugar:</strong> ${escHTML(lugar)}</div>
+          <div style="grid-column:1/-1"><strong>📌 Asunto:</strong> ${escHTML(motivo)}</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:0.78rem;margin-bottom:10px">
+          <div>
+            <span>Docente Tutor: <strong>${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong></span><br>
+            <span style="color:#64748b">Firma y Sello Institucional</span>
+          </div>
+          <div style="text-align:right;color:#64748b">
+            <span>Favor portar su cédula de identidad</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#64748b;margin:12px 0">
+          <span style="flex:1;border-top:1.5px dashed #94a3b8"></span>
+          <span>✂️ DESPRENDIBLE DE CONFIRMACIÓN (RECORTAR Y DEVOLVER FIRMADO) ✂️</span>
+          <span style="flex:1;border-top:1.5px dashed #94a3b8"></span>
+        </div>
+        <div style="font-size:0.8rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span><strong>Estudiante:</strong> ${escHTML(stName)}</span>
+            <span><strong>Grado:</strong> ${escHTML(S.grado || '7mo C')}</span>
+          </div>
+          <div style="margin-bottom:6px">
+            Yo, <strong>${escHTML(p?.rep_nombre || '____________________________________________')}</strong>, confirmo la recepción de la convocatoria para el día <strong>${escHTML(fechaHora)}</strong>.
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+            <span>C.I.: ${escHTML(p?.rep_cedula || '________________________')}</span>
+            <span>Teléfono: ${escHTML(p?.rep_telefono || '________________________')}</span>
+            <span>Firma: ________________________</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Citaciones a Representantes — UEF Calderón 2</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #0f172a; }
+        @media print { body { padding: 0; } @page { size: portrait; margin: 10mm 8mm; } }
+      </style>
+    </head>
+    <body>
+      ${html}
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
 }
 
 function populateRubricaStudentSelect() {
@@ -16693,13 +16995,43 @@ function printRubricaEntry(rubId) {
   if (selPreset) selPreset.value = r.preset;
   if (selStudent) selStudent.value = r.studentIdx;
   if (obsInput) obsInput.value = r.obs;
-  updateRubricaPreview();
-  window.print();
+  printRubrica();
 }
 
 function printRubrica() {
   updateRubricaPreview();
-  window.print();
+  const box = document.getElementById('rubricaPreviewBox');
+  if (!box) return;
+  const contentHtml = box.innerHTML;
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Rúbrica de Evaluación Cualitativa — UEF Calderón 2</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #0f172a; line-height: 1.4; font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.78rem; }
+        th { border: 1px solid #cbd5e1; padding: 6px 4px; font-weight: 700; text-align: center; }
+        td { border: 1px solid #cbd5e1; padding: 5px 4px; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .diag-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 800; font-size: 0.78rem; }
+        .diag-badge-da { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .diag-badge-aa { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .diag-badge-pa { background: #fef3c7; color: #92400e; border: 1px solid #fde047; }
+        .diag-badge-na { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        @media print { body { padding: 0; } @page { size: portrait; margin: 10mm 8mm; } }
+      </style>
+    </head>
+    <body>
+      ${contentHtml}
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
 }
 
 
