@@ -10417,6 +10417,14 @@ function rpFilter(q) {
   document.getElementById('rpBody').innerHTML = matches.map(({i})=>buildStudentCard(i)).join('');
 }
 
+function rpShowOne(si) {
+  const el = document.getElementById('rpBody');
+  if (el) {
+    el.innerHTML = buildStudentCard(si);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
 function getStudentDetailedPerformance(si) {
   const result = {
     subjects: [],
