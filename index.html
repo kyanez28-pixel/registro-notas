@@ -10417,8 +10417,97 @@ function rpFilter(q) {
   document.getElementById('rpBody').innerHTML = matches.map(({i})=>buildStudentCard(i)).join('');
 }
 
-function rpShowOne(si) {
-  document.getElementById('rpBody').innerHTML = buildStudentCard(si);
+function getStudentDetailedPerformance(si) {
+  const result = {
+    subjects: [],
+    strengths: [],
+    improvements: [],
+    weaknesses: [],
+    pendingActivities: []
+  };
+
+  getMats().forEach(mName => {
+    const mat = S.mats[mName];
+    if (!mat) return;
+    const isQual = isQualitativeMat(mName);
+    const calc = getStudentTrimestreCalc(si, mName);
+    const sData = {
+      name: mName,
+      isQual,
+      calc,
+      activities: [],
+      lowActivities: [],
+      improvedActivities: [],
+      topActivities: []
+    };
+
+    if (!isQual && mat.weeks && mat.cols) {
+      const g = (mat.grades && mat.grades[si]) || {};
+      mat.weeks.forEach(w => {
+        const wName = getWeekName(w);
+        const wTitle = getWeekTitle(w);
+        const cols = mat.cols[wName] || [];
+        cols.forEach(col => {
+          const key = wName + '||' + col.name;
+          const rk = mName + '||' + si + '||' + wName + '||' + col.name;
+          const rawVal = g[key];
+          const isRec = !!(S.recovered && S.recovered[rk]);
+
+          if (rawVal !== undefined && rawVal !== '') {
+            const num = parseFloat(rawVal);
+            const actInfo = {
+              week: wName,
+              weekTitle: wTitle,
+              colName: col.name,
+              score: rawVal,
+              num: isNaN(num) ? null : num,
+              isImproved: isRec,
+              type: col.type || 'ACT'
+            };
+            sData.activities.push(actInfo);
+
+            if (!isNaN(num)) {
+              if (isRec) {
+                sData.improvedActivities.push(actInfo);
+                result.improvements.push({ mat: mName, act: col.name, week: wName, score: rawVal });
+              }
+              if (num < 7.00) {
+                sData.lowActivities.push(actInfo);
+                result.weaknesses.push({ mat: mName, act: col.name, week: wName, score: rawVal });
+              } else if (num >= 9.00) {
+                sData.topActivities.push(actInfo);
+              }
+            }
+          } else {
+            result.pendingActivities.push({ mat: mName, act: col.name, week: wName });
+          }
+        });
+      });
+    }
+
+    if (!isQual) {
+      const avgNum = parseFloat(calc.trimAvg);
+      if (!isNaN(avgNum)) {
+        if (avgNum >= 9.00) {
+          result.strengths.push({ mat: mName, avg: calc.trimAvg, note: 'Domina los aprendizajes requeridos' });
+        } else if (avgNum >= 7.00) {
+          result.strengths.push({ mat: mName, avg: calc.trimAvg, note: 'Alcanza los aprendizajes requeridos' });
+        } else {
+          result.weaknesses.push({ mat: mName, avg: calc.trimAvg, isSubject: true, note: 'Requiere plan de refuerzo pedagógico' });
+        }
+      }
+    } else {
+      if (calc.qualVal === 'DA' || calc.qualVal === 'AA') {
+        result.strengths.push({ mat: mName, qual: calc.qualVal, note: 'Excelente desempeño formativo/cualitativo' });
+      } else if (calc.qualVal === 'PA' || calc.qualVal === 'NA') {
+        result.weaknesses.push({ mat: mName, qual: calc.qualVal, isSubject: true, note: 'Requiere mayor acompañamiento formativo' });
+      }
+    }
+
+    result.subjects.push(sData);
+  });
+
+  return result;
 }
 
 function buildStudentCard(si) {
@@ -10427,13 +10516,14 @@ function buildStudentCard(si) {
   const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
   const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
   const attStats = getStudentAttendanceStats(si);
+  const perf = getStudentDetailedPerformance(si);
 
   let statusBadge = '🟢 Domina los aprendizajes (Aprobado)';
   if (gAvg !== null) {
     const n = parseFloat(gAvg);
-    if (n < 4.01) statusBadge = '⚠ Promoción Excepcional (Requiere acuerdo y plan)';
-    else if (n < 7.00) statusBadge = '🔴 Supletorio (Requiere refuerzo pedagógico)';
-    else if (n < 9.00) statusBadge = '🟡 Alcanza aprendizajes (Opción a 1 mejora)';
+    if (n < 4.01) statusBadge = '⚠ Promoción Excepcional (Requiere acuerdo y plan de mejora)';
+    else if (n < 7.00) statusBadge = '🔴 Supletorio / Riesgo (Requiere refuerzo pedagógico inmediato)';
+    else if (n < 9.00) statusBadge = '🟡 Alcanza los aprendizajes (Opción a mejora)';
   }
 
   const repName = profile.rep_nombre || 'No registrado';
@@ -10442,75 +10532,169 @@ function buildStudentCard(si) {
   const cedula = profile.cedula || '—';
 
   let html = `
-    <div class="rp-card" style="box-shadow:var(--shadow-md);border-radius:var(--radius-md);margin-bottom:18px;border:1px solid var(--border-color)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;border-bottom:1px solid var(--border-color);padding-bottom:12px">
+    <div class="rp-card" style="box-shadow:var(--shadow-md);border-radius:var(--radius-md);margin-bottom:20px;border:1px solid var(--border-color);background:var(--bg-card)">
+      
+      <!-- Cabecera de la Libreta -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;border-bottom:1px solid var(--border-color);padding-bottom:14px">
         <div>
-          <div class="rp-name" style="font-size:1.15rem;font-weight:900;color:var(--primary)">👤 ${si+1}. ${escHTML(name)}</div>
-          <div class="rp-sub" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px">
+          <div class="rp-name" style="font-size:1.25rem;font-weight:900;color:var(--primary)">👤 ${si+1}. ${escHTML(name)}</div>
+          <div class="rp-sub" style="font-size:0.82rem;color:var(--text-muted);margin-top:3px">
             Cédula: <strong>${escHTML(cedula)}</strong> · ${escHTML(S.grado)} · ${escHTML(S.anio)} · ${escHTML(S.periodo)}
           </div>
-          <div style="font-size:0.78rem;font-weight:800;color:${color};margin-top:4px">${statusBadge}</div>
+          <div style="font-size:0.82rem;font-weight:800;color:${color};margin-top:5px;display:inline-block;padding:2px 8px;border-radius:6px;background:${color==='#ef4444'?'#fee2e2':'#dcfce7'}">
+            ${statusBadge}
+          </div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-outline" onclick="rpShowAll()">← Lista</button>
-          <button class="btn btn-success" onclick="shareWhatsApp(${si})">📱 Enviar por WhatsApp</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="rpShowAll()" style="font-weight:800;border-radius:8px">← Lista Completa</button>
+          <button class="btn btn-success" onclick="shareWhatsApp(${si})" style="font-weight:800;padding:8px 16px;border-radius:8px;box-shadow:0 3px 10px rgba(22,163,74,0.3);display:inline-flex;align-items:center;gap:6px">
+            <span style="font-size:1.1rem">📲</span> Enviar Reporte por WhatsApp
+          </button>
         </div>
       </div>
 
       <!-- Ficha de Representante & Asistencia -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px">
-        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px">
-          <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">👨‍👩‍👧 Representante Legal</div>
-          <div style="font-weight:800;font-size:0.88rem;color:var(--text-main);margin-top:2px">${escHTML(repName)} ${escHTML(repRel)}</div>
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">
-            Teléfono/WhatsApp: <strong style="color:var(--primary)">${escHTML(repTel || 'No registrado')}</strong>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:16px">
+        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px 16px">
+          <div style="font-size:0.75rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">👨‍👩‍👧 Representante Legal</div>
+          <div style="font-weight:800;font-size:0.92rem;color:var(--text-main);margin-top:3px">${escHTML(repName)} ${escHTML(repRel)}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px">
+            Teléfono/WhatsApp: <strong style="color:var(--primary);font-size:0.88rem">${escHTML(repTel || 'No registrado')}</strong>
           </div>
         </div>
 
-        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 14px">
-          <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">📅 Resumen de Asistencia</div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
-            <span style="font-size:0.8rem;font-weight:700">Asistencias: <strong style="color:#16a34a">${attStats.p}</strong></span>
-            <span style="font-size:0.8rem;font-weight:700">Faltas: <strong style="color:#dc2626">${attStats.f}</strong></span>
-            <span style="font-size:0.8rem;font-weight:700">Justificadas: <strong style="color:#2563eb">${attStats.fj}</strong></span>
-            <span style="font-size:0.8rem;font-weight:700">Atrasos: <strong style="color:#d97706">${attStats.a}</strong></span>
+        <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px 16px">
+          <div style="font-size:0.75rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">📅 Resumen de Asistencia</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px">
+            <span style="font-size:0.82rem;font-weight:700">🟢 Asistencias: <strong style="color:#16a34a">${attStats.p}</strong></span>
+            <span style="font-size:0.82rem;font-weight:700">🔴 Faltas: <strong style="color:#dc2626">${attStats.f}</strong></span>
+            <span style="font-size:0.82rem;font-weight:700">🔵 Justificadas: <strong style="color:#2563eb">${attStats.fj}</strong></span>
+            <span style="font-size:0.82rem;font-weight:700">🟡 Atrasos: <strong style="color:#d97706">${attStats.a}</strong></span>
           </div>
         </div>
       </div>
 
-      <div class="rp-summary" style="margin-bottom:14px">
-        <div class="rp-stat" style="border-left:4px solid ${color}">
-          <div class="rp-stat-v" style="color:${color}">${gAvg || '—'}</div>
-          <div class="rp-stat-l">Promedio General Truncado (2 decimales)</div>
+      <!-- Promedio General -->
+      <div class="rp-summary" style="margin-bottom:18px">
+        <div class="rp-stat" style="border-left:5px solid ${color};background:var(--bg-card-subtle);border-radius:10px;padding:12px 16px">
+          <div class="rp-stat-v" style="color:${color};font-size:1.8rem;font-weight:900">${gAvg || '—'}</div>
+          <div class="rp-stat-l" style="font-weight:800;color:var(--text-muted)">Promedio General Truncado (2 decimales) · Escala Oficial MINEDUC</div>
         </div>
+      </div>
+
+      <!-- ══ BLOQUE DE ANÁLISIS PEDAGÓGICO PARA PADRES ══ -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:20px">
+        
+        <!-- 1. Fortalezas -->
+        <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:14px">
+          <div style="font-size:0.86rem;font-weight:900;color:#166534;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span>🌟 Lo que está MUY BIEN (Fortalezas)</span>
+          </div>
+          <div style="font-size:0.8rem;color:#14532d;line-height:1.45">
+            ${perf.strengths.length > 0 
+              ? `<ul style="margin:0;padding-left:18px">${perf.strengths.slice(0, 4).map(s => `<li><strong>${escHTML(s.mat)}</strong>: ${s.avg ? s.avg + ' pts' : s.qual} — ${s.note}</li>`).join('')}</ul>`
+              : '<em>Continúa fomentando hábitos de estudio para consolidar materias sobresalientes.</em>'}
+          </div>
+        </div>
+
+        <!-- 2. Mejoras Registradas -->
+        <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:12px;padding:14px">
+          <div style="font-size:0.86rem;font-weight:900;color:#1e40af;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span>📈 Mejoras Registradas / Refuerzo</span>
+          </div>
+          <div style="font-size:0.8rem;color:#1e3a8a;line-height:1.45">
+            ${perf.improvements.length > 0 
+              ? `<ul style="margin:0;padding-left:18px">${perf.improvements.map(im => `<li>🎉 <strong>${escHTML(im.mat)}</strong> (${escHTML(im.act)}): Nota superada a <strong>${im.score}</strong></li>`).join('')}</ul>`
+              : '<em>El estudiante puede solicitar evaluaciones de mejora o recuperación pedagógica para subir calificaciones de hasta 2 actividades.</em>'}
+          </div>
+        </div>
+
+        <!-- 3. Lo que debe mejorar -->
+        <div style="background:#fff1f2;border:1.5px solid #fda4af;border-radius:12px;padding:14px">
+          <div style="font-size:0.86rem;font-weight:900;color:#9f1239;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span>⚠️ Lo que DEBE MEJORAR (Compromisos)</span>
+          </div>
+          <div style="font-size:0.8rem;color:#881337;line-height:1.45">
+            ${perf.weaknesses.length > 0 
+              ? `<ul style="margin:0;padding-left:18px">${perf.weaknesses.slice(0, 4).map(w => `<li><strong>${escHTML(w.mat)}</strong> ${w.act ? '(' + escHTML(w.act) + ': ' + w.score + ')' : ': ' + w.avg + ' pts'} — ${w.note}</li>`).join('')}</ul>
+                 <div style="margin-top:8px;font-size:0.75rem;font-weight:800;color:#9f1239">💡 Compromiso en Casa: Supervisar tareas diarias y firma de agenda escolar.</div>`
+              : '<span style="color:#15803d;font-weight:800">✅ ¡Excelente! No presenta asignaturas ni actividades menores a 7.00 puntos.</span>'}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ DESGLOSE DETALLADO DE ACTIVIDADES POR ASIGNATURA ══ -->
+      <div style="font-size:0.92rem;font-weight:900;margin-bottom:12px;color:var(--text-main);display:flex;align-items:center;gap:8px">
+        <span>📚 Calificaciones Detalladas por Actividad y Asignatura:</span>
       </div>
   `;
 
-  // Desglose por Materia
-  html += `<div style="font-size:0.85rem;font-weight:900;margin-bottom:8px;color:var(--text-main)">📚 Calificaciones por Asignatura:</div>`;
-  getMats().forEach(mName => {
-    const calc = getStudentTrimestreCalc(si, mName);
-    if (!calc.isQual) {
+  perf.subjects.forEach(sData => {
+    const mName = sData.name;
+    const calc = sData.calc;
+
+    if (!sData.isQual) {
       const isLow = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7.00;
       const mColor = isLow ? '#dc2626' : '#1e3a8a';
-      html += `<div style="margin-bottom:8px;border:1px solid var(--border-color);border-left:4px solid ${mColor};border-radius:var(--radius-sm);padding:10px 14px;background:var(--bg-card)">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-          <span style="font-weight:800;font-size:0.88rem;color:${mColor}">${escHTML(mName)}</span>
-          <span style="font-family:var(--font-mono);font-weight:900;font-size:0.95rem;color:${mColor}">Nota Trimestre: ${calc.trimAvg}</span>
+      const mBg = isLow ? '#fff5f5' : 'var(--bg-card)';
+
+      let actsHTML = '';
+      if (sData.activities.length > 0) {
+        actsHTML = `
+          <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-color)">
+            <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase">
+              📝 Actividades Evaluadas:
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${sData.activities.map(act => {
+                const num = act.num;
+                const isActLow = num !== null && num < 7.00;
+                const isActTop = num !== null && num >= 9.00;
+                const badgeBg = act.isImproved ? '#dcfce7' : (isActLow ? '#fee2e2' : (isActTop ? '#f0fdf4' : '#f8fafc'));
+                const badgeColor = act.isImproved ? '#15803d' : (isActLow ? '#b91c1c' : (isActTop ? '#15803d' : '#334155'));
+                const badgeBorder = act.isImproved ? '#86efac' : (isActLow ? '#fca5a5' : '#e2e8f0');
+                return `
+                  <div style="background:${badgeBg};border:1px solid ${badgeBorder};border-radius:8px;padding:5px 10px;font-size:0.78rem;display:inline-flex;align-items:center;gap:6px">
+                    <span style="font-size:0.72rem;color:var(--text-muted);font-weight:700">${escHTML(act.week)}:</span>
+                    <span style="font-weight:700;color:var(--text-main)">${escHTML(act.colName)}</span>
+                    <strong style="color:${badgeColor};font-family:var(--font-mono);font-size:0.86rem">${act.score}</strong>
+                    ${act.isImproved ? '<span style="font-size:0.7rem;background:#15803d;color:#fff;padding:1px 5px;border-radius:4px">Mejora 🎉</span>' : (isActLow ? '<span style="font-size:0.7rem;background:#dc2626;color:#fff;padding:1px 5px;border-radius:4px">Refuerzo ⚠️</span>' : '')}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        actsHTML = `<div style="font-size:0.75rem;color:var(--text-light);font-style:italic;margin-top:6px">No hay actividades detalladas registradas aún para esta materia.</div>`;
+      }
+
+      html += `
+        <div style="margin-bottom:12px;border:1px solid var(--border-color);border-left:5px solid ${mColor};border-radius:10px;padding:12px 16px;background:${mBg};box-shadow:0 1px 3px rgba(0,0,0,0.02)">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-weight:900;font-size:0.95rem;color:${mColor}">${escHTML(mName)}</span>
+            <span style="font-family:var(--font-mono);font-weight:900;font-size:1.05rem;color:${mColor};background:var(--bg-card);padding:3px 10px;border-radius:6px;border:1px solid var(--border-color)">
+              Nota Trimestre: ${calc.trimAvg} / 10
+            </span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px">
+            70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) · 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
+          </div>
+          ${actsHTML}
         </div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px">
-          70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) · 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
-        </div>
-      </div>`;
+      `;
     } else {
       const qObj = QUAL_SCALE.find(q => q.val === calc.qualVal) || QUAL_SCALE[3];
-      html += `<div style="margin-bottom:8px;border:1px solid var(--border-color);border-left:4px solid #7c3aed;border-radius:var(--radius-sm);padding:10px 14px;background:var(--bg-card)">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-          <span style="font-weight:800;font-size:0.88rem;color:var(--text-main)">${escHTML(mName)}</span>
-          <span class="badge-qual ${qObj.cls}">${qObj.val} — ${qObj.label}</span>
+      html += `
+        <div style="margin-bottom:12px;border:1px solid var(--border-color);border-left:5px solid #7c3aed;border-radius:10px;padding:12px 16px;background:var(--bg-card)">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-weight:900;font-size:0.95rem;color:var(--text-main)">${escHTML(mName)}</span>
+            <span class="badge-qual ${qObj.cls}" style="font-size:0.82rem">${qObj.val} — ${qObj.label}</span>
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">${qObj.desc}</div>
         </div>
-        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">${qObj.desc}</div>
-      </div>`;
+      `;
     }
   });
 
@@ -10523,47 +10707,102 @@ function shareWhatsApp(si) {
   const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
   const repName = profile.rep_nombre || 'Estimado/a Representante';
   const attStats = getStudentAttendanceStats(si);
+  const perf = getStudentDetailedPerformance(si);
 
   let rawTel = (profile.rep_telefono || '').replace(/\D/g, '');
   if (rawTel.startsWith('09') && rawTel.length === 10) {
     rawTel = '593' + rawTel.substring(1);
   }
 
-  const lines = [
-    `🎓 *INFORME DE CALIFICACIONES Y ASISTENCIA*`,
-    `Estimado/a: *${repName}*`,
-    `Estudiante: *${name}*`,
-    `Grado/Curso: ${S.grado || '—'} · Año Lectivo: ${S.anio || '—'}`,
-    `Período: *${S.periodo || '1er Trimestre'}*`,
-    `─────────────────────`,
-    `📊 *PROMEDIO GENERAL: ${gAvg || '—'} / 10*`,
-    `─────────────────────`,
-    `*CALIFICACIONES (70% Form. + 30% Sum.):*`
-  ];
-
-  getMats().forEach(m => {
-    const calc = getStudentTrimestreCalc(si, m);
-    if (!calc.isQual) {
-      lines.push(`• *${m}*: ${calc.trimAvg} (70%: ${calc.formWeighted} | 30%: ${calc.sumWeighted})`);
-    }
-  });
-
-  lines.push(`─────────────────────`);
-  lines.push(`*EVALUACIÓN CUALITATIVA:*`);
-  getMats().forEach(m => {
-    const calc = getStudentTrimestreCalc(si, m);
-    if (calc.isQual) {
-      lines.push(`• *${m}*: [${calc.qualVal}]`);
-    }
-  });
-
-  if (attStats.total > 0) {
-    lines.push(`─────────────────────`);
-    lines.push(`*ASISTENCIA:* ${attStats.p} Asistencias · ${attStats.f} Faltas · ${attStats.fj} Justificadas · ${attStats.a} Atrasos`);
+  let statusText = '🟢 Domina los aprendizajes requeridos';
+  if (gAvg !== null) {
+    const n = parseFloat(gAvg);
+    if (n < 4.01) statusText = '⚠️ Promoción Excepcional (Requiere plan de mejora)';
+    else if (n < 7.00) statusText = '🔴 Supletorio (Requiere refuerzo pedagógico)';
+    else if (n < 9.00) statusText = '🟡 Alcanza los aprendizajes requeridos';
   }
 
-  lines.push(`─────────────────────`);
-  lines.push(`Docente: ${S.docente || 'Docente'}`);
+  const lines = [
+    `🎓 *UNIDAD EDUCATIVA FISCAL CALDERÓN 2*`,
+    `📋 *INFORME DETALLADO DE CALIFICACIONES Y ASISTENCIA*`,
+    `───────────────────────────────`,
+    `👋 Estimada/o *${repName}*,`,
+    `Representante legal de: *${name}*`,
+    `Grado/Paralelo: *${S.grado || '7mo EGB "C"'}* · Año Lectivo: *${S.anio || '2026-2027'}*`,
+    `Período: *${S.periodo || '1er Trimestre'}*`,
+    `───────────────────────────────`,
+    `📊 *PROMEDIO GENERAL: ${gAvg || '—'} / 10*`,
+    `📌 Estado Académico: *${statusText}*`,
+    `───────────────────────────────`,
+    `📚 *DETALLE POR ASIGNATURA Y ACTIVIDADES:*`
+  ];
+
+  perf.subjects.forEach(sData => {
+    const m = sData.name;
+    const calc = sData.calc;
+    if (!sData.isQual) {
+      const isLow = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7.00;
+      const icon = isLow ? '📕' : '📘';
+      lines.push(``);
+      lines.push(`${icon} *${m.toUpperCase()}*: *${calc.trimAvg} / 10* ${isLow ? '⚠️' : '✅'}`);
+      lines.push(`   (70% Formativo: ${calc.formWeighted} | 30% Sumativo: ${calc.sumWeighted})`);
+
+      if (sData.activities.length > 0) {
+        sData.activities.forEach(act => {
+          const num = act.num;
+          const isActLow = num !== null && num < 7.00;
+          const actIcon = act.isImproved ? '🎉' : (isActLow ? '🔴' : '🟢');
+          lines.push(`   • ${act.week} - ${act.colName}: *${act.score}* ${actIcon}${act.isImproved ? ' [Mejora]' : (isActLow ? ' [Requiere Refuerzo]' : '')}`);
+        });
+      }
+    } else {
+      lines.push(``);
+      lines.push(`🎨 *${m.toUpperCase()}*: *[${calc.qualVal}]*`);
+    }
+  });
+
+  // Bloque de Fortalezas
+  if (perf.strengths.length > 0) {
+    lines.push(``);
+    lines.push(`───────────────────────────────`);
+    lines.push(`🌟 *FORTALEZAS Y LO QUE ESTÁ MUY BIEN:*`);
+    perf.strengths.slice(0, 4).forEach(st => {
+      lines.push(`• *${st.mat}*: ${st.avg ? st.avg + ' pts' : st.qual} — ${st.note}`);
+    });
+  }
+
+  // Bloque de Mejoras Registradas
+  if (perf.improvements.length > 0) {
+    lines.push(``);
+    lines.push(`───────────────────────────────`);
+    lines.push(`📈 *MEJORAS Y PROGRESO REGISTRADO:*`);
+    perf.improvements.forEach(im => {
+      lines.push(`• 🎉 *${im.mat}* (${im.act}): Calificación mejorada a *${im.score}*`);
+    });
+  }
+
+  // Bloque de lo que debe mejorar
+  if (perf.weaknesses.length > 0) {
+    lines.push(``);
+    lines.push(`───────────────────────────────`);
+    lines.push(`⚠️ *LO QUE DEBE MEJORAR Y COMPROMISOS:*`);
+    perf.weaknesses.slice(0, 4).forEach(w => {
+      lines.push(`• *${w.mat}* ${w.act ? '(' + w.act + ': ' + w.score + ')' : ': ' + w.avg + ' pts'} — ${w.note}`);
+    });
+    lines.push(`💡 *Compromiso en casa:* Supervisar repaso diario de 20 a 30 minutos, verificar cuadernos y coordinar plan de refuerzo pedagógico.`);
+  }
+
+  // Asistencia
+  if (attStats.total > 0) {
+    lines.push(``);
+    lines.push(`───────────────────────────────`);
+    lines.push(`📅 *RESUMEN DE ASISTENCIA:*`);
+    lines.push(`🟢 Asistencias: ${attStats.p} | 🔴 Faltas: ${attStats.f} | 🟡 Atrasos: ${attStats.a} | 🔵 Justificadas: ${attStats.fj}`);
+  }
+
+  lines.push(``);
+  lines.push(`───────────────────────────────`);
+  lines.push(`✍️ *Docente Tutor:* ${S.docente || 'Lcdo. Kléver Yánez'}`);
   lines.push(`_Instructivo Oficial MINEDEC · Acuerdo MINEDUC-2024-00031-A — 2 decimales truncados_`);
 
   const msg = encodeURIComponent(lines.join('\n'));
