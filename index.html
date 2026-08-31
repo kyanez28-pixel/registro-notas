@@ -18616,24 +18616,17 @@ function renderStudentsMatrix() {
       ? `<img src="${p.foto}" style="width:32px;height:38px;object-fit:cover;border-radius:4px;border:1.5px solid ${isParentFilled ? '#16a34a' : '#2563eb'};flex-shrink:0"/>`
       : `<div style="width:32px;height:38px;border-radius:4px;border:1.5px dashed ${isParentFilled ? '#86efac' : 'var(--border-color)'};background:${isParentFilled ? '#f0fdf4' : 'var(--bg-card-subtle)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:${isParentFilled ? '#15803d' : 'var(--text-light)'}">👤</div>`;
 
-    const statusBadge = isParentFilled
-      ? `<span style="display:inline-flex;align-items:center;gap:2px;background:#dcfce7;color:#15803d;border:1px solid #86efac;font-size:0.62rem;font-weight:900;padding:1px 6px;border-radius:99px;margin-top:2px" title="Ficha completada por el representante legal">✅ PADRES</span>`
-      : `<span style="display:inline-flex;align-items:center;gap:2px;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;font-size:0.62rem;font-weight:900;padding:1px 6px;border-radius:99px;margin-top:2px" title="Pendiente de llenado por el representante legal">⏳ PENDIENTE</span>`;
-
     const rowBg = isParentFilled 
-      ? 'background:rgba(240,253,244,0.45);' 
-      : 'background:rgba(254,242,242,0.45);';
+      ? 'background:rgba(240,253,244,0.55);' 
+      : 'background:rgba(254,242,242,0.55);';
 
     return `
       <tr style="cursor:pointer;${rowBg}" ondblclick="openStudentProfileModal(${si})" title="Doble clic para ver/editar ficha completa">
-        <td class="ic" style="border-left:${isParentFilled ? '3.5px solid #16a34a' : '3.5px solid #dc2626'} !important">${si + 1}</td>
+        <td class="ic" style="border-left:${isParentFilled ? '4px solid #16a34a' : '4px solid #dc2626'} !important">${si + 1}</td>
         <td class="nc" style="width:${nomW}px;min-width:${nomW}px;max-width:${nomW}px;font-weight:700" onclick="openStudentProfileModal(${si})">
           <div style="display:flex;align-items:center;gap:7px">
             ${avatarHTML}
-            <div style="display:flex;flex-direction:column;overflow:hidden">
-              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span>
-              ${statusBadge}
-            </div>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span>
           </div>
         </td>
         ${cellsHTML}
