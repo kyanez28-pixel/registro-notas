@@ -3988,7 +3988,7 @@ body.in-focus-mode {
     <div>
       <div style="font-size:1.15rem;font-weight:900;letter-spacing:0.3px;display:flex;align-items:center;gap:8px">
         <span>👥 Matriz de Datos de los Estudiantes</span>
-        <span style="font-size:0.7rem;background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:99px;font-weight:700">6to EGB "C" · 2025-2026</span>
+        <span id="stMatrixCourseBadge" style="font-size:0.7rem;background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:99px;font-weight:700">7mo EGB "C" · 2026-2027</span>
       </div>
       <div style="font-size:0.75rem;opacity:.9;margin-top:3px">
         Nómina general, datos personales, representantes legales, fichas de contacto y necesidades educativas
@@ -17363,6 +17363,10 @@ function renderStudentsMatrix() {
   const tb = document.getElementById('stMatrixTb');
   const thEl = document.getElementById('stMatrixTh');
   const statsDiv = document.getElementById('stMatrixStats');
+  const courseBadge = document.getElementById('stMatrixCourseBadge');
+  if (courseBadge) {
+    courseBadge.textContent = `${S.grado || '7mo EGB "C"'} · ${S.anio || '2026-2027'}`;
+  }
   if (!tb || !thEl) return;
 
   // ── Estadísticas ──────────────────────────────────────────────────────────
@@ -18200,7 +18204,7 @@ function printSingleStudentProfile(si) {
         <div style="flex:1">
           <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
           <p>FICHA INFORMATIVA Y MATRIZ DE DATOS DEL ESTUDIANTE</p>
-          <p><strong>Año Lectivo:</strong> ${S.anio || '2025-2026'} · <strong>Grado:</strong> ${S.grado || '6to EGB C'} · <strong>Tutor:</strong> ${S.tutor || S.docente || 'Lcdo. Kléver Yánez'}</p>
+          <p><strong>Año Lectivo:</strong> ${S.anio || '2026-2027'} · <strong>Grado:</strong> ${S.grado || '7mo EGB C'} · <strong>Tutor:</strong> ${S.tutor || S.docente || 'Lcdo. Kléver Yánez'}</p>
         </div>
         ${p.foto ? `<img src="${p.foto}" style="width:80px;height:100px;object-fit:cover;border-radius:6px;border:2px solid #1e3a8a;flex-shrink:0"/>` : '<div style="width:80px;height:100px;border:2px dashed #cbd5e1;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#94a3b8;font-size:0.7rem;text-align:center">Sin foto</div>'}
       </div>
@@ -18316,7 +18320,7 @@ function exportStudentsMatrixXLSX() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  const fileName = 'Matriz_Datos_Estudiantes_' + (S.grado || 'Sexto_C').replace(/\s+/g, '_') + '_' + (S.anio || '2025-2026') + '.xlsx';
+  const fileName = 'Matriz_Datos_Estudiantes_' + (S.grado || 'Septimo_C').replace(/\s+/g, '_') + '_' + (S.anio || '2026-2027') + '.xlsx';
   a.download = fileName;
   document.body.appendChild(a);
   a.click();
