@@ -8159,17 +8159,9 @@ function renderTable() {
       const numDisp = calc.numAvg ? `<span style="font-size:0.75rem;color:var(--text-muted);margin-left:4px">(${calc.numAvg})</span>` : '';
       summaryCells = `<td class="td-trim" style="${trimHidden?'display:none;':''}"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span>${numDisp}</td>`;
     }
-
-    // Badge de actualización por padres
-    const _prof = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
-    const _isParentDone = _prof && (_prof.parentUpdatedAt || (_prof.rep_nombre && _prof.rep_telefono && _prof.rep_telefono.trim().length >= 9 && _prof.direccion && _prof.direccion.trim().length > 3));
-    const _parentBadge = _isParentDone
-      ? ` <span title="Datos actualizados por el representante legal" style="display:inline-flex;align-items:center;gap:2px;background:#16a34a;color:#fff;font-size:0.6rem;font-weight:900;padding:1px 5px;border-radius:99px;vertical-align:middle;letter-spacing:0.2px;margin-left:4px;cursor:default">👨‍👩‍👧 PAD</span>`
-      : '';
-
-    return `<tr data-name="${escVal(name.toLowerCase())}" style="${isRowH?'display:none;':(_isParentDone?'outline:1.5px solid rgba(22,163,74,0.4);':'')}">
+    return `<tr data-name="${escVal(name.toLowerCase())}" style="${isRowH?'display:none;':''}">
       <td class="ic">${rowPos+1}</td>
-      <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}${_parentBadge}</td>
+      <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}</td>
       ${cells}
       ${summaryCells}
       <td class="ac" style="white-space:nowrap">
