@@ -4063,6 +4063,8 @@ body.in-focus-mode {
       </div>
       <select id="stMatrixFilterNnee" class="sort-select" onchange="renderStudentsMatrix()">
         <option value="all">Todos los Estudiantes</option>
+        <option value="padres-si">✅ Formulario Llenado por Padres</option>
+        <option value="padres-no">⚠️ Pendientes de Llenar Formulario</option>
         <option value="nnee-si">Con NN.EE. / Discapacidad</option>
         <option value="enf-si">Con Enfermedades / Alergias</option>
         <option value="hermanos-si">Con Hermanos en la Institución</option>
@@ -8158,9 +8160,16 @@ function renderTable() {
       summaryCells = `<td class="td-trim" style="${trimHidden?'display:none;':''}"><span class="badge-qual ${qObj.cls}">${qObj.val} - ${qObj.label.split(' ')[0]}</span>${numDisp}</td>`;
     }
 
-    return `<tr data-name="${escVal(name.toLowerCase())}" style="${isRowH?'display:none;':''}">
+    // Badge de actualización por padres
+    const _prof = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+    const _isParentDone = _prof && (_prof.parentUpdatedAt || (_prof.rep_nombre && _prof.rep_telefono && _prof.rep_telefono.trim().length >= 9 && _prof.direccion && _prof.direccion.trim().length > 3));
+    const _parentBadge = _isParentDone
+      ? ` <span title="Datos actualizados por el representante legal" style="display:inline-flex;align-items:center;gap:2px;background:#16a34a;color:#fff;font-size:0.6rem;font-weight:900;padding:1px 5px;border-radius:99px;vertical-align:middle;letter-spacing:0.2px;margin-left:4px;cursor:default">👨‍👩‍👧 PAD</span>`
+      : '';
+
+    return `<tr data-name="${escVal(name.toLowerCase())}" style="${isRowH?'display:none;':(_isParentDone?'outline:1.5px solid rgba(22,163,74,0.4);':'')}">
       <td class="ic">${rowPos+1}</td>
-      <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}</td>
+      <td class="nc" onclick="handleStudentNameTap(this, ${si})" ondblclick="editStudentName(${si})" title="${escVal(name)}">${escHTML(name)}${_parentBadge}</td>
       ${cells}
       ${summaryCells}
       <td class="ac" style="white-space:nowrap">
@@ -16084,7 +16093,13 @@ function updateCustomListPreview() {
           '<div class="only-print list-cell-print-box" style="text-align:center;font-weight:700">' + escHTML(val || '') + '</div>' +
         '</td>';
       } else {
-        tdCols += '<td style="padding:' + cellPadding + ';text-align:' + align + ';' + fontMono + ';background:' + theme.cellBg + ' !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
+        // Verificar si el estudiante tiene actualización de padres y la celda es un campo de datos del representante
+        const _mProf = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
+        const _parentFields = ['mat_rep_nombre','mat_rep_cedula','mat_rep_telefono','mat_direccion','mat_rep_email','mat_tel_emergencia','mat_madre_nombre','mat_madre_tel','mat_padre_nombre','mat_padre_tel','mat_cedula','mat_fecha_nac','mat_edad','mat_nnee','mat_enfermedad','mat_hermanos'];
+        const _isParentCell = _mProf && _mProf.parentUpdatedAt && def && _parentFields.includes(colType);
+        const _cellBg = _isParentCell ? 'rgba(22,163,74,0.12)' : theme.cellBg;
+        const _cellBorder = _isParentCell ? 'border-left:3px solid #16a34a;' : '';
+        tdCols += '<td title="' + (_isParentCell ? ('✅ Dato ingresado por el representante/padre · ' + new Date(_mProf.parentUpdatedAt).toLocaleDateString('es-EC',{day:'2-digit',month:'2-digit',year:'2-digit'})) : '') + '" style="padding:' + cellPadding + ';text-align:' + align + ';' + fontMono + _cellBorder + ';background:' + _cellBg + ' !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
           '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="text-align:' + align + ';' + fontMono + ';font-size:' + fontSize + ';padding:3px 6px"/>' +
           '<div class="only-print list-cell-print-box" style="text-align:' + align + ';' + fontMono + ';font-weight:700">' + escHTML(val || '') + '</div>' +
         '</td>';
@@ -18380,6 +18395,12 @@ function getCellValue(p, colId, si) {
   }
 }
 
+function isProfileFilledByParent(p) {
+  if (!p) return false;
+  if (p.parentUpdatedAt) return true;
+  return !!(p.rep_nombre && p.rep_telefono && p.rep_telefono.trim().length >= 9 && p.direccion && p.direccion.trim().length > 3);
+}
+
 // Drag state for matrix columns
 let _mxDragCol = null;
 
@@ -18396,11 +18417,19 @@ function renderStudentsMatrix() {
 
   // ── Estadísticas ──────────────────────────────────────────────────────────
   const total = S.studentProfiles.length;
+  const withParents = S.studentProfiles.filter(p => isProfileFilledByParent(p)).length;
   const withNnee  = S.studentProfiles.filter(p => p.nnee && p.nnee.trim().toUpperCase().startsWith('S')).length;
   const withEnf   = S.studentProfiles.filter(p => p.enfermedad && !['NO','NINGUNA','NINGÚNA',''].includes((p.enfermedad||'').trim().toUpperCase())).length;
   const withRepTel= S.studentProfiles.filter(p => p.rep_telefono && p.rep_telefono.trim().length > 5).length;
 
   if (statsDiv) statsDiv.innerHTML = `
+    <div class="stat-card" style="border-left:4px solid #16a34a;padding:10px 14px;background:#f0fdf4">
+      <div class="stat-card-title" style="color:#15803d">👨‍👩‍👧 FORMULARIO DE PADRES</div>
+      <div class="stat-card-val" style="color:#15803d">${withParents} / ${total}</div>
+      <div class="stat-card-sub" style="font-weight:800;color:${withParents === total ? '#16a34a' : '#b45309'}">
+        ${withParents === total ? '🎉 100% Completado' : `⚠️ Faltan ${total - withParents} por llenar`}
+      </div>
+    </div>
     <div class="stat-card" style="border-left:4px solid #2563eb;padding:10px 14px">
       <div class="stat-card-title">TOTAL MATRICULADOS</div>
       <div class="stat-card-val" style="color:#2563eb">${total}</div>
@@ -18416,9 +18445,9 @@ function renderStudentsMatrix() {
       <div class="stat-card-val" style="color:#dc2626">${withEnf}</div>
       <div class="stat-card-sub">Salud y Cuidado</div>
     </div>
-    <div class="stat-card" style="border-left:4px solid #16a34a;padding:10px 14px">
+    <div class="stat-card" style="border-left:4px solid #0284c7;padding:10px 14px">
       <div class="stat-card-title">CONTACTOS CON WHATSAPP</div>
-      <div class="stat-card-val" style="color:#16a34a">${withRepTel} / ${total}</div>
+      <div class="stat-card-val" style="color:#0284c7">${withRepTel} / ${total}</div>
       <div class="stat-card-sub">Comunicación Directa</div>
     </div>`;
 
@@ -18570,7 +18599,10 @@ function renderStudentsMatrix() {
   const rowsHTML = S.studentProfiles.map((p, si) => {
     if (S.students[si] && S.students[si] !== p.nombre) p.nombre = S.students[si];
     const name = p.nombre || `Estudiante ${si+1}`;
+    const isParentFilled = isProfileFilledByParent(p);
 
+    if (filterNnee === 'padres-si'  && !isParentFilled) return '';
+    if (filterNnee === 'padres-no'  && isParentFilled) return '';
     if (filterNnee === 'nnee-si'    && !(p.nnee||'').trim().toUpperCase().startsWith('S')) return '';
     if (filterNnee === 'enf-si'     && ['NO','NINGUNA','NINGÚNA',''].includes((p.enfermedad||'').trim().toUpperCase())) return '';
     if (filterNnee === 'hermanos-si'&& ['NO',''].includes((p.hermanos_inst||'').trim().toUpperCase())) return '';
@@ -18582,18 +18614,35 @@ function renderStudentsMatrix() {
 
     const cellsHTML = orderedCols.map((col, ci) => {
       const w = S.colWidths[`matrix||${col.id}`] || col.minW;
-      return `<td style="width:${w}px;min-width:${w}px;vertical-align:middle">${getCellValue(p, col.id, si)}</td>`;
+      const cellHighlight = isParentFilled && ['rep_nombre','rep_telefono','rep_cedula','direccion','rep_email','tel_emerg','madre_nombre','madre_tel','padre_nombre','padre_tel','nnee','enfermedad','hermanos'].includes(col.id)
+        ? 'background:rgba(220,252,231,0.35);'
+        : '';
+      return `<td style="width:${w}px;min-width:${w}px;vertical-align:middle;${cellHighlight}">${getCellValue(p, col.id, si)}</td>`;
     }).join('');
 
     const avatarHTML = p.foto
-      ? `<img src="${p.foto}" style="width:32px;height:38px;object-fit:cover;border-radius:4px;border:1.5px solid #2563eb;flex-shrink:0"/>`
-      : `<div style="width:32px;height:38px;border-radius:4px;border:1.5px dashed var(--border-color);background:var(--bg-card-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:var(--text-light)">👤</div>`;
+      ? `<img src="${p.foto}" style="width:32px;height:38px;object-fit:cover;border-radius:4px;border:1.5px solid ${isParentFilled ? '#16a34a' : '#2563eb'};flex-shrink:0"/>`
+      : `<div style="width:32px;height:38px;border-radius:4px;border:1.5px dashed ${isParentFilled ? '#86efac' : 'var(--border-color)'};background:${isParentFilled ? '#f0fdf4' : 'var(--bg-card-subtle)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:${isParentFilled ? '#15803d' : 'var(--text-light)'}">👤</div>`;
+
+    const statusBadge = isParentFilled
+      ? `<span style="display:inline-flex;align-items:center;gap:2px;background:#dcfce7;color:#15803d;border:1px solid #86efac;font-size:0.62rem;font-weight:900;padding:1px 6px;border-radius:99px;margin-top:2px" title="Ficha completada por el representante legal">✅ PADRES</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:2px;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;font-size:0.62rem;font-weight:900;padding:1px 6px;border-radius:99px;margin-top:2px" title="Pendiente de llenado por el representante legal">⏳ PENDIENTE</span>`;
+
+    const rowBg = isParentFilled 
+      ? 'background:rgba(240,253,244,0.45);' 
+      : 'background:rgba(254,242,242,0.45);';
 
     return `
-      <tr style="cursor:pointer" ondblclick="openStudentProfileModal(${si})" title="Doble clic para ver/editar ficha completa">
-        <td class="ic">${si + 1}</td>
+      <tr style="cursor:pointer;${rowBg}" ondblclick="openStudentProfileModal(${si})" title="Doble clic para ver/editar ficha completa">
+        <td class="ic" style="border-left:${isParentFilled ? '3.5px solid #16a34a' : '3.5px solid #dc2626'} !important">${si + 1}</td>
         <td class="nc" style="width:${nomW}px;min-width:${nomW}px;max-width:${nomW}px;font-weight:700" onclick="openStudentProfileModal(${si})">
-          <div style="display:flex;align-items:center;gap:7px">${avatarHTML}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span></div>
+          <div style="display:flex;align-items:center;gap:7px">
+            ${avatarHTML}
+            <div style="display:flex;flex-direction:column;overflow:hidden">
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span>
+              ${statusBadge}
+            </div>
+          </div>
         </td>
         ${cellsHTML}
         <td style="text-align:center;white-space:nowrap">
@@ -20116,6 +20165,9 @@ function saveParentStandaloneData() {
   if (_parentStandaloneFotoData) {
     p.foto = _parentStandaloneFotoData;
   }
+
+  // Marcar que este perfil fue actualizado por el padre/representante
+  p.parentUpdatedAt = new Date().toISOString();
 
   _lastSavedParentStudentIndex = si;
 
