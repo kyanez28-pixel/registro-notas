@@ -4373,32 +4373,33 @@ body.in-focus-mode {
     </div>
 
     <!-- Tabs de trimestres -->
-    <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;align-items:center">
-      <button id="instCronoTab1" class="btn btn-success" onclick="switchInstCronoTab(1)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">📅 1er Trimestre · Sep–Nov 2026</button>
-      <button id="instCronoTab2" class="btn btn-outline" onclick="switchInstCronoTab(2)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;color:#b45309;border-color:#fcd34d;background:rgba(251,191,36,0.08)">📅 2do Trimestre · Dic 2026–Mar 2027</button>
-      <button id="instCronoTab3" class="btn btn-outline" onclick="switchInstCronoTab(3)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;color:#7c3aed;border-color:#c4b5fd;background:rgba(124,58,237,0.08)">📅 3er Trimestre · Mar–Jun 2027</button>
-      <span id="instCurrentTrimIndicator" style="margin-left:auto;font-size:0.75rem;font-weight:800;color:var(--primary);background:var(--primary-light);padding:4px 10px;border-radius:99px"></span>
+    <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;align-items:center">
+      <button id="instCronoTab1" class="btn btn-success" onclick="switchInstCronoTab(1)" style="font-size:0.95rem;white-space:nowrap;font-weight:900;padding:8px 18px">📅 1er Trimestre · Sep–Nov 2026</button>
+      <button id="instCronoTab2" class="btn btn-outline" onclick="switchInstCronoTab(2)" style="font-size:0.95rem;white-space:nowrap;font-weight:900;padding:8px 18px;color:#b45309;border-color:#fcd34d;background:rgba(251,191,36,0.08)">📅 2do Trimestre · Dic 2026–Mar 2027</button>
+      <button id="instCronoTab3" class="btn btn-outline" onclick="switchInstCronoTab(3)" style="font-size:0.95rem;white-space:nowrap;font-weight:900;padding:8px 18px;color:#7c3aed;border-color:#c4b5fd;background:rgba(124,58,237,0.08)">📅 3er Trimestre · Mar–Jun 2027</button>
+      <span id="instCurrentTrimIndicator" style="margin-left:auto;font-size:0.82rem;font-weight:900;color:var(--primary);background:var(--primary-light);padding:5px 12px;border-radius:99px"></span>
     </div>
 
     <!-- ── 1ER TRIMESTRE ── -->
     <div id="instCronoContent1">
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div style="background:linear-gradient(90deg,#059669,#10b981);padding:10px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#059669,#10b981);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
-            <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL PRIMER TRIMESTRE 2026-2027</div>
-            <div style="font-size:0.75rem;opacity:.9">01/09 al 01/12/2026 &nbsp;·&nbsp; 63 días laborables oficiales</div>
+            <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL PRIMER TRIMESTRE 2026-2027</div>
+            <div style="font-size:0.92rem;opacity:.95;margin-top:2px;font-weight:700">01/09 al 01/12/2026 &nbsp;·&nbsp; 63 días laborables oficiales</div>
           </div>
-          <span style="font-size:0.72rem;background:rgba(255,255,255,0.22);padding:3px 10px;border-radius:99px;font-weight:800">Fase CONECTA / NIVELA / CREA</span>
+          <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Fase CONECTA / NIVELA / CREA</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+          <table style="width:100%;border-collapse:collapse;font-size:0.92rem">
             <thead>
-              <tr style="background:var(--bg-card-subtle)">
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:90px">Mes</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:125px">Fechas</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades Institucionales</th>
-                <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:140px">Estado / Seguimiento</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:170px">Mis Notas Docente</th>
+              <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
+                <th style="padding:12px 6px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:44px;border:none">✓</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:120px;border:none">Mes</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:165px;border:none">Fechas</th>
+                <th style="padding:12px 18px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Estado / Seguimiento</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody1"></tbody>
@@ -4409,23 +4410,24 @@ body.in-focus-mode {
 
     <!-- ── 2DO TRIMESTRE ── -->
     <div id="instCronoContent2" style="display:none">
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div style="background:linear-gradient(90deg,#d97706,#f59e0b);padding:10px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#d97706,#f59e0b);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
-            <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL SEGUNDO TRIMESTRE 2026-2027</div>
-            <div style="font-size:0.75rem;opacity:.9">02/12/2026 al 15/03/2027 &nbsp;·&nbsp; 66 días laborables oficiales</div>
+            <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL SEGUNDO TRIMESTRE 2026-2027</div>
+            <div style="font-size:0.92rem;opacity:.95;margin-top:2px;font-weight:700">02/12/2026 al 15/03/2027 &nbsp;·&nbsp; 66 días laborables oficiales</div>
           </div>
-          <span style="font-size:0.72rem;background:rgba(255,255,255,0.22);padding:3px 10px;border-radius:99px;font-weight:800">Planificación N° 2 · Aniversario</span>
+          <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Planificación N° 2 · Aniversario</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+          <table style="width:100%;border-collapse:collapse;font-size:0.92rem">
             <thead>
-              <tr style="background:var(--bg-card-subtle)">
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:90px">Mes</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:125px">Fechas</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades Institucionales</th>
-                <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:140px">Estado / Seguimiento</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:170px">Mis Notas Docente</th>
+              <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
+                <th style="padding:12px 6px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:44px;border:none">✓</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:120px;border:none">Mes</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:165px;border:none">Fechas</th>
+                <th style="padding:12px 18px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Estado / Seguimiento</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody2"></tbody>
@@ -4436,23 +4438,24 @@ body.in-focus-mode {
 
     <!-- ── 3ER TRIMESTRE ── -->
     <div id="instCronoContent3" style="display:none">
-      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div style="background:linear-gradient(90deg,#7c3aed,#a855f7);padding:10px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#7c3aed,#a855f7);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
-            <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL TERCER TRIMESTRE 2026-2027</div>
-            <div style="font-size:0.75rem;opacity:.9">16/03 al 25/06/2027 &nbsp;·&nbsp; 71 días laborables oficiales</div>
+            <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL TERCER TRIMESTRE 2026-2027</div>
+            <div style="font-size:0.92rem;opacity:.95;margin-top:2px;font-weight:700">16/03 al 25/06/2027 &nbsp;·&nbsp; 71 días laborables oficiales</div>
           </div>
-          <span style="font-size:0.72rem;background:rgba(255,255,255,0.22);padding:3px 10px;border-radius:99px;font-weight:800">Feria de Proyectos · Cierre</span>
+          <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Feria de Proyectos · Cierre</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+          <table style="width:100%;border-collapse:collapse;font-size:0.92rem">
             <thead>
-              <tr style="background:var(--bg-card-subtle)">
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:90px">Mes</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:125px">Fechas</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades Institucionales</th>
-                <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:140px">Estado / Seguimiento</th>
-                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;width:170px">Mis Notas Docente</th>
+              <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
+                <th style="padding:12px 6px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:44px;border:none">✓</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:120px;border:none">Mes</th>
+                <th style="padding:12px 14px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:165px;border:none">Fechas</th>
+                <th style="padding:12px 18px;text-align:left;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Estado / Seguimiento</th>
+                <th style="padding:12px 14px;text-align:center;color:#ffffff;font-size:0.88rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody3"></tbody>
@@ -21646,19 +21649,19 @@ function getInstActivityTiming(act, refDate) {
 
   let badgeHtml = '';
   if (isToday) {
-    badgeHtml = `<span style="background:#10b981;color:#fff;font-weight:900;font-size:0.7rem;padding:3px 8px;border-radius:99px;box-shadow:0 2px 6px rgba(16,185,129,0.4);display:inline-flex;align-items:center;gap:4px">
-      <span class="sync-dot pulse" style="background:#fff;width:6px;height:6px"></span> ⚡ HOY (EN CURSO)
+    badgeHtml = `<span style="background:#059669;color:#fff;font-weight:900;font-size:0.84rem;padding:5px 12px;border-radius:99px;box-shadow:0 3px 8px rgba(5,150,105,0.35);display:inline-flex;align-items:center;gap:6px;letter-spacing:0.2px">
+      <span class="sync-dot pulse" style="background:#fff;width:7px;height:7px"></span> ⚡ HOY (EN CURSO)
     </span>`;
   } else if (isPast) {
-    badgeHtml = `<span style="background:var(--bg-card-subtle);color:var(--text-light);font-weight:700;font-size:0.7rem;padding:2px 7px;border-radius:99px;border:1px solid var(--border-color)">
+    badgeHtml = `<span style="background:var(--bg-card-subtle);color:var(--text-muted);font-weight:800;font-size:0.80rem;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border-color)">
       ✔ Concluida
     </span>`;
   } else if (isThisWeek) {
-    badgeHtml = `<span style="background:#fef3c7;color:#92400e;font-weight:800;font-size:0.7rem;padding:2px 8px;border-radius:99px;border:1px solid #fcd34d">
+    badgeHtml = `<span style="background:#fef3c7;color:#92400e;font-weight:900;font-size:0.84rem;padding:5px 12px;border-radius:99px;border:1.5px solid #f59e0b;box-shadow:0 2px 6px rgba(245,158,11,0.15)">
       ⏳ En ${diffDays} día${diffDays > 1 ? 's' : ''}
     </span>`;
   } else if (isUpcoming) {
-    badgeHtml = `<span style="background:var(--bg-card-subtle);color:var(--text-muted);font-weight:700;font-size:0.7rem;padding:2px 7px;border-radius:99px;border:1px solid var(--border-color)">
+    badgeHtml = `<span style="background:#eff6ff;color:#1e40af;font-weight:800;font-size:0.80rem;padding:4px 10px;border-radius:99px;border:1.5px solid #bfdbfe">
       📅 Próxima (${diffDays} d)
     </span>`;
   }
@@ -21745,65 +21748,71 @@ function renderInstCronograma() {
 
       // Estilos según estado
       let rowBg = '';
-      let borderLeft = 'border-left: 3px solid transparent;';
+      let borderLeft = 'border-left: 4px solid transparent;';
       if (isSummary) {
-        rowBg = 'background:var(--bg-card-subtle);';
+        rowBg = 'background:var(--bg-card-subtle);font-weight:900;';
       } else if (timing.isToday) {
         rowBg = 'background:rgba(16,185,129,0.14);';
-        borderLeft = 'border-left: 5px solid #10b981;';
+        borderLeft = 'border-left: 6px solid #059669;';
       } else if (isDone) {
-        rowBg = 'background:rgba(241,245,249,0.5);opacity:0.85;';
+        rowBg = 'background:rgba(241,245,249,0.6);opacity:0.85;';
       } else if (row.highlight) {
         rowBg = 'background:rgba(37,99,235,0.06);';
       }
 
-      const actColor = isDone ? 'color:var(--text-light);text-decoration:line-through' : (timing.isToday ? 'font-weight:800;color:var(--text-main)' : (row.highlight ? 'font-weight:800;color:var(--text-main)' : 'color:var(--text-main)'));
+      const actColor = isDone
+        ? 'color:var(--text-light);text-decoration:line-through;font-weight:600;'
+        : (timing.isToday
+          ? 'font-weight:900;color:#047857;font-size:1.06rem;'
+          : (row.highlight
+            ? 'font-weight:900;color:var(--text-main);font-size:1.04rem;'
+            : 'font-weight:700;color:var(--text-main);font-size:1.02rem;'));
 
       html += `
         <tr style="border-bottom:1px solid var(--border-subtle);${rowBg}${borderLeft}transition:all .15s ease">
           <!-- Checkbox para actividades regulares -->
-          <td style="padding:8px 8px;text-align:center;vertical-align:middle;width:38px">
+          <td style="padding:12px 8px;text-align:center;vertical-align:middle;width:44px">
             ${!isSummary && row.id ? `
-              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleInstChecklist('${row.id}', this.checked)" title="Marcar como cumplida/atendida" style="width:17px;height:17px;accent-color:#10b981;cursor:pointer"/>
+              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleInstChecklist('${row.id}', this.checked)" title="Marcar como cumplida/atendida" style="width:21px;height:21px;accent-color:#059669;cursor:pointer"/>
             ` : '📌'}
           </td>
 
           <!-- Mes -->
-          <td style="padding:8px 10px;font-weight:800;color:#059669;white-space:nowrap;vertical-align:middle;font-size:0.75rem">
+          <td style="padding:12px 14px;font-weight:900;color:#047857;white-space:nowrap;vertical-align:middle;font-size:0.95rem;width:120px">
             ${row.mes ? escHTML(row.mes) : ''}
           </td>
 
           <!-- Fechas -->
-          <td style="padding:8px 10px;white-space:nowrap;vertical-align:middle;font-size:0.78rem;font-weight:700;color:var(--text-main);font-family:var(--font-mono)">
+          <td style="padding:12px 14px;white-space:nowrap;vertical-align:middle;font-size:0.96rem;font-weight:800;color:var(--text-main);font-family:var(--font-mono);width:165px">
             ${escHTML(row.fecha)}
           </td>
 
-          <!-- Descripción de la Actividad -->
-          <td style="padding:8px 12px;vertical-align:middle;font-size:0.82rem;line-height:1.45;${actColor}">
-            <div style="display:flex;flex-direction:column;gap:4px">
+          <!-- Descripción de la Actividad (Letra grande y clara) -->
+          <td style="padding:12px 18px;vertical-align:middle;line-height:1.6;${actColor}">
+            <div style="display:flex;flex-direction:column;gap:6px">
               <div>${escHTML(row.act)}</div>
               ${note ? `
-                <div style="background:rgba(245,158,11,0.12);border-left:3px solid #f59e0b;padding:4px 8px;border-radius:4px;font-size:0.75rem;color:var(--text-main);display:flex;align-items:center;justify-content:space-between;gap:6px">
-                  <div style="display:flex;align-items:center;gap:6px;overflow:hidden">
-                    <span>📌</span>
-                    <strong style="white-space:nowrap">Mi Nota:</strong>
+                <div style="background:rgba(245,158,11,0.15);border-left:4px solid #f59e0b;padding:8px 12px;border-radius:6px;font-size:0.88rem;color:var(--text-main);display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700">
+                  <div style="display:flex;align-items:center;gap:8px;overflow:hidden">
+                    <span style="font-size:1.05rem">📌</span>
+                    <strong style="white-space:nowrap;color:#92400e">Mi Nota:</strong>
                     <span style="overflow:hidden;text-overflow:ellipsis">${escHTML(note)}</span>
                   </div>
-                  <button onclick="openInstNoteModal('${row.id}')" title="Editar nota" style="background:none;border:none;color:#b45309;font-size:0.8rem;cursor:pointer;padding:0 2px">✏️</button>
+                  <button onclick="openInstNoteModal('${row.id}')" title="Editar nota" style="background:none;border:none;color:#b45309;font-size:0.95rem;cursor:pointer;padding:2px 4px">✏️</button>
                 </div>
               ` : ''}
             </div>
           </td>
 
           <!-- Estado en Vivo -->
-          <td style="padding:8px 10px;vertical-align:middle;text-align:center;white-space:nowrap">
+          <td style="padding:12px 14px;vertical-align:middle;text-align:center;white-space:nowrap;width:180px">
             ${timing.badgeHtml || '—'}
           </td>
 
-          <!-- Acciones / Notas -->
-          <td style="padding:8px 10px;vertical-align:middle;text-align:center;white-space:nowrap;width:110px">
+          <!-- Acciones / Notas Docente -->
+          <td style="padding:12px 14px;vertical-align:middle;text-align:center;white-space:nowrap;width:140px">
             ${!isSummary && row.id ? `
-              <button class="btn btn-outline" onclick="openInstNoteModal('${row.id}')" style="padding:3px 9px;font-size:0.72rem;border-radius:6px;display:inline-flex;align-items:center;gap:4px" title="Añadir nota personal a esta actividad">
+              <button class="btn btn-outline" onclick="openInstNoteModal('${row.id}')" style="padding:6px 14px;font-size:0.84rem;font-weight:800;border-radius:8px;display:inline-flex;align-items:center;gap:5px" title="Añadir nota personal a esta actividad">
                 ${note ? '📝 Ver Nota' : '➕ Nota'}
               </button>
             ` : ''}
