@@ -21789,6 +21789,82 @@ let _instCronoSearch = '';
 let _instActiveTrimester = 1;
 let _instCronoAutoSwitched = false;
 
+function switchInstCronoTab(trimNum) {
+  _instActiveTrimester = trimNum;
+
+  // 1. Mostrar/Ocultar contenedores de cada trimestre
+  for (let i = 1; i <= 3; i++) {
+    const content = document.getElementById('instCronoContent' + i);
+    if (content) {
+      content.style.display = (i === trimNum) ? 'block' : 'none';
+    }
+
+    // 2. Estilos de los botones de pestañas
+    const tabBtn = document.getElementById('instCronoTab' + i);
+    if (tabBtn) {
+      if (i === trimNum) {
+        tabBtn.className = 'btn';
+        tabBtn.style.color = '#ffffff';
+        tabBtn.style.fontWeight = '900';
+        tabBtn.style.fontSize = '0.95rem';
+        tabBtn.style.padding = '8px 18px';
+        tabBtn.style.whiteSpace = 'nowrap';
+        tabBtn.style.boxShadow = '0 3px 8px rgba(0,0,0,0.18)';
+        if (i === 1) {
+          tabBtn.style.background = '#059669';
+          tabBtn.style.borderColor = '#059669';
+        } else if (i === 2) {
+          tabBtn.style.background = '#d97706';
+          tabBtn.style.borderColor = '#d97706';
+        } else {
+          tabBtn.style.background = '#7c3aed';
+          tabBtn.style.borderColor = '#7c3aed';
+        }
+      } else {
+        tabBtn.className = 'btn btn-outline';
+        tabBtn.style.boxShadow = 'none';
+        tabBtn.style.fontWeight = '800';
+        tabBtn.style.fontSize = '0.95rem';
+        tabBtn.style.padding = '8px 18px';
+        tabBtn.style.whiteSpace = 'nowrap';
+        if (i === 1) {
+          tabBtn.style.color = '#059669';
+          tabBtn.style.borderColor = '#86efac';
+          tabBtn.style.background = 'rgba(16,185,129,0.08)';
+        } else if (i === 2) {
+          tabBtn.style.color = '#b45309';
+          tabBtn.style.borderColor = '#fcd34d';
+          tabBtn.style.background = 'rgba(251,191,36,0.08)';
+        } else {
+          tabBtn.style.color = '#7c3aed';
+          tabBtn.style.borderColor = '#c4b5fd';
+          tabBtn.style.background = 'rgba(124,58,237,0.08)';
+        }
+      }
+    }
+
+    // 3. Estilos de las tarjetas superiores de resumen
+    const card = document.getElementById('cronoTrimCard' + i);
+    if (card) {
+      if (i === trimNum) {
+        card.style.borderColor = (i === 1 ? '#059669' : (i === 2 ? '#d97706' : '#7c3aed'));
+        card.style.boxShadow = '0 4px 14px rgba(0,0,0,0.12)';
+        card.style.transform = 'translateY(-2px)';
+      } else {
+        card.style.borderColor = 'var(--border-color)';
+        card.style.boxShadow = 'var(--shadow-sm)';
+        card.style.transform = 'none';
+      }
+    }
+  }
+
+  // 4. Actualizar indicador de texto
+  const ind = document.getElementById('instCurrentTrimIndicator');
+  if (ind) {
+    ind.textContent = trimNum === 1 ? 'Viendo 1er Trimestre' : (trimNum === 2 ? 'Viendo 2do Trimestre' : 'Viendo 3er Trimestre');
+  }
+}
+
 function renderInstCronograma() {
   ensureCronoData();
   const todayStr = typeof getTodayDateStr === 'function' ? getTodayDateStr() : new Date().toISOString().slice(0, 10);
