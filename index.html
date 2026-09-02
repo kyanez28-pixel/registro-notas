@@ -6743,6 +6743,40 @@ body.in-focus-mode {
   </div>
 </div>
 
+
+<!-- ── MODAL: FICHA COMPLETA DEL ESTUDIANTE (ALTA DEFINICIÓN & ANCHO COMPLETO) ── -->
+<div class="mo" id="studentProfileModal" style="z-index:100080" onclick="if(event.target===this)closeStudentProfileModal()">
+  <div class="md" style="max-width:880px;width:96%;border-radius:20px;padding:0;overflow:hidden;background:#ffffff;box-shadow:0 25px 60px rgba(0,0,0,0.35);display:flex;flex-direction:column;max-height:92vh">
+    <!-- Encabezado del Modal -->
+    <div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:42px;height:42px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🎓</div>
+        <div>
+          <h3 id="spModalTitle" style="color:#ffffff;font-size:1.18rem;font-weight:900;margin:0;letter-spacing:-0.2px;border:none;padding:0">Ficha del Estudiante</h3>
+          <div id="spModalSubtitle" style="font-size:0.78rem;opacity:0.9;font-weight:700;margin-top:2px">Datos personales, representantes legales y contacto</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" onclick="closeStudentProfileModal()" class="btn" style="background:rgba(255,255,255,0.2);color:#ffffff;border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:6px 14px;font-weight:900;font-size:0.95rem;cursor:pointer">✕ Cerrar</button>
+      </div>
+    </div>
+
+    <!-- Cuerpo Desplazable con UN SOLO scrollbar limpio -->
+    <div id="spModalBody" style="padding:22px 26px;overflow-y:auto;flex:1;background:#ffffff;display:flex;flex-direction:column;gap:16px">
+      <!-- Inyectado dinámicamente -->
+    </div>
+
+    <!-- Barra Inferior de Acciones -->
+    <div style="background:var(--bg-card-subtle);border-top:1px solid var(--border-color);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;flex-shrink:0">
+      <div id="spModalLeftActions" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button type="button" class="btn btn-outline" onclick="closeStudentProfileModal()" style="font-weight:800;padding:8px 18px">Cancelar</button>
+        <button type="button" class="btn btn-success" id="spModalSaveBtn" style="font-weight:900;padding:9px 24px;box-shadow:0 3px 10px rgba(16,185,129,0.3)">💾 Guardar Ficha Completa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── MODAL: AGREGAR / EDITAR COLUMNA PERSONALIZADA DE MATRIZ ── -->
 <div class="mo" id="addMatrixColModal" style="z-index:10020" onclick="if(event.target===this)closeAddMatrixColModal()">
   <div class="md" style="max-width:480px;width:95%;border-radius:18px;padding:24px;box-shadow:var(--shadow-xl)">
@@ -19336,184 +19370,177 @@ function filterStudentsMatrix() {
 
 
 
+function closeStudentProfileModal() {
+  const m = document.getElementById('studentProfileModal');
+  if (m) {
+    m.classList.remove('open');
+    m.style.display = 'none';
+  }
+}
+window.closeStudentProfileModal = closeStudentProfileModal;
+
 function openStudentProfileModal(si) {
   ensureStudentProfiles();
   const p = S.studentProfiles[si];
   if (!p) return;
 
-  const name = p.nombre || S.students[si] || `Estudiante ${si+1}`;
+  const name = p.nombre || S.students[si] || ('Estudiante ' + (si+1));
   const repWa = formatPhoneWhatsApp(p.rep_telefono);
-
   const fotoSrc = p.foto || '';
 
   const modalHTML = `
-    <div style="display:flex;flex-direction:column;gap:14px;max-height:75vh;overflow-y:auto;padding-right:6px">
-
-      <!-- FOTO DEL ESTUDIANTE -->
-      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--bg-card-subtle);border:1.5px dashed ${fotoSrc ? '#2563eb' : 'var(--border-color)'};border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:border-color .2s"
-           id="mProfFotoZone"
-           title="Clic aquí y presiona Ctrl+V para pegar una foto, o haz clic para seleccionar archivo"
-           onclick="document.getElementById('mProfFotoFileInput').click()">
-        <div style="position:relative;flex-shrink:0">
-          <img id="mProfFotoImg"
-            src="${fotoSrc || ''}"
-            style="width:90px;height:110px;object-fit:cover;border-radius:8px;border:2px solid ${fotoSrc ? '#2563eb' : 'var(--border-color)'};background:var(--bg-card);display:${fotoSrc ? 'block' : 'none'}"/>
-          <div id="mProfFotoPlaceholder" style="width:90px;height:110px;border-radius:8px;border:2px dashed var(--border-color);background:var(--bg-card);display:${fotoSrc ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-muted)">
-            <span style="font-size:2rem">📷</span>
-            <span style="font-size:0.62rem;font-weight:700;text-align:center;line-height:1.2">Sin foto</span>
-          </div>
-        </div>
-        <div style="flex:1">
-          <div style="font-weight:800;font-size:0.88rem;color:var(--text-main);margin-bottom:4px">📷 Foto del Estudiante</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;margin-bottom:8px">
-            <strong>Ctrl+V</strong> — Pegar desde portapapeles (captura de pantalla o foto copiada)<br>
-            <strong>Clic aquí</strong> — Seleccionar archivo de imagen (JPG, PNG, etc.)
-          </div>
-          ${fotoSrc ? `<button type="button" onclick="event.stopPropagation();document.getElementById('mProfFotoImg').src='';document.getElementById('mProfFotoImg').style.display='none';document.getElementById('mProfFotoPlaceholder').style.display='flex';document.getElementById('mProfFotoZone').style.borderColor='var(--border-color)';_mProfFotoData=''" class="btn btn-danger" style="font-size:0.72rem;padding:3px 10px">✕ Quitar foto</button>` : ''}
-        </div>
-        <input type="file" id="mProfFotoFileInput" accept="image/*" style="display:none" onclick="event.stopPropagation()"
-          onchange="_mProfLoadFotoFromFile(this)"/>
-      </div>
-
-      <!-- Bloque 1: Datos del Estudiante -->
-      <div style="background:var(--bg-card-subtle);border:1.5px solid #3b82f6;border-radius:var(--radius-md);padding:14px">
-        <div style="font-weight:800;font-size:0.9rem;color:#1e40af;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-          <span>🎓 DATOS PERSONALES DEL ESTUDIANTE</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
-          <div>
-            <label>Nombres y Apellidos del Estudiante</label>
-            <input type="text" id="mProfNombre" value="${escVal(name)}" style="font-weight:700;font-size:0.95rem"/>
-          </div>
-          <div>
-            <label>N° Cédula de Identidad</label>
-            <input type="text" id="mProfCedula" value="${escVal(p.cedula||'')}"/>
-          </div>
-          <div>
-            <label>Fecha de Nacimiento</label>
-            <input type="date" id="mProfFechaNac" value="${escVal(p.fecha_nacimiento||'')}" onchange="document.getElementById('mProfEdad').value = calculateAgeFromBirthDate(this.value)"/>
-          </div>
-          <div>
-            <label>Edad (Actualizada automáticamente)</label>
-            <input type="text" id="mProfEdad" value="${escVal(calculateAgeFromBirthDate(p.fecha_nacimiento)||p.edad||'')}" readonly style="background:var(--bg-card);font-weight:700;color:#2563eb" placeholder="Se calcula con la fecha de nacimiento"/>
-          </div>
-          <div>
-            <label>¿Tiene NN.EE. asociada o no a discapacidad?</label>
-            <input type="text" id="mProfNnee" value="${escVal(p.nnee||'NO')}" placeholder="NO / SI (especificar)"/>
-          </div>
-          <div>
-            <label>¿Tiene alguna enfermedad o alergia?</label>
-            <input type="text" id="mProfEnfermedad" value="${escVal(p.enfermedad||'NO')}" placeholder="NO / Ninguna / Detalle"/>
-          </div>
-          <div style="grid-column:1/-1">
-            <label>Hermanos en la institución (Año y paralelo)</label>
-            <input type="text" id="mProfHermanos" value="${escVal(p.hermanos_inst||'NO')}" placeholder="NO / Ej: 10mo B, 3ro C BGU"/>
-          </div>
+    <!-- FOTO DEL ESTUDIANTE -->
+    <div style="display:flex;align-items:flex-start;gap:18px;background:var(--bg-card-subtle);border:1.5px dashed ${fotoSrc ? '#2563eb' : 'var(--border-color)'};border-radius:var(--radius-md);padding:16px;cursor:pointer;transition:border-color .2s"
+         id="mProfFotoZone"
+         title="Clic aquí y presiona Ctrl+V para pegar una foto, o haz clic para seleccionar archivo"
+         onclick="document.getElementById('mProfFotoFileInput').click()">
+      <div style="position:relative;flex-shrink:0">
+        <img id="mProfFotoImg"
+          src="${fotoSrc || ''}"
+          style="width:96px;height:120px;object-fit:cover;border-radius:10px;border:2px solid ${fotoSrc ? '#2563eb' : 'var(--border-color)'};background:#ffffff;display:${fotoSrc ? 'block' : 'none'};box-shadow:0 4px 10px rgba(0,0,0,0.1)"/>
+        <div id="mProfFotoPlaceholder" style="width:96px;height:120px;border-radius:10px;border:2px dashed var(--border-color);background:#ffffff;display:${fotoSrc ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-muted)">
+          <span style="font-size:2.2rem">👤</span>
+          <span style="font-size:0.72rem;font-weight:800;text-align:center;line-height:1.2">Sin foto</span>
         </div>
       </div>
-
-      <!-- Bloque 2: Representante Legal -->
-      <div style="background:var(--bg-card-subtle);border:1.5px solid #16a34a;border-radius:var(--radius-md);padding:14px">
-        <div style="font-weight:800;font-size:0.9rem;color:#15803d;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-          <span>👤 REPRESENTANTE LEGAL</span>
+      <div style="flex:1">
+        <div style="font-weight:900;font-size:1rem;color:var(--text-main);margin-bottom:4px">📷 Fotografía del Estudiante</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;margin-bottom:10px">
+          <strong>Ctrl+V</strong> — Pegar captura o foto directamente desde el portapapeles.<br>
+          <strong>Clic en el recuadro</strong> — Seleccionar archivo de imagen (JPG, PNG).
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
-          <div>
-            <label>Nombres y Apellidos del Representante</label>
-            <input type="text" id="mProfRepNombre" value="${escVal(p.rep_nombre||'')}"/>
-          </div>
-          <div>
-            <label>N° Cédula Representante</label>
-            <input type="text" id="mProfRepCedula" value="${escVal(p.rep_cedula||'')}"/>
-          </div>
-          <div>
-            <label>Teléfono / Celular Representante</label>
-            <input type="text" id="mProfRepTelefono" value="${escVal(p.rep_telefono||'')}"/>
-          </div>
-          <div>
-            <label>Teléfono en caso de emergencia</label>
-            <input type="text" id="mProfTelEmergencia" value="${escVal(p.tel_emergencia||'')}"/>
-          </div>
-          <div>
-            <label>Correo Electrónico</label>
-            <input type="email" id="mProfRepEmail" value="${escVal(p.rep_email||'')}"/>
-          </div>
-          <div style="grid-column:1/-1">
-            <label>Dirección Domiciliaria</label>
-            <input type="text" id="mProfDireccion" value="${escVal(p.direccion||'')}"/>
-          </div>
-        </div>
+        ${fotoSrc ? `<button type="button" onclick="event.stopPropagation();document.getElementById('mProfFotoImg').src='';document.getElementById('mProfFotoImg').style.display='none';document.getElementById('mProfFotoPlaceholder').style.display='flex';document.getElementById('mProfFotoZone').style.borderColor='var(--border-color)';_mProfFotoData=''" class="btn btn-danger" style="font-size:0.75rem;padding:4px 12px;font-weight:800">✕ Quitar foto</button>` : ''}
       </div>
-
-      <!-- Bloque 3: Datos de la Madre y Padre -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
-        <div style="background:var(--bg-card-subtle);border:1.5px solid #9333ea;border-radius:var(--radius-md);padding:12px">
-          <div style="font-weight:800;font-size:0.85rem;color:#7e22ce;margin-bottom:8px">👩 DATOS DE LA MADRE</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div>
-              <label>Nombres y Apellidos de la Madre</label>
-              <input type="text" id="mProfMadreNombre" value="${escVal(p.madre_nombre||'')}"/>
-            </div>
-            <div>
-              <label>N° Cédula Madre</label>
-              <input type="text" id="mProfMadreCedula" value="${escVal(p.madre_cedula||'')}"/>
-            </div>
-            <div>
-              <label>Teléfono Madre</label>
-              <input type="text" id="mProfMadreTelefono" value="${escVal(p.madre_telefono||'')}"/>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:var(--bg-card-subtle);border:1.5px solid #ea580c;border-radius:var(--radius-md);padding:12px">
-          <div style="font-weight:800;font-size:0.85rem;color:#c2410c;margin-bottom:8px">👨 DATOS DEL PADRE</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div>
-              <label>Nombres y Apellidos del Padre</label>
-              <input type="text" id="mProfPadreNombre" value="${escVal(p.padre_nombre||'')}"/>
-            </div>
-            <div>
-              <label>N° Cédula Padre</label>
-              <input type="text" id="mProfPadreCedula" value="${escVal(p.padre_cedula||'')}"/>
-            </div>
-            <div>
-              <label>Teléfono Padre</label>
-              <input type="text" id="mProfPadreTelefono" value="${escVal(p.padre_telefono||'')}"/>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bloque 4: Preguntas y Columnas Personalizadas -->
-      ${(S.customMatrixCols && S.customMatrixCols.length > 0) ? `
-      <div style="background:var(--bg-card-subtle);border:1.5px solid #0284c7;border-radius:var(--radius-md);padding:14px">
-        <div style="font-weight:800;font-size:0.9rem;color:#0369a1;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-          <span>📋 INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
-          ${S.customMatrixCols.map(col => {
-            const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
-            return `
-              <div>
-                <label>${escHTML(col.label)}</label>
-                <input type="text" id="mProf_cst_${col.id}" value="${escVal(currentVal)}" placeholder="Escribir información..." style="font-weight:600"/>
-              </div>`;
-          }).join('')}
-        </div>
-      </div>` : ''}
-
+      <input type="file" id="mProfFotoFileInput" accept="image/*" style="display:none" onclick="event.stopPropagation()"
+        onchange="_mProfLoadFotoFromFile(this)"/>
     </div>
 
-    <!-- Botonera inferior -->
-    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:space-between;align-items:center;border-top:1px solid var(--border-color);padding-top:12px">
-      <div style="display:flex;gap:6px">
-        ${repWa ? `<a href="https://wa.me/${repWa}" target="_blank" class="btn btn-success" style="font-size:0.8rem;text-decoration:none">💬 Enviar WhatsApp</a>` : ''}
-        <button type="button" class="btn btn-purple" style="font-size:0.8rem" onclick="printSingleStudentProfile(${si})">🖨 Imprimir Ficha</button>
+    <!-- Bloque 1: Datos del Estudiante -->
+    <div style="background:var(--bg-card-subtle);border:1.5px solid #3b82f6;border-radius:var(--radius-md);padding:18px">
+      <div style="font-weight:900;font-size:0.95rem;color:#1e40af;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span>🎓 DATOS PERSONALES DEL ESTUDIANTE</span>
       </div>
-      <div style="display:flex;gap:6px">
-        <button type="button" class="btn btn-danger" style="font-size:0.8rem" onclick="deleteStudentFromMatrix(${si})">🗑 Eliminar</button>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div style="grid-column:1/-1">
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Nombres y Apellidos Completos *</label>
+          <input type="text" id="mProfNombre" value="${escVal(name)}" style="font-weight:800;font-size:1.05rem;width:100%;padding:9px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">N° Cédula de Identidad</label>
+          <input type="text" id="mProfCedula" value="${escVal(p.cedula||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Fecha de Nacimiento</label>
+          <input type="date" id="mProfFechaNac" value="${escVal(p.fecha_nacimiento||'')}" onchange="document.getElementById('mProfEdad').value = calculateAgeFromBirthDate(this.value)" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Edad (Automática)</label>
+          <input type="text" id="mProfEdad" value="${escVal(calculateAgeFromBirthDate(p.fecha_nacimiento)||p.edad||'')}" readonly style="background:var(--bg-card);font-weight:800;color:#2563eb;width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;box-sizing:border-box" placeholder="Se calcula con la fecha de nacimiento"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">¿Tiene NN.EE. asociada o no a discapacidad?</label>
+          <input type="text" id="mProfNnee" value="${escVal(p.nnee||'NO')}" placeholder="NO / SI (especificar)" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">¿Tiene alguna enfermedad o alergia?</label>
+          <input type="text" id="mProfEnfermedad" value="${escVal(p.enfermedad||'NO')}" placeholder="NO / Ninguna / Detalle" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Hermanos en la institución (Año y paralelo)</label>
+          <input type="text" id="mProfHermanos" value="${escVal(p.hermanos_inst||'NO')}" placeholder="NO / Ej: 10mo B, 3ro C BGU" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
       </div>
     </div>
+
+    <!-- Bloque 2: Representante Legal -->
+    <div style="background:var(--bg-card-subtle);border:1.5px solid #16a34a;border-radius:var(--radius-md);padding:18px">
+      <div style="font-weight:900;font-size:0.95rem;color:#15803d;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span>👤 DATOS DEL REPRESENTANTE LEGAL</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Nombres y Apellidos Representante</label>
+          <input type="text" id="mProfRepNombre" value="${escVal(p.rep_nombre||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">N° Cédula Representante</label>
+          <input type="text" id="mProfRepCedula" value="${escVal(p.rep_cedula||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Teléfono / Celular Representante</label>
+          <input type="text" id="mProfRepTelefono" value="${escVal(p.rep_telefono||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Teléfono en Caso de Emergencia</label>
+          <input type="text" id="mProfTelEmergencia" value="${escVal(p.tel_emergencia||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div>
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Correo Electrónico</label>
+          <input type="email" id="mProfRepEmail" value="${escVal(p.rep_email||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Dirección Domiciliaria</label>
+          <input type="text" id="mProfDireccion" value="${escVal(p.direccion||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloque 3: Datos de la Madre y Padre -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+      <div style="background:var(--bg-card-subtle);border:1.5px solid #9333ea;border-radius:var(--radius-md);padding:14px">
+        <div style="font-weight:900;font-size:0.9rem;color:#7e22ce;margin-bottom:10px">👩 DATOS DE LA MADRE</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Nombres y Apellidos de la Madre</label>
+            <input type="text" id="mProfMadreNombre" value="${escVal(p.madre_nombre||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">N° Cédula Madre</label>
+            <input type="text" id="mProfMadreCedula" value="${escVal(p.madre_cedula||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Teléfono Madre</label>
+            <input type="text" id="mProfMadreTelefono" value="${escVal(p.madre_telefono||'')}"/>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card-subtle);border:1.5px solid #ea580c;border-radius:var(--radius-md);padding:14px">
+        <div style="font-weight:900;font-size:0.9rem;color:#c2410c;margin-bottom:10px">👨 DATOS DEL PADRE</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Nombres y Apellidos del Padre</label>
+            <input type="text" id="mProfPadreNombre" value="${escVal(p.padre_nombre||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">N° Cédula Padre</label>
+            <input type="text" id="mProfPadreCedula" value="${escVal(p.padre_cedula||'')}" style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">Teléfono Padre</label>
+            <input type="text" id="mProfPadreTelefono" value="${escVal(p.padre_telefono||'')}"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloque 4: Columnas Personalizadas -->
+    ${(S.customMatrixCols && S.customMatrixCols.length > 0) ? `
+    <div style="background:var(--bg-card-subtle);border:1.5px solid #0284c7;border-radius:var(--radius-md);padding:16px">
+      <div style="font-weight:900;font-size:0.95rem;color:#0369a1;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span>📋 INFORMACIÓN Y PREGUNTAS ADICIONALES DEL AULA</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        ${S.customMatrixCols.map(col => {
+          const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+          return `
+            <div>
+              <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">${escHTML(col.label)}</label>
+              <input type="text" id="mProf_cst_${col.id}" value="${escVal(currentVal)}" placeholder="Escribir información..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border-color);border-radius:8px;background:var(--bg-card);box-sizing:border-box;font-weight:700"/>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}
   `;
 
   // Variable temporal para la foto durante edición
@@ -19529,9 +19556,11 @@ function openStudentProfileModal(si) {
       const img = document.getElementById('mProfFotoImg');
       const ph  = document.getElementById('mProfFotoPlaceholder');
       const zone = document.getElementById('mProfFotoZone');
-      img.src = _mProfFotoData;
-      img.style.display = 'block';
-      img.style.borderColor = '#2563eb';
+      if (img) {
+        img.src = _mProfFotoData;
+        img.style.display = 'block';
+        img.style.borderColor = '#2563eb';
+      }
       if (ph) ph.style.display = 'none';
       if (zone) zone.style.borderColor = '#2563eb';
       toast('✔ Foto cargada — guarda para conservarla', '#2563eb');
@@ -19539,105 +19568,116 @@ function openStudentProfileModal(si) {
     reader.readAsDataURL(file);
   };
 
-  showModal(
-    `Ficha del Estudiante: ${name}`,
-    modalHTML,
-    '💾 Guardar Cambios',
-    () => {
-      const nvName = document.getElementById('mProfNombre').value.trim().toUpperCase();
-      if (!nvName) {
-        toast('⚠️ El nombre del estudiante no puede quedar vacío', '#d97706');
-        return;
-      }
+  // Inyectar en modal dedicado
+  document.getElementById('spModalTitle').textContent = 'Ficha del Estudiante: ' + name;
+  document.getElementById('spModalSubtitle').textContent = 'N° ' + (si + 1) + ' de matrícula · ' + (S.grado || 'Séptimo de Básica') + ' · MINEDUC 2026-2027';
+  document.getElementById('spModalBody').innerHTML = modalHTML;
 
-      // Guardar foto
-      p.foto = _mProfFotoData || '';
+  // Botones de acción izquierda (WhatsApp, Imprimir, Eliminar)
+  document.getElementById('spModalLeftActions').innerHTML = `
+    ${repWa ? `<a href="https://wa.me/${repWa}" target="_blank" class="btn btn-success" style="font-size:0.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:800">💬 WhatsApp</a>` : ''}
+    <button type="button" class="btn btn-purple" style="font-size:0.82rem;font-weight:800" onclick="printSingleStudentProfile(${si})">🖨 Imprimir Ficha</button>
+    <button type="button" class="btn btn-danger" style="font-size:0.82rem;font-weight:800" onclick="closeStudentProfileModal();deleteStudentFromMatrix(${si})">🗑 Eliminar</button>
+  `;
 
-      // Actualizar perfil
-      p.nombre = nvName;
-      p.cedula = document.getElementById('mProfCedula').value.trim();
-      p.fecha_nacimiento = document.getElementById('mProfFechaNac').value;
-      p.edad = document.getElementById('mProfEdad').value.trim() || calculateAgeFromBirthDate(p.fecha_nacimiento);
-      p.nnee = document.getElementById('mProfNnee').value.trim();
-      p.enfermedad = document.getElementById('mProfEnfermedad').value.trim();
-      p.hermanos_inst = document.getElementById('mProfHermanos').value.trim();
-
-      p.rep_nombre = document.getElementById('mProfRepNombre').value.trim();
-      p.rep_cedula = document.getElementById('mProfRepCedula').value.trim();
-      p.rep_telefono = document.getElementById('mProfRepTelefono').value.trim();
-      p.tel_emergencia = document.getElementById('mProfTelEmergencia').value.trim();
-      p.rep_email = document.getElementById('mProfRepEmail').value.trim();
-      p.direccion = document.getElementById('mProfDireccion').value.trim();
-
-      p.madre_nombre = document.getElementById('mProfMadreNombre').value.trim();
-      p.madre_cedula = document.getElementById('mProfMadreCedula').value.trim();
-      p.madre_telefono = document.getElementById('mProfMadreTelefono').value.trim();
-
-      p.padre_nombre = document.getElementById('mProfPadreNombre').value.trim();
-      p.padre_cedula = document.getElementById('mProfPadreCedula').value.trim();
-      p.padre_telefono = document.getElementById('mProfPadreTelefono').value.trim();
-
-      // Guardar preguntas / columnas personalizadas
-      if (S.customMatrixCols && S.customMatrixCols.length > 0) {
-        p.customData = p.customData || {};
-        S.customMatrixCols.forEach(col => {
-          const inp = document.getElementById(`mProf_cst_${col.id}`);
-          if (inp) {
-            p.customData[col.id] = inp.value.trim();
-            p[col.id] = inp.value.trim();
-          }
-        });
-      }
-
-      // Sincronizar con S.students si cambió el nombre
-      if (S.students[si] !== nvName) {
-        S.students[si] = nvName;
-      }
-
-      closeModal();
-      renderStudentsMatrix();
-      render();
-      saveData();
-      toast(`✔ Datos de "${nvName}" guardados exitosamente`, '#16a34a');
-    }
-  );
-
-  // === LISTENER GLOBAL CTRL+V PARA FOTO (solo mientras el modal esté abierto) ===
-  function _profPasteHandler(e) {
-    // Solo actuar si el modal de ficha sigue abierto
-    const modalEl = document.getElementById('modal');
-    if (!modalEl || !modalEl.style.display || modalEl.style.display === 'none') {
-      document.removeEventListener('paste', _profPasteHandler);
+  // Botón guardar
+  const saveBtn = document.getElementById('spModalSaveBtn');
+  saveBtn.onclick = () => {
+    const nvName = document.getElementById('mProfNombre').value.trim().toUpperCase();
+    if (!nvName) {
+      toast('⚠️ El nombre del estudiante no puede quedar vacío', '#d97706');
       return;
     }
-    const items = e.clipboardData && e.clipboardData.items;
-    if (!items) return;
-    let imageItem = null;
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.startsWith('image/')) { imageItem = items[i]; break; }
+
+    // Guardar foto
+    p.foto = _mProfFotoData || '';
+
+    // Actualizar perfil
+    p.nombre = nvName;
+    p.cedula = document.getElementById('mProfCedula').value.trim();
+    p.fecha_nacimiento = document.getElementById('mProfFechaNac').value;
+    p.edad = document.getElementById('mProfEdad').value.trim() || calculateAgeFromBirthDate(p.fecha_nacimiento);
+    p.nnee = document.getElementById('mProfNnee').value.trim();
+    p.enfermedad = document.getElementById('mProfEnfermedad').value.trim();
+    p.hermanos_inst = document.getElementById('mProfHermanos').value.trim();
+
+    p.rep_nombre = document.getElementById('mProfRepNombre').value.trim();
+    p.rep_cedula = document.getElementById('mProfRepCedula').value.trim();
+    p.rep_telefono = document.getElementById('mProfRepTelefono').value.trim();
+    p.tel_emergencia = document.getElementById('mProfTelEmergencia').value.trim();
+    p.rep_email = document.getElementById('mProfRepEmail').value.trim();
+    p.direccion = document.getElementById('mProfDireccion').value.trim();
+
+    p.madre_nombre = document.getElementById('mProfMadreNombre').value.trim();
+    p.madre_cedula = document.getElementById('mProfMadreCedula').value.trim();
+    p.madre_telefono = document.getElementById('mProfMadreTelefono').value.trim();
+
+    p.padre_nombre = document.getElementById('mProfPadreNombre').value.trim();
+    p.padre_cedula = document.getElementById('mProfPadreCedula').value.trim();
+    p.padre_telefono = document.getElementById('mProfPadreTelefono').value.trim();
+
+    // Guardar preguntas / columnas personalizadas
+    if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+      p.customData = p.customData || {};
+      S.customMatrixCols.forEach(col => {
+        const inp = document.getElementById('mProf_cst_' + col.id);
+        if (inp) {
+          p.customData[col.id] = inp.value.trim();
+          p[col.id] = inp.value.trim();
+        }
+      });
     }
-    if (!imageItem) return;
-    e.preventDefault();
-    const blob = imageItem.getAsFile();
-    if (!blob) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      _mProfFotoData = ev.target.result;
-      const img  = document.getElementById('mProfFotoImg');
-      const ph   = document.getElementById('mProfFotoPlaceholder');
-      const zone = document.getElementById('mProfFotoZone');
-      if (img) {
-        img.src = _mProfFotoData;
-        img.style.display = 'block';
-        img.style.borderColor = '#2563eb';
+
+    // Sincronizar con S.students si cambió el nombre
+    if (S.students[si] !== nvName) {
+      S.students[si] = nvName;
+    }
+
+    closeStudentProfileModal();
+    renderStudentsMatrix();
+    render();
+    saveData();
+    toast('✔ Datos de "' + nvName + '" guardados exitosamente', '#16a34a');
+  };
+
+  // Abrir modal dedicado
+  const m = document.getElementById('studentProfileModal');
+  m.classList.add('open');
+  m.style.display = 'flex';
+
+  // === LISTENER GLOBAL CTRL+V PARA FOTO ===
+  function _profPasteHandler(e) {
+    if (!m || !m.classList.contains('open')) {
+      window.removeEventListener('paste', _profPasteHandler);
+      return;
+    }
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const blob = items[i].getAsFile();
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          _mProfFotoData = evt.target.result;
+          const img  = document.getElementById('mProfFotoImg');
+          const ph   = document.getElementById('mProfFotoPlaceholder');
+          const zone = document.getElementById('mProfFotoZone');
+          if (img) {
+            img.src = _mProfFotoData;
+            img.style.display = 'block';
+            img.style.borderColor = '#2563eb';
+          }
+          if (ph)   ph.style.display = 'none';
+          if (zone) zone.style.borderColor = '#2563eb';
+          toast('📷 Foto pegada desde portapapeles — guarda para conservarla', '#2563eb');
+        };
+        reader.readAsDataURL(blob);
+        break;
       }
-      if (ph)   ph.style.display = 'none';
-      if (zone) zone.style.borderColor = '#2563eb';
-      toast('📷 Foto pegada desde portapapeles — guarda para conservarla', '#2563eb');
-    };
-    reader.readAsDataURL(blob);
+    }
   }
-  document.addEventListener('paste', _profPasteHandler);
+
+  window.removeEventListener('paste', _profPasteHandler);
+  window.addEventListener('paste', _profPasteHandler);
 }
 
 function openAddStudentMatrixModal() {
