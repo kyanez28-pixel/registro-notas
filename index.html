@@ -35,13 +35,86 @@
   --fs-xs: 11.5px;
   --fs-h1: 1.3rem;
 
-  /* Estilos específicos para la tabla del Cronograma Institucional (Letras y Números Gigantes & Claros) */
+  /* Palette - Light (Ultra Nítido & Alto Contraste) */
+  --bg-app: #eef2f7;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f5f7fa;
+  --bg-header: linear-gradient(135deg, #1e3a8a 0%, #1e40af 45%, #2563eb 85%, #3b82f6 100%);
+  --bg-toolbar: #ffffff;
+  --border-color: #d1d9e4;
+  --border-subtle: #e8edf4;
+  --border-focus: #2563eb;
+  --text-main: #080f1e;
+  --text-muted: #334155;
+  --text-light: #4b5e72;
+  
+  /* Primary & Accents */
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-light: #eff6ff;
+  --primary-glow: rgba(29, 78, 216, 0.22);
+
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --success-border: #86efac;
+
+  --danger: #b91c1c;
+  --danger-bg: #fee2e2;
+  --danger-border: #fca5a5;
+
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --warning-border: #fcd34d;
+
+  --info: #0369a1;
+  --info-bg: #e0f2fe;
+
+  --purple: #7c3aed;
+  --purple-bg: #f3e8ff;
+
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.10), 0 1px 2px -1px rgba(15, 23, 42, 0.07);
+  --shadow-md: 0 4px 8px -1px rgba(15, 23, 42, 0.11), 0 2px 4px -2px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 10px 18px -3px rgba(15, 23, 42, 0.12), 0 4px 6px -4px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.14), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+  
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
 }
+
+/* ══ MODO OSCURO (PROFUNDO, ELEGANTE & ALTO CONTRASTE) ══ */
+body.dark {
+  --bg-app: #060b12;
+  --bg-card: #0c1525;
+  --bg-card-subtle: #111d30;
+  --bg-header: linear-gradient(135deg, #050a14 0%, #0a1428 45%, #122048 100%);
+  --bg-toolbar: #0c1525;
+  --border-color: #1e2d45;
+  --border-subtle: #162038;
+  --border-focus: #60a5fa;
+  --text-main: #f1f5f9;        /* blanco cálido para máximo contraste */
+  --text-muted: #b0bfcf;       /* antes #94a3b8 — más claro y legible */
+  --text-light: #8097ad;       /* antes #64748b — más visible en dark */
+
+  --primary-light: rgba(37, 99, 235, 0.22);
+  --success-bg: rgba(22, 163, 74, 0.22);
+  --danger-bg: rgba(220, 38, 38, 0.22);
+  --warning-bg: rgba(217, 119, 6, 0.22);
+  --info-bg: rgba(2, 132, 199, 0.22);
+  --purple-bg: rgba(147, 51, 234, 0.22);
+}
+
+/* ══════════════════════════════════════════════════════
+   ESTILOS CRONOGRAMA INSTITUCIONAL (LETRAS GRANDES & LEGIBLES)
+   ══════════════════════════════════════════════════════ */
 .inst-crono-table {
   font-family: var(--font-crono) !important;
   width: 100% !important;
   border-collapse: collapse !important;
-  table-layout: fixed !important; /* Garantiza que las 6 columnas entren en pantalla y el texto haga wrap */
+  table-layout: fixed !important;
 }
 .inst-crono-table th {
   font-family: var(--font-crono) !important;
@@ -115,77 +188,7 @@
   line-height: 1.25 !important;
 }
 
-  /* Palette - Light (Ultra Nítido & Alto Contraste) */
-  --bg-app: #eef2f7;
-  --bg-card: #ffffff;
-  --bg-card-subtle: #f5f7fa;
-  --bg-header: linear-gradient(135deg, #1e3a8a 0%, #1e40af 45%, #2563eb 85%, #3b82f6 100%);
-  --bg-toolbar: #ffffff;
-  --border-color: #d1d9e4;
-  --border-subtle: #e8edf4;
-  --border-focus: #2563eb;
-  --text-main: #080f1e;       /* más oscuro para máximo contraste */
-  --text-muted: #334155;      /* antes #475569 — ahora más oscuro */
-  --text-light: #4b5e72;      /* antes #64748b — ahora más legible */
-  
-  /* Primary & Accents */
-  --primary: #1d4ed8;
-  --primary-hover: #1e40af;
-  --primary-light: #eff6ff;
-  --primary-glow: rgba(29, 78, 216, 0.22);
 
-  --success: #15803d;
-  --success-bg: #dcfce7;
-  --success-border: #86efac;
-
-  --danger: #b91c1c;
-  --danger-bg: #fee2e2;
-  --danger-border: #fca5a5;
-
-  --warning: #b45309;
-  --warning-bg: #fef3c7;
-  --warning-border: #fcd34d;
-
-  --info: #0369a1;
-  --info-bg: #e0f2fe;
-
-  --purple: #7c3aed;
-  --purple-bg: #f3e8ff;
-
-  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.06);
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.10), 0 1px 2px -1px rgba(15, 23, 42, 0.07);
-  --shadow-md: 0 4px 8px -1px rgba(15, 23, 42, 0.11), 0 2px 4px -2px rgba(15, 23, 42, 0.07);
-  --shadow-lg: 0 10px 18px -3px rgba(15, 23, 42, 0.12), 0 4px 6px -4px rgba(15, 23, 42, 0.06);
-  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.14), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
-  
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-}
-
-/* ══ MODO OSCURO (PROFUNDO, ELEGANTE & ALTO CONTRASTE) ══ */
-body.dark {
-  --bg-app: #060b12;
-  --bg-card: #0c1525;
-  --bg-card-subtle: #111d30;
-  --bg-header: linear-gradient(135deg, #050a14 0%, #0a1428 45%, #122048 100%);
-  --bg-toolbar: #0c1525;
-  --border-color: #1e2d45;
-  --border-subtle: #162038;
-  --border-focus: #60a5fa;
-  --text-main: #f1f5f9;        /* blanco cálido para máximo contraste */
-  --text-muted: #b0bfcf;       /* antes #94a3b8 — más claro y legible */
-  --text-light: #8097ad;       /* antes #64748b — más visible en dark */
-
-  --primary-light: rgba(37, 99, 235, 0.22);
-  --success-bg: rgba(22, 163, 74, 0.22);
-  --danger-bg: rgba(220, 38, 38, 0.22);
-  --warning-bg: rgba(217, 119, 6, 0.22);
-  --info-bg: rgba(2, 132, 199, 0.22);
-  --purple-bg: rgba(147, 51, 234, 0.22);
-}
 
 /* ══════════════════════════════════════════════════════
    GLOBAL RESETS & TIPOGRAFÍA DE ALTA DEFINICIÓN
@@ -1113,8 +1116,15 @@ td.cell-delay::after { content: 'P'; position: absolute; top: 1px; right: 2px; f
   z-index: 9999; align-items: center; justify-content: center; padding: 18px;
 }
 .mo.open { display: flex; }
+
+body.dark .md { background: #0c1525 !important; background-color: #0c1525 !important; }
+
 .md {
-  background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
   padding: 26px; min-width: 340px; max-width: 540px; width: 95%; box-shadow: var(--shadow-xl);
   max-height: 90vh; overflow-y: auto; animation: slideUp .2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -4254,7 +4264,7 @@ body.in-focus-mode {
   </div>
 
   <!-- Barra de Vistas y Secciones de la Matriz (Segmented Tabs & Slider) -->
-  <div class="matrix-sections-bar" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:25">
+  <div class="matrix-sections-bar" style="background:#ffffff;border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:25">
     
     <!-- Pestañas de Vista Rápida -->
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -4354,7 +4364,7 @@ body.in-focus-mode {
   </div>
 
   <!-- ── TARJETA EN VIVO: SEGUIMIENTO SEGÚN FECHA ACTUAL & ESTADO INSTITUCIONAL ── -->
-  <div id="cronoLiveStatusCard" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
+  <div id="cronoLiveStatusCard" style="background:#ffffff;border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">
       
       <!-- Fecha Actual y Fase -->
@@ -4529,7 +4539,7 @@ body.in-focus-mode {
 
     <!-- ── 1ER TRIMESTRE ── -->
     <div id="instCronoContent1">
-      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div style="background:#ffffff;border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
         <div style="background:linear-gradient(90deg,#059669,#10b981);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL PRIMER TRIMESTRE 2026-2027</div>
@@ -4565,7 +4575,7 @@ body.in-focus-mode {
 
     <!-- ── 2DO TRIMESTRE ── -->
     <div id="instCronoContent2" style="display:none">
-      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div style="background:#ffffff;border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
         <div style="background:linear-gradient(90deg,#d97706,#f59e0b);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL SEGUNDO TRIMESTRE 2026-2027</div>
@@ -4601,7 +4611,7 @@ body.in-focus-mode {
 
     <!-- ── 3ER TRIMESTRE ── -->
     <div id="instCronoContent3" style="display:none">
-      <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+      <div style="background:#ffffff;border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
         <div style="background:linear-gradient(90deg,#7c3aed,#a855f7);padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-weight:900;font-size:1.25rem;letter-spacing:-0.2px">CRONOGRAMA DE ACTIVIDADES DEL TERCER TRIMESTRE 2026-2027</div>
@@ -6260,7 +6270,7 @@ body.in-focus-mode {
 
 <!-- ══ MODAL DE RECORDATORIOS & NOTAS INSTITUCIONALES CALDERÓN 2 ══ -->
 <div id="remindersModal" class="mo" style="z-index:10015" onclick="if(event.target===this)closeRemindersModal()">
-  <div class="md" style="max-width:760px;width:96%;border-radius:18px;padding:24px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl)">
+  <div class="md" style="max-width:760px;width:96%;border-radius:18px;padding:24px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl);background:#ffffff !important;background-color:#ffffff !important;">
     
     <!-- Encabezado -->
     <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:14px">
@@ -22336,7 +22346,7 @@ function renderRemindersModalContent() {
       todayList.forEach(({ act, timing, note }) => {
         const isDone = !!S.instCronoChecklist[act.id];
         h += `
-          <div style="background:var(--bg-card);border:2px solid #10b981;border-radius:12px;padding:14px 16px;box-shadow:0 4px 14px rgba(16,185,129,0.15)">
+          <div style="background:#ffffff;border:2px solid #10b981;border-radius:12px;padding:14px 16px;box-shadow:0 4px 14px rgba(16,185,129,0.15)">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
               <div style="display:flex;align-items:center;gap:8px">
                 <span class="sync-dot pulse" style="background:#10b981;width:8px;height:8px"></span>
