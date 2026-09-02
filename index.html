@@ -12914,6 +12914,9 @@ function applyRemoteState(newState, updatedAt, source) {
   if (document.getElementById('piPanel')?.style.display !== 'none' && typeof renderPi === 'function') {
     renderPi();
   }
+  if (document.getElementById('studentsMatrixPanel')?.style.display !== 'none' && typeof renderStudentsMatrix === 'function') {
+    renderStudentsMatrix();
+  }
   if (document.getElementById('cronogramaPanel')?.style.display !== 'none' && typeof renderCronogramaModule === 'function') {
     renderCronogramaModule();
   }
@@ -18814,12 +18817,73 @@ function deleteCustomMatrixCol(colId) {
 }
 window.deleteCustomMatrixCol = deleteCustomMatrixCol;
 
+
+function resolveCustomColValue(p, colId) {
+  if (!p) return '';
+  // 1. Directo por ID en customData o en p
+  if (p.customData && p.customData[colId] !== undefined && p.customData[colId] !== null && String(p.customData[colId]).trim() !== '') {
+    return String(p.customData[colId]).trim();
+  }
+  if (p[colId] !== undefined && p[colId] !== null && String(p[colId]).trim() !== '') {
+    return String(p[colId]).trim();
+  }
+
+  // 2. Por etiqueta de la columna (definición en S.customMatrixCols)
+  const colDef = (S.customMatrixCols || []).find(c => c.id === colId);
+  if (colDef && colDef.label) {
+    const label = colDef.label;
+    const norm = label.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // A) Hermanos (si el padre llenó la sección de hermanos en el formulario)
+    if (norm.includes('hermano') && p.hermanos_inst && p.hermanos_inst.trim() !== '') {
+      return p.hermanos_inst.trim();
+    }
+
+    // B) Transporte / Recorrido / Cómo viene o se retira
+    if ((norm.includes('viene') || norm.includes('recorrido') || norm.includes('retiran') || norm.includes('transporte') || norm.includes('solo')) && (p.recorrido || p.transporte || p.como_viene)) {
+      return (p.recorrido || p.transporte || p.como_viene).trim();
+    }
+
+    // C) Buscar en p.customData por etiqueta directa o coincidencia
+    if (p.customData) {
+      if (p.customData[label] && String(p.customData[label]).trim() !== '') {
+        return String(p.customData[label]).trim();
+      }
+      for (const [k, v] of Object.entries(p.customData)) {
+        if (!v) continue;
+        const normK = k.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (normK === norm || norm.includes(normK) || normK.includes(norm)) {
+          return String(v).trim();
+        }
+      }
+      // D) Si hay valores guardados en customData con IDs que ya no coinciden
+      const customKeys = Object.keys(p.customData);
+      const colIdx = (S.customMatrixCols || []).findIndex(c => c.id === colId);
+      if (colIdx !== -1 && customKeys[colIdx] && p.customData[customKeys[colIdx]]) {
+        return String(p.customData[customKeys[colIdx]]).trim();
+      }
+    }
+
+    // E) Buscar propiedad directa en p que coincida con el nombre
+    for (const [k, v] of Object.entries(p)) {
+      if (!v || typeof v !== 'string') continue;
+      const normK = k.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (normK === norm) {
+        return v.trim();
+      }
+    }
+  }
+
+  return '';
+}
+window.resolveCustomColValue = resolveCustomColValue;
+
 function editMatrixCell(si, colId, cellDiv) {
   if (cellDiv.querySelector('input')) return;
   const p = S.studentProfiles[si];
   if (!p) return;
   p.customData = p.customData || {};
-  const currentVal = p.customData[colId] !== undefined ? p.customData[colId] : (p[colId] || '');
+  const currentVal = resolveCustomColValue(p, colId);
 
   const input = document.createElement('input');
   input.type = 'text';
@@ -18839,6 +18903,17 @@ function editMatrixCell(si, colId, cellDiv) {
     const newVal = input.value.trim();
     p.customData[colId] = newVal;
     p[colId] = newVal;
+    const colDef = (S.customMatrixCols || []).find(c => c.id === colId);
+    if (colDef && colDef.label) {
+      p.customData[colDef.label] = newVal;
+      const norm = colDef.label.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (norm.includes('hermano')) p.hermanos_inst = newVal;
+      if (norm.includes('viene') || norm.includes('recorrido') || norm.includes('retiran') || norm.includes('transporte')) {
+        p.recorrido = newVal;
+        p.transporte = newVal;
+        p.como_viene = newVal;
+      }
+    }
     saveData();
     cellDiv.innerHTML = `<span style="font-size:0.78rem;font-weight:600">${newVal ? escHTML(newVal) : '<span style="color:var(--text-light);font-size:0.72rem;font-style:italic">✎ Escribir...</span>'}</span>`;
     cellDiv.style.background = 'rgba(34,197,94,0.2)';
@@ -18859,7 +18934,7 @@ window.editMatrixCell = editMatrixCell;
 
 function getCellValue(p, colId, si) {
   if (colId && colId.startsWith('cst_')) {
-    const val = (p.customData && p.customData[colId] !== undefined) ? p.customData[colId] : (p[colId] || '');
+    const val = resolveCustomColValue(p, colId);
     return `<div class="mx-custom-cell" onclick="event.stopPropagation();editMatrixCell(${si}, '${colId}', this)" title="Clic para editar" style="cursor:pointer;padding:3px 6px;min-height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:background .15s ease">
       <span style="font-size:0.78rem;font-weight:600">${val ? escHTML(val) : '<span style="color:var(--text-light);font-size:0.72rem;font-style:italic">✎ Escribir...</span>'}</span>
     </div>`;
@@ -19542,7 +19617,7 @@ function openStudentProfileModal(si) {
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
         ${S.customMatrixCols.map(col => {
-          const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+          const currentVal = resolveCustomColValue(p, col.id);
           return `
             <div>
               <label style="font-size:0.82rem;font-weight:800;color:var(--text-muted);display:block;margin-bottom:4px">${escHTML(col.label)}</label>
@@ -19948,7 +20023,7 @@ function exportStudentsMatrixXLSX() {
       p.padre_cedula || '',
       p.padre_telefono || ''
     ];
-    const customValues = customCols.map(c => (p.customData && p.customData[c.id] !== undefined) ? p.customData[c.id] : (p[c.id] || ''));
+    const customValues = customCols.map(c => resolveCustomColValue(p, c.id));
     return [...baseRow, ...customValues];
   });
 
@@ -19990,6 +20065,11 @@ function getParentFormBaseUrl(stIndex = null) {
   }
   if (stIndex !== null && stIndex !== undefined) {
     url += `&st=${stIndex}`;
+  }
+  if (S.customMatrixCols && S.customMatrixCols.length > 0) {
+    try {
+      url += `&cols=${encodeURIComponent(JSON.stringify(S.customMatrixCols))}`;
+    } catch(e) {}
   }
   return url;
 }
@@ -20275,7 +20355,7 @@ function onParentSelectStudent(val) {
     if (S.customMatrixCols && S.customMatrixCols.length > 0) {
       customCard.style.display = 'block';
       customList.innerHTML = S.customMatrixCols.map(col => {
-        const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+        const currentVal = resolveCustomColValue(p, col.id);
         return `
           <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-left:4px solid ${col.bg || '#0284c7'};border-radius:8px;padding:10px 12px">
             <label style="font-weight:800;font-size:0.8rem;color:var(--text-main);display:block;margin-bottom:4px">
@@ -20390,8 +20470,19 @@ function saveParentPortalData() {
     S.customMatrixCols.forEach(col => {
       const inp = document.getElementById(`pf_cst_${col.id}`);
       if (inp) {
-        p.customData[col.id] = inp.value.trim();
-        p[col.id] = inp.value.trim();
+        const val = inp.value.trim();
+        p.customData[col.id] = val;
+        p[col.id] = val;
+        if (col.label) {
+          p.customData[col.label] = val;
+          const norm = col.label.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (norm.includes('hermano') && val) p.hermanos_inst = val;
+          if ((norm.includes('viene') || norm.includes('recorrido') || norm.includes('retiran') || norm.includes('transporte')) && val) {
+            p.recorrido = val;
+            p.transporte = val;
+            p.como_viene = val;
+          }
+        }
       }
     });
   }
@@ -20442,6 +20533,26 @@ let _parentStandaloneFotoData = null;
 let _lastSavedParentStudentIndex = null;
 
 function initParentStandaloneMode(stIndex = null) {
+  // Leer preguntas personalizadas desde la URL si están presentes
+  try {
+    const urlP = new URLSearchParams(window.location.search);
+    const colsP = urlP.get('cols');
+    if (colsP) {
+      const parsed = JSON.parse(decodeURIComponent(colsP));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        if (!S.customMatrixCols || S.customMatrixCols.length === 0) {
+          S.customMatrixCols = parsed;
+        } else {
+          parsed.forEach(pc => {
+            if (!S.customMatrixCols.some(c => c.id === pc.id)) {
+              S.customMatrixCols.push(pc);
+            }
+          });
+        }
+      }
+    }
+  } catch(e) {}
+
   // 1. Ocultar interfaz de docente y pantalla de login
   const loginSc = document.getElementById('loginScreen');
   if (loginSc) loginSc.style.display = 'none';
@@ -20563,7 +20674,7 @@ function onParentStandaloneSelectStudent(val) {
     if (S.customMatrixCols && S.customMatrixCols.length > 0) {
       customCard.style.display = 'block';
       customList.innerHTML = S.customMatrixCols.map(col => {
-        const currentVal = (p.customData && p.customData[col.id] !== undefined) ? p.customData[col.id] : (p[col.id] || '');
+        const currentVal = resolveCustomColValue(p, col.id);
         return `
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid ${col.bg || '#0284c7'};border-radius:10px;padding:12px 14px">
             <label style="font-weight:800;font-size:0.88rem;color:#0f172a;display:block;margin-bottom:6px">
@@ -20683,8 +20794,19 @@ function saveParentStandaloneData() {
     S.customMatrixCols.forEach(col => {
       const inp = document.getElementById(`ps_cst_${col.id}`);
       if (inp) {
-        p.customData[col.id] = inp.value.trim();
-        p[col.id] = inp.value.trim();
+        const val = inp.value.trim();
+        p.customData[col.id] = val;
+        p[col.id] = val;
+        if (col.label) {
+          p.customData[col.label] = val;
+          const norm = col.label.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (norm.includes('hermano') && val) p.hermanos_inst = val;
+          if ((norm.includes('viene') || norm.includes('recorrido') || norm.includes('retiran') || norm.includes('transporte')) && val) {
+            p.recorrido = val;
+            p.transporte = val;
+            p.como_viene = val;
+          }
+        }
       }
     });
   }
