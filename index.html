@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="./icon.svg">
 <title>Registro de Notas — EGB Media (Séptimo de Básica) · MINEDEC 2026-2027</title>
 
-<!-- Google Fonts: Inter, Plus Jakarta Sans & JetBrains Mono para máxima claridad y nitidez -->
+<!-- Google Fonts: Outfit, Montserrat, Inter, Plus Jakarta Sans & JetBrains Mono para máxima claridad y nitidez -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
 <!-- Firebase SDK Compat -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -28,11 +28,68 @@
    ══════════════════════════════════════════════════════ */
 :root {
   --font-main: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-crono: 'Outfit', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
   --fs: 15px;
   --fs-sm: 13px;
   --fs-xs: 11.5px;
   --fs-h1: 1.3rem;
+
+  /* Estilos específicos para la tabla del Cronograma Institucional (Letras y Números Gigantes & Claros) */
+}
+.inst-crono-table {
+  font-family: var(--font-crono) !important;
+}
+.inst-crono-table th {
+  font-family: var(--font-crono) !important;
+  font-size: 1.22rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+}
+.inst-crono-table td {
+  font-family: var(--font-crono) !important;
+}
+.crono-td-mes {
+  font-family: var(--font-crono) !important;
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: #065f46 !important;
+  letter-spacing: 0.6px !important;
+}
+.crono-td-fecha {
+  font-family: var(--font-crono) !important;
+  font-size: 1.55rem !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  font-feature-settings: "tnum" 1 !important;
+  letter-spacing: 0.2px !important;
+  white-space: nowrap !important;
+}
+.crono-td-act {
+  font-family: var(--font-crono) !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  line-height: 1.65 !important;
+  color: #0f172a !important;
+}
+.crono-td-act.act-title {
+  font-size: 1.50rem !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.3px !important;
+}
+.crono-td-act.act-today {
+  font-size: 1.50rem !important;
+  font-weight: 900 !important;
+  color: #064e3b !important;
+}
+.crono-badge-timing {
+  font-family: var(--font-crono) !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  padding: 8px 18px !important;
+  letter-spacing: 0.3px !important;
+}
 
   /* Palette - Light (Ultra Nítido & Alto Contraste) */
   --bg-app: #eef2f7;
@@ -4391,15 +4448,15 @@ body.in-focus-mode {
           <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Fase CONECTA / NIVELA / CREA</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:1.15rem">
+          <table class="inst-crono-table" style="width:100%;border-collapse:collapse">
             <thead>
               <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
-                <th style="padding:14px 8px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:50px;border:none">✓</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:130px;border:none">Mes</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Fechas</th>
-                <th style="padding:14px 20px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Estado / Seguimiento</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:150px;border:none">Notas Docente</th>
+                <th style="padding:16px 8px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:55px;border:none">✓</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Mes</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Fechas</th>
+                <th style="padding:16px 20px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:210px;border:none">Estado / Seguimiento</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:160px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody1"></tbody>
@@ -4419,15 +4476,15 @@ body.in-focus-mode {
           <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Planificación N° 2 · Aniversario</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:1.15rem">
+          <table class="inst-crono-table" style="width:100%;border-collapse:collapse">
             <thead>
               <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
-                <th style="padding:14px 8px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:50px;border:none">✓</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:130px;border:none">Mes</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Fechas</th>
-                <th style="padding:14px 20px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Estado / Seguimiento</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:150px;border:none">Notas Docente</th>
+                <th style="padding:16px 8px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:55px;border:none">✓</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Mes</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Fechas</th>
+                <th style="padding:16px 20px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:210px;border:none">Estado / Seguimiento</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:160px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody2"></tbody>
@@ -4447,15 +4504,15 @@ body.in-focus-mode {
           <span style="font-size:0.82rem;background:rgba(255,255,255,0.25);padding:4px 12px;border-radius:99px;font-weight:900">Feria de Proyectos · Cierre</span>
         </div>
         <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:1.15rem">
+          <table class="inst-crono-table" style="width:100%;border-collapse:collapse">
             <thead>
               <tr style="background:linear-gradient(90deg,#1e3a8a 0%,#1e40af 100%);color:#ffffff">
-                <th style="padding:14px 8px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:50px;border:none">✓</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:130px;border:none">Mes</th>
-                <th style="padding:14px 16px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:180px;border:none">Fechas</th>
-                <th style="padding:14px 20px;text-align:left;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Estado / Seguimiento</th>
-                <th style="padding:14px 16px;text-align:center;color:#ffffff;font-size:1.05rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:150px;border:none">Notas Docente</th>
+                <th style="padding:16px 8px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;white-space:nowrap;width:55px;border:none">✓</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:140px;border:none">Mes</th>
+                <th style="padding:16px 16px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:200px;border:none">Fechas</th>
+                <th style="padding:16px 20px;text-align:left;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;border:none">Actividades Institucionales Calderón 2</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:210px;border:none">Estado / Seguimiento</th>
+                <th style="padding:16px 16px;text-align:center;color:#ffffff;font-size:1.22rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;width:160px;border:none">Notas Docente</th>
               </tr>
             </thead>
             <tbody id="instCronoBody3"></tbody>
@@ -21760,59 +21817,61 @@ function renderInstCronograma() {
         rowBg = 'background:rgba(37,99,235,0.05);';
       }
 
+      const isTitleAct = row.act && (row.act === row.act.toUpperCase() || row.highlight || row.act.startsWith('INICIO') || row.act.startsWith('PRIMER') || row.act.startsWith('SEGUNDO') || row.act.startsWith('TERCER') || row.act.startsWith('NIVELACIÓN'));
+
+      const actFontSize = isTitleAct ? '1.55rem' : '1.40rem';
+      const actFontWeight = isTitleAct || timing.isToday ? '900' : '700';
       const actColor = isDone
-        ? 'color:var(--text-muted);text-decoration:line-through;font-weight:600;font-size:1.12rem;'
+        ? 'color:var(--text-muted);text-decoration:line-through;font-weight:600;font-size:1.30rem;'
         : (timing.isToday
-          ? 'font-weight:900;color:#0f172a;font-size:1.24rem;'
-          : (row.highlight
-            ? 'font-weight:900;color:#0f172a;font-size:1.24rem;'
-            : 'font-weight:700;color:#0f172a;font-size:1.18rem;'));
+          ? `font-weight:900;color:#064e3b;font-size:${actFontSize};`
+          : `font-weight:${actFontWeight};color:#0f172a;font-size:${actFontSize};`);
 
       html += `
         <tr style="border-bottom:1.5px solid var(--border-subtle);${rowBg}${borderLeft}transition:all .15s ease">
           <!-- Checkbox para actividades regulares -->
-          <td style="padding:16px 8px;text-align:center;vertical-align:middle;width:50px">
+          <td style="padding:16px 10px;text-align:center;vertical-align:middle;width:55px">
             ${!isSummary && row.id ? `
-              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleInstChecklist('${row.id}', this.checked)" title="Marcar como cumplida/atendida" style="width:24px;height:24px;accent-color:#059669;cursor:pointer"/>
+              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleInstChecklist('${row.id}', this.checked)" title="Marcar como cumplida/atendida" style="width:26px;height:26px;accent-color:#059669;cursor:pointer"/>
             ` : '📌'}
           </td>
 
-          <!-- Mes -->
-          <td style="padding:16px 16px;font-weight:900;color:#065f46;white-space:nowrap;vertical-align:middle;font-size:1.15rem;letter-spacing:0.5px;width:130px">
+          <!-- Mes (Letra gigante Outfit) -->
+          <td class="crono-td-mes" style="padding:16px 18px;font-weight:900;color:#065f46;white-space:nowrap;vertical-align:middle;font-size:1.45rem;letter-spacing:0.6px;font-family:'Outfit','Montserrat',sans-serif;width:140px">
             ${row.mes ? escHTML(row.mes) : ''}
           </td>
 
-          <!-- Fechas -->
-          <td style="padding:16px 16px;white-space:nowrap;vertical-align:middle;font-size:1.18rem;font-weight:900;color:#0f172a;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;width:180px">
+          <!-- Fechas (Números y letras gigantes Outfit) -->
+          <td class="crono-td-fecha" style="padding:16px 18px;white-space:nowrap;vertical-align:middle;font-size:1.55rem;font-weight:900;color:#0f172a;font-family:'Outfit','Montserrat',sans-serif;font-feature-settings:'tnum' 1;letter-spacing:0.3px;width:200px">
             ${escHTML(row.fecha)}
           </td>
 
-          <!-- Descripción de la Actividad (Letra grande y clara) -->
-          <td style="padding:16px 20px;vertical-align:middle;line-height:1.65;${actColor}">
+          <!-- Descripción de la Actividad (Letra gigante Outfit) -->
+          <td class="crono-td-act" style="padding:16px 20px;vertical-align:middle;line-height:1.65;font-family:'Outfit','Montserrat',sans-serif;${actColor}">
             <div style="display:flex;flex-direction:column;gap:8px">
               <div>${escHTML(row.act)}</div>
               ${note ? `
-                <div style="background:rgba(245,158,11,0.15);border-left:5px solid #f59e0b;padding:10px 14px;border-radius:8px;font-size:1.02rem;color:#0f172a;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700">
+                <div style="background:rgba(245,158,11,0.15);border-left:5px solid #f59e0b;padding:10px 16px;border-radius:8px;font-size:1.15rem;color:#0f172a;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700">
                   <div style="display:flex;align-items:center;gap:10px;overflow:hidden">
-                    <span style="font-size:1.2rem">📌</span>
+                    <span style="font-size:1.3rem">📌</span>
                     <strong style="white-space:nowrap;color:#92400e">Mi Nota:</strong>
                     <span style="overflow:hidden;text-overflow:ellipsis">${escHTML(note)}</span>
                   </div>
-                  <button onclick="openInstNoteModal('${row.id}')" title="Editar nota" style="background:none;border:none;color:#b45309;font-size:1.1rem;cursor:pointer;padding:2px 6px">✏️</button>
+                  <button onclick="openInstNoteModal('${row.id}')" title="Editar nota" style="background:none;border:none;color:#b45309;font-size:1.2rem;cursor:pointer;padding:2px 6px">✏️</button>
                 </div>
               ` : ''}
             </div>
           </td>
 
-          <!-- Estado en Vivo -->
-          <td style="padding:16px 16px;vertical-align:middle;text-align:center;white-space:nowrap;width:200px">
+          <!-- Estado en Vivo (Badge Outfit grande) -->
+          <td style="padding:16px 16px;vertical-align:middle;text-align:center;white-space:nowrap;width:210px">
             ${timing.badgeHtml || '—'}
           </td>
 
           <!-- Acciones / Notas Docente -->
-          <td style="padding:16px 16px;vertical-align:middle;text-align:center;white-space:nowrap;width:150px">
+          <td style="padding:16px 16px;vertical-align:middle;text-align:center;white-space:nowrap;width:160px">
             ${!isSummary && row.id ? `
-              <button class="btn btn-outline" onclick="openInstNoteModal('${row.id}')" style="padding:8px 16px;font-size:0.92rem;font-weight:900;border-radius:8px;display:inline-flex;align-items:center;gap:6px" title="Añadir nota personal a esta actividad">
+              <button class="btn btn-outline" onclick="openInstNoteModal('${row.id}')" style="padding:10px 20px;font-size:1.05rem;font-weight:900;border-radius:9px;font-family:'Outfit','Montserrat',sans-serif;display:inline-flex;align-items:center;gap:6px" title="Añadir nota personal a esta actividad">
                 ${note ? '📝 Ver Nota' : '➕ Nota'}
               </button>
             ` : ''}
