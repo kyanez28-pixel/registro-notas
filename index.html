@@ -4254,6 +4254,9 @@ body.in-focus-mode {
     <button id="tabBtnCrono5" class="btn btn-outline" onclick="switchCronoModuleTab(5)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;background:rgba(124,58,237,0.1);border-color:#a855f7;color:#7c3aed">
       📚 5. Orientaciones MINEDEC 2026-2027
     </button>
+    <button id="tabBtnCrono6" class="btn btn-outline" onclick="switchCronoModuleTab(6)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;background:rgba(5,150,105,0.1);border-color:#10b981;color:#065f46">
+      🏫 6. Cronograma Institucional 26-27
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -4770,6 +4773,134 @@ body.in-focus-mode {
           <span>🔗 Project Gutenberg (Español)</span>
         </a>
       </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 6: CRONOGRAMA INSTITUCIONAL 26-27 (U.E.F. CALDERÓN 2)
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab6" style="display:none">
+
+    <!-- Banner -->
+    <div style="background:linear-gradient(135deg,#064e3b 0%,#065f46 40%,#059669 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0">🏫</div>
+          <div>
+            <div style="font-size:1.15rem;font-weight:900;letter-spacing:0.2px">Cronograma Institucional · Año Lectivo 2026 - 2027</div>
+            <div style="font-size:0.78rem;opacity:.92;margin-top:3px">Unidad Educativa Fiscal &quot;Calderón 2&quot; · Régimen Sierra-Amazonía · 200 Días Laborables</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:0.75rem;background:#f59e0b;color:#78350f;padding:4px 12px;border-radius:99px;font-weight:800">Oficial</span>
+          <span style="font-size:0.75rem;background:rgba(255,255,255,0.25);color:#fff;padding:4px 12px;border-radius:99px;font-weight:700">3 Trimestres</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen de días laborados -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px">
+      <div style="background:var(--bg-card);border:1.5px solid #86efac;border-radius:var(--radius-md);padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-size:2rem;font-weight:900;color:#15803d;font-family:var(--font-mono)">63</div>
+        <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Días — 1er Trimestre</div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-top:2px">Sep – Nov 2026</div>
+      </div>
+      <div style="background:var(--bg-card);border:1.5px solid #fcd34d;border-radius:var(--radius-md);padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-size:2rem;font-weight:900;color:#b45309;font-family:var(--font-mono)">66</div>
+        <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Días — 2do Trimestre</div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-top:2px">Dic 2026 – Mar 2027</div>
+      </div>
+      <div style="background:var(--bg-card);border:1.5px solid #c4b5fd;border-radius:var(--radius-md);padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-size:2rem;font-weight:900;color:#7c3aed;font-family:var(--font-mono)">71</div>
+        <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Días — 3er Trimestre</div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-top:2px">Mar – Jun 2027</div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(29,78,216,0.10),rgba(5,150,105,0.10));border:2px solid var(--primary);border-radius:var(--radius-md);padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <div style="font-size:2rem;font-weight:900;color:var(--primary);font-family:var(--font-mono)">200</div>
+        <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Total Días Laborables</div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-top:2px">Periodo lectivo completo</div>
+      </div>
+    </div>
+
+    <!-- Tabs de trimestres -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto">
+      <button id="instCronoTab1" class="btn btn-success" onclick="switchInstCronoTab(1)" style="font-size:0.82rem;white-space:nowrap;font-weight:800">📅 1er Trimestre · Sep–Nov 2026</button>
+      <button id="instCronoTab2" class="btn btn-outline" onclick="switchInstCronoTab(2)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;color:#b45309;border-color:#fcd34d;background:rgba(251,191,36,0.08)">📅 2do Trimestre · Dic 2026–Mar 2027</button>
+      <button id="instCronoTab3" class="btn btn-outline" onclick="switchInstCronoTab(3)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;color:#7c3aed;border-color:#c4b5fd;background:rgba(124,58,237,0.08)">📅 3er Trimestre · Mar–Jun 2027</button>
+    </div>
+
+    <!-- ── 1ER TRIMESTRE ── -->
+    <div id="instCronoContent1">
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#059669,#10b981);padding:10px 18px;color:#fff">
+          <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL PRIMER TRIMESTRE 2026-2027</div>
+          <div style="font-size:0.75rem;opacity:.9">01/09 al 01/12/2026 &nbsp;·&nbsp; 63 días laborables</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+            <thead>
+              <tr style="background:var(--bg-card-subtle)">
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:80px">Mes</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:110px">Fechas</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades</th>
+              </tr>
+            </thead>
+            <tbody id="instCronoBody1"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2DO TRIMESTRE ── -->
+    <div id="instCronoContent2" style="display:none">
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#d97706,#f59e0b);padding:10px 18px;color:#fff">
+          <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL SEGUNDO TRIMESTRE 2026-2027</div>
+          <div style="font-size:0.75rem;opacity:.9">02/12/2026 al 15/03/2027 &nbsp;·&nbsp; 66 días laborables</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+            <thead>
+              <tr style="background:var(--bg-card-subtle)">
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:80px">Mes</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:110px">Fechas</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades</th>
+              </tr>
+            </thead>
+            <tbody id="instCronoBody2"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3ER TRIMESTRE ── -->
+    <div id="instCronoContent3" style="display:none">
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)">
+        <div style="background:linear-gradient(90deg,#7c3aed,#a855f7);padding:10px 18px;color:#fff">
+          <div style="font-weight:900;font-size:0.95rem">CRONOGRAMA DE ACTIVIDADES DEL TERCER TRIMESTRE 2026-2027</div>
+          <div style="font-size:0.75rem;opacity:.9">16/03 al 25/06/2027 &nbsp;·&nbsp; 71 días laborables</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+            <thead>
+              <tr style="background:var(--bg-card-subtle)">
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:80px">Mes</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase;white-space:nowrap;min-width:110px">Fechas</th>
+                <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border-color);color:var(--text-muted);font-size:0.72rem;text-transform:uppercase">Actividades</th>
+              </tr>
+            </thead>
+            <tbody id="instCronoBody3"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firma institucional -->
+    <div style="background:var(--bg-card-subtle);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:12px 18px;margin-top:16px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-around;text-align:center">
+      <div><div style="font-weight:900;font-size:0.85rem;color:var(--text-main)">MSC. Elsa Álvarez</div><div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Rectora</div></div>
+      <div><div style="font-weight:900;font-size:0.85rem;color:var(--text-main)">MSc. Mauricio Guachamín</div><div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Vicerrector</div></div>
+      <div><div style="font-weight:900;font-size:0.85rem;color:var(--text-main)">MSc. Evelyn Silva</div><div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Inspectora General</div></div>
     </div>
 
   </div>
@@ -21122,17 +21253,223 @@ function openCronoNoteModal(actId) {
 }
 
 function switchCronoModuleTab(tabIdx) {
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 6; i++) {
     const view = document.getElementById('cronoModuleTab' + i);
     const btn  = document.getElementById('tabBtnCrono' + i);
     if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
     if (btn) {
       if (i === tabIdx) {
         if (i === 5) { btn.style.background='#7c3aed'; btn.style.color='#fff'; btn.style.borderColor='#7c3aed'; }
+        else if (i === 6) { btn.style.background='#059669'; btn.style.color='#fff'; btn.style.borderColor='#059669'; }
         else btn.className = 'btn btn-primary';
       } else {
         btn.className = 'btn btn-outline';
         if (i === 5) { btn.style.background='rgba(124,58,237,0.1)'; btn.style.color='#7c3aed'; btn.style.borderColor='#a855f7'; }
+        if (i === 6) { btn.style.background='rgba(5,150,105,0.1)'; btn.style.color='#065f46'; btn.style.borderColor='#10b981'; }
+      }
+    }
+  }
+  // Si se activa la tab 6, renderizar el cronograma institucional
+  if (tabIdx === 6) renderInstCronograma();
+}
+
+// ── DATOS DEL CRONOGRAMA INSTITUCIONAL 2026-2027 ──
+const INST_CRONO_DATA = {
+  t1: [
+    {mes:'SEPTIEMBRE', fecha:'01/09/2026', act:'INICIO DEL AÑO LECTIVO.', highlight:true},
+    {mes:'', fecha:'01/09 al 01/12/26', act:'PRIMER TRIMESTRE', highlight:true},
+    {mes:'', fecha:'Del 01 al 04', act:'Actividades de adaptación y diagnóstico'},
+    {mes:'', fecha:'02/09 al 08/09/2026', act:'Evaluación diagnóstica'},
+    {mes:'', fecha:'09/09/2026', act:'Tabulación de resultados'},
+    {mes:'', fecha:'09/09/2026', act:'Entrega digital de la planificación de nivelación de docentes a coordinadores y Junta de directoras para su revisión y observaciones.'},
+    {mes:'', fecha:'11/09/2026', act:'Entrega digital de la tabulación diagnóstica y de la planificación de nivelación a Vicerrectorado.'},
+    {mes:'', fecha:'Del 9 al 18', act:'NIVELACIÓN DE HABILIDADES Y DESTREZAS', highlight:true},
+    {mes:'', fecha:'10 y 11/09/2026', act:'Reunión de padres de familia desde Preparatoria a 3ro B.G.U., para la conformación del comité de grado de padres de familia a partir de las 16:00.'},
+    {mes:'', fecha:'10 y 11/09/2026', act:'Evaluación socioemocional.'},
+    {mes:'', fecha:'11/09/2026', act:'Día de la República - valor "El respeto a los símbolos patrios".'},
+    {mes:'', fecha:'14/09/2026', act:'Día de la Democracia. (minuto cívico)'},
+    {mes:'', fecha:'19/09/2026', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'19/09/2026', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'OCTUBRE', fecha:'01/10/2026', act:'Minuto cívico - Valor "El trabajo en equipo".'},
+    {mes:'', fecha:'Del 5 al 9', act:'Inicio Planificación N° 1 (seis semanas).'},
+    {mes:'', fecha:'5 y 6', act:'Revisión de la planificación microcurricular por coordinadores en trabajo conjunto con los años y áreas.'},
+    {mes:'', fecha:'09/10/2026', act:'Envío digital de la Planificación microcurricular a Vicerrectorado por Junta para su aprobación.'},
+    {mes:'', fecha:'09/10/2026', act:'Fiesta de la Interculturalidad'},
+    {mes:'', fecha:'12/10/2026', act:'Día de la Interculturalidad. (Feriado)'},
+    {mes:'', fecha:'21/10/2026', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'21/10/2026', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'NOVIEMBRE', fecha:'02/11/2026', act:'Minuto cívico - Valor "La honradez".'},
+    {mes:'', fecha:'Del 02 al 06', act:'Revisión de instrumentos de evaluación 1er trimestre.'},
+    {mes:'', fecha:'09/11/2026', act:'Entrega digital e impresa de los instrumentos de evaluación del 1er trimestre a Vicerrectorado.'},
+    {mes:'', fecha:'Del 9 al 13', act:'Segundo bloque de planificación de 5 semanas.'},
+    {mes:'', fecha:'12 y 13', act:'Revisión de la planificación microcurricular por coordinadores en trabajo conjunto con los años y áreas.'},
+    {mes:'', fecha:'16/11/2026', act:'Envío digital de la Planificación microcurricular a Vicerrectorado por Junta para su aprobación.'},
+    {mes:'', fecha:'19/11/2026', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'19/11/2026', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'', fecha:'Del 23 al 27', act:'Evaluaciones del Primer trimestre.'},
+    {mes:'', fecha:'28/11/2026', act:'Juntas de Curso.'},
+    {mes:'RESUMEN', fecha:'DÍAS FESTIVOS', act:'', highlight:true},
+    {mes:'', fecha:'09/10/2026', act:'Día de la Interculturalidad (Feriado)'},
+    {mes:'', fecha:'DÍAS LAB.', act:'', highlight:true},
+    {mes:'', fecha:'SEPTIEMBRE', act:'20'},
+    {mes:'', fecha:'OCTUBRE', act:'21'},
+    {mes:'', fecha:'NOVIEMBRE', act:'22'},
+    {mes:'TOTAL', fecha:'', act:'63 DÍAS LABORADOS', highlight:true}
+  ],
+  t2: [
+    {mes:'DICIEMBRE', fecha:'02/12 al 15/03/27', act:'SEGUNDO TRIMESTRE', highlight:true},
+    {mes:'', fecha:'02/12 al 05/03/27', act:'INICIO DE LA PLANIFICACIÓN N° 2', highlight:true},
+    {mes:'', fecha:'03/12/2026', act:'Reunión con padres de familia de 1ro a 7mo para la entrega de informe académico y comportamental del 1er Trimestre desde las 15h00.'},
+    {mes:'', fecha:'04/12/2026', act:'Reunión con padres de familia de 8vo a 3ro BGU para la entrega de informe académico y comportamental del 1er Trimestre desde las 15h00.'},
+    {mes:'', fecha:'07/12/2026', act:'Envío digital del Plan de Refuerzo académico de alerta temprana.'},
+    {mes:'', fecha:'Del 07 al 11/2026', act:'Proceso de mejora directa y con refuerzo pedagógico.'},
+    {mes:'', fecha:'08/12/2026', act:'Entrega de calificaciones (IMPRESAS), informes trimestrales (DIGITAL) a (Vicerrectorado), comportamiento, asistencia (Inspección general).'},
+    {mes:'', fecha:'11/12/2026', act:'MINUTO CÍVICO: DIA MUNDIAL DE LOS DERECHOS HUMANOS. VALOR: "La generosidad"'},
+    {mes:'', fecha:'18/12/2026', act:'Día Internacional del Migrante.'},
+    {mes:'', fecha:'18/12/2026', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'21/12/2026', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'', fecha:'24/12/2026', act:'Programa navideño.'},
+    {mes:'ENERO', fecha:'04/01/2027', act:'Minuto cívico - Valor "La amistad".'},
+    {mes:'', fecha:'11-12-13-14', act:'Revisión de la planificación (6 semanas).'},
+    {mes:'', fecha:'15/01/2027', act:'Envío de la planificación por Junta de directores a Vicerrectorado para su aprobación.'},
+    {mes:'', fecha:'24/01/2027', act:'Día Mundial de la Educación se traslada al 25 de enero.'},
+    {mes:'', fecha:'29/01/2027', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'29/01/2027', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'FEBRERO', fecha:'01/02/2027', act:'Minuto cívico - Valor "La sinceridad".'},
+    {mes:'', fecha:'05/02/2027', act:'Entrega del proyecto integrador fase 3-4 por docentes a coordinadores'},
+    {mes:'', fecha:'8 y 9', act:'Feriado por carnaval. (FERIADO)'},
+    {mes:'', fecha:'10 y 11', act:'Revisión del proyecto integrador.'},
+    {mes:'', fecha:'09/02/2027', act:'Día Internacional del Internet Seguro. Se traslada al miércoles 10.'},
+    {mes:'', fecha:'11/02/2027', act:'Día Internacional de las mujeres y niñas en la ciencia. (Se traslada al 09 de febrero)'},
+    {mes:'', fecha:'12/02/2027', act:'Entrega digital del proyecto integrador a Vicerrectorado para su aprobación por parte de Junta de directores de subnivel.'},
+    {mes:'', fecha:'12/02/2027', act:'Envío digital de instrumentos de evaluación del Segundo trimestre de docentes a coordinación.'},
+    {mes:'', fecha:'15-16', act:'Revisión de los instrumentos de evaluación en conjunto con los años y áreas.'},
+    {mes:'', fecha:'19/02/2027', act:'Entrega digital e impreso de las evaluaciones del Segundo trimestre a Vicerrectorado.'},
+    {mes:'', fecha:'19/02/2027', act:'Pregón de fiestas patronales 14vo aniversario.'},
+    {mes:'', fecha:'19/02/2027', act:'Entrega digital de la Planificación microcurricular de docentes a Coordinadores 3er trimestre (seis semanas).'},
+    {mes:'', fecha:'22 y 23', act:'Revisión de la planificación microcurricular por coordinadores en trabajo conjunto con los años y áreas.'},
+    {mes:'', fecha:'Del 22 al 26', act:'Actividades por el aniversario institucional.'},
+    {mes:'', fecha:'Del 22 feb. al 4 mar.', act:'Desarrollo de la fase 2-3 del proyecto interdisciplinar.'},
+    {mes:'', fecha:'25/02/2027', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'25/02/2027', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia.'},
+    {mes:'', fecha:'26/02/2027', act:'Sesión solemne - Aniversario de la Institución.'},
+    {mes:'', fecha:'26/03/2027', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia y de Refuerzo pedagógico para superar las alertas.'},
+    {mes:'MARZO', fecha:'01/03/2027', act:'Minuto cívico - Valor "La solidaridad".'},
+    {mes:'', fecha:'01/03/2027', act:'Envío digital de la Planificación microcurricular a Vicerrectorado por Junta para su aprobación.'},
+    {mes:'', fecha:'Del 08 al 12', act:'Evaluaciones del Segundo trimestre'},
+    {mes:'', fecha:'15/03/2027', act:'Juntas de Curso'},
+    {mes:'RESUMEN', fecha:'DÍAS FESTIVOS', act:'', highlight:true},
+    {mes:'', fecha:'25 DE DICIEMBRE', act:'Navidad'},
+    {mes:'', fecha:'01 DE ENERO', act:'Año nuevo'},
+    {mes:'', fecha:'8 y 9 DE FEBRERO', act:'Carnaval'},
+    {mes:'', fecha:'DÍAS LAB.', act:'', highlight:true},
+    {mes:'', fecha:'DICIEMBRE', act:'17'},
+    {mes:'', fecha:'ENERO', act:'20'},
+    {mes:'', fecha:'FEBRERO', act:'18'},
+    {mes:'', fecha:'MARZO', act:'11'},
+    {mes:'TOTAL', fecha:'', act:'66 DÍAS LABORADOS', highlight:true}
+  ],
+  t3: [
+    {mes:'MARZO', fecha:'16/03 al 25/06/2027', act:'TERCER TRIMESTRE', highlight:true},
+    {mes:'', fecha:'16/03 al 18/06/2027', act:'INICIO DE LA PLANIFICACIÓN N° 3', highlight:true},
+    {mes:'', fecha:'17/03/2027', act:'Entrega de calificaciones, informes trimestrales digital e impresos a (Vicerrectorado), comportamiento, asistencia (Inspección general). Registro en el Sistema SIEE.'},
+    {mes:'', fecha:'26/03/2027', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'18/03/2027', act:'Reunión de padres de familia desde PREPARATORIA a 7mo de básica para la entrega de informe académico y comportamental del 2do Trimestre desde las 15h00.'},
+    {mes:'', fecha:'19/03/2027', act:'Reunión de padres de familia de Básica Superior y BGU para la entrega de informe académico y comportamental del 2do Trimestre desde las 15h00.'},
+    {mes:'', fecha:'Del 22/03 al 25', act:'Proceso de mejora directa y con refuerzo pedagógico recepción de solicitudes.'},
+    {mes:'', fecha:'26/03/2027', act:'Feriado por Viernes Santo.'},
+    {mes:'', fecha:'28/03/2027', act:'Minuto cívico - Valor "La toma de iniciativa".'},
+    {mes:'ABRIL', fecha:'13/04/2027', act:'Día del Maestro'},
+    {mes:'', fecha:'16', act:'Entrega digital de la Planificación microcurricular de docentes a Coordinadores 3er trimestre (seis semanas).'},
+    {mes:'', fecha:'19 y 20', act:'Revisión de la planificación microcurricular por coordinadores en trabajo conjunto con los años y áreas.'},
+    {mes:'', fecha:'23', act:'Envío digital de la Planificación microcurricular a Vicerrectorado por Junta para su aprobación.'},
+    {mes:'', fecha:'22 y 23', act:'Fiesta de la lectura.'},
+    {mes:'', fecha:'29/04/2027', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'29/04/2027', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia.'},
+    {mes:'MAYO', fecha:'01/05/2027', act:'Feriado por el "Día del trabajo". Se traslada al viernes 30 de abril.'},
+    {mes:'', fecha:'03/05/2027', act:'Minuto cívico - Valor "La convivencia".'},
+    {mes:'', fecha:'17/05/2027', act:'Día Mundial del Reciclaje.'},
+    {mes:'', fecha:'20 - 21', act:'FERIA DE PROYECTOS INTERDISCIPLINARIOS (DIFUSIÓN DE LOS PRODUCTOS).', highlight:true},
+    {mes:'', fecha:'24/05/2027', act:'Feriado por la Batalla de Pichincha.'},
+    {mes:'', fecha:'28/05/2027', act:'Envío digital de instrumentos de evaluación del tercer trimestre de docentes a coordinación.'},
+    {mes:'', fecha:'28/05/2027', act:'Simulacro parcial de evacuación en las instituciones educativas fiscales.'},
+    {mes:'', fecha:'31 may. y 1 jun.', act:'Revisión de los instrumentos de evaluación en conjunto con los años y áreas.'},
+    {mes:'', fecha:'31/05/2027', act:'Envío de informes de alertas de aprendizaje mensual - Proceso de suscripción de actas con padres de familia.'},
+    {mes:'JUNIO', fecha:'01/06/2027', act:'Día del Niño.'},
+    {mes:'', fecha:'04/06/2027', act:'Entrega digital e impreso de las evaluaciones del tercer trimestre a Vicerrectorado.'},
+    {mes:'', fecha:'07/06/2027', act:'Minuto cívico - Valor "El éxito".'},
+    {mes:'', fecha:'12/06/2027', act:'Día mundial Contra el Trabajo Infantil. Se traslada al lunes 14.'},
+    {mes:'', fecha:'14/06/2027', act:'Presentación de planificaciones e instrumentos de evaluación de supletorios de docentes a Coordinadores y Junta Académica para su revisión y observaciones.'},
+    {mes:'', fecha:'15 y 16', act:'Revisión de la planificación e instrumentos de evaluación en conjunto con los años y áreas.'},
+    {mes:'', fecha:'18/06/2027', act:'Envío de la planificación e instrumentos de evaluación supletoria por Junta de directores a Vicerrectorado para su aprobación.'},
+    {mes:'', fecha:'Del 21 al 25', act:'Evaluaciones del tercer trimestre.'},
+    {mes:'', fecha:'25/06/2027', act:'Simulacro total de evacuación en coordinación con los encargados de la gestión de riesgos a nivel local.'},
+    {mes:'', fecha:'28', act:'Juntas de curso y publicación de notas'},
+    {mes:'', fecha:'Del 29 al 02/07', act:'Clases de recuperación para estudiantes que se presentarán a exámenes supletorios.'},
+    {mes:'', fecha:'30/06/2027', act:'Reunión de padres de familia desde preparatoria a BGU para la entrega de informe académico y comportamental del 3er Trimestre desde las 15h00.'},
+    {mes:'', fecha:'30/06/2027', act:'Entrega de calificaciones, informes trimestrales digital e impresos a (Vicerrectorado), comportamiento, asistencia (Inspección general). Registro en el Sistema SIEE.'},
+    {mes:'JULIO', fecha:'Del 05 al 07', act:'Evaluaciones supletorias.'},
+    {mes:'', fecha:'08/07/2027', act:'Juntas de curso y publicación de notas.'},
+    {mes:'', fecha:'09/07/2027', act:'Asamblea general de finalización del periodo lectivo'},
+    {mes:'', fecha:'', act:'Vacaciones ininterrumpidas de docentes'},
+    {mes:'RESUMEN', fecha:'DÍAS FESTIVOS', act:'', highlight:true},
+    {mes:'', fecha:'26 DE MARZO', act:'VIERNES SANTO'},
+    {mes:'', fecha:'01 DE MAYO', act:'DÍA DEL TRABAJO - SE TRASLADA AL 30 DE ABRIL.'},
+    {mes:'', fecha:'24 DE MAYO', act:'BATALLA DE PICHINCHA'},
+    {mes:'', fecha:'DÍAS LAB.', act:'', highlight:true},
+    {mes:'', fecha:'MARZO', act:'12'},
+    {mes:'', fecha:'ABRIL', act:'21'},
+    {mes:'', fecha:'MAYO', act:'20'},
+    {mes:'', fecha:'JUNIO', act:'18'},
+    {mes:'TOTAL', fecha:'', act:'71 DÍAS LABORADOS', highlight:true},
+    {mes:'RESUMEN LECTIVO', fecha:'PRIMER TRIMESTRE', act:'63 días', highlight:true},
+    {mes:'', fecha:'SEGUNDO TRIMESTRE', act:'66 días'},
+    {mes:'', fecha:'TERCER TRIMESTRE', act:'71 días'},
+    {mes:'', fecha:'TOTAL', act:'200 DÍAS LABORADOS', highlight:true}
+  ]
+};
+
+let _instCronoRendered = false;
+function renderInstCronograma() {
+  if (_instCronoRendered) return;
+  _instCronoRendered = true;
+  ['t1','t2','t3'].forEach((key, idx) => {
+    const tbody = document.getElementById('instCronoBody' + (idx+1));
+    if (!tbody) return;
+    let lastMes = '';
+    let html = '';
+    INST_CRONO_DATA[key].forEach(row => {
+      const mes = row.mes || '';
+      const showMes = mes && mes !== lastMes;
+      if (showMes) lastMes = mes;
+      const isHighlight = !!row.highlight;
+      const isSummary = mes === 'RESUMEN' || mes === 'RESUMEN LECTIVO' || mes === 'TOTAL';
+      const rowBg = isSummary ? 'background:var(--bg-card-subtle)' : (isHighlight ? 'background:rgba(5,150,105,0.07)' : '');
+      const actStyle = isHighlight ? 'font-weight:800;color:var(--text-main)' : 'color:var(--text-muted)';
+      html += `<tr style="border-bottom:1px solid var(--border-subtle);${rowBg}">
+        <td style="padding:7px 12px;font-weight:800;color:#059669;white-space:nowrap;vertical-align:top;font-size:0.75rem">${showMes ? escHTML(mes) : ''}</td>
+        <td style="padding:7px 12px;white-space:nowrap;vertical-align:top;font-size:0.75rem;font-weight:700;color:var(--text-main)">${escHTML(row.fecha)}</td>
+        <td style="padding:7px 12px;vertical-align:top;font-size:0.8rem;${actStyle}">${escHTML(row.act)}</td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  });
+}
+
+function switchInstCronoTab(tabIdx) {
+  for (let i = 1; i <= 3; i++) {
+    const c = document.getElementById('instCronoContent' + i);
+    const b = document.getElementById('instCronoTab' + i);
+    if (c) c.style.display = i === tabIdx ? 'block' : 'none';
+    if (b) {
+      if (i === tabIdx) {
+        if (i === 1) { b.className='btn btn-success'; b.style.cssText='font-size:0.82rem;white-space:nowrap;font-weight:800'; }
+        if (i === 2) { b.style.background='#d97706'; b.style.color='#fff'; b.style.borderColor='#d97706'; b.style.fontWeight='800'; }
+        if (i === 3) { b.style.background='#7c3aed'; b.style.color='#fff'; b.style.borderColor='#7c3aed'; b.style.fontWeight='800'; }
+      } else {
+        b.className = 'btn btn-outline';
+        if (i === 2) { b.style.background='rgba(251,191,36,0.08)'; b.style.color='#b45309'; b.style.borderColor='#fcd34d'; b.style.fontWeight='800'; }
+        if (i === 3) { b.style.background='rgba(124,58,237,0.08)'; b.style.color='#7c3aed'; b.style.borderColor='#c4b5fd'; b.style.fontWeight='800'; }
       }
     }
   }
@@ -21277,8 +21614,23 @@ function exportCronogramaXLSX() {
   XLSX.utils.book_append_sheet(wb, ws1, 'Agenda Actividades Previas');
   XLSX.utils.book_append_sheet(wb, ws2, 'Calendario 200 Días');
 
-  XLSX.writeFile(wb, `Cronograma_Agenda_Calderon2_${S.grado || '7mo_C'}.xlsx`);
-  toast('📊 Cronograma y Agenda exportados a Excel', '#16a34a');
+  // Hojas Institucionales 2026-2027
+  if (typeof INST_CRONO_DATA !== 'undefined') {
+    const t1Sheet = [['UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"'], ['CRONOGRAMA DE ACTIVIDADES DEL PRIMER TRIMESTRE 2026-2027'], ['MES', 'FECHAS', 'ACTIVIDADES']];
+    INST_CRONO_DATA.t1.forEach(r => t1Sheet.push([r.mes || '', r.fecha || '', r.act || '']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t1Sheet), '1er Trimestre Oficial');
+
+    const t2Sheet = [['UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"'], ['CRONOGRAMA DE ACTIVIDADES DEL SEGUNDO TRIMESTRE 2026-2027'], ['MES', 'FECHAS', 'ACTIVIDADES']];
+    INST_CRONO_DATA.t2.forEach(r => t2Sheet.push([r.mes || '', r.fecha || '', r.act || '']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t2Sheet), '2do Trimestre Oficial');
+
+    const t3Sheet = [['UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"'], ['CRONOGRAMA DE ACTIVIDADES DEL TERCER TRIMESTRE 2026-2027'], ['MES', 'FECHAS', 'ACTIVIDADES']];
+    INST_CRONO_DATA.t3.forEach(r => t3Sheet.push([r.mes || '', r.fecha || '', r.act || '']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(t3Sheet), '3er Trimestre Oficial');
+  }
+
+  XLSX.writeFile(wb, `Cronograma_Institucional_Calderon2_2026-2027.xlsx`);
+  toast('📊 Cronograma Institucional exportado a Excel', '#16a34a');
 }
 
 function openCronogramaModal() {

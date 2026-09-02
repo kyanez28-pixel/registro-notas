@@ -1,0 +1,5275 @@
+{
+  "version": 4,
+  "exportedAt": "2026-08-31T02:03:06.234Z",
+  "grado": "Séptimo C",
+  "anio": "2026-2027",
+  "periodo": "1er Trimestre",
+  "state": {
+    "colWidths": {
+      "CCNN||LA ENERGÍA TÉRMICA EN LA MAQUINA DE VAPOR||PROM": 48,
+      "CCNN||TEMPERATURA Y CALOR||LECCIÓN 2": 32,
+      "Lengua||LA EXPOSICIÓN ORAL||PROM": 66,
+      "Lengua||LAS FUNCIONES DEL LENGUAJE||PAG 202-203": 61,
+      "matrix||cedula": 97.00000762939453,
+      "Lengua||LAS FUNCIONES DEL LENGUAJE||ACTIVIDAD DE REFUERZO": 78,
+      "Matemáticas||EVALUACIÓN SUMATIVA||PI": 141.183349609375,
+      "Matemáticas||MÁXIMO COMÚN DIVISOR||PROM": 48,
+      "matrix||correo_inst": 165,
+      "CCNN||LA ENERGÍA TÉRMICA EN LA MAQUINA DE VAPOR||PAG 131": 56,
+      "Lengua||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PROM": 40,
+      "names": 231.1875,
+      "Matemáticas||SEMANA 2||T2": 50,
+      "Lengua||DISFRUTO DE LA LECTURA DE CUENTOS LATINOAMERICANOS||PAG 1921": 74,
+      "Artística||GUARDIANES DE LA VÍA||PROM": 44,
+      "Lengua||LA GRAMÁTICA ME AYUDA A ESCRIBIR MEJOR (SUJETO, PREDICADO Y CONCORDANCIA)||PÁG 174-175": 94,
+      "Lengua||ESCRIBO ATIÍCULOS INFORMATIVOS||CONSULTAR DEL ANIMAL": 81,
+      "Lengua||DISFRUTO DE LA LECTURA DE CUENTOS LATINOAMERICANOS||PROM": 47,
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD||PROM": 59,
+      "Matemáticas||EVALUACIÓN SUMATIVA||EV": 104.51667785644531,
+      "Lengua||DISFRUTO DE LA LECTURA DE CUENTOS LATINOAMERICANOS||PAG 185-186": 46,
+      "Lengua||LA EXPOSICIÓN ORAL||PAG 207-208": 68,
+      "CCNN||TEMPERATURA Y CALOR||PAG 115": 67,
+      "CCNN||LA ENERGÍA TÉRMICA EN LA MAQUINA DE VAPOR||COMPLETAR EL MAPA CONCEPTUAL": 38,
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS||L2": 54,
+      "Matemáticas||MULTIPLICACIÓN DE FRACCIONES||PROM": 47,
+      "EESS||LAS CARACTERÍSTICAS COMUNES DE LA NACIÓN||TAREA COMPLETAR EL MAPA CONCEPTUAL": 92,
+      "Lengua||LA GRAMÁTICA ME AYUDA A ESCRIBIR MEJOR (SUJETO, PREDICADO Y CONCORDANCIA)||PROM": 39,
+      "CCNN||LA ENERGÍA TÉRMICA EN LA MAQUINA DE VAPOR||LECCION": 64,
+      "Matemáticas||ESCRIBIR POESÍAS||LECCION ESCRITA": 149.140625,
+      "Lengua||LA EXPOSICIÓN ORAL||PAG 205-206": 56,
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS||PAG 86": 80,
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD||EJERCICIOS DE REFUERZO": 65,
+      "CCNN||EL CALOR Y LA ATMÓSFERA||CONTESTAR PREGUNTAS": 40,
+      "Artística||OBRA: DIVERSIDAD HUMANA.||AUTORETRATO COLORIDO": 58,
+      "matrix||hermanos": 189.46875,
+      "EESS||EL PROYECTO DE GABRIEL GARCIA MORENO||PROM": 68,
+      "matrix||fecha_nac": 90,
+      "CCNN||EL CALOR Y LA ATMÓSFERA||LECCIÓN": 38,
+      "Lengua||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL||PAG 191": 71,
+      "Lengua||LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS||PAG 157-160": 89,
+      "CCNN||LAS ÓRBITAS PLANETARIAS Y EL MOVIMIENTO DE LOS PLANETAS ALREDEDOR DEL SOL||CUADERNO": 82,
+      "EESS||SEMANA 1||T1": 50,
+      "Lengua||LA GRAMÁTICA ME AYUDA A ESCRIBIR MEJOR (SUJETO, PREDICADO Y CONCORDANCIA)||PAG 177": 69,
+      "matrix||nombres": 295,
+      "Lengua||ESCRIBO UN DIARIO PERSONAL||PAG 225-226": 78,
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS||PROM": 53,
+      "Matemáticas||ESCRIBIR POESÍAS||PROM": 50,
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS||PAG 111": 53,
+      "CCNN||LA ATMOSFERA Y SUS CAPAS||PROM": 43,
+      "CCNN||TEMPERATURA Y CALOR||PROM": 38,
+      "CCNN||LA ATMOSFERA Y SUS CAPAS||LECCION": 45,
+      "Lengua||ESCRIBO ATIÍCULOS INFORMATIVOS||PROM": 41.525001525878906,
+      "CCNN||EL CALOR Y LA ATMÓSFERA||PAG 127": 40,
+      "matrix||enfermedad": 125.88334655761719,
+      "Matemáticas||ADICIÓN Y SUSTRACCIÓN DE FRACCIONES||PROM": 52,
+      "Matemáticas||SEMANA 2||A2": 152.4375,
+      "CCNN||LA ATMOSFERA Y SUS CAPAS||PAG 135": 64,
+      "CCNN||TEMPERATURA Y CALOR||7 PREGUNTAS Y DIBUJO": 52,
+      "Matemáticas||MÍNIMO COMÚN MÚLTIPLO||PROM": 59,
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD||PAG 69": 86.59722137451172,
+      "EESS||SEMANA 1||L1": 50,
+      "Matemáticas||ADICIÓN Y SUSTRACCIÓN DE FRACCIONES||OPERACIONES CON FRACCIONES": 37,
+      "CCNN||EL CALOR Y LA ATMÓSFERA||PROM": 36,
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS||LECCIÓN 1": 66,
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS||8 PREGUNTAS Y DIBUJO": 56,
+      "Lengua||LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS||PROM": 42.900001525878906,
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD||PAG 68": 56,
+      "Artística||ELABRAR UN INSTRUMENTO MUSICAÑ||COPIAR HOJA Y COMPLETAR LA INFORMACIÓN": 75,
+      "EESS||LA REVOLUCÓN MARCISTA Y LA CRISIS DE 1859||RESUMEN CUADERNO": 67,
+      "Artística||GUARDIANES DE LA VÍA||DIBUJO DE EDUCACIÓN VIAL": 46,
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD||LECCIÓN1": 122.70833587646484,
+      "Lengua||LA GRAMÁTICA ME AYUDA A ESCRIBIR MEJOR (SUJETO, PREDICADO Y CONCORDANCIA)||LECCIÓN LA CONCORDANCIA": 70,
+      "Matemáticas||ESCRIBIR POESÍAS||ESCRIBIR EN EL CUADERNO": 127.00000762939453,
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS||PROM": 58,
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS||PAG 87": 86
+    },
+    "calendar": {
+      "trimEnd": "2026-12-01",
+      "trimStart": "2026-09-01",
+      "noclassDays": [
+        {
+          "label": "Independencia de Guayaquil",
+          "date": "2026-10-09"
+        },
+        {
+          "date": "2026-11-02",
+          "label": "Día de los Difuntos"
+        },
+        {
+          "date": "2026-11-03",
+          "label": "Independencia de Cuenca"
+        },
+        {
+          "date": "2026-12-25",
+          "label": "Navidad"
+        },
+        {
+          "label": "Vacaciones Estudiantiles",
+          "date": "2026-12-28"
+        },
+        {
+          "label": "Vacaciones Estudiantiles",
+          "date": "2026-12-29"
+        },
+        {
+          "label": "Vacaciones Estudiantiles",
+          "date": "2026-12-30"
+        },
+        {
+          "date": "2026-12-31",
+          "label": "Vacaciones Estudiantiles"
+        },
+        {
+          "label": "Año Nuevo",
+          "date": "2027-01-01"
+        },
+        {
+          "date": "2027-02-08",
+          "label": "Carnaval"
+        },
+        {
+          "date": "2027-02-09",
+          "label": "Carnaval"
+        },
+        {
+          "label": "Fiesta de la Lectura",
+          "date": "2027-04-19"
+        },
+        {
+          "date": "2027-04-23",
+          "label": "Fiesta de la Lectura"
+        },
+        {
+          "label": "Viernes Santo",
+          "date": "2027-04-30"
+        },
+        {
+          "label": "Día del Trabajo (Traslado)",
+          "date": "2027-05-03"
+        },
+        {
+          "label": "Batalla de Pichincha",
+          "date": "2027-05-24"
+        }
+      ]
+    },
+    "attAbsPeriod": "week",
+    "tutor": "Lic. Klever Yánez",
+    "attAbsVisible": true,
+    "cronoChecklist": {
+      "prev_17": true,
+      "prev_20": true,
+      "prev_3": true,
+      "prev_29": true,
+      "prev_23": true,
+      "prev_22": true,
+      "prev_2": true,
+      "prev_11": true,
+      "prev_15": true,
+      "prev_12": true,
+      "prev_21": true,
+      "prev_10": true,
+      "prev_5": true,
+      "prev_19": true,
+      "prev_6": true,
+      "prev_24": true,
+      "prev_28": true,
+      "prev_26": true,
+      "prev_13": true,
+      "prev_9": true,
+      "prev_27": true,
+      "prev_7": true,
+      "prev_14": true,
+      "prev_4": true,
+      "prev_1": true,
+      "prev_16": true,
+      "prev_8": true,
+      "prev_18": true,
+      "prev_25": true
+    },
+    "recovered": {},
+    "grado": "Séptimo C",
+    "customMatrixCols": [
+      {
+        "label": "ESCRIBIR COMO VIENE Y SE VA SU REPRESENTADO, RECORRIDO, SOLO, LO  O LA RETIRAN",
+        "bg": "#db2777",
+        "minW": 130,
+        "group": "est",
+        "id": "cst_1788137774809"
+      },
+      {
+        "label": "EN CASO DE TENER HERMANOS ESCRIBIR EL GRADO O CURSO Y PARALELO",
+        "bg": "#16a34a",
+        "group": "est",
+        "id": "cst_1788139328511",
+        "minW": 130
+      }
+    ],
+    "docente": "Lic. Klever Yánez",
+    "pi": {
+      "mats": [
+        "Matemáticas",
+        "Lengua",
+        "EESS",
+        "CCNN",
+        "Artística",
+        "EEFF"
+      ],
+      "config": {
+        "indicadores": [
+          {
+            "id": "PI1",
+            "peso": 50,
+            "nombre": "Relación con el tema central del proyecto1"
+          },
+          {
+            "nombre": "Aplicación de contenidos de la asignatura",
+            "peso": 50,
+            "id": "PI2"
+          }
+        ],
+        "syncMode": "subject",
+        "fecha": "",
+        "tema": "",
+        "titulo": "PROYECTO INTERDISCIPLINARIO — TRIMESTRE I"
+      },
+      "grades": {
+        "EESS": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "CCNN": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "Matemáticas": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "Artística": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "Lengua": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "EEFF": {
+          "0": {
+            "PI1": "8.10"
+          },
+          "1": {
+            "PI1": "9.90"
+          },
+          "2": {
+            "PI1": "8.30"
+          },
+          "3": {
+            "PI1": "8.40"
+          },
+          "4": {
+            "PI1": "7.30"
+          },
+          "5": {
+            "PI1": "7.80"
+          },
+          "6": {
+            "PI1": "7.20"
+          },
+          "7": {
+            "PI1": "9.80"
+          },
+          "8": {
+            "PI1": "8.10"
+          },
+          "9": {
+            "PI1": "7.60"
+          },
+          "10": {
+            "PI1": "8.50"
+          },
+          "11": {
+            "PI1": "9.90"
+          },
+          "12": {
+            "PI1": "8.20"
+          },
+          "13": {
+            "PI1": "7.60"
+          },
+          "14": {
+            "PI1": "7.90"
+          },
+          "15": {
+            "PI1": "9.00"
+          },
+          "16": {
+            "PI1": "7.70"
+          },
+          "17": {
+            "PI1": "8.10"
+          },
+          "18": {
+            "PI1": "9.10"
+          },
+          "19": {
+            "PI1": "8.50"
+          },
+          "20": {
+            "PI1": "8.20"
+          },
+          "21": {
+            "PI1": "9.90"
+          },
+          "22": {
+            "PI1": "9.60"
+          },
+          "23": {
+            "PI1": "9.50"
+          },
+          "24": {
+            "PI1": "9.50"
+          },
+          "25": {
+            "PI1": "9.60"
+          },
+          "26": {
+            "PI1": "9.80"
+          },
+          "27": {
+            "PI1": "9.10"
+          },
+          "28": {
+            "PI1": "7.90"
+          },
+          "29": {
+            "PI1": "8.40"
+          },
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        }
+      }
+    },
+    "currentTrimestre": "1er Trimestre",
+    "matsList": [
+      "Matemáticas",
+      "Lengua",
+      "EESS",
+      "CCNN",
+      "Artística",
+      "Acompañamiento Integral",
+      "Lectura"
+    ],
+    "diagnostico": {
+      "grades": {
+        "lengua": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "eess": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "matematicas": {
+          "0": {
+            "D3": "10.00",
+            "D2": "10.00",
+            "D4": "10.00",
+            "D1": "8.00"
+          },
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "ccnn": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        }
+      },
+      "activeSubject": "lengua",
+      "config": {
+        "materias": [
+          {
+            "skills": [
+              {
+                "name": "Operaciones Fundacionales & Cálculo Mental",
+                "id": "D1",
+                "code": "M.3.1.7",
+                "peso": 50,
+                "desc": "Resuelve operaciones con números naturales (suma, resta, mult, div) y cálculo mental."
+              },
+              {
+                "peso": 50,
+                "id": "D2",
+                "name": "Fracciones y Expresiones Decimales",
+                "code": "M.3.1.33",
+                "desc": "Lee, escribe, representa y opera con fracciones simples y números decimales."
+              }
+            ],
+            "color": "#1d4ed8",
+            "icon": "📐",
+            "name": "Matemáticas",
+            "id": "matematicas"
+          },
+          {
+            "color": "#7c3aed",
+            "icon": "📖",
+            "name": "Lengua y Literatura",
+            "id": "lengua",
+            "skills": [
+              {
+                "id": "D1",
+                "desc": "Comprender los contenidos implícitos de un texto mediante la realización de inferencias fundamentales y proyectivo-valorativas. (Hora 1)",
+                "peso": 13,
+                "name": "Comprensión de Contenidos Implícitos e Inferencias",
+                "code": "LL.3.3.2."
+              },
+              {
+                "name": "Escritura de Instrucciones y Conectores Lógicos",
+                "code": "LL.3.4.4.",
+                "peso": 13,
+                "id": "D2",
+                "desc": "Escribir instrucciones con secuencia lógica, uso de conectores temporales y de orden, y coherencia en el manejo del referente y de las personas gramaticales, en situaciones comunicativas que lo requieran. (Horas 2-3)"
+              },
+              {
+                "name": "Elementos de Textos Literarios",
+                "id": "D3",
+                "code": "LL.3.5.1.",
+                "peso": 12,
+                "desc": "Reconocer en un texto literario los elementos característicos que le dan sentido. (Hora 4)"
+              },
+              {
+                "desc": "Proponer intervenciones orales con una intención comunicativa, organizar el discurso según las estructuras básicas de la lengua oral y utilizar un vocabulario adecuado. (Hora 5)",
+                "id": "D4",
+                "peso": 13,
+                "code": "LL.3.2.2.",
+                "name": "Intervenciones Orales y Estructura Discursiva"
+              },
+              {
+                "peso": 13,
+                "code": "LL.3.3.3.",
+                "name": "Inferencia y Síntesis: Tema e Ideas Principales",
+                "id": "D5",
+                "desc": "Inferir y sintetizar el contenido esencial de un texto al diferenciar el tema de las ideas principales. (Hora 6)"
+              },
+              {
+                "id": "D6",
+                "desc": "Escribir exposiciones organizadas en párrafos según esquema de comparación, problema-solución y antecedente-consecuente, en las situaciones comunicativas que lo requieran. (Horas 7-8)",
+                "peso": 12,
+                "name": "Escritura de Exposiciones y Párrafos Estructurados",
+                "code": "LL.3.4.3."
+              },
+              {
+                "name": "Lectura Autónoma y Preferencias Personales",
+                "code": "LL.3.5.3.",
+                "peso": 12,
+                "id": "D7",
+                "desc": "Elegir lecturas basándose en preferencias personales de autor, género o temas y el manejo de diversos soportes para formarse como lector autónomo. (Hora 9)"
+              },
+              {
+                "code": "LL.3.2.1.",
+                "name": "Escucha Activa y Juicios de Valor en Discursos",
+                "peso": 12,
+                "id": "D8",
+                "desc": "Escuchar discursos orales y formular juicios de valor con respecto a su contenido y forma, y participar de manera respetuosa frente a las intervenciones de los demás. (Hora 10)"
+              }
+            ]
+          },
+          {
+            "id": "ccnn",
+            "color": "#059669",
+            "name": "Ciencias Naturales",
+            "icon": "🔬",
+            "skills": [
+              {
+                "desc": "Identifica tipos de ecosistemas, adaptaciones y cadenas tróficas del Ecuador.",
+                "code": "CN.3.1.1",
+                "name": "Ecosistemas, Fauna y Flora del Ecuador",
+                "peso": 35,
+                "id": "D1"
+              },
+              {
+                "peso": 35,
+                "code": "CN.3.2.3",
+                "name": "Cuerpo Humano, Sistemas y Salud",
+                "id": "D2",
+                "desc": "Reconoce los sistemas del cuerpo humano y prácticas de higiene y nutrición."
+              },
+              {
+                "code": "CN.3.3.1",
+                "name": "Materia, Energía y Método Científico",
+                "peso": 30,
+                "id": "D3",
+                "desc": "Distingue propiedades de la materia, tipos de energía y observación experimental."
+              }
+            ]
+          },
+          {
+            "color": "#d97706",
+            "id": "eess",
+            "icon": "🌍",
+            "skills": [
+              {
+                "desc": "Identifica los periodos históricos clave y hechos fundacionales de la República.",
+                "peso": 35,
+                "id": "D1",
+                "code": "CS.3.1.25",
+                "name": "Historia y República del Ecuador"
+              },
+              {
+                "code": "CS.3.2.4",
+                "name": "Geografía, Provincias y Regiones",
+                "peso": 35,
+                "id": "D2",
+                "desc": "Reconoce las 4 regiones naturales, provincias del Ecuador y mapas temáticos."
+              },
+              {
+                "desc": "Comprende normas ciudadanas, derechos de la niñez y participación democrática.",
+                "code": "CS.3.3.1",
+                "name": "Convivencia, Deberes y Derechos",
+                "id": "D3",
+                "peso": 30
+              }
+            ],
+            "name": "Estudios Sociales"
+          }
+        ],
+        "fecha": "01 al 18 de Septiembre de 2026",
+        "periodo": "Fase Conecta (Sem 1) & Fase Nivela (Sem 2 y 3)",
+        "metaMinima": 7
+      },
+      "conivelacion": {
+        "eess": [
+          {
+            "students": [],
+            "tutorSi": 0,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "tutorSi": 1,
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "students": []
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 2,
+            "students": []
+          },
+          {
+            "students": [],
+            "tutorSi": 3,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "students": [],
+            "tutorSi": 4
+          },
+          {
+            "students": [],
+            "tutorSi": 5,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "students": [],
+            "tutorSi": 6,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 7,
+            "students": []
+          }
+        ],
+        "lengua": [
+          {
+            "students": [],
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 0
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "students": [],
+            "tutorSi": 1
+          },
+          {
+            "students": [],
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 2
+          },
+          {
+            "students": [],
+            "tutorSi": 3,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "students": [],
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 4
+          },
+          {
+            "students": [],
+            "tutorSi": 5,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 6,
+            "students": []
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 7,
+            "students": []
+          }
+        ],
+        "ccnn": [
+          {
+            "students": [],
+            "tutorSi": 0,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "tutorSi": 1,
+            "students": [],
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "students": [],
+            "tutorSi": 2,
+            "estrategia": "Tutoría orientada con apoyo directo del docente"
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 3,
+            "students": []
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 4,
+            "students": []
+          },
+          {
+            "students": [],
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "tutorSi": 5
+          },
+          {
+            "tutorSi": 6,
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "students": []
+          },
+          {
+            "estrategia": "Tutoría orientada con apoyo directo del docente",
+            "students": [],
+            "tutorSi": 7
+          }
+        ],
+        "matematicas": [
+          {
+            "estrategia": "Lectura guiada y resolución cooperativa de ejercicios prácticos",
+            "tutorSi": 0,
+            "students": []
+          }
+        ]
+      },
+      "socioemocional": {
+        "0": {
+          "obs": "",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno"
+        },
+        "1": {
+          "apoyo": "Constante",
+          "convivencia": "Bueno",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "obs": "",
+          "alertaDece": false
+        },
+        "2": {
+          "obs": "",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "apoyo": "Constante"
+        },
+        "3": {
+          "convivencia": "Bueno",
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "alertaDece": false,
+          "obs": ""
+        },
+        "4": {
+          "convivencia": "Bueno",
+          "obs": "",
+          "alertaDece": false,
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "5": {
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "autonomia": "Bueno",
+          "apoyo": "Constante"
+        },
+        "6": {
+          "alertaDece": false,
+          "apoyo": "Constante",
+          "obs": "",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno"
+        },
+        "7": {
+          "autonomia": "Bueno",
+          "obs": "",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "8": {
+          "convivencia": "Bueno",
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "alertaDece": false
+        },
+        "9": {
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "apoyo": "Constante",
+          "convivencia": "Bueno",
+          "obs": "",
+          "autonomia": "Bueno"
+        },
+        "10": {
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "obs": ""
+        },
+        "11": {
+          "obs": "",
+          "alertaDece": false,
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "apoyo": "Constante"
+        },
+        "12": {
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "obs": "",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "convivencia": "Bueno"
+        },
+        "13": {
+          "convivencia": "Bueno",
+          "obs": "",
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado"
+        },
+        "14": {
+          "alertaDece": false,
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno"
+        },
+        "15": {
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "obs": "",
+          "alertaDece": false,
+          "apoyo": "Constante"
+        },
+        "16": {
+          "obs": "",
+          "convivencia": "Bueno",
+          "autonomia": "Bueno",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "apoyo": "Constante"
+        },
+        "17": {
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "convivencia": "Bueno",
+          "obs": "",
+          "alertaDece": false
+        },
+        "18": {
+          "obs": "",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado"
+        },
+        "19": {
+          "obs": "",
+          "autonomia": "Bueno",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "apoyo": "Constante"
+        },
+        "20": {
+          "convivencia": "Bueno",
+          "obs": "",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "21": {
+          "apoyo": "Constante",
+          "obs": "",
+          "autonomia": "Bueno",
+          "alertaDece": false,
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "22": {
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "obs": "",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno"
+        },
+        "23": {
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "obs": "",
+          "alertaDece": false
+        },
+        "24": {
+          "obs": "",
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "alertaDece": false
+        },
+        "25": {
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "obs": "",
+          "convivencia": "Bueno",
+          "alertaDece": false
+        },
+        "26": {
+          "alertaDece": false,
+          "apoyo": "Constante",
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "autonomia": "Bueno"
+        },
+        "27": {
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "apoyo": "Constante",
+          "obs": ""
+        },
+        "28": {
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "apoyo": "Constante",
+          "obs": ""
+        },
+        "29": {
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "autonomia": "Bueno",
+          "apoyo": "Constante"
+        },
+        "30": {
+          "apoyo": "Constante",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno"
+        },
+        "31": {
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "apoyo": "Constante",
+          "obs": ""
+        },
+        "32": {
+          "convivencia": "Bueno",
+          "autonomia": "Bueno",
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "alertaDece": false,
+          "apoyo": "Constante"
+        },
+        "33": {
+          "obs": "",
+          "apoyo": "Constante",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado",
+          "alertaDece": false
+        },
+        "34": {
+          "obs": "",
+          "convivencia": "Bueno",
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "autonomia": "Bueno"
+        },
+        "35": {
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "autonomia": "Bueno",
+          "obs": "",
+          "apoyo": "Constante",
+          "alertaDece": false
+        },
+        "36": {
+          "apoyo": "Constante",
+          "alertaDece": false,
+          "obs": "",
+          "autonomia": "Bueno",
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "37": {
+          "apoyo": "Constante",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "animo": "Tranquilo / Adaptado",
+          "obs": "",
+          "autonomia": "Bueno"
+        },
+        "38": {
+          "autonomia": "Bueno",
+          "alertaDece": false,
+          "apoyo": "Constante",
+          "obs": "",
+          "convivencia": "Bueno",
+          "animo": "Tranquilo / Adaptado"
+        },
+        "39": {
+          "autonomia": "Bueno",
+          "obs": "",
+          "animo": "Tranquilo / Adaptado",
+          "convivencia": "Bueno",
+          "alertaDece": false,
+          "apoyo": "Constante"
+        }
+      },
+      "activeTab": "informes"
+    },
+    "hiddenRows": {},
+    "herramientas": {
+      "atencion": {
+        "fechaHora": "Lunes, 14 de Septiembre de 2026 · 14:00",
+        "studentIdx": 0,
+        "motivo": "Bajo Rendimiento Académico / Alerta de Refuerzo",
+        "parentesco": "Madre de Familia",
+        "contacto": "",
+        "compromisos": "",
+        "hechos": "",
+        "repName": ""
+      },
+      "reunion": {
+        "fecha": "Viernes, 05 de Septiembre de 2026",
+        "horaLugar": "13:30 a 15:00 · Aula de Séptimo C",
+        "orden": "1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes.",
+        "titulo": "I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO"
+      },
+      "activeListId": "list_1787926365515",
+      "listado": {
+        "colCount": 6,
+        "cols": [
+          "Actividad 1",
+          "Actividad 2",
+          "Actividad 3",
+          "Actividad 4",
+          "Firma Tutor/a",
+          "Estado"
+        ],
+        "subtitle": "Evaluación Formativa Continua (70%) · Séptimo de Básica",
+        "title": "CONTROL DE CUMPLIMIENTO DE TAREAS Y ACTIVIDADES",
+        "colTypes": [
+          "check",
+          "check",
+          "check",
+          "check",
+          "firma",
+          "texto"
+        ],
+        "orientation": "portrait"
+      },
+      "activeReunionId": "reu_1787870632891",
+      "currentAtencionForm": {
+        "parentesco": "Madre de Familia",
+        "repName": "",
+        "hechos": "",
+        "studentIdx": 0,
+        "contacto": "",
+        "fechaHora": "",
+        "motivo": "Bajo Rendimiento Académico / Alerta de Refuerzo",
+        "compromisos": ""
+      },
+      "citaciones": {
+        "motivo": "Tratar asuntos pedagógicos y comportamentales relacionados con su representado/a.",
+        "lugar": "Aula de Séptimo de Básica C",
+        "modo": "individual",
+        "fechaHora": "Lunes, 14 de Septiembre de 2026 a las 14:00",
+        "studentIdx": 0
+      },
+      "reuniones": [
+        {
+          "attendance": {
+            "0": {
+              "rep": "",
+              "present": false,
+              "ci": "",
+              "obs": ""
+            },
+            "1": {
+              "rep": "",
+              "present": false,
+              "ci": "",
+              "obs": ""
+            },
+            "2": {
+              "present": false,
+              "rep": "",
+              "obs": "",
+              "ci": ""
+            },
+            "3": {
+              "rep": "",
+              "obs": "",
+              "present": false,
+              "ci": ""
+            },
+            "4": {
+              "obs": "",
+              "ci": "",
+              "present": false,
+              "rep": ""
+            },
+            "5": {
+              "rep": "",
+              "ci": "",
+              "present": false,
+              "obs": ""
+            },
+            "6": {
+              "rep": "",
+              "ci": "",
+              "obs": "",
+              "present": false
+            },
+            "7": {
+              "obs": "",
+              "ci": "",
+              "present": false,
+              "rep": ""
+            },
+            "8": {
+              "ci": "",
+              "obs": "",
+              "present": false,
+              "rep": ""
+            },
+            "9": {
+              "ci": "",
+              "obs": "",
+              "present": false,
+              "rep": ""
+            },
+            "10": {
+              "ci": "",
+              "present": false,
+              "obs": "",
+              "rep": ""
+            },
+            "11": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "12": {
+              "present": false,
+              "rep": "",
+              "obs": "",
+              "ci": ""
+            },
+            "13": {
+              "present": false,
+              "rep": "",
+              "ci": "",
+              "obs": ""
+            },
+            "14": {
+              "present": false,
+              "rep": "",
+              "obs": "",
+              "ci": ""
+            },
+            "15": {
+              "present": false,
+              "obs": "",
+              "ci": "",
+              "rep": ""
+            },
+            "16": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "17": {
+              "rep": "",
+              "ci": "",
+              "present": false,
+              "obs": ""
+            },
+            "18": {
+              "present": false,
+              "obs": "",
+              "rep": "",
+              "ci": ""
+            },
+            "19": {
+              "present": false,
+              "ci": "",
+              "rep": "",
+              "obs": ""
+            },
+            "20": {
+              "present": false,
+              "ci": "",
+              "obs": "",
+              "rep": ""
+            },
+            "21": {
+              "obs": "",
+              "ci": "",
+              "present": false,
+              "rep": ""
+            },
+            "22": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "23": {
+              "rep": "",
+              "ci": "",
+              "present": false,
+              "obs": ""
+            },
+            "24": {
+              "present": false,
+              "obs": "",
+              "ci": "",
+              "rep": ""
+            },
+            "25": {
+              "ci": "",
+              "rep": "",
+              "obs": "",
+              "present": false
+            },
+            "26": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "27": {
+              "ci": "",
+              "obs": "",
+              "rep": "",
+              "present": false
+            },
+            "28": {
+              "rep": "",
+              "ci": "",
+              "present": false,
+              "obs": ""
+            },
+            "29": {
+              "ci": "",
+              "present": false,
+              "obs": "",
+              "rep": ""
+            },
+            "30": {
+              "rep": "",
+              "present": false,
+              "obs": "",
+              "ci": ""
+            },
+            "31": {
+              "present": false,
+              "ci": "",
+              "obs": "",
+              "rep": ""
+            },
+            "32": {
+              "ci": "",
+              "rep": "",
+              "present": false,
+              "obs": ""
+            },
+            "33": {
+              "rep": "",
+              "ci": "",
+              "present": false,
+              "obs": ""
+            },
+            "34": {
+              "ci": "",
+              "obs": "",
+              "rep": "",
+              "present": false
+            },
+            "35": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "36": {
+              "present": false,
+              "ci": "",
+              "obs": "",
+              "rep": ""
+            },
+            "37": {
+              "obs": "",
+              "present": false,
+              "ci": "",
+              "rep": ""
+            },
+            "38": {
+              "present": false,
+              "rep": "",
+              "obs": "",
+              "ci": ""
+            },
+            "39": {
+              "rep": "",
+              "present": false,
+              "obs": "",
+              "ci": ""
+            }
+          },
+          "titulo": "I REUNIÓN ORDINARIA DE PADRES DE FAMILIA — INICIO DE AÑO LECTIVO",
+          "horaLugar": "13:30 a 15:00 · Aula de Séptimo C",
+          "id": "reu_1787870632891",
+          "fecha": "Viernes, 05 de Septiembre de 2026",
+          "orden": "1. Saludo y bienvenida por parte del Docente Tutor.\n2. Socialización de lineamientos pedagógicos y normativa de evaluación 70/30 (Acuerdo MINEDUC-2024-00031-A).\n3. Informe de la Fase CONECTA y diagnóstico socioemocional.\n4. Elección y posesión de la Directiva del Comité de Paralelo (2026-2027).\n5. Asuntos varios y compromisos de los representantes."
+        }
+      ],
+      "rubricaEval": {
+        "scores": {
+          "1": "DA",
+          "2": "DA",
+          "3": "DA",
+          "4": "DA"
+        },
+        "obs": "",
+        "studentIdx": 0,
+        "preset": "convivencia"
+      },
+      "rubrica": {
+        "preset": "exposicion"
+      },
+      "rubricas": [],
+      "atenciones": [],
+      "lists": [
+        {
+          "subtitle": "Evaluación Formativa Continua (70%) · Séptimo de Básica",
+          "id": "list_1787870632891",
+          "cols": [
+            "fecha de Nacimiento",
+            "EDAD"
+          ],
+          "data": {
+            "0": {
+              "3": true
+            },
+            "1": {}
+          },
+          "colCount": 2,
+          "colTypes": [
+            "mat_fecha_nac",
+            "mat_edad"
+          ],
+          "style": {
+            "fontSize": "10pt",
+            "rowPadding": "medium",
+            "textTransform": "uppercase",
+            "fontFamily": "'Inter', system-ui, sans-serif",
+            "colorTheme": "vibrant"
+          },
+          "orientation": "portrait",
+          "title": "LISTADO ESTUDIANTES EDAD Y DOMICILIO"
+        },
+        {
+          "orientation": "landscape",
+          "colCount": 1,
+          "title": "NOMBRES Y CEDULAS ESTUDIANTES",
+          "id": "list_1787871318490",
+          "style": {
+            "fontFamily": "'Arial', 'Helvetica', sans-serif",
+            "fontSize": "10.5pt",
+            "rowPadding": "spacious",
+            "textTransform": "uppercase",
+            "colorTheme": "vibrant"
+          },
+          "subtitle": "Séptimo C · Año Lectivo 2026-2027",
+          "colTypes": [
+            "mat_cedula"
+          ],
+          "data": {},
+          "cols": [
+            "Cédula"
+          ]
+        },
+        {
+          "cols": [
+            "Cédula",
+            "EN CASO DE TENER HERMANOS ESCRIBIR EL GRADO O CURSO Y PARALELO"
+          ],
+          "data": {
+            "0": {},
+            "1": {},
+            "2": {},
+            "3": {},
+            "4": {},
+            "5": {},
+            "6": {},
+            "7": {},
+            "8": {},
+            "9": {},
+            "10": {},
+            "11": {},
+            "12": {},
+            "13": {},
+            "14": {},
+            "15": {},
+            "16": {},
+            "17": {},
+            "18": {},
+            "19": {},
+            "20": {},
+            "21": {},
+            "22": {},
+            "23": {},
+            "24": {},
+            "25": {},
+            "26": {},
+            "27": {},
+            "28": {},
+            "29": {},
+            "30": {},
+            "31": {},
+            "32": {},
+            "33": {},
+            "34": {},
+            "35": {},
+            "36": {},
+            "37": {},
+            "38": {},
+            "39": {}
+          },
+          "id": "list_1787926365515",
+          "orientation": "portrait",
+          "colTypes": [
+            "mat_madre_tel",
+            "mat_cst_cst_1788139328511"
+          ],
+          "subtitle": "Protocolo de Seguridad y Atención a la Diversidad · U.E.F. \"Calderón 2\"",
+          "style": {
+            "colorTheme": "vibrant",
+            "fontSize": "6.5pt",
+            "rowPadding": "compact",
+            "textTransform": "uppercase",
+            "sheetWidth": "auto",
+            "fontFamily": "'Times New Roman', serif"
+          },
+          "colCount": 2,
+          "title": "FICHA DE SALUD, ALERGIAS Y NECESIDADES EDUCATIVAS (NN.EE.)"
+        }
+      ]
+    },
+    "trimestres": {
+      "1er Trimestre": {
+        "mats": {
+          "Lengua": {
+            "cols": {
+              "SEMANA 1": [
+                {
+                  "type": "AC",
+                  "name": "A1",
+                  "date": "",
+                  "color": null
+                },
+                {
+                  "date": "",
+                  "name": "T1",
+                  "color": null,
+                  "type": "T"
+                },
+                {
+                  "date": "",
+                  "color": null,
+                  "name": "L1",
+                  "type": "L"
+                }
+              ],
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "date": "",
+                  "name": "PI",
+                  "type": "PI",
+                  "color": null
+                },
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "EV",
+                  "type": "PS"
+                }
+              ],
+              "SEMANA 2": [
+                {
+                  "date": "",
+                  "name": "A2",
+                  "color": null,
+                  "type": "AC"
+                },
+                {
+                  "name": "TG1",
+                  "date": "",
+                  "color": null,
+                  "type": "TG"
+                },
+                {
+                  "name": "T2",
+                  "date": "",
+                  "type": "T",
+                  "color": null
+                }
+              ]
+            },
+            "grades": {
+              "0": {
+                "EVALUACIÓN SUMATIVA||PI": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ]
+          },
+          "Matemáticas": {
+            "grades": {
+              "0": {
+                "EVALUACIÓN SUMATIVA||EV": "6.00",
+                "SEMANA 1||T1": "8.00",
+                "SEMANA 2||T2": "5.00",
+                "EVALUACIÓN SUMATIVA||PI": "6.50",
+                "SEMANA 2||A2": "7.00",
+                "SEMANA 1||L1": "8.00"
+              },
+              "1": {
+                "SEMANA 1||T1": "8.00",
+                "SEMANA 2||T2": "5.00",
+                "EVALUACIÓN SUMATIVA||EV": "7.00",
+                "SEMANA 2||A2": "7.00",
+                "SEMANA 1||L1": "7.00"
+              },
+              "2": {
+                "SEMANA 1||T1": "1.00",
+                "SEMANA 1||L1": "10.00"
+              },
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "cols": {
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "type": "PI",
+                  "date": "",
+                  "color": null,
+                  "name": "PI"
+                },
+                {
+                  "type": "PS",
+                  "color": null,
+                  "date": "",
+                  "name": "EV"
+                }
+              ],
+              "SEMANA 2": [
+                {
+                  "type": "AC",
+                  "name": "A2",
+                  "date": "",
+                  "color": null
+                },
+                {
+                  "date": "",
+                  "color": null,
+                  "name": "T2",
+                  "type": "T"
+                }
+              ],
+              "SEMANA 1": [
+                {
+                  "name": "T1",
+                  "date": "",
+                  "color": null,
+                  "type": "T"
+                },
+                {
+                  "color": null,
+                  "name": "L1",
+                  "date": "",
+                  "type": "L"
+                }
+              ]
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ]
+          },
+          "CCNN": {
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ],
+            "grades": {
+              "0": {
+                "EVALUACIÓN SUMATIVA||PI": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "cols": {
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "type": "PI",
+                  "date": "",
+                  "color": null,
+                  "name": "PI"
+                },
+                {
+                  "type": "PS",
+                  "date": "",
+                  "name": "EV",
+                  "color": null
+                }
+              ],
+              "SEMANA 2": [
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "A2",
+                  "type": "AC"
+                },
+                {
+                  "type": "TG",
+                  "name": "TG1",
+                  "date": "",
+                  "color": null
+                },
+                {
+                  "type": "T",
+                  "date": "",
+                  "name": "T2",
+                  "color": null
+                }
+              ],
+              "SEMANA 1": [
+                {
+                  "type": "AC",
+                  "date": "",
+                  "name": "A1",
+                  "color": null
+                },
+                {
+                  "type": "T",
+                  "name": "T1",
+                  "date": "",
+                  "color": null
+                },
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "L1",
+                  "type": "L"
+                }
+              ]
+            }
+          },
+          "EESS": {
+            "grades": {
+              "0": {
+                "SEMANA 2||A2": "8",
+                "SEMANA 1||L1": "7",
+                "SEMANA 1||A1": "8",
+                "SEMANA 2||TG1": "9",
+                "EVALUACIÓN SUMATIVA||PI": "7.00",
+                "SEMANA 1||T1": "8"
+              },
+              "1": {
+                "SEMANA 1||L1": "8",
+                "SEMANA 1||T1": "8",
+                "SEMANA 1||A1": "2"
+              },
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ],
+            "cols": {
+              "SEMANA 1": [
+                {
+                  "color": null,
+                  "name": "A1",
+                  "date": "",
+                  "type": "AC"
+                },
+                {
+                  "type": "T",
+                  "date": "",
+                  "name": "T1",
+                  "color": null
+                },
+                {
+                  "date": "",
+                  "name": "L1",
+                  "color": null,
+                  "type": "L"
+                },
+                {
+                  "name": "ASFASF",
+                  "date": "2026-08-12",
+                  "color": "#7c3aed",
+                  "type": "T"
+                }
+              ],
+              "SEMANA 2": [
+                {
+                  "name": "A2",
+                  "date": "",
+                  "color": null,
+                  "type": "AC"
+                },
+                {
+                  "name": "TG1",
+                  "date": "",
+                  "color": null,
+                  "type": "TG"
+                },
+                {
+                  "type": "T",
+                  "color": null,
+                  "name": "T2",
+                  "date": ""
+                }
+              ],
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "name": "PI",
+                  "date": "",
+                  "color": null,
+                  "type": "PI"
+                },
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "EV",
+                  "type": "PS"
+                }
+              ]
+            }
+          },
+          "Lectura": {
+            "cols": {
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "type": "PI",
+                  "date": "",
+                  "name": "PI",
+                  "color": null
+                },
+                {
+                  "color": null,
+                  "name": "EV",
+                  "date": "",
+                  "type": "PS"
+                }
+              ],
+              "SEMANA 1": [
+                {
+                  "type": "AC",
+                  "color": null,
+                  "date": "",
+                  "name": "A1"
+                },
+                {
+                  "date": "",
+                  "name": "T1",
+                  "color": null,
+                  "type": "T"
+                },
+                {
+                  "date": "",
+                  "name": "L1",
+                  "color": null,
+                  "type": "L"
+                }
+              ],
+              "SEMANA 2": [
+                {
+                  "date": "",
+                  "name": "A2",
+                  "color": null,
+                  "type": "AC"
+                },
+                {
+                  "name": "TG1",
+                  "date": "",
+                  "type": "TG",
+                  "color": null
+                },
+                {
+                  "date": "",
+                  "name": "T2",
+                  "type": "T",
+                  "color": null
+                }
+              ]
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ],
+            "grades": {
+              "0": {},
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            }
+          },
+          "Artística": {
+            "grades": {
+              "0": {
+                "EVALUACIÓN SUMATIVA||PI": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "cols": {
+              "SEMANA 2": [
+                {
+                  "name": "A2",
+                  "date": "",
+                  "color": null,
+                  "type": "AC"
+                },
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "TG1",
+                  "type": "TG"
+                },
+                {
+                  "color": null,
+                  "type": "T",
+                  "date": "",
+                  "name": "T2"
+                }
+              ],
+              "SEMANA 1": [
+                {
+                  "type": "AC",
+                  "color": null,
+                  "name": "A1",
+                  "date": ""
+                },
+                {
+                  "type": "T",
+                  "date": "",
+                  "name": "T1",
+                  "color": null
+                },
+                {
+                  "date": "",
+                  "name": "L1",
+                  "color": null,
+                  "type": "L"
+                }
+              ],
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "type": "PI",
+                  "date": "",
+                  "name": "PI",
+                  "color": null
+                },
+                {
+                  "type": "PS",
+                  "name": "EV",
+                  "date": "",
+                  "color": null
+                }
+              ]
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ]
+          },
+          "Acompañamiento Integral": {
+            "cols": {
+              "SEMANA 2": [
+                {
+                  "type": "AC",
+                  "color": null,
+                  "date": "",
+                  "name": "A2"
+                },
+                {
+                  "type": "TG",
+                  "color": null,
+                  "name": "TG1",
+                  "date": ""
+                },
+                {
+                  "type": "T",
+                  "color": null,
+                  "name": "T2",
+                  "date": ""
+                }
+              ],
+              "SEMANA 1": [
+                {
+                  "color": null,
+                  "date": "",
+                  "name": "A1",
+                  "type": "AC"
+                },
+                {
+                  "type": "T",
+                  "color": null,
+                  "date": "",
+                  "name": "T1"
+                },
+                {
+                  "type": "L",
+                  "date": "",
+                  "name": "L1",
+                  "color": null
+                }
+              ],
+              "EVALUACIÓN SUMATIVA": [
+                {
+                  "date": "",
+                  "name": "PI",
+                  "color": null,
+                  "type": "PI"
+                },
+                {
+                  "type": "PS",
+                  "color": null,
+                  "name": "EV",
+                  "date": ""
+                }
+              ]
+            },
+            "grades": {
+              "0": {},
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "weeks": [
+              "SEMANA 1",
+              "SEMANA 2",
+              "EVALUACIÓN SUMATIVA"
+            ]
+          }
+        },
+        "pi": {
+          "grades": {
+            "Lengua": {
+              "0": {
+                "PI1": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "Matemáticas": {
+              "0": {
+                "PI2": "8.00",
+                "PI1": "5.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "CCNN": {
+              "0": {
+                "PI1": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "EESS": {
+              "0": {
+                "PI1": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            },
+            "Artística": {
+              "0": {
+                "PI1": "7.00"
+              },
+              "1": {},
+              "2": {},
+              "3": {},
+              "4": {},
+              "5": {},
+              "6": {},
+              "7": {},
+              "8": {},
+              "9": {},
+              "10": {},
+              "11": {},
+              "12": {},
+              "13": {},
+              "14": {},
+              "15": {},
+              "16": {},
+              "17": {},
+              "18": {},
+              "19": {},
+              "20": {},
+              "21": {},
+              "22": {},
+              "23": {},
+              "24": {},
+              "25": {},
+              "26": {},
+              "27": {},
+              "28": {},
+              "29": {},
+              "30": {},
+              "31": {},
+              "32": {},
+              "33": {},
+              "34": {},
+              "35": {},
+              "36": {},
+              "37": {},
+              "38": {},
+              "39": {}
+            }
+          },
+          "config": {
+            "titulo": "PROYECTO INTERDISCIPLINARIO — TRIMESTRE I",
+            "tema": "",
+            "indicadores": [
+              {
+                "peso": 50,
+                "nombre": "Relación con el tema central del proyecto1",
+                "id": "PI1"
+              },
+              {
+                "id": "PI2",
+                "nombre": "Aplicación de contenidos de la asignatura",
+                "peso": 50
+              }
+            ],
+            "fecha": ""
+          },
+          "mats": [
+            "Matemáticas",
+            "EESS",
+            "CCNN",
+            "Artística",
+            "Lengua"
+          ]
+        },
+        "asistencia": {
+          "2026-08-12": {
+            "0": "P",
+            "1": "P",
+            "2": "P",
+            "3": "P",
+            "4": "P",
+            "5": "P",
+            "6": "P",
+            "7": "P",
+            "8": "P",
+            "9": "P",
+            "10": "P",
+            "11": "P",
+            "12": "P",
+            "13": "P",
+            "14": "P",
+            "15": "P",
+            "16": "P",
+            "17": "P",
+            "18": "P",
+            "19": "P",
+            "20": "P",
+            "21": "P",
+            "22": "P",
+            "23": "P",
+            "24": "P",
+            "25": "P",
+            "26": "P",
+            "27": "P",
+            "28": "P",
+            "29": "P",
+            "30": "P",
+            "31": "P",
+            "32": "P",
+            "33": "P",
+            "34": "P",
+            "35": "P",
+            "36": "P",
+            "37": "P",
+            "38": "P",
+            "39": "P"
+          }
+        }
+      }
+    },
+    "studentProfiles": [
+      {
+        "rep_nombre": "Juliza Mendoza",
+        "customData": {},
+        "nombre": "ALCIVAR MENDOZA AMY SOFIA",
+        "num": "1",
+        "enfermedad": "No",
+        "rep_email": "amysofiaalcivarmendoza@gmail.com",
+        "rep_cedula": "1317148581",
+        "padre_nombre": "Guido Bienvenido Alcivar Moreira",
+        "fecha_nacimiento": "2015-06-30",
+        "madre_cedula": "1317148581",
+        "direccion": "Agustín Guerrero y Aguila Imperial",
+        "cedula": "1756848188",
+        "rep_telefono": "0981702812",
+        "tel_emergencia": "0980440464",
+        "hermanos_inst": "No",
+        "madre_nombre": "Juliza Liliana Mendoza García",
+        "padre_telefono": "0980440464",
+        "padre_cedula": "1311997926",
+        "madre_telefono": "0939591924",
+        "edad": "11 años, 2 meses, 0 días",
+        "correo_institucional": "almeamso10267191@estudiantes.edu.ec",
+        "nnee": "No"
+      },
+      {
+        "madre_nombre": "Lourdes Amanda Anzatuña Chasi",
+        "madre_telefono": "0995473515",
+        "edad": "10 años, 8 meses, 23 días",
+        "nnee": "No",
+        "rep_telefono": "0995473515",
+        "padre_cedula": "1722317334",
+        "hermanos_inst": "10mo",
+        "direccion": "Calderón-marianitas-cabuyal",
+        "tel_emergencia": "0984328542",
+        "num": "2",
+        "enfermedad": "No",
+        "rep_cedula": "1719374132",
+        "padre_telefono": "0984328542",
+        "fecha_nacimiento": "2015-12-07",
+        "correo_institucional": "alaneman14528487@estudiantes.edu.ec",
+        "rep_nombre": "Lourdes Anzatuña",
+        "rep_email": "lulitanegrita@hotmail.com",
+        "customData": {},
+        "nombre": "ALMEIDA ANZATUÑA EMILY ANAHI",
+        "cedula": "1757158173",
+        "padre_nombre": "Diego Armando Almeida Andrade",
+        "madre_cedula": "1719374132"
+      },
+      {
+        "rep_telefono": "0980029834",
+        "madre_nombre": "Tacuaman Carla",
+        "rep_email": "nathaliahermosa9@gmail.com",
+        "nombre": "ALMEIDA TACUAMAN DOMINIC JHARET",
+        "padre_cedula": "1715222475",
+        "cedula": "1756919260",
+        "direccion": "San Juan de Calderón Barrio Pacpo Siglo Xxi",
+        "correo_institucional": "altadojh12143848@estudiantes.edu.ec",
+        "customData": {},
+        "rep_nombre": "Carla Tacuaman",
+        "hermanos_inst": "3ro C GBU",
+        "tel_emergencia": "0994311231",
+        "nnee": "SI",
+        "edad": "11 años, 2 meses, 8 días",
+        "rep_cedula": "1717709453",
+        "padre_telefono": "0980029834",
+        "enfermedad": "No",
+        "num": "3",
+        "padre_nombre": "Almeida William",
+        "madre_telefono": "0980029834",
+        "madre_cedula": "1717709453",
+        "fecha_nacimiento": "2015-06-22"
+      },
+      {
+        "enfermedad": "No",
+        "rep_cedula": "1726737537",
+        "rep_nombre": "Erika Ortiz",
+        "nnee": "No",
+        "rep_telefono": "0992511709",
+        "edad": "11 años, 5 meses, 4 días",
+        "madre_nombre": "Erika Samanta Ortiz Cortez",
+        "padre_cedula": "1714735634",
+        "padre_nombre": "Francisco Javier Andino Estrada",
+        "direccion": "Zabala, de los Gavilanes N7-81 y los Flamencos",
+        "cedula": "1756655724",
+        "madre_cedula": "1726737537",
+        "fecha_nacimiento": "2015-03-26",
+        "madre_telefono": "0992511709",
+        "padre_telefono": "0992511709",
+        "nombre": "ANDINO ORTIZ ERICK JACOBO",
+        "rep_email": "samanta.11@live.com",
+        "hermanos_inst": "9no C",
+        "correo_institucional": "anorerja10247316@estudiantes.edu.ec",
+        "num": "4",
+        "tel_emergencia": "0998557324"
+      },
+      {
+        "nombre": "ANDRADE ANGULO JAYKO DOMINICK",
+        "rep_nombre": "",
+        "rep_cedula": "",
+        "enfermedad": "",
+        "foto": "",
+        "madre_cedula": "",
+        "cedula": "2351248998",
+        "hermanos_inst": "",
+        "padre_nombre": "",
+        "edad": "",
+        "nnee": "",
+        "padre_cedula": "",
+        "direccion": "",
+        "rep_telefono": "",
+        "madre_telefono": "",
+        "madre_nombre": "",
+        "fecha_nacimiento": "",
+        "padre_telefono": "",
+        "num": "5",
+        "rep_email": "",
+        "tel_emergencia": "",
+        "correo_institucional": "ananjado11977210@estudiantes2.edu.ec"
+      },
+      {
+        "hermanos_inst": "2do B",
+        "madre_telefono": "0939022965 / 0987689045",
+        "num": "6",
+        "padre_cedula": "1400972004",
+        "edad": "12 años, 3 meses, 13 días",
+        "padre_telefono": "0939022965",
+        "nnee": "No",
+        "madre_nombre": "Suambra Chumap Rosa Maribel",
+        "tel_emergencia": "0939022965",
+        "rep_telefono": "0987689045",
+        "madre_cedula": "1400972004",
+        "cedula": "1755805411",
+        "correo_institucional": "ansumebr9320933@estudiantes.edu.ec",
+        "direccion": ".llano Grande Gracia Moreno",
+        "padre_nombre": "Ante Tamayo Nelson Giovanni",
+        "rep_nombre": "Suambra Chumap Rosa Maribel",
+        "enfermedad": "No",
+        "nombre": "ANTE SUAMBRA MELISA BRIGITH",
+        "rep_email": "maribelsuambra20@gmail.com",
+        "fecha_nacimiento": "2014-05-17",
+        "rep_cedula": "1400972004"
+      },
+      {
+        "fecha_nacimiento": "2014-12-07",
+        "correo_institucional": "caesjuka10259182@estudiantes.edu.ec",
+        "num": "7",
+        "hermanos_inst": "No",
+        "cedula": "1756772800",
+        "padre_nombre": "Hendry Campos",
+        "nombre": "CAMPOS ESPINOSA JUSTER KAIL",
+        "nnee": "No",
+        "edad": "11 años, 8 meses, 23 días",
+        "madre_cedula": "1004389696",
+        "rep_cedula": "1004389696",
+        "madre_nombre": "Silvia Espinosa",
+        "tel_emergencia": "0996829472",
+        "rep_telefono": "0962595260",
+        "direccion": "Calle Idependencia Lote 4 Mrtin Licango",
+        "enfermedad": "No",
+        "padre_telefono": "",
+        "padre_cedula": "",
+        "rep_nombre": "Silvia Espinosa",
+        "madre_telefono": "0962595260",
+        "rep_email": ""
+      },
+      {
+        "direccion": "Zabala Calle los Arrieros Entre los Huiragcguros y Amalia Uruguen",
+        "nnee": "SI",
+        "edad": "11 años, 0 meses, 13 días",
+        "cedula": "1756936512",
+        "nombre": "CASTILLO ROJAS DOMINICK JAZIEL",
+        "padre_nombre": "",
+        "rep_email": "donaelitojr@gmail.com",
+        "rep_nombre": "Melania Jaramillo",
+        "rep_cedula": "1713957783",
+        "enfermedad": "No",
+        "madre_cedula": "1725658080",
+        "rep_telefono": "0987480865 / 0994021936",
+        "correo_institucional": "carodoja11188647@estudiantes.edu.ec",
+        "madre_nombre": "Maria Augusta Rojas Jaramillo",
+        "fecha_nacimiento": "2015-08-17",
+        "madre_telefono": "0987480865",
+        "hermanos_inst": "No",
+        "padre_cedula": "",
+        "num": "8",
+        "padre_telefono": "",
+        "tel_emergencia": "0987480865 / 0994021936"
+      },
+      {
+        "rep_nombre": "Gloria Elizabeth Pinanjota Caluguillin",
+        "padre_nombre": "Eiter Euclides Cedeño Intriago",
+        "enfermedad": "No",
+        "madre_cedula": "1725702797",
+        "rep_cedula": "1725702797",
+        "madre_nombre": "Gloria Elizabeth Pinanjota Calugullin",
+        "padre_telefono": "0995009011",
+        "rep_email": "elipinanjota10@gmail.com",
+        "rep_telefono": "0987778599 / 0995009011",
+        "padre_cedula": "1725330029",
+        "tel_emergencia": "0987778599 / 0995009011",
+        "nombre": "CEDEÑO PINANJOTA ARLETH SALOME",
+        "correo_institucional": "cepiarsa12031124@estudiantes.edu.ec",
+        "nnee": "No",
+        "direccion": "Barrio Reina del Cisne Calle de las Amazilias E7-273 y de los Faisanes",
+        "cedula": "1757096704",
+        "num": "9",
+        "edad": "10 años, 10 meses, 2 días",
+        "madre_telefono": "0987778599",
+        "fecha_nacimiento": "2015-10-28",
+        "hermanos_inst": "No"
+      },
+      {
+        "madre_telefono": "0987337221",
+        "padre_nombre": "Chileno Quinaloa Edwin Bladimir",
+        "madre_cedula": "1751505031",
+        "nombre": "CHILENO MEDINA CRISTOFER ALEJANDRO",
+        "tel_emergencia": "0982303279",
+        "cedula": "1756500573",
+        "fecha_nacimiento": "2014-12-25",
+        "hermanos_inst": "No",
+        "padre_telefono": "0987306467",
+        "rep_email": "nataly1994b@hotmail.com",
+        "correo_institucional": "chmecral10261068@estudiantes.edu.ec",
+        "direccion": "Calle Hermano Miguel y Amelia Enriquez N10",
+        "nnee": "No",
+        "madre_nombre": "Nataly Beatriz Medina Andagana",
+        "edad": "11 años, 8 meses, 5 días",
+        "rep_telefono": "0987337221",
+        "rep_nombre": "Nataly Medina",
+        "padre_cedula": "0202379871",
+        "rep_cedula": "1751505031",
+        "enfermedad": "No",
+        "num": "10"
+      },
+      {
+        "correo_institucional": "chllales11170478@estudiantes.edu.ec",
+        "nombre": "CHONTA LLUMITAXI ALISSON ESTEFANIA",
+        "rep_cedula": "1755270376",
+        "enfermedad": "No",
+        "hermanos_inst": "No",
+        "rep_nombre": "Dayana Llumitaxi",
+        "padre_nombre": "",
+        "madre_cedula": "1755270376",
+        "cedula": "1757113640",
+        "fecha_nacimiento": "2015-11-17",
+        "num": "11",
+        "madre_nombre": "Dayana Elizabeth Llumitaxi Quizhpi",
+        "rep_telefono": "0987940062",
+        "tel_emergencia": "0995106209",
+        "direccion": "Madrid y Abdon Calderon",
+        "padre_cedula": "",
+        "padre_telefono": "",
+        "edad": "10 años, 9 meses, 13 días",
+        "nnee": "No",
+        "madre_telefono": "0987940062",
+        "rep_email": "dayanallumitaxi2002@gmail.com"
+      },
+      {
+        "nnee": "No",
+        "fecha_nacimiento": "2015-07-28",
+        "edad": "11 años, 1 mes, 2 días",
+        "hermanos_inst": "No",
+        "madre_telefono": "0983185486",
+        "rep_email": "rouspavel86@gmail.com",
+        "padre_nombre": "Roberto Cisneros Pineda",
+        "rep_nombre": "María Rosa Moran Pineda",
+        "correo_institucional": "cimoalpa11195761@estudiantes.edu.ec",
+        "tel_emergencia": "0983185486 / 0998810920",
+        "rep_cedula": "1722179734",
+        "padre_telefono": "",
+        "madre_cedula": "1722179734",
+        "num": "12",
+        "direccion": "Zabala, de los Carpinteros",
+        "enfermedad": "No",
+        "rep_telefono": "0983185486",
+        "madre_nombre": "Maria Rosa Moran Pineda",
+        "cedula": "1756898340",
+        "padre_cedula": "1721611886",
+        "nombre": "CISNEROS MORAN ALEJANDRO PAVEL"
+      },
+      {
+        "cedula": "1756914972",
+        "direccion": "Zabala -alondras y Carpinteros",
+        "edad": "11 años, 1 mes, 28 días",
+        "nnee": "No",
+        "rep_telefono": "0986802708",
+        "madre_nombre": "Mary Narcisa Infante Cordova",
+        "rep_email": "arcisainfante9119@gmail.com",
+        "padre_cedula": "1102141643",
+        "nombre": "ENCARNACION INFANTE TIFANY ESTHER",
+        "padre_nombre": "Juan Carlos Encarnación Sánchez",
+        "enfermedad": "No",
+        "padre_telefono": "0981107634",
+        "rep_cedula": "1105545352",
+        "hermanos_inst": "No",
+        "rep_nombre": "Mary Infante",
+        "tel_emergencia": "0986892708 / 0981107634",
+        "correo_institucional": "eninties10294772@estudiantes.edu.ec",
+        "madre_cedula": "1105545352",
+        "madre_telefono": "0986802708",
+        "fecha_nacimiento": "2015-07-02",
+        "num": "13"
+      },
+      {
+        "madre_nombre": "Guadalupe Acero Pinto",
+        "direccion": "Los Arrieros y los Quindes Cj.valenciana Casa 60",
+        "correo_institucional": "flaccano10261593@estudiantes.edu.ec",
+        "hermanos_inst": "No",
+        "rep_telefono": "0980608424",
+        "num": "14",
+        "fecha_nacimiento": "2014-09-26",
+        "padre_cedula": "1719160085",
+        "nnee": "No",
+        "edad": "11 años, 11 meses, 4 días",
+        "rep_email": "rosariopinto1234@gmail.com",
+        "madre_telefono": "0980608424",
+        "cedula": "1756317770",
+        "rep_cedula": "1716747603",
+        "nombre": "FLORES ACERO CAMILA NOEMI",
+        "enfermedad": "No",
+        "padre_nombre": "Rafael Flores",
+        "tel_emergencia": "0980608424 / 0993694921",
+        "madre_cedula": "1716747603",
+        "rep_nombre": "Acero Pinto Rosario Guadalupe",
+        "padre_telefono": "0995537434"
+      },
+      {
+        "rep_nombre": "Cabay Pomaquiza Laura Margarita",
+        "tel_emergencia": "0984584235",
+        "padre_cedula": "1725847394",
+        "enfermedad": "No",
+        "rep_telefono": "0984584235",
+        "padre_telefono": "0999768033",
+        "rep_cedula": "0603631433",
+        "madre_nombre": "Cabay Pomaquiza Laura Margarita",
+        "fecha_nacimiento": "2015-03-19",
+        "madre_telefono": "0984584235",
+        "correo_institucional": "gacatama12026147@estudiantes.edu.ec",
+        "num": "15",
+        "rep_email": "magui25cabay@gmail.com",
+        "nombre": "GAGUY CABAY TAMIA MAYTE",
+        "nnee": "No",
+        "edad": "11 años, 5 meses, 11 días",
+        "cedula": "1757419559",
+        "madre_cedula": "0603631433",
+        "direccion": "San Jose de Moran Calle Carlos Mantilla y Pasaje Mendosa",
+        "padre_nombre": "Gaguy Parapi Juan Fernando",
+        "hermanos_inst": "8vo y 1ero de Basica"
+      },
+      {
+        "correo_institucional": "gocesaai10359375@estudiantes.edu.ec",
+        "padre_nombre": "Edison Maximiliano Godoy Quezada",
+        "nnee": "No",
+        "direccion": "Amalia Urigen y Francisco de Albornoz – Conjunto Marianitas",
+        "edad": "11 años, 4 meses, 1 día",
+        "madre_cedula": "1718003435",
+        "hermanos_inst": "Segundo “b”, Decimo “d”",
+        "num": "16",
+        "rep_email": "sandymonserratecedeno@gmail.com",
+        "nombre": "GODOY CEDEÑO SAMANTHA AITANA",
+        "tel_emergencia": "0995124651",
+        "padre_telefono": "0992926882",
+        "fecha_nacimiento": "2015-04-29",
+        "madre_nombre": "Sandy Monserrst Cedeño P.",
+        "rep_nombre": "Sandy Monserrat Cedeño",
+        "madre_telefono": "0995124651",
+        "rep_telefono": "0995124651",
+        "enfermedad": "No",
+        "padre_cedula": "1718533050",
+        "cedula": "1756768311",
+        "rep_cedula": "1718003435"
+      },
+      {
+        "num": "17",
+        "madre_nombre": "Lidia Yolanda Diaz Guañuna",
+        "madre_telefono": "0995469857",
+        "rep_telefono": "0995469857",
+        "padre_cedula": "1714543079",
+        "correo_institucional": "gudisaes11195982@estudiantes.edu.ec",
+        "edad": "11 años, 7 meses, 30 días",
+        "nnee": "No",
+        "tel_emergencia": "0995469857",
+        "fecha_nacimiento": "2014-12-31",
+        "padre_telefono": "0995284080",
+        "cedula": "1756754410",
+        "rep_email": "yd623322@gmail.com",
+        "rep_nombre": "Lidia Yolanda Diaz Guañuna",
+        "hermanos_inst": "No",
+        "padre_nombre": "Ivan Patricio Gualoto Quisilema",
+        "enfermedad": "No",
+        "madre_cedula": "1715699359",
+        "nombre": "GUALOTO DIAZ SAMANTHA ESTEFANIA",
+        "direccion": "Calderón Bellavista Barrio Cristo Rey",
+        "rep_cedula": "1715699359"
+      },
+      {
+        "rep_email": "veronicatentets784@gmail.com",
+        "num": "18",
+        "fecha_nacimiento": "2015-04-29",
+        "rep_telefono": "0983230197",
+        "madre_nombre": "Santiak Tentets Genni Verónica",
+        "direccion": "San Ignacio Segunda Etapa Zavala",
+        "correo_institucional": "gusajaja10241797@estudiantes.edu.ec",
+        "padre_cedula": "1715295513",
+        "enfermedad": "No",
+        "padre_nombre": "Guanotasig Padilla Milton Rodrigo",
+        "rep_cedula": "1400417679",
+        "edad": "11 años, 4 meses, 1 día",
+        "hermanos_inst": "No",
+        "rep_nombre": "Genni Santiak",
+        "madre_telefono": "0983230197",
+        "nnee": "No",
+        "cedula": "1756711998",
+        "madre_cedula": "1400417679",
+        "nombre": "GUANOTASIG SANTIAK JAYDEEN JAACE",
+        "padre_telefono": "0939985484",
+        "tel_emergencia": "0939985484"
+      },
+      {
+        "enfermedad": "No",
+        "rep_cedula": "1720663291",
+        "num": "19",
+        "rep_nombre": "Vinueza Obando Laura Yolanda",
+        "fecha_nacimiento": "2024-09-03",
+        "correo_institucional": "guvijhal11998636@estudiantes.edu.ec",
+        "padre_cedula": "1719967851",
+        "rep_telefono": "0984808981",
+        "madre_nombre": "Vinueza Obando Laura Yolanda",
+        "rep_email": "vinuezalaura97@gmail.com",
+        "padre_telefono": "0984381959",
+        "madre_cedula": "1720663291",
+        "nombre": "GUAYANAY VINUEZA JHON ALEX",
+        "padre_nombre": "Guayanay Calva Wilian Bernardo",
+        "tel_emergencia": "0968273349",
+        "direccion": "San Juan de Calderon Isidro el Labrador y Daniel Puebla",
+        "hermanos_inst": "1ro BGU",
+        "edad": "1 año, 11 meses, 27 días",
+        "nnee": "No",
+        "madre_telefono": "0984808981",
+        "cedula": "1757164122"
+      },
+      {
+        "rep_cedula": "1723848766",
+        "enfermedad": "No",
+        "rep_nombre": "Mónica Alexandra Roldan Patajalo",
+        "madre_nombre": "Mónica Alexandra Roldan Patajalo",
+        "rep_telefono": "0992273164",
+        "num": "20",
+        "padre_cedula": "1725547432",
+        "tel_emergencia": "0988252193",
+        "padre_nombre": "Oscar Eduardo Guerron Viana",
+        "direccion": "Barrio los Eucaliptos Calle Atahualpa Avenida Alejandro Crespo",
+        "padre_telefono": "0988071526",
+        "madre_cedula": "1723848766",
+        "cedula": "1756662498",
+        "hermanos_inst": "No",
+        "edad": "11 años, 4 meses, 30 días",
+        "madre_telefono": "0992273164",
+        "nnee": "No",
+        "nombre": "GUERRON ROLDAN ANGEL SEBASTIAN",
+        "rep_email": "monicaalexa271096@gmail.com",
+        "fecha_nacimiento": "2015-03-31",
+        "correo_institucional": "guroanse11187797@estudiantes.edu.ec"
+      },
+      {
+        "padre_telefono": "0981564793",
+        "fecha_nacimiento": "2015-05-14",
+        "correo_institucional": "hetijhal11189546@estudiantes.edu.ec",
+        "rep_email": "alejacristel187@gmail.com",
+        "tel_emergencia": "0994102168",
+        "nombre": "HEREDIA TITUAÑA JHAIR ALEJANDRO",
+        "cedula": "1756764096",
+        "num": "21",
+        "padre_cedula": "0603745589",
+        "direccion": "Zabala",
+        "rep_telefono": "0981564793",
+        "madre_telefono": "0994443792",
+        "madre_nombre": "Cristina Alexandra Tituaña Catota",
+        "hermanos_inst": "No",
+        "madre_cedula": "1003490024",
+        "padre_nombre": "Luis Marcos Heredia Morocho",
+        "rep_nombre": "Cristina Alexandra Tituaña",
+        "nnee": "No",
+        "edad": "11 años, 3 meses, 16 días",
+        "enfermedad": "No",
+        "rep_cedula": "1003490024"
+      },
+      {
+        "rep_nombre": "Gabriela Elizabeth Morales Gutiérrez",
+        "enfermedad": "No",
+        "num": "22",
+        "rep_cedula": "1723529275",
+        "fecha_nacimiento": "2015-02-07",
+        "padre_cedula": "1712971553",
+        "nnee": "No",
+        "rep_telefono": "0994717134",
+        "edad": "11 años, 6 meses, 23 días",
+        "madre_nombre": "Gabriela Elizabeth Morales Gutiérrez",
+        "madre_telefono": "0994717134",
+        "madre_cedula": "1723529275",
+        "correo_institucional": "inmodeva10247313@estudiantes.edu.ec",
+        "nombre": "IÑIGUEZ MORALES DEMY VALENTINA",
+        "direccion": "San Juan de Calderón/ Calle Luis Tufiño y Isidro Labrador",
+        "padre_nombre": "Marlon Hianarino Iñiguez López",
+        "tel_emergencia": "09988824637 / 0990402522 / 0994717134",
+        "padre_telefono": "0998442187",
+        "rep_email": "gabymorales1991@hotmail.com",
+        "hermanos_inst": "9no a",
+        "cedula": "1756565683"
+      },
+      {
+        "rep_nombre": "Carla Erazo",
+        "correo_institucional": "jaeryena10273697@estudiantes.edu.ec",
+        "rep_cedula": "1721938031",
+        "fecha_nacimiento": "2015-05-13",
+        "hermanos_inst": "No",
+        "enfermedad": "No",
+        "madre_cedula": "1721938031",
+        "padre_nombre": "José Luis Jaramillo Jaramillo",
+        "nnee": "No",
+        "padre_telefono": "0994705815 / 0990402522",
+        "edad": "11 años, 3 meses, 17 días",
+        "padre_cedula": "1712635042",
+        "direccion": "Geovanni Calles y Marianas E2-408",
+        "tel_emergencia": "0997923902 / 0989220796",
+        "nombre": "JARAMILLO ERAZO YERLIS NAHOMI",
+        "madre_nombre": "Carla Aracely Erazo Cheme",
+        "rep_telefono": "0991270184",
+        "cedula": "1756746788",
+        "rep_email": "carlaerazo0913@gmail.com",
+        "madre_telefono": "0991270184",
+        "num": "23"
+      },
+      {
+        "padre_cedula": "",
+        "madre_nombre": "",
+        "rep_telefono": "",
+        "hermanos_inst": "NO",
+        "tel_emergencia": "",
+        "rep_cedula": "",
+        "direccion": "",
+        "enfermedad": "No",
+        "padre_telefono": "",
+        "nombre": "LOMBEIDA SANMARTIN DILAN YORDAN",
+        "rep_nombre": "",
+        "correo_institucional": "losadiyo11196031@estudiantes.edu.ec",
+        "madre_telefono": "",
+        "madre_cedula": "",
+        "fecha_nacimiento": "",
+        "cedula": "1756697106",
+        "nnee": "NO",
+        "rep_email": "",
+        "edad": "",
+        "num": "24",
+        "padre_nombre": ""
+      },
+      {
+        "tel_emergencia": "0992647459 / 0993469533",
+        "direccion": "Calles Geovanny Calles y Ernesto Quezada",
+        "padre_telefono": "0992647459",
+        "cedula": "1757118631",
+        "rep_telefono": "0993469533",
+        "madre_nombre": "Maura Azucena Cepeda Paspuel",
+        "nombre": "LOVATO CEPEDA EITHAN SEBASTIAN",
+        "hermanos_inst": "No",
+        "madre_telefono": "0993469533",
+        "rep_email": "mauracepeda075@gmail.com",
+        "padre_cedula": "0401047501",
+        "correo_institucional": "loceeise11189885@estudiantes.edu.ec",
+        "padre_nombre": "Fernando Tarcisio Lovato Ante",
+        "fecha_nacimiento": "2015-11-18",
+        "rep_cedula": "1721938031",
+        "enfermedad": "No",
+        "num": "25",
+        "rep_nombre": "Maura Azucena Cepeda Paspuel",
+        "madre_cedula": "1715407928",
+        "edad": "10 años, 9 meses, 12 días",
+        "nnee": "No"
+      },
+      {
+        "rep_telefono": "0986374947",
+        "madre_nombre": "Rosa Maria Narvaez Shiguango",
+        "cedula": "1756522643",
+        "padre_cedula": "17122883090",
+        "nombre": "MALES NARVAEZ DANDY FERNEY",
+        "enfermedad": "No",
+        "rep_cedula": "2100256946",
+        "rep_nombre": "Rosa María Narvaez Shiguango",
+        "madre_telefono": "0986374947",
+        "edad": "11 años, 7 meses, 25 días",
+        "nnee": "No",
+        "rep_email": "rosit12narvaez@gmail.com",
+        "hermanos_inst": "No",
+        "num": "26",
+        "padre_nombre": "Luis Humberto Males Cotacachi",
+        "tel_emergencia": "0963642911 / 0963611692",
+        "fecha_nacimiento": "2015-01-05",
+        "padre_telefono": "0963642911",
+        "correo_institucional": "manadafe10274506@estudiantes.edu.ec",
+        "direccion": "Amalia Uriguen - Pasaje 5",
+        "madre_cedula": "2100256946"
+      },
+      {
+        "enfermedad": "Bilirrubinas Altas",
+        "hermanos_inst": "No",
+        "padre_cedula": "1306412394",
+        "rep_cedula": "1724066186",
+        "rep_nombre": "Tania Pozo",
+        "madre_nombre": "Tania Jimena Pozo Quelal",
+        "rep_telefono": "0995790279",
+        "edad": "11 años, 0 meses, 5 días",
+        "nnee": "No",
+        "num": "27",
+        "madre_telefono": "0995790279",
+        "direccion": "Condor y Amazilias N3 Barrio Monserrath",
+        "fecha_nacimiento": "2015-08-25",
+        "nombre": "MERA POZO VALERIA MONSERRATH",
+        "madre_cedula": "1724066186",
+        "tel_emergencia": "0958853295",
+        "cedula": "1756967897",
+        "rep_email": "pozotnia@gmail.com",
+        "correo_institucional": "mepovamo10249658@estudiantes.edu.ec",
+        "padre_nombre": "Julio Cevastian Mera Chilan",
+        "padre_telefono": "0958853295"
+      },
+      {
+        "padre_telefono": "",
+        "direccion": "Atahualpa y Arrieros Huertos Familiares Casa 85",
+        "madre_cedula": "1724443278",
+        "correo_institucional": "motudami11986137@estudiantes.edu.ec",
+        "padre_nombre": "",
+        "tel_emergencia": "0939138640",
+        "rep_email": "gracielatulcanazo@gmail.com",
+        "fecha_nacimiento": "2015-08-20",
+        "madre_telefono": "0988867416",
+        "nnee": "No",
+        "edad": "11 años, 0 meses, 10 días",
+        "nombre": "MORALES TULCANAZO DANDELAY MIA",
+        "num": "28",
+        "rep_nombre": "Graciela Silvana Tulcanazo Saca",
+        "hermanos_inst": "No",
+        "padre_cedula": "",
+        "rep_telefono": "0988867416",
+        "rep_cedula": "1724443278",
+        "enfermedad": "No",
+        "cedula": "1756952121",
+        "madre_nombre": "Graciela Silvana Tulcanazo Saca"
+      },
+      {
+        "rep_email": "nancyalexamorales.92@hotmail.com",
+        "rep_nombre": "Nancy Morales",
+        "padre_cedula": "",
+        "rep_telefono": "0989108076 / 022021041",
+        "rep_cedula": "1721883146",
+        "enfermedad": "No",
+        "madre_nombre": "Nancy Alexandra Morales Ipiales",
+        "direccion": "Calderón, Barrio Clavel #2 Arupos N4-235 y Concordia",
+        "correo_institucional": "mumoscis10287764@estudiantes.edu.ec",
+        "num": "29",
+        "padre_telefono": "",
+        "tel_emergencia": "0999817790 / 0985719355",
+        "cedula": "1756921175",
+        "edad": "11 años, 0 meses, 25 días",
+        "nnee": "No",
+        "nombre": "MUSGO MORALES SCARLETT ISABEL",
+        "madre_cedula": "1721883146",
+        "madre_telefono": "0989108076",
+        "fecha_nacimiento": "2015-08-05",
+        "padre_nombre": "",
+        "hermanos_inst": "3ro EGB C"
+      },
+      {
+        "cedula": "1756398093",
+        "hermanos_inst": "8vo B, 3ero B y 1ro de Basica",
+        "direccion": "Zabala, de los Gavilanes y de los Huiragchuros",
+        "padre_cedula": "1724660442",
+        "fecha_nacimiento": "2014-11-05",
+        "rep_telefono": "0968192992",
+        "edad": "11 años, 9 meses, 25 días",
+        "madre_nombre": "Wendy Mishelle Lanas Villavicencio",
+        "nombre": "NOLIVOS LANAS BRYANA MAITE",
+        "rep_email": "wendy.lanas@hotmail.com",
+        "nnee": "No",
+        "tel_emergencia": "0968192992",
+        "enfermedad": "No",
+        "num": "30",
+        "rep_cedula": "1723543243",
+        "madre_cedula": "1723543243",
+        "padre_nombre": "Juan Carlos Nolivos Bunces",
+        "padre_telefono": "0967457958",
+        "rep_nombre": "Wendy Mishelle Lanas Villavicencio",
+        "madre_telefono": "0968192992",
+        "correo_institucional": "nolabrma10275515@estudiantes.edu.ec"
+      },
+      {
+        "madre_cedula": "0987424549",
+        "hermanos_inst": "2do a EGB",
+        "num": "31",
+        "edad": "10 años, 10 meses, 21 días",
+        "nnee": "No",
+        "padre_nombre": "Miguel Ángel Palacios Cuaspud",
+        "rep_nombre": "Karol Michelle Pizarro Vaca",
+        "tel_emergencia": "0987424549 / 0962547500 / 0994647634",
+        "enfermedad": "No",
+        "direccion": "Bellavista, Daniel Montoya y Gonzalo Cordova",
+        "nombre": "PALACIOS PIZARRO DOSTIN MIGUEL",
+        "padre_telefono": "0962547500",
+        "rep_cedula": "0707055463",
+        "cedula": "1757115629",
+        "padre_cedula": "1726199092",
+        "madre_telefono": "0987424549",
+        "rep_email": "karolmpv269@gmail.com",
+        "madre_nombre": "Karol Michelle Pizarro Vaca",
+        "correo_institucional": "papidomi11179255@estudiantes.edu.ec",
+        "fecha_nacimiento": "2015-10-09",
+        "rep_telefono": "0987424549"
+      },
+      {
+        "fecha_nacimiento": "2015-06-19",
+        "correo_institucional": "peanalja11047767@estudiantes.edu.ec",
+        "nombre": "PERALTA ANRANGO ALEXANDER JAVIER",
+        "madre_nombre": "Anrango Quiguango Valeria Elizabeth",
+        "cedula": "1756816524",
+        "rep_telefono": "0989085450",
+        "padre_cedula": "0401565981",
+        "num": "32",
+        "enfermedad": "No",
+        "nnee": "No",
+        "edad": "11 años, 2 meses, 11 días",
+        "padre_nombre": "Peralta Peralta Luis Javier",
+        "rep_cedula": "1003955398",
+        "madre_telefono": "0989085450",
+        "rep_nombre": "Valeria Anrango",
+        "direccion": "Carlos Mantilla Calle 6 de Enero Barrio Tajamar",
+        "madre_cedula": "1003955398",
+        "hermanos_inst": "1eo BGU",
+        "padre_telefono": "0980925103",
+        "rep_email": "anrangovaleria507@gmail.com",
+        "tel_emergencia": "0980925103"
+      },
+      {
+        "edad": "10 años, 11 meses, 5 días",
+        "hermanos_inst": "7mo EGB",
+        "nnee": "No",
+        "enfermedad": "No",
+        "padre_cedula": "0503928137",
+        "rep_cedula": "1725417131",
+        "rep_nombre": "Jessica Paulina Ante Tamayo",
+        "madre_nombre": "Jessica Paulina Ante Tamayo",
+        "rep_telefono": "0989148309",
+        "madre_cedula": "1725417131",
+        "tel_emergencia": "0989148309",
+        "cedula": "1757015761",
+        "fecha_nacimiento": "2015-09-25",
+        "num": "33",
+        "padre_telefono": "0986734087",
+        "rep_email": "antejessica2@gmail.com",
+        "padre_nombre": "Néstor Gerardo Quishpe Pastuña",
+        "madre_telefono": "0989148309",
+        "correo_institucional": "quanaljo11047620@estudiantes.edu.ec",
+        "nombre": "QUISHPE ANTE ALAN JOSUE",
+        "direccion": "Colinas de Valle Urbanización San Felipe"
+      },
+      {
+        "direccion": "Calderon Geonanny Calles- Vicente Paredes",
+        "rep_telefono": "0978285506",
+        "madre_nombre": "Mariana Alexandra Garcia Tobar",
+        "padre_cedula": "1205622341",
+        "hermanos_inst": "3ro de GBU",
+        "rep_email": "karlita06.garcia@gmail.com",
+        "correo_institucional": "qugadyje10276402@estudiantes.edu.ec",
+        "fecha_nacimiento": "2014-01-09",
+        "madre_telefono": "0996426432",
+        "num": "34",
+        "nombre": "QUIÑONEZ GARCIA DYLAN JESNER",
+        "nnee": "No",
+        "edad": "12 años, 7 meses, 21 días",
+        "padre_nombre": "Carlos Roberto Quiñonez Garcia",
+        "rep_cedula": "0751027459",
+        "cedula": "0751138793",
+        "tel_emergencia": "09988383879 / 0979285506 / 0996426432 / 0982322076",
+        "enfermedad": "No",
+        "padre_telefono": "0988383879",
+        "rep_nombre": "Alexandra Garcia",
+        "madre_cedula": "1724592330"
+      },
+      {
+        "rep_telefono": "0999045119",
+        "madre_telefono": "0991940221",
+        "madre_nombre": "Martha Lucía Robles Carrion",
+        "hermanos_inst": "No",
+        "nombre": "ROBLES CARRION ANGELINE ISABELA",
+        "padre_cedula": "",
+        "tel_emergencia": "09990451190991940221",
+        "cedula": "1756879712",
+        "padre_telefono": "",
+        "correo_institucional": "rocaanis10265902@estudiantes.edu.ec",
+        "fecha_nacimiento": "2015-06-09",
+        "rep_email": "benitojaya@yahoo.es",
+        "num": "35",
+        "padre_nombre": "",
+        "direccion": "Virgen de Monserrat y Efrain Armas",
+        "rep_nombre": "Benito de Jesús Jaya",
+        "rep_cedula": "0500849732",
+        "madre_cedula": "1103611610",
+        "nnee": "No",
+        "enfermedad": "No",
+        "edad": "11 años, 2 meses, 21 días"
+      },
+      {
+        "rep_telefono": "0995798792",
+        "cedula": "0550814958",
+        "num": "36",
+        "correo_institucional": "roloisan11187261@estudiantes.edu.ec",
+        "madre_nombre": "Lourdes López",
+        "edad": "10 años, 9 meses, 28 días",
+        "nnee": "No",
+        "padre_cedula": "1712476363",
+        "rep_nombre": "Lourdes Clemencia Lopez Cobagango",
+        "rep_cedula": "0401584180",
+        "nombre": "ROSALES LOPEZ ISAAC ANDRES",
+        "enfermedad": "No",
+        "rep_email": "jonathanmarcelo2016@gmail.com",
+        "fecha_nacimiento": "2015-11-02",
+        "madre_telefono": "0995798792",
+        "padre_nombre": "Jonathan Marcelo Rosales Rosales",
+        "padre_telefono": "0987298699",
+        "hermanos_inst": "No",
+        "direccion": "Calle Atahualpay Piquero Sector Zabala",
+        "madre_cedula": "0401584180",
+        "tel_emergencia": "0958964907"
+      },
+      {
+        "tel_emergencia": "0958872444 / 3256068",
+        "rep_nombre": "Angela Litardo Ruiz",
+        "correo_institucional": "rolicrda11989696@estudiantes.edu.ec",
+        "padre_telefono": "0958872444",
+        "enfermedad": "No",
+        "rep_cedula": "0922490917",
+        "fecha_nacimiento": "2015-01-07",
+        "edad": "11 años, 7 meses, 23 días",
+        "nnee": "No",
+        "hermanos_inst": "9no Ano",
+        "madre_telefono": "0993128849",
+        "padre_cedula": "1726145871",
+        "num": "37",
+        "rep_telefono": "0993128849",
+        "madre_nombre": "Angela Liliana Litardo Ruiz",
+        "madre_cedula": "0922490917",
+        "cedula": "1756545453",
+        "rep_email": "litardoangela61@gmail.com",
+        "padre_nombre": "Arturo Adalberto Rosero Toro",
+        "direccion": "Sector Bella Vista Barrio el Bosque 4/ Lote 19/4calle Luis Murillo y Hurtado",
+        "nombre": "ROSERO LITARDO CRISTIAN DANIEL"
+      },
+      {
+        "padre_cedula": "1708447170",
+        "padre_telefono": "0999417995",
+        "num": "38",
+        "madre_nombre": "Mercy Teresa Aguirre Hugo",
+        "tel_emergencia": "0999417995",
+        "hermanos_inst": "No",
+        "rep_telefono": "0969414521",
+        "rep_cedula": "1713017034",
+        "enfermedad": "No",
+        "edad": "11 años, 10 meses, 6 días",
+        "nnee": "No",
+        "rep_nombre": "Mercy Teresa Aguirre Hugo",
+        "madre_telefono": "0969414521",
+        "direccion": "Barrio Zabala Calle los Quindes Conjunto Valenciana 3 Casa 109",
+        "correo_institucional": "saagjhse10261070@estudiantes.edu.ec",
+        "nombre": "SANGUCHO AGUIRRE JHOAN SEBASTIAN",
+        "rep_email": "mercyaguirre548@gmail.com",
+        "madre_cedula": "1713017034",
+        "fecha_nacimiento": "2014-10-24",
+        "cedula": "1756603419",
+        "padre_nombre": "Vicente Sangucho Lema"
+      },
+      {
+        "hermanos_inst": "No",
+        "tel_emergencia": "2064160 / 0958998096",
+        "cedula": "1756879027",
+        "fecha_nacimiento": "2015-07-18",
+        "padre_telefono": "0999137891",
+        "madre_cedula": "1205316795",
+        "enfermedad": "No",
+        "nombre": "SARZOSA CONTRERAS TYLER LEONEL",
+        "madre_telefono": "0995384573",
+        "rep_cedula": "1714019252",
+        "rep_nombre": "Marco Vinicio Sarzosa Guerrero",
+        "padre_nombre": "Marco Vinicio Sarzosa Guerrero",
+        "num": "39",
+        "correo_institucional": "sacotyle10240242@estudiantes.edu.ec",
+        "padre_cedula": "1714019252",
+        "direccion": "Barrio Esperanza y Progreso Callé Brucelas Lote 62 y Damasco",
+        "madre_nombre": "Maritza Alejandra Contreras España",
+        "rep_telefono": "0999137891",
+        "edad": "11 años, 1 mes, 12 días",
+        "nnee": "No",
+        "rep_email": "marvin1s82_@hotmail.com"
+      },
+      {
+        "rep_nombre": "Joselin Estefania Ramos Aldaz",
+        "rep_email": "tefyaldaz1997@gmail.com",
+        "correo_institucional": "veraesal12824432@estudiantes.edu.ec",
+        "enfermedad": "No",
+        "rep_cedula": "1004454995",
+        "direccion": "San Juan Bellavista",
+        "rep_telefono": "0984574085",
+        "madre_nombre": "Joselin Estefania Ramos Aldaz",
+        "padre_cedula": "",
+        "edad": "11 años, 7 meses, 7 días",
+        "padre_nombre": "",
+        "nnee": "No",
+        "hermanos_inst": "No",
+        "cedula": "1756659015",
+        "madre_telefono": "0984574085",
+        "fecha_nacimiento": "2015-01-23",
+        "madre_cedula": "1004454995",
+        "nombre": "VELASCO RAMOS ESTEBAN ALEXANDER",
+        "padre_telefono": "",
+        "tel_emergencia": "0992591837",
+        "num": "40"
+      }
+    ],
+    "weekColors": {
+      "Matemáticas||SEMANA 7": {
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d",
+        "s": "#22c55e"
+      },
+      "Matemáticas||SEMANA 2": {
+        "s": "#3b82f6",
+        "c": "rgba(59,130,246,0.06)",
+        "h": "#1e40af"
+      },
+      "CCNN||SEMANA 2": {
+        "c": "rgba(59,130,246,0.06)",
+        "h": "#1e40af",
+        "s": "#3b82f6"
+      },
+      "Lengua||LEO PARA CONOCER LAS EXPERIENCIAS DE OTROS:EL DIARIO PERSONAL": {
+        "c": "rgba(44,62,80,0.07)",
+        "h": "#2c3e50",
+        "s": "#405264"
+      },
+      "Matemáticas||MÁXIMO COMÚN DIVISOR": {
+        "s": "#c9592f",
+        "h": "#b5451b",
+        "c": "rgba(181,69,27,0.07)"
+      },
+      "CCNN||EL CALOR Y LA ATMÓSFERA": {
+        "c": "rgba(155,89,182,0.07)",
+        "h": "#7b2d8b",
+        "s": "#9b59b6"
+      },
+      "CCNN||TEMPERATURA Y CALOR": {
+        "s": "#9f2e2e",
+        "h": "#8b1a1a",
+        "c": "rgba(139,26,26,0.07)"
+      },
+      "Matemáticas||SEMANA 3": {
+        "s": "#f97316",
+        "c": "rgba(249,115,22,0.06)",
+        "h": "#c2410c"
+      },
+      "Artística||TIPOS DE ROSTROS": {
+        "s": "#8d6e63",
+        "c": "rgba(141,110,99,0.07)",
+        "h": "#5d4037"
+      },
+      "EESS||EL DOMINIO DE LA OLIGARQUÍA LOCAL EN LA NUEVA REPUBLICA": {
+        "c": "rgba(122,106,0,0.07)",
+        "h": "#7a6a00",
+        "s": "#8e7e14"
+      },
+      "Acompañamiento Integral||SEMANA 2": {
+        "h": "#1a4a8a",
+        "c": "rgba(46,109,164,0.07)",
+        "s": "#2e6da4"
+      },
+      "CCNN||LAS ÓRBITAS PLANETARIAS Y EL MOVIMIENTO DE LOS PLANETAS ALREDEDOR DEL SOL": {
+        "h": "#7b2d8b",
+        "c": "rgba(123,45,139,0.07)",
+        "s": "#8f419f"
+      },
+      "Artística||DIA DE LA MADRE": {
+        "h": "#7a6a00",
+        "c": "rgba(122,106,0,0.07)",
+        "s": "#8e7e14"
+      },
+      "Matemáticas||ADICIÓN Y SUSTRACCIÓN DE FRACCIONES": {
+        "h": "#7a6a00",
+        "c": "rgba(122,106,0,0.07)",
+        "s": "#8e7e14"
+      },
+      "Lengua||SEMANA 1": {
+        "h": "#15803d",
+        "c": "rgba(34,197,94,0.06)",
+        "s": "#22c55e"
+      },
+      "Lengua||LA EXPOSICIÓN ORAL": {
+        "c": "rgba(241,196,15,0.07)",
+        "h": "#7a6a00",
+        "s": "#f1c40f"
+      },
+      "Lectura||EVALUACIÓN SUMATIVA": {
+        "h": "#7e22ce",
+        "c": "rgba(168,85,247,0.06)",
+        "s": "#a855f7"
+      },
+      "Matemáticas||NUMEROS PRIMOS Y COMPUESTOS": {
+        "s": "#71544b",
+        "h": "#5d4037",
+        "c": "rgba(93,64,55,0.07)"
+      },
+      "Lectura||SEMANA 2": {
+        "h": "#1a4a8a",
+        "c": "rgba(46,109,164,0.07)",
+        "s": "#2e6da4"
+      },
+      "CCNN||SEMANA 1": {
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d",
+        "s": "#22c55e"
+      },
+      "EESS||EVALUACIÓN SUMATIVA": {
+        "c": "rgba(168,85,247,0.06)",
+        "h": "#7e22ce",
+        "s": "#a855f7"
+      },
+      "Matemáticas||CRITERIOS DE DIVISIBILIDAD": {
+        "h": "#1a7a7a",
+        "c": "rgba(26,122,122,0.07)",
+        "s": "#2e8e8e"
+      },
+      "Artística||ESTRUCTURA DE LA OBRA TEATRAL CON FIESTAS Y TRADICIONES DEL ECUADOR": {
+        "c": "rgba(84,110,122,0.07)",
+        "h": "#2c3e50",
+        "s": "#546e7a"
+      },
+      "EESS||ORGANIZACION DEL ESTADO ECUATORIANO A INICIOS DE LA REPÚBLICA": {
+        "s": "#8f419f",
+        "c": "rgba(123,45,139,0.07)",
+        "h": "#7b2d8b"
+      },
+      "EESS||SEMANA 2": {
+        "h": "#1e40af",
+        "c": "rgba(59,130,246,0.06)",
+        "s": "#3b82f6"
+      },
+      "CCNN||CIENTÍFICOS DESTACADOS EN LA VULCANOLOGÍA": {
+        "s": "#1565c0",
+        "h": "#0d47a1",
+        "c": "rgba(21,101,192,0.07)"
+      },
+      "Artística||MACETA RECICLAJE": {
+        "s": "#16a085",
+        "h": "#1a7a7a",
+        "c": "rgba(22,160,133,0.07)"
+      },
+      "Matemáticas||OPERACIONES COMBINADAS CON FRACCIONES": {
+        "c": "rgba(46,204,113,0.07)",
+        "h": "#1a5c1a",
+        "s": "#2ecc71"
+      },
+      "Matemáticas||REFUERZO PEDAGÓGICO": {
+        "c": "rgba(168,85,247,0.06)",
+        "h": "#7e22ce",
+        "s": "#a855f7"
+      },
+      "Lengua||PREJUCIOS SOCIALES EN LA COMUNICACIÓN ORAL": {
+        "s": "#2e8250",
+        "h": "#1a6e3c",
+        "c": "rgba(26,110,60,0.07)"
+      },
+      "CCNN||CAPAS DE LA ATMÓSFERA": {
+        "c": "rgba(122,106,0,0.07)",
+        "h": "#7a6a00",
+        "s": "#8e7e14"
+      },
+      "Matemáticas||SEMANA 4": {
+        "s": "#f97316",
+        "c": "rgba(249,115,22,0.06)",
+        "h": "#c2410c"
+      },
+      "Artística||EVALUACIÓN SUMATIVA": {
+        "h": "#7e22ce",
+        "c": "rgba(168,85,247,0.06)",
+        "s": "#a855f7"
+      },
+      "Matemáticas||ESCRIBIR POESÍAS I.LL.3.1.1.": {
+        "h": "#15803d",
+        "c": "rgba(34,197,94,0.06)",
+        "s": "#22c55e"
+      },
+      "CCNN||LA ENERGÍA TÉRMICA EN LA MAQUINA DE VAPOR": {
+        "s": "#e67e22",
+        "c": "rgba(230,126,34,0.07)",
+        "h": "#b5451b"
+      },
+      "CCNN||MATERIA: SUSTANCIAS PURAS Y MEZCLAS": {
+        "s": "#405264",
+        "h": "#2c3e50",
+        "c": "rgba(44,62,80,0.07)"
+      },
+      "Matemáticas||OPERACIONES COMBINADAS CON FRACCIONES (SEMANA2)": {
+        "s": "#8d6e63",
+        "h": "#5d4037",
+        "c": "rgba(141,110,99,0.07)"
+      },
+      "EESS||SEMANA 1": {
+        "h": "#15803d",
+        "c": "rgba(34,197,94,0.06)",
+        "s": "#22c55e"
+      },
+      "CCNN||EVALUACIÓN SUMATIVA": {
+        "s": "#a855f7",
+        "h": "#7e22ce",
+        "c": "rgba(168,85,247,0.06)"
+      },
+      "Artística||SEMANA 1": {
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d",
+        "s": "#22c55e"
+      },
+      "Lengua||LA GRAMÁTICA ME AYUDA A ESCRIBIR MEJOR (SUJETO, PREDICADO Y CONCORDANCIA)": {
+        "s": "#8e7e14",
+        "c": "rgba(122,106,0,0.07)",
+        "h": "#7a6a00"
+      },
+      "Matemáticas||SEMANA 5": {
+        "s": "#14b8a6",
+        "c": "rgba(20,184,166,0.06)",
+        "h": "#0f766e"
+      },
+      "Artística||SEMANA 2": {
+        "s": "#3b82f6",
+        "c": "rgba(59,130,246,0.06)",
+        "h": "#1e40af"
+      },
+      "Lectura||SEMANA 1": {
+        "s": "#22c55e",
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d"
+      },
+      "Matemáticas||SEMANA 1": {
+        "h": "#15803d",
+        "c": "rgba(34,197,94,0.06)",
+        "s": "#22c55e"
+      },
+      "EESS||EL PUEBLO Y LOS ACTORES SOCIALES DE LA REPÚBLICA": {
+        "s": "#2e8250",
+        "c": "rgba(26,110,60,0.07)",
+        "h": "#1a6e3c"
+      },
+      "Matemáticas||OPERACIONES CONBINADAS CON FRACCIONES": {
+        "s": "#546e7a",
+        "c": "rgba(84,110,122,0.07)",
+        "h": "#2c3e50"
+      },
+      "Matemáticas||ESCRIBIR POESÍAS": {
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d",
+        "s": "#22c55e"
+      },
+      "Acompañamiento Integral||¿QUIÉN TIENE EL PODER EN EL PAÍS?”": {
+        "c": "rgba(122,106,0,0.07)",
+        "h": "#7a6a00",
+        "s": "#8e7e14"
+      },
+      "Lengua||DISFRUTO DE LA LECTURA DE CUENTOS LATINOAMERICANOS": {
+        "s": "#c0392b",
+        "h": "#8b1a1a",
+        "c": "rgba(192,57,43,0.07)"
+      },
+      "Matemáticas||MULTIPLICACIÓN DE FRACCIONES": {
+        "c": "rgba(22,160,133,0.07)",
+        "h": "#1a7a7a",
+        "s": "#16a085"
+      },
+      "CCNN||EL CLIMA EN LAS REGIONES NATURALES DE ECUADOR": {
+        "s": "#546e7a",
+        "c": "rgba(84,110,122,0.07)",
+        "h": "#2c3e50"
+      },
+      "EESS||LA REVOLUCÓN MARCISTA Y LA CRISIS DE 1859": {
+        "s": "#405264",
+        "c": "rgba(44,62,80,0.07)",
+        "h": "#2c3e50"
+      },
+      "Artística||GUARDIANES DE LA VÍA": {
+        "s": "#c9592f",
+        "c": "rgba(181,69,27,0.07)",
+        "h": "#b5451b"
+      },
+      "EESS||EL FLOREANISMO EN EL ECUADOR": {
+        "s": "#c9592f",
+        "c": "rgba(181,69,27,0.07)",
+        "h": "#b5451b"
+      },
+      "Artística||EL MELODRAMA": {
+        "s": "#8e7e14",
+        "c": "rgba(122,106,0,0.07)",
+        "h": "#7a6a00"
+      },
+      "EESS||LAS CARACTERÍSTICAS COMUNES DE LA NACIÓN": {
+        "h": "#7a6a00",
+        "c": "rgba(122,106,0,0.07)",
+        "s": "#8e7e14"
+      },
+      "Lengua||ESCRIBO ATIÍCULOS INFORMATIVOS": {
+        "h": "#1a7a7a",
+        "c": "rgba(26,122,122,0.07)",
+        "s": "#2e8e8e"
+      },
+      "Matemáticas||APORTES INDIVIDUALES": {
+        "s": "#22c55e",
+        "c": "rgba(34,197,94,0.06)",
+        "h": "#15803d"
+      },
+      "Artística||FIGURA DE PLASTILINA-FOMIX M": {
+        "s": "#2ecc71",
+        "h": "#1a5c1a",
+        "c": "rgba(46,204,113,0.07)"
+      },
+      "Matemáticas||DIVISIÓN DE FRACCIONES": {
+        "c": "rgba(241,196,15,0.07)",
+        "h": "#7a6a00",
+        "s": "#f1c40f"
+      },
+      "Matemáticas||SEMANA 6": {
+        "h": "#a16207",
+        "c": "rgba(234,179,8,0.06)",
+        "s": "#eab308"
+      },
+      "EESS||EL PROYECTO DE GABRIEL GARCIA MORENO": {
+        "s": "#2e8e8e",
+        "h": "#1a7a7a",
+        "c": "rgba(26,122,122,0.07)"
+      },
+      "Lengua||ESCRIBO UN DIARIO PERSONAL": {
+        "c": "rgba(141,110,99,0.07)",
+        "h": "#5d4037",
+        "s": "#8d6e63"
+      },
+      "Lengua||LAS FUNCIONES DEL LENGUAJE": {
+        "c": "rgba(13,71,161,0.07)",
+        "h": "#0d47a1",
+        "s": "#215bb5"
+      },
+      "Acompañamiento Integral||SEMANA 1": {
+        "h": "#15803d",
+        "c": "rgba(34,197,94,0.06)",
+        "s": "#22c55e"
+      },
+      "Artística||OBRA: DIVERSIDAD HUMANA.": {
+        "s": "#71544b",
+        "h": "#5d4037",
+        "c": "rgba(93,64,55,0.07)"
+      },
+      "Lengua||LEO PARA CONOCER EL MUNDO DE HÉROES Y VILLANOS": {
+        "s": "#71544b",
+        "c": "rgba(93,64,55,0.07)",
+        "h": "#5d4037"
+      },
+      "EESS||CONSOLIDACIÓN DE LA UNIDAD NACIONAL Y SOBERANA DEL PAÍS": {
+        "s": "#1565c0",
+        "h": "#0d47a1",
+        "c": "rgba(21,101,192,0.07)"
+      },
+      "EESS||SISTEMA MUNDIAL DE MERCADO Y PREDOMINIO DE LA BURGUSÍA COMERCIAL Y BANCARIA": {
+        "c": "rgba(141,110,99,0.07)",
+        "h": "#5d4037",
+        "s": "#8d6e63"
+      },
+      "Acompañamiento Integral||EVALUACIÓN SUMATIVA": {
+        "h": "#7e22ce",
+        "c": "rgba(168,85,247,0.06)",
+        "s": "#a855f7"
+      },
+      "Lengua||EL PREDICADO Y EL COMPLEMENTO DIRECTO": {
+        "s": "#2ecc71",
+        "h": "#1a5c1a",
+        "c": "rgba(46,204,113,0.07)"
+      },
+      "Matemáticas||NÚMEROS DECIMALES:LECTURA Y ESCRITURA": {
+        "s": "#1565c0",
+        "c": "rgba(21,101,192,0.07)",
+        "h": "#0d47a1"
+      },
+      "Matemáticas||APORTES GRUPALES": {
+        "s": "#3b82f6",
+        "h": "#1e40af",
+        "c": "rgba(59,130,246,0.06)"
+      },
+      "Matemáticas||EVALUACIÓN SUMATIVA": {
+        "c": "rgba(249,115,22,0.06)",
+        "h": "#c2410c",
+        "s": "#f97316"
+      },
+      "CCNN||LOS FENÓMENOS GEOLÓGICOS Y LA FORMACIÓN DE RELIEVES": {
+        "c": "rgba(46,204,113,0.07)",
+        "h": "#1a5c1a",
+        "s": "#2ecc71"
+      },
+      "Matemáticas||MÍNIMO COMÚN MÚLTIPLO": {
+        "h": "#7b2d8b",
+        "c": "rgba(123,45,139,0.07)",
+        "s": "#8f419f"
+      },
+      "Matemáticas||PERÍMETROS Y ÁREAS DE PARALELOGRAMOS Y TRAPECIOS": {
+        "s": "#2ecc71",
+        "c": "rgba(46,204,113,0.07)",
+        "h": "#1a5c1a"
+      },
+      "Artística||ELABRAR UN INSTRUMENTO MUSICAÑ": {
+        "c": "rgba(123,45,139,0.07)",
+        "h": "#7b2d8b",
+        "s": "#8f419f"
+      },
+      "Matemáticas||SEMANA 8": {
+        "s": "#3b82f6",
+        "c": "rgba(59,130,246,0.06)",
+        "h": "#1e40af"
+      },
+      "Artística||AUTORETRATO Y PASATIEMPOS": {
+        "h": "#b5451b",
+        "c": "rgba(230,126,34,0.07)",
+        "s": "#e67e22"
+      },
+      "Lengua||EVALUACIÓN SUMATIVA": {
+        "h": "#7e22ce",
+        "c": "rgba(168,85,247,0.06)",
+        "s": "#a855f7"
+      },
+      "CCNN||LA ATMOSFERA Y SUS CAPAS": {
+        "s": "#2e8e8e",
+        "c": "rgba(26,122,122,0.07)",
+        "h": "#1a7a7a"
+      },
+      "Lengua||SEMANA 2": {
+        "s": "#3b82f6",
+        "c": "rgba(59,130,246,0.06)",
+        "h": "#1e40af"
+      },
+      "Lectura||UN LIBRO DE CIENCIA FICCIÓN": {
+        "s": "#215bb5",
+        "c": "rgba(13,71,161,0.07)",
+        "h": "#0d47a1"
+      },
+      "CCNN||LA VARIEDAD DE CLIMAS EN EL ECUADOR": {
+        "h": "#5d4037",
+        "c": "rgba(141,110,99,0.07)",
+        "s": "#8d6e63"
+      },
+      "EESS||ECUADOR ENTRE 1875 Y 1895: AUGE CACAOTERO, CONFLICTO SOCIALES Y POLITICOS": {
+        "s": "#546e7a",
+        "c": "rgba(84,110,122,0.07)",
+        "h": "#2c3e50"
+      },
+      "EESS||ESFUERZOS INTELECTUALES PARA ENTENDER EL PAÍS Y SU IDENTIDAD A FINALES DEL SIGLO XIX": {
+        "h": "#1a5c1a",
+        "c": "rgba(46,204,113,0.07)",
+        "s": "#2ecc71"
+      }
+    },
+    "cronoNotes": {},
+    "anio": "2026-2027",
+    "asistencia": {
+      "2026-08-12": {
+        "0": "P",
+        "1": "P",
+        "2": "P",
+        "3": "P",
+        "4": "P",
+        "5": "P",
+        "6": "P",
+        "7": "P",
+        "8": "P",
+        "9": "P",
+        "10": "P",
+        "11": "P",
+        "12": "P",
+        "13": "P",
+        "14": "P",
+        "15": "P",
+        "16": "P",
+        "17": "P",
+        "18": "P",
+        "19": "P",
+        "20": "P",
+        "21": "P",
+        "22": "P",
+        "23": "P",
+        "24": "P",
+        "25": "P",
+        "26": "P",
+        "27": "P",
+        "28": "P",
+        "29": "P",
+        "30": "P",
+        "31": "P",
+        "32": "P",
+        "33": "P",
+        "34": "P",
+        "35": "P",
+        "36": "P",
+        "37": "P",
+        "38": "P",
+        "39": "P"
+      },
+      "2026-08-16": {
+        "0": "P",
+        "1": "P",
+        "2": "P",
+        "3": "P",
+        "4": "P",
+        "5": "P",
+        "6": "P",
+        "7": "P",
+        "8": "P",
+        "9": "P",
+        "10": "P",
+        "11": "P",
+        "12": "P",
+        "13": "P",
+        "14": "P",
+        "15": "P",
+        "16": "P",
+        "17": "P",
+        "18": "P",
+        "19": "P",
+        "20": "P",
+        "21": "P",
+        "22": "P",
+        "23": "P",
+        "24": "P",
+        "25": "P",
+        "26": "P",
+        "27": "P",
+        "28": "P",
+        "29": "P",
+        "30": "P",
+        "31": "P",
+        "32": "P",
+        "33": "P",
+        "34": "P",
+        "35": "P",
+        "36": "P",
+        "37": "P",
+        "38": "P",
+        "39": "P"
+      },
+      "2026-08-13": {},
+      "2026-08-18": {
+        "0": "P",
+        "1": "P",
+        "2": "P",
+        "3": "P",
+        "4": "P",
+        "5": "P",
+        "6": "P",
+        "7": "P",
+        "8": "P",
+        "9": "P",
+        "10": "P",
+        "11": "P",
+        "12": "P",
+        "13": "P",
+        "14": "P",
+        "15": "P",
+        "16": "P",
+        "17": "P",
+        "18": "P",
+        "19": "P",
+        "20": "P",
+        "21": "P",
+        "22": "P",
+        "23": "P",
+        "24": "P",
+        "25": "P",
+        "26": "P",
+        "27": "P",
+        "28": "P",
+        "29": "P",
+        "30": "P",
+        "31": "P",
+        "32": "P",
+        "33": "P",
+        "34": "P",
+        "35": "P",
+        "36": "P",
+        "37": "P",
+        "38": "P",
+        "39": "P"
+      },
+      "2026-08-17": {
+        "0": "P",
+        "1": "P",
+        "2": "P",
+        "3": "P",
+        "4": "P",
+        "5": "P",
+        "6": "P",
+        "7": "P",
+        "8": "P",
+        "9": "P",
+        "10": "P",
+        "11": "P",
+        "12": "P",
+        "13": "P",
+        "14": "P",
+        "15": "P",
+        "16": "P",
+        "17": "P",
+        "18": "P",
+        "19": "P",
+        "20": "P",
+        "21": "P",
+        "22": "P",
+        "23": "P",
+        "24": "P",
+        "25": "P",
+        "26": "P",
+        "27": "P",
+        "28": "P",
+        "29": "P",
+        "30": "P",
+        "31": "P",
+        "32": "P",
+        "33": "P",
+        "34": "P",
+        "35": "P",
+        "36": "P",
+        "37": "P",
+        "38": "P",
+        "39": "P"
+      },
+      "2026-08-19": {
+        "0": "P",
+        "1": "P",
+        "2": "P",
+        "3": "P",
+        "4": "P",
+        "5": "P",
+        "6": "P",
+        "7": "P",
+        "8": "P",
+        "9": "P",
+        "10": "P",
+        "11": "P",
+        "12": "P",
+        "13": "P",
+        "14": "P",
+        "15": "P",
+        "16": "P",
+        "17": "P",
+        "18": "P",
+        "19": "P",
+        "20": "P",
+        "21": "P",
+        "22": "P",
+        "23": "P",
+        "24": "P",
+        "25": "P",
+        "26": "P",
+        "27": "P",
+        "28": "P",
+        "29": "P",
+        "30": "P",
+        "31": "P",
+        "32": "P",
+        "33": "P",
+        "34": "P",
+        "35": "P",
+        "36": "P",
+        "37": "P",
+        "38": "P",
+        "39": "P"
+      },
+      "2026-09-01": {
+        "0": "P"
+      }
+    },
+    "matrixColOrder": [
+      "cedula",
+      "correo_inst",
+      "edad",
+      "cumple_cuenta",
+      "fecha_nac",
+      "nnee",
+      "enfermedad",
+      "hermanos",
+      "rep_nombre",
+      "rep_cedula",
+      "rep_telefono",
+      "direccion",
+      "rep_email",
+      "tel_emerg",
+      "madre_nombre",
+      "madre_cedula",
+      "madre_tel",
+      "padre_nombre",
+      "padre_cedula",
+      "cst_1788139328511",
+      "padre_tel",
+      "cst_1788137774809"
+    ],
+    "hiddenCols": {},
+    "mats": {
+      "CCNN": {
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ],
+        "cols": {
+          "SEMANA 1": [
+            {
+              "type": "AC",
+              "color": null,
+              "name": "A1",
+              "date": ""
+            },
+            {
+              "type": "T",
+              "color": null,
+              "date": "",
+              "name": "T1"
+            },
+            {
+              "name": "L1",
+              "date": "",
+              "color": null,
+              "type": "L"
+            }
+          ],
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "date": "",
+              "name": "PI",
+              "color": null,
+              "type": "PI"
+            },
+            {
+              "name": "EV",
+              "date": "",
+              "color": null,
+              "type": "PS"
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "name": "A2",
+              "date": "",
+              "color": null
+            },
+            {
+              "type": "TG",
+              "color": null,
+              "date": "",
+              "name": "TG1"
+            },
+            {
+              "type": "T",
+              "date": "",
+              "name": "T2",
+              "color": null
+            }
+          ]
+        }
+      },
+      "EESS": {
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ],
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "cols": {
+          "SEMANA 1": [
+            {
+              "type": "AC",
+              "color": null,
+              "name": "A1",
+              "date": ""
+            },
+            {
+              "date": "",
+              "color": null,
+              "name": "T1",
+              "type": "T"
+            },
+            {
+              "date": "",
+              "name": "L1",
+              "type": "L",
+              "color": null
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "color": null,
+              "name": "A2",
+              "date": "",
+              "type": "AC"
+            },
+            {
+              "date": "",
+              "name": "TG1",
+              "color": null,
+              "type": "TG"
+            },
+            {
+              "color": null,
+              "name": "T2",
+              "date": "",
+              "type": "T"
+            }
+          ],
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "color": null,
+              "name": "PI",
+              "date": "",
+              "type": "PI"
+            },
+            {
+              "type": "PS",
+              "color": null,
+              "name": "EV",
+              "date": ""
+            }
+          ]
+        }
+      },
+      "Lectura": {
+        "cols": {
+          "SEMANA 1": [
+            {
+              "type": "AC",
+              "color": null,
+              "date": "",
+              "name": "A1"
+            },
+            {
+              "color": null,
+              "date": "",
+              "name": "T1",
+              "type": "T"
+            },
+            {
+              "type": "L",
+              "color": null,
+              "date": "",
+              "name": "L1"
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "date": "",
+              "name": "A2",
+              "color": null
+            },
+            {
+              "color": null,
+              "name": "TG1",
+              "date": "",
+              "type": "TG"
+            },
+            {
+              "type": "T",
+              "date": "",
+              "name": "T2",
+              "color": null
+            }
+          ],
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "type": "PI",
+              "color": null,
+              "name": "PI",
+              "date": ""
+            },
+            {
+              "type": "PS",
+              "date": "",
+              "name": "EV",
+              "color": null
+            }
+          ]
+        },
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ]
+      },
+      "Artística": {
+        "cols": {
+          "SEMANA 1": [
+            {
+              "color": null,
+              "type": "AC",
+              "date": "",
+              "name": "A1"
+            },
+            {
+              "date": "",
+              "name": "T1",
+              "color": null,
+              "type": "T"
+            },
+            {
+              "name": "L1",
+              "date": "",
+              "type": "L",
+              "color": null
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "color": null,
+              "date": "",
+              "name": "A2"
+            },
+            {
+              "type": "TG",
+              "date": "",
+              "name": "TG1",
+              "color": null
+            },
+            {
+              "type": "T",
+              "color": null,
+              "date": "",
+              "name": "T2"
+            }
+          ],
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "date": "",
+              "name": "PI",
+              "type": "PI",
+              "color": null
+            },
+            {
+              "type": "PS",
+              "name": "EV",
+              "date": "",
+              "color": null
+            }
+          ]
+        },
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ]
+      },
+      "Lengua": {
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ],
+        "cols": {
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "date": "",
+              "name": "PI",
+              "color": null,
+              "type": "PI"
+            },
+            {
+              "type": "PS",
+              "color": null,
+              "date": "",
+              "name": "EV"
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "color": null,
+              "type": "AC",
+              "name": "A2",
+              "date": ""
+            },
+            {
+              "type": "TG",
+              "color": null,
+              "name": "TG1",
+              "date": ""
+            },
+            {
+              "type": "T",
+              "date": "",
+              "name": "T2",
+              "color": null
+            }
+          ],
+          "SEMANA 1": [
+            {
+              "type": "AC",
+              "color": null,
+              "name": "A1",
+              "date": ""
+            },
+            {
+              "color": null,
+              "date": "",
+              "name": "T1",
+              "type": "T"
+            },
+            {
+              "color": null,
+              "type": "L",
+              "name": "L1",
+              "date": ""
+            }
+          ]
+        },
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        }
+      },
+      "Matemáticas": {
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        },
+        "cols": {
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "type": "PI",
+              "color": null,
+              "name": "PI",
+              "date": ""
+            },
+            {
+              "color": null,
+              "date": "",
+              "name": "EV",
+              "type": "PS"
+            }
+          ],
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "date": "",
+              "color": null,
+              "name": "A2"
+            },
+            {
+              "type": "TG",
+              "name": "TG1",
+              "date": "",
+              "color": null
+            },
+            {
+              "date": "",
+              "name": "T2",
+              "color": null,
+              "type": "T"
+            }
+          ],
+          "SEMANA 1": [
+            {
+              "color": null,
+              "name": "A1",
+              "date": "",
+              "type": "AC"
+            },
+            {
+              "name": "T1",
+              "date": "",
+              "color": null,
+              "type": "T"
+            },
+            {
+              "type": "L",
+              "color": null,
+              "date": "",
+              "name": "L1"
+            }
+          ]
+        },
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ]
+      },
+      "Acompañamiento Integral": {
+        "weeks": [
+          "SEMANA 1",
+          "SEMANA 2",
+          "EVALUACIÓN SUMATIVA"
+        ],
+        "cols": {
+          "SEMANA 2": [
+            {
+              "type": "AC",
+              "date": "",
+              "name": "A2",
+              "color": null
+            },
+            {
+              "type": "TG",
+              "date": "",
+              "name": "TG1",
+              "color": null
+            },
+            {
+              "type": "T",
+              "date": "",
+              "name": "T2",
+              "color": null
+            }
+          ],
+          "SEMANA 1": [
+            {
+              "color": null,
+              "date": "",
+              "name": "A1",
+              "type": "AC"
+            },
+            {
+              "date": "",
+              "name": "T1",
+              "type": "T",
+              "color": null
+            },
+            {
+              "type": "L",
+              "date": "",
+              "name": "L1",
+              "color": null
+            }
+          ],
+          "EVALUACIÓN SUMATIVA": [
+            {
+              "type": "PI",
+              "name": "PI",
+              "date": "",
+              "color": null
+            },
+            {
+              "name": "EV",
+              "date": "",
+              "color": null,
+              "type": "PS"
+            }
+          ]
+        },
+        "grades": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {},
+          "20": {},
+          "21": {},
+          "22": {},
+          "23": {},
+          "24": {},
+          "25": {},
+          "26": {},
+          "27": {},
+          "28": {},
+          "29": {},
+          "30": {},
+          "31": {},
+          "32": {},
+          "33": {},
+          "34": {},
+          "35": {},
+          "36": {},
+          "37": {},
+          "38": {},
+          "39": {}
+        }
+      }
+    },
+    "matsMeta": [
+      {
+        "qual": false,
+        "name": "Matemáticas"
+      },
+      {
+        "qual": false,
+        "name": "Lengua"
+      },
+      {
+        "name": "EESS",
+        "qual": false
+      },
+      {
+        "name": "CCNN",
+        "qual": false
+      },
+      {
+        "name": "Artística",
+        "qual": false
+      },
+      {
+        "qual": true,
+        "name": "Acompañamiento Integral"
+      },
+      {
+        "name": "Lectura",
+        "qual": true
+      }
+    ],
+    "periodo": "1er Trimestre",
+    "students": [
+      "ALCIVAR MENDOZA AMY SOFIA",
+      "ALMEIDA ANZATUÑA EMILY ANAHI",
+      "ALMEIDA TACUAMAN DOMINIC JHARET",
+      "ANDINO ORTIZ ERICK JACOBO",
+      "ANDRADE ANGULO JAYKO DOMINICK",
+      "ANTE SUAMBRA MELISA BRIGITH",
+      "CAMPOS ESPINOSA JUSTER KAIL",
+      "CASTILLO ROJAS DOMINICK JAZIEL",
+      "CEDEÑO PINANJOTA ARLETH SALOME",
+      "CHILENO MEDINA CRISTOFER ALEJANDRO",
+      "CHONTA LLUMITAXI ALISSON ESTEFANIA",
+      "CISNEROS MORAN ALEJANDRO PAVEL",
+      "ENCARNACION INFANTE TIFANY ESTHER",
+      "FLORES ACERO CAMILA NOEMI",
+      "GAGUY CABAY TAMIA MAYTE",
+      "GODOY CEDEÑO SAMANTHA AITANA",
+      "GUALOTO DIAZ SAMANTHA ESTEFANIA",
+      "GUANOTASIG SANTIAK JAYDEEN JAACE",
+      "GUAYANAY VINUEZA JHON ALEX",
+      "GUERRON ROLDAN ANGEL SEBASTIAN",
+      "HEREDIA TITUAÑA JHAIR ALEJANDRO",
+      "IÑIGUEZ MORALES DEMY VALENTINA",
+      "JARAMILLO ERAZO YERLIS NAHOMI",
+      "LOMBEIDA SANMARTIN DILAN YORDAN",
+      "LOVATO CEPEDA EITHAN SEBASTIAN",
+      "MALES NARVAEZ DANDY FERNEY",
+      "MERA POZO VALERIA MONSERRATH",
+      "MORALES TULCANAZO DANDELAY MIA",
+      "MUSGO MORALES SCARLETT ISABEL",
+      "NOLIVOS LANAS BRYANA MAITE",
+      "PALACIOS PIZARRO DOSTIN MIGUEL",
+      "PERALTA ANRANGO ALEXANDER JAVIER",
+      "QUISHPE ANTE ALAN JOSUE",
+      "QUIÑONEZ GARCIA DYLAN JESNER",
+      "ROBLES CARRION ANGELINE ISABELA",
+      "ROSALES LOPEZ ISAAC ANDRES",
+      "ROSERO LITARDO CRISTIAN DANIEL",
+      "SANGUCHO AGUIRRE JHOAN SEBASTIAN",
+      "SARZOSA CONTRERAS TYLER LEONEL",
+      "VELASCO RAMOS ESTEBAN ALEXANDER"
+    ],
+    "am": 1
+  }
+}
