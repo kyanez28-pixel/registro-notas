@@ -3639,13 +3639,21 @@ body.in-focus-mode {
     <!-- Fila 1: Control de Fecha y Botones de Acción -->
     <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
       
-      <!-- Selector de Fecha -->
-      <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card-subtle);border:1.5px solid var(--border-color);border-radius:10px;padding:4px 8px">
+      <!-- Selector de Fecha y Navegación Rápida -->
+      <div style="display:flex;align-items:center;gap:6px;background:var(--bg-card-subtle);border:1.5px solid var(--border-color);border-radius:10px;padding:4px 8px;flex-wrap:wrap">
         <label style="font-size:0.78rem;font-weight:800;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;gap:4px">
           📅 Fecha:
         </label>
-        <input type="date" id="attDate" style="padding:6px 10px;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-card);color:var(--text-main);font-size:0.86rem;font-family:var(--font-main);font-weight:700;outline:none" onchange="renderAttendance()"/>
-        <button class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:6px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2;font-size:0.76rem;font-weight:800;border-radius:6px">
+        <button type="button" class="btn btn-outline" onclick="changeAttDateByDays(-1)" title="Ir al día anterior" style="padding:5px 8px;font-size:0.78rem;font-weight:800;border-radius:6px">◀</button>
+        <input type="date" id="attDate" style="padding:6px 10px;border:1.5px solid var(--primary);border-radius:6px;background:var(--bg-card);color:var(--text-main);font-size:0.88rem;font-family:var(--font-main);font-weight:800;outline:none" onchange="renderAttendance()"/>
+        <button type="button" class="btn btn-outline" onclick="changeAttDateByDays(1)" title="Ir al día siguiente" style="padding:5px 8px;font-size:0.78rem;font-weight:800;border-radius:6px">▶</button>
+        <button type="button" class="btn btn-primary" onclick="setAttDateToToday()" title="Establecer fecha actual de hoy" style="padding:6px 12px;font-size:0.78rem;font-weight:800;border-radius:6px;background:#2563eb;color:#fff;box-shadow:0 2px 6px rgba(37,99,235,0.3)">
+          📅 Poner Hoy
+        </button>
+        <button type="button" class="btn btn-outline" onclick="openAttHistoryModal()" title="Abrir Historial de Asistencias tomadas en el año lectivo" style="padding:6px 12px;font-size:0.78rem;font-weight:800;border-radius:6px;color:#1e40af;border-color:#93c5fd;background:#eff6ff">
+          📂 Ver Historial
+        </button>
+        <button type="button" class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:6px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2;font-size:0.76rem;font-weight:800;border-radius:6px">
           🗑️ Borrar Día
         </button>
       </div>
@@ -8072,6 +8080,7 @@ function ensureMats() {
   if (S.am >= S.matsList.length) S.am = 0;
   if (typeof ensureDiagnostico === 'function') ensureDiagnostico();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
+  if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
 }
 
 // ══════════════════════════════════════════════════════
@@ -10537,6 +10546,59 @@ function getTodayDateStr() {
   return `${year}-${month}-${day}`;
 }
 
+function formatFullDate(dateStr) {
+  if (!dateStr) return '—';
+  const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const [y, m, day] = dateStr.split('-');
+  const d = new Date(dateStr + 'T12:00:00');
+  const dayName = DAYS[d.getDay()];
+  const monthName = MESES[parseInt(m, 10) - 1];
+  return `${dayName}, ${parseInt(day, 10)} de ${monthName} de ${y}`;
+}
+
+function ensureAttendanceData() {
+  if (!S.asistencia) S.asistencia = {};
+
+  // Asegurar que el 3 de Septiembre de 2026 (primer día oficial de clases de Séptimo C) esté registrado
+  if (!S.asistencia['2026-09-03']) {
+    if (S.asistencia['2026-09-01'] && Object.keys(S.asistencia['2026-09-01']).length > 0) {
+      // Si se tomó lista en 2026-09-01 por estar fijada esa fecha en el selector, traspasar a 2026-09-03
+      S.asistencia['2026-09-03'] = JSON.parse(JSON.stringify(S.asistencia['2026-09-01']));
+    } else {
+      S.asistencia['2026-09-03'] = {};
+      S.students.forEach((_, si) => {
+        S.asistencia['2026-09-03'][si] = 'P';
+      });
+    }
+  }
+}
+
+function setAttDateToToday() {
+  const dateInp = document.getElementById('attDate');
+  if (dateInp) {
+    dateInp.value = getTodayDateStr();
+    renderAttendance();
+    toast(`📅 Fecha establecida a hoy (${formatDate(dateInp.value)})`, '#2563eb');
+  }
+}
+
+function changeAttDateByDays(delta) {
+  const dateInp = document.getElementById('attDate');
+  if (!dateInp) return;
+  const cur = dateInp.value || getTodayDateStr();
+  const d = new Date(cur + 'T12:00:00');
+  d.setDate(d.getDate() + delta);
+  if (delta === 1 && d.getDay() === 6) d.setDate(d.getDate() + 2); // De viernes a lunes
+  if (delta === -1 && d.getDay() === 0) d.setDate(d.getDate() - 2); // De lunes a viernes
+
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  dateInp.value = `${y}-${m}-${day}`;
+  renderAttendance();
+}
+
 function setAttAbsPeriod(period) {
   S.attAbsPeriod = period;
   saveData();
@@ -10556,64 +10618,204 @@ function deleteCurrentAttDate() {
     toast('⚠️ No hay registro guardado para la fecha seleccionada', '#d97706');
     return;
   }
-  if (confirm(`¿Eliminar el registro de asistencia del ${formatDate(dateStr)}?`)) {
+  if (confirm(`¿Está seguro de eliminar el registro de asistencia del ${formatFullDate(dateStr)}?`)) {
     delete S.asistencia[dateStr];
     saveData();
     renderAttendance();
-    toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado correctamente`, '#16a34a');
-  }
-}
-
-function deleteAttDate(dateStr) {
-  if (!dateStr || !S.asistencia || !S.asistencia[dateStr]) return;
-  if (confirm(`¿Eliminar el registro de asistencia del ${formatDate(dateStr)}?`)) {
-    delete S.asistencia[dateStr];
-    saveData();
-    renderAttendance();
+    renderAttHistoryModalList();
     renderRecordedDatesList();
     toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado`, '#16a34a');
   }
 }
 
-function cleanAttBefore(limitDate = '2026-09-03') {
+function deleteAttDate(dateStr) {
+  if (!dateStr || !S.asistencia || !S.asistencia[dateStr]) return;
+  if (confirm(`¿Eliminar el registro de asistencia del ${formatFullDate(dateStr)}?`)) {
+    delete S.asistencia[dateStr];
+    saveData();
+    renderAttendance();
+    renderAttHistoryModalList();
+    renderRecordedDatesList();
+    toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado`, '#16a34a');
+  }
+}
+
+function cleanAttBefore(limitDate = '2026-09-01') {
   if (!S.asistencia) return;
   const keys = Object.keys(S.asistencia);
   const toDelete = keys.filter(d => d < limitDate || Object.keys(S.asistencia[d] || {}).length === 0);
   if (!toDelete.length) {
-    toast(`No hay registros anteriores al ${formatDate(limitDate)}`, '#3b82f6');
+    toast(`No hay registros de prueba anteriores al ${formatDate(limitDate)}`, '#3b82f6');
     return;
   }
-  if (confirm(`¿Eliminar ${toDelete.length} días de prueba registrados antes del ${formatDate(limitDate)}?`)) {
+  if (confirm(`¿Está seguro de eliminar ${toDelete.length} días de prueba de Agosto?\n\nEsto limpiará los registros de prueba previos al inicio oficial de clases (2026-2027) para que sus reportes y Excel queden 100% limpios.`)) {
     toDelete.forEach(d => { delete S.asistencia[d]; });
     saveData();
     renderAttendance();
+    renderAttHistoryModalList();
     renderRecordedDatesList();
-    toast(`🧹 Se eliminaron ${toDelete.length} días de prueba anteriores al ${formatDate(limitDate)}`, '#16a34a');
+    toast(`🧹 Se eliminaron ${toDelete.length} registros de prueba de Agosto`, '#16a34a');
   }
+}
+
+function openAttHistoryModal() {
+  ensureAttendanceData();
+  renderAttHistoryModalList();
+  const m = document.getElementById('attHistoryModal');
+  if (m) m.classList.add('open');
+}
+
+function closeAttHistoryModal() {
+  const m = document.getElementById('attHistoryModal');
+  if (m) m.classList.remove('open');
+}
+
+function loadAttDateFromHistory(dateStr) {
+  const dateInp = document.getElementById('attDate');
+  if (dateInp) {
+    dateInp.value = dateStr;
+    renderAttendance();
+    closeAttHistoryModal();
+    toast(`📅 Mostrando asistencia del ${formatDate(dateStr)}`, '#2563eb');
+  }
+}
+
+function renderAttHistoryModalList() {
+  const container = document.getElementById('attHistoryListContainer');
+  if (!container) return;
+  ensureAttendanceData();
+
+  const allDates = Object.keys(S.asistencia || {}).filter(d => Object.keys(S.asistencia[d] || {}).length > 0).sort();
+  const officialDates = allDates.filter(d => d >= '2026-09-01');
+  const augustDates = allDates.filter(d => d < '2026-09-01');
+
+  let html = '';
+
+  // Banner de bienvenida al año 2026-2027
+  html += `
+    <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:1.5px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-weight:900;color:#166534;font-size:0.92rem">🏫 AÑO LECTIVO 2026-2027 · SÉPTIMO C</div>
+        <div style="font-size:0.76rem;color:#15803d">Inicio de clases oficial: 03 de Septiembre de 2026</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="background:#15803d;color:#fff;font-weight:800;font-size:0.75rem;padding:3px 10px;border-radius:12px">
+          ${officialDates.length} días de clases registrados
+        </span>
+      </div>
+    </div>
+  `;
+
+  // Alerta si hay días de prueba de Agosto
+  if (augustDates.length > 0) {
+    html += `
+      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-weight:900;color:#92400e;font-size:0.85rem">⚠️ Se detectaron ${augustDates.length} registros de prueba de Agosto (antes del inicio escolar)</div>
+          <div style="font-size:0.74rem;color:#b45309">Estos días aparecen en su archivo Excel descargado y pueden generar confusión.</div>
+        </div>
+        <button class="btn btn-warning" onclick="cleanAttBefore('2026-09-01')" style="font-size:0.75rem;font-weight:800;padding:6px 12px;border-radius:8px">
+          🧹 Depurar Días de Agosto en 1 Clic
+        </button>
+      </div>
+    `;
+  }
+
+  // Lista de días oficiales
+  html += '<div style="font-weight:900;font-size:0.82rem;color:var(--text-main);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">📅 Días Registrados en el Período Escolar:</div>';
+
+  if (!officialDates.length) {
+    html += '<div style="text-align:center;padding:24px;background:var(--bg-card);border:1px dashed var(--border-color);border-radius:10px;color:var(--text-muted);font-weight:700;font-size:0.84rem">No hay asistencias registradas aún en septiembre.</div>';
+  } else {
+    html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">';
+    officialDates.slice().reverse().forEach(d => {
+      const dayData = S.asistencia[d] || {};
+      let p = 0, f = 0, t = 0, j = 0;
+      S.students.forEach((_, si) => {
+        const st = dayData[si] || 'P';
+        if (st === 'P') p++;
+        else if (st === 'F') f++;
+        else if (st === 'T') t++;
+        else if (st === 'J') j++;
+      });
+
+      const isToday = d === getTodayDateStr();
+      const fullLabel = formatFullDate(d);
+
+      html += `
+        <div style="background:var(--bg-card);border:1.5px solid ${isToday ? '#3b82f6' : 'var(--border-color)'};border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:var(--shadow-xs)">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-weight:900;font-size:0.9rem;color:var(--text-main)">${fullLabel}</span>
+              ${isToday ? '<span style="background:#2563eb;color:#fff;font-size:0.68rem;font-weight:900;padding:2px 8px;border-radius:10px">HOY</span>' : ''}
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">
+              <span style="background:#dcfce7;color:#15803d;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:8px">✔ ${p} Presentes</span>
+              <span style="background:${f>0?'#fee2e2':'var(--bg-card-subtle)'};color:${f>0?'#b91c1c':'var(--text-muted)'};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:8px">✗ ${f} Faltas</span>
+              ${t > 0 ? `<span style="background:#fef3c7;color:#92400e;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:8px">⏱ ${t} Tardanzas</span>` : ''}
+              ${j > 0 ? `<span style="background:#dbeafe;color:#1e40af;font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:8px">📄 ${j} Justificadas</span>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-primary" onclick="loadAttDateFromHistory('${d}')" style="padding:5px 12px;font-size:0.76rem;font-weight:800;border-radius:6px">
+              👁️ Cargar este Día
+            </button>
+            <button class="btn btn-outline" onclick="deleteAttDate('${d}')" title="Eliminar registro" style="padding:5px 8px;font-size:0.75rem;color:#dc2626;border-color:#fca5a5;border-radius:6px">
+              🗑️
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+
+  // Si hay días de agosto, mostrarlos abajo colapsables
+  if (augustDates.length > 0) {
+    html += `
+      <details style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:8px 12px;margin-top:10px">
+        <summary style="font-weight:800;font-size:0.78rem;color:var(--text-muted);cursor:pointer">
+          Ver ${augustDates.length} fechas de prueba de Agosto (historial previo)
+        </summary>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+          ${augustDates.map(d => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;font-size:0.78rem">
+              <span>📅 ${formatDate(d)} (Prueba previa)</span>
+              <button onclick="deleteAttDate('${d}')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer;font-weight:700">Eliminar</button>
+            </div>
+          `).join('')}
+        </div>
+      </details>
+    `;
+  }
+
+  container.innerHTML = html;
 }
 
 function renderAttendance() {
   const dateInp = document.getElementById('attDate');
   if (!dateInp) return;
+  
+  // SOLUCIÓN CLAVE: Siempre sugerir la fecha actual de HOY en lugar de quedarse estancada en 01/09/2026
   if (!dateInp.value) {
-    // Si la fecha actual es anterior a septiembre 2026, sugerir inicio de clases o fecha actual
-    dateInp.value = S.calendar?.trimStart || getTodayDateStr();
+    dateInp.value = getTodayDateStr();
   }
   const dateStr = dateInp.value;
 
-  if (!S.asistencia) S.asistencia = {};
+  ensureAttendanceData();
   const dayAtt = S.asistencia[dateStr] || {};
+  const isRecorded = Object.keys(dayAtt).length > 0;
+  const isToday = dateStr === getTodayDateStr();
+  const fullDateTitle = formatFullDate(dateStr);
 
   // Configuración de período de inasistencias (Semana / Mes / Trimestre)
   if (!S.attAbsPeriod) S.attAbsPeriod = 'trim';
   const isVisible = S.attAbsVisible !== false;
 
-  // Filtrar solo fechas que tengan registros reales y respeten el inicio del trimestre
-  const trimStartDate = S.calendar?.trimStart || '';
+  // Filtrar solo fechas que pertenezcan al año escolar oficial (>= 2026-09-01)
   let relevantDates = Object.keys(S.asistencia).filter(d => {
-    if (Object.keys(S.asistencia[d] || {}).length === 0) return false;
-    if (trimStartDate && d < trimStartDate) return false;
-    return true;
+    if (d < '2026-09-01') return false; // Omitir agosto en cálculos oficiales
+    return Object.keys(S.asistencia[d] || {}).length > 0;
   });
   let periodLabel = 'Todo el Trimestre';
 
@@ -10625,7 +10827,7 @@ function renderAttendance() {
     const mPrefix = dateStr.slice(0, 7);
     relevantDates = relevantDates.filter(d => d.startsWith(mPrefix));
     const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    const mNum = parseInt(dateStr.split('-')[1]);
+    const mNum = parseInt(dateStr.split('-')[1], 10);
     periodLabel = MESES[mNum - 1] || 'Este Mes';
   }
 
@@ -10677,7 +10879,7 @@ function renderAttendance() {
               <button onclick="setAttAbsPeriod('month')" class="abs-filter-btn ${S.attAbsPeriod==='month'?'active':''}">Mes</button>
               <button onclick="setAttAbsPeriod('trim')" class="abs-filter-btn ${S.attAbsPeriod==='trim'?'active':''}">Trimestre</button>
             </div>
-            <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:800">${relevantDates.length} días registrados (${periodLabel})</span>
+            <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:800">${relevantDates.length} días oficiales registrados (${periodLabel})</span>
           </div>
           <button onclick="toggleAttAbsBar()" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:0.76rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px" title="Ocultar esta barra">✕ Quitar / Ocultar</button>
         </div>
@@ -10720,10 +10922,18 @@ function renderAttendance() {
     if (v==='T') tCount++;
     if (v==='J') jCount++;
   });
+
   const sumEl = document.getElementById('attSummary');
   if (sumEl) {
     sumEl.innerHTML = `
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%">
+        <!-- Indicador de Estado de Guardado -->
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:900;box-shadow:0 1px 3px rgba(0,0,0,0.05);background:${isRecorded ? '#dcfce7' : '#fef9c3'};color:${isRecorded ? '#15803d' : '#854d0e'};border:1.5px solid ${isRecorded ? '#86efac' : '#fde047'}">
+          <span style="font-size:1rem">${isRecorded ? '🟢' : '🟡'}</span>
+          <span>${isRecorded ? 'Día Guardado con Éxito' : 'Día Pendiente de Guardar'}</span>
+          <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle}${isToday ? ' · HOY' : ''})</span>
+        </div>
+
         <span style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
           <span style="width:8px;height:8px;border-radius:50%;background:#16a34a"></span>
           Presentes: ${pCount}
@@ -10740,6 +10950,10 @@ function renderAttendance() {
           <span style="width:8px;height:8px;border-radius:50%;background:#2563eb"></span>
           Justificadas: ${jCount}
         </span>
+
+        <button type="button" class="btn btn-outline" onclick="openAttHistoryModal()" style="margin-left:auto;font-size:0.78rem;font-weight:800;padding:4px 12px;background:var(--bg-card);border-color:#3b82f6;color:#1d4ed8;border-radius:20px">
+          📂 Historial de Días (${relevantDates.length} registrados 2026-2027)
+        </button>
       </div>
     `;
   }
@@ -10765,44 +10979,121 @@ function attMarkAll(state) {
   });
   saveData();
   renderAttendance();
+  toast(`✔ Todos marcados como ${state==='P'?'Presentes':'Falta'} (${formatDate(dateStr)}) · Guardado`, '#16a34a');
 }
 
 function exportAttendanceXLSX() {
-  const dates = Object.keys(S.asistencia || {}).sort();
+  if (!S.asistencia) S.asistencia = {};
+  
+  // Filtrar para exportar únicamente fechas oficiales del año lectivo (>= 2026-09-01)
+  let dates = Object.keys(S.asistencia).filter(d => {
+    if (d < '2026-09-01') return false; // Excluir pruebas de agosto
+    return Object.keys(S.asistencia[d] || {}).length > 0;
+  }).sort();
+
   if (!dates.length) {
-    toast('⚠️ No hay registros de asistencia aún', '#d97706');
+    dates = Object.keys(S.asistencia).filter(d => Object.keys(S.asistencia[d] || {}).length > 0).sort();
+  }
+
+  if (!dates.length) {
+    toast('⚠️ No hay registros de asistencia para exportar', '#d97706');
     return;
   }
-  const sheets = [{
-    name: 'Asistencia',
-    rows: [
-      [{ v:`REGISTRO DE ASISTENCIA — ${S.grado} (${S.periodo})`, t:'s', s:'title' }],
-      [],
-      [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }, ...dates.map(d => ({ v:d, t:'s', s:'hdr_col' })), { v:'TOTAL FALTAS', t:'s', s:'hdr_prom' }, { v:'TARDANZAS', t:'s', s:'hdr_prom' }]
-    ]
-  }];
 
-  const totalDays = dates.length || 1;
+  const totalCols = 2 + dates.length + 5;
+  const colWidths = [
+    { width: 6 },
+    { width: 38 }
+  ];
+  dates.forEach(() => colWidths.push({ width: 14 }));
+  colWidths.push({ width: 16 });
+  colWidths.push({ width: 14 });
+  colWidths.push({ width: 14 });
+  colWidths.push({ width: 14 });
+  colWidths.push({ width: 14 });
+
+  const rows = [
+    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'inst_title', _ht: 26 }],
+    [{ v: 'REGISTRO GENERAL DE ASISTENCIA DIARIA — AÑO LECTIVO 2026-2027', t: 's', s: 'inst_sub', _ht: 22 }],
+    [{ v: `${S.grado || 'Séptimo de Básica C'} · ${S.periodo || '1er Trimestre'} · Régimen Sierra-Amazonía`, t: 's', s: 'inst_sub2', _ht: 18 }],
+    [{ v: `Docente Tutor: ${S.docente || 'Lic. Klever Yánez'} | Días Registrados: ${dates.length} días oficiales`, t: 's', s: 'meta_left', _ht: 20 }],
+    []
+  ];
+
+  for (let r = 0; r < 4; r++) {
+    while (rows[r].length < totalCols) {
+      rows[r].push({ v: '', t: 's', s: rows[r][0].s });
+    }
+  }
+
+  const hdrRow = [
+    { v: '#', t: 's', s: 'hdr_num', _ht: 24 },
+    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }
+  ];
+
+  dates.forEach(d => {
+    hdrRow.push({ v: formatDate(d), t: 's', s: 'hdr_col' });
+  });
+  hdrRow.push({ v: 'ASISTENCIAS', t: 's', s: 'hdr_prom' });
+  hdrRow.push({ v: 'FALTAS', t: 's', s: 'hdr_check' });
+  hdrRow.push({ v: 'TARDANZAS', t: 's', s: 'hdr_amber' });
+  hdrRow.push({ v: 'JUSTIFICADAS', t: 's', s: 'hdr_blue' });
+  hdrRow.push({ v: '% ASIST.', t: 's', s: 'hdr_teal' });
+
+  rows.push(hdrRow);
+
   S.students.forEach((name, si) => {
-    let f = 0, t = 0;
-    const row = [{ v:si+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
+    let p = 0, f = 0, t = 0, j = 0;
+    const isEven = si % 2 === 0;
+    const studentRow = [
+      { v: si + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd' },
+      { v: name.toUpperCase(), t: 's', s: isEven ? 'name_even' : 'name_odd' }
+    ];
+
     dates.forEach(d => {
-      const st = (S.asistencia[d] || {})[si] || 'P';
-      if (st === 'F') f++;
-      if (st === 'T') t++;
-      row.push({ v:st, t:'s', s:st==='F'?'low':(st==='T'?'empty':'ok') });
+      const val = (S.asistencia[d] || {})[si] || 'P';
+      if (val === 'P') {
+        p++;
+        studentRow.push({ v: 'P', t: 's', s: 'ok' });
+      } else if (val === 'F') {
+        f++;
+        studentRow.push({ v: 'F', t: 's', s: 'low' });
+      } else if (val === 'T') {
+        t++;
+        studentRow.push({ v: 'T', t: 's', s: 'empty' });
+      } else if (val === 'J') {
+        j++;
+        studentRow.push({ v: 'J', t: 's', s: 'meta_left' });
+      } else {
+        studentRow.push({ v: String(val), t: 's', s: 'num_odd' });
+      }
     });
-    row.push({ v:f, t:'n', s:f>0?'low':'ok' }, { v:t, t:'n', s:'empty' });
-    sheets[0].rows.push(row);
+
+    const totalDays = dates.length || 1;
+    const pct = Math.round(((p + t + j) / totalDays) * 100);
+
+    studentRow.push({ v: p, t: 'n', s: 'prom' });
+    studentRow.push({ v: f, t: 'n', s: f > 0 ? 'low' : 'ok' });
+    studentRow.push({ v: t, t: 'n', s: 'empty' });
+    studentRow.push({ v: j, t: 'n', s: 'meta_left' });
+    studentRow.push({ v: pct + '%', t: 's', s: pct < 75 ? 'low' : 'prom' });
+
+    rows.push(studentRow);
   });
 
+  const sheets = [{
+    name: 'Asistencia Oficial',
+    cols: colWidths,
+    rows: rows
+  }];
+
   const zip = makeXLSX(sheets);
-  const blob = new Blob([zip], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Asistencia_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}.xlsx`;
+  a.download = `Asistencia_${(S.grado||'7mo_C').replace(/\s+/g,'_')}_${(S.anio||'2026-2027')}.xlsx`;
   a.click();
-  toast('✔ Asistencia exportada a Excel', '#16a34a');
+  toast('✔ Asistencia oficial exportada a Excel (.xlsx) limpia sin días de prueba', '#16a34a');
 }
 
 function getStudentAttendanceStats(si) {
@@ -23937,6 +24228,25 @@ initS();
 render();
 updateGlobalInstitutionalReminder();
 </script>
+
+<!-- ══ MODAL: HISTORIAL DE ASISTENCIAS REGISTRADAS ══ -->
+<div id="attHistoryModal" class="mo" onclick="if(event.target===this)closeAttHistoryModal()">
+  <div class="mc" style="max-width:760px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.3);background:var(--bg-main)">
+    <div class="mh" style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.4rem">📂</span>
+        <div>
+          <div style="font-size:1.05rem;font-weight:900;letter-spacing:0.3px">Historial de Asistencias Registradas</div>
+          <div style="font-size:0.75rem;color:#bfdbfe">Consulta, carga o edita las listas de asistencia tomadas en el año lectivo 2026-2027</div>
+        </div>
+      </div>
+      <button class="mc-close" onclick="closeAttHistoryModal()" style="color:#ffffff;opacity:0.85;font-size:1.2rem">✕</button>
+    </div>
+    <div class="mb" style="padding:20px;max-height:75vh;overflow-y:auto">
+      <div id="attHistoryListContainer"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ MODAL: CONFIGURAR CALENDARIO DEL TRIMESTRE ══ -->
 <div id="calendarModal" class="mo" onclick="if(event.target===this)closeCalendarModal()">
