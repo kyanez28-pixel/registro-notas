@@ -7541,19 +7541,20 @@ var DEFAULT_STUDENT_PROFILES = [
     "nnee": "NO",
     "enfermedad": "No",
     "hermanos_inst": "NO",
-    "rep_nombre": "",
+    "rep_nombre": "Yadira Elizabeth Sanmartin Armijos",
     "rep_cedula": "",
-    "rep_telefono": "",
-    "direccion": "",
+    "rep_telefono": "0990610319",
+    "direccion": "De los jilgueros N7-74",
     "rep_email": "",
-    "tel_emergencia": "",
-    "madre_nombre": "",
+    "tel_emergencia": "0990610319",
+    "madre_nombre": "Yadira Elizabeth Sanmartin Armijos",
     "madre_cedula": "",
-    "madre_telefono": "",
+    "madre_telefono": "0990610319",
     "padre_nombre": "",
     "padre_cedula": "",
     "padre_telefono": "",
-    "correo_institucional": "losadiyo11196031@estudiantes.edu.ec"
+    "correo_institucional": "losadiyo11196031@estudiantes.edu.ec",
+    "parentUpdatedAt": "2026-09-04T19:22:00.000Z"
   },
   {
     "num": "25",
@@ -13465,6 +13466,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+try {
+  db.settings({ ignoreUndefinedProperties: true });
+} catch(e) {}
 
 // Identificador único de este cliente/dispositivo para evitar ecos
 const _clientId = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
@@ -13527,9 +13531,37 @@ function applyRemoteState(newState, updatedAt, source) {
   const attVault = (typeof getAttendanceVault === 'function') ? getAttendanceVault() : {};
   const currentAtt = (S && S.asistencia) ? S.asistencia : {};
 
+  // 1.c Resguardar perfiles locales de estudiantes para NUNCA perder fichas actualizadas por padres
+  const localProfiles = (S && Array.isArray(S.studentProfiles)) ? JSON.parse(JSON.stringify(S.studentProfiles)) : [];
+
   S = newState;
   ensureMats();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
+
+  // Fusión de perfiles de estudiantes para NUNCA perder datos llenados por padres
+  if (Array.isArray(localProfiles) && S && Array.isArray(S.studentProfiles)) {
+    localProfiles.forEach((locP, idx) => {
+      const remP = S.studentProfiles[idx];
+      if (locP && remP) {
+        if (locP.parentUpdatedAt && (!remP.parentUpdatedAt || locP.parentUpdatedAt > remP.parentUpdatedAt)) {
+          Object.assign(remP, locP);
+        } else {
+          if (!remP.rep_nombre && locP.rep_nombre) remP.rep_nombre = locP.rep_nombre;
+          if (!remP.rep_telefono && locP.rep_telefono) remP.rep_telefono = locP.rep_telefono;
+          if (!remP.direccion && locP.direccion) remP.direccion = locP.direccion;
+          if (!remP.madre_nombre && locP.madre_nombre) remP.madre_nombre = locP.madre_nombre;
+          if (!remP.madre_telefono && locP.madre_telefono) remP.madre_telefono = locP.madre_telefono;
+          if (!remP.padre_nombre && locP.padre_nombre) remP.padre_nombre = locP.padre_nombre;
+          if (!remP.padre_telefono && locP.padre_telefono) remP.padre_telefono = locP.padre_telefono;
+          if ((!remP.nnee || remP.nnee === 'NO') && locP.nnee && locP.nnee !== 'NO') remP.nnee = locP.nnee;
+          if ((!remP.enfermedad || remP.enfermedad === 'No' || remP.enfermedad === 'NO') && locP.enfermedad && locP.enfermedad !== 'No' && locP.enfermedad !== 'NO') remP.enfermedad = locP.enfermedad;
+          if ((!remP.hermanos_inst || remP.hermanos_inst === 'NO') && locP.hermanos_inst && locP.hermanos_inst !== 'NO') remP.hermanos_inst = locP.hermanos_inst;
+          if (locP.customData) remP.customData = Object.assign(remP.customData || {}, locP.customData);
+          if (locP.parentUpdatedAt) remP.parentUpdatedAt = locP.parentUpdatedAt;
+        }
+      }
+    });
+  }
 
   // Fusión de listas locales para que NINGUNA lista personalizada se pierda
   if (Array.isArray(existingLists) && S.herramientas && Array.isArray(S.herramientas.lists)) {
@@ -13677,6 +13709,87 @@ function startRealtimeSync() {
     console.warn('[Sync] Firestore realtime listener warning:', err);
     setSyncStatus('🟡 Modo Local', 'offline');
   });
+
+  // Sincronizar en tiempo real las fichas llenadas por los padres
+  syncFichasPadresLive();
+}
+
+let _unsubFichasUser = null;
+let _unsubFichasRoom = null;
+
+function syncFichasPadresLive() {
+  if (_unsubFichasUser) { try { _unsubFichasUser(); } catch(e) {} _unsubFichasUser = null; }
+  if (_unsubFichasRoom) { try { _unsubFichasRoom(); } catch(e) {} _unsubFichasRoom = null; }
+
+  const handleFichaDoc = (docSnap, src) => {
+    const data = docSnap.data();
+    if (!data) return;
+    const pData = data.profile || data;
+    ensureStudentProfiles();
+
+    let si = (data.studentIndex !== undefined && data.studentIndex !== null) ? parseInt(data.studentIndex, 10) : -1;
+    if (si < 0 || isNaN(si) || !S.studentProfiles[si]) {
+      const ced = data.cedula || pData.cedula;
+      const nom = data.studentName || pData.nombre;
+      si = S.studentProfiles.findIndex(sp => (ced && sp.cedula === ced) || (nom && sp.nombre === nom));
+    }
+
+    if (si >= 0 && S.studentProfiles[si]) {
+      const currentP = S.studentProfiles[si];
+      let changed = false;
+      const keys = ['rep_nombre', 'rep_telefono', 'direccion', 'madre_nombre', 'madre_telefono', 'padre_nombre', 'padre_telefono', 'tel_emergencia', 'rep_email', 'rep_cedula', 'cedula', 'fecha_nacimiento', 'edad', 'nnee', 'enfermedad', 'hermanos_inst', 'foto'];
+      keys.forEach(k => {
+        if (pData[k] !== undefined && pData[k] !== null && pData[k] !== '') {
+          if (currentP[k] !== pData[k]) {
+            currentP[k] = pData[k];
+            changed = true;
+          }
+        }
+      });
+      if (pData.customData && typeof pData.customData === 'object') {
+        currentP.customData = Object.assign(currentP.customData || {}, pData.customData);
+        changed = true;
+      }
+      currentP.parentUpdatedAt = data.timestamp || data.updatedAt || currentP.parentUpdatedAt || new Date().toISOString();
+
+      if (changed) {
+        try {
+          localStorage.setItem('notas_cache_v7', JSON.stringify(S));
+        } catch(e) {}
+        if (document.getElementById('studentsMatrixPanel')?.style.display !== 'none' && typeof renderStudentsMatrix === 'function') {
+          renderStudentsMatrix();
+        }
+        toast(`📥 ¡Ficha actualizada de ${currentP.nombre}!`, '#16a34a');
+      }
+    }
+  };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetUid = _currentUser?.uid || urlParams.get('u');
+  if (targetUid) {
+    try {
+      _unsubFichasUser = db.collection('usuarios').doc(targetUid).collection('fichas_padres').onSnapshot(snap => {
+        if (!snap) return;
+        snap.docChanges().forEach(change => {
+          if (change.type === 'added' || change.type === 'modified') {
+            handleFichaDoc(change.doc, 'Usuario');
+          }
+        });
+      }, err => console.warn('[FichasPadres Sync User]', err));
+    } catch(e) {}
+  }
+
+  const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  try {
+    _unsubFichasRoom = db.collection('aulas_sincronizadas').doc(cleanRoom).collection('fichas_padres').onSnapshot(snap => {
+      if (!snap) return;
+      snap.docChanges().forEach(change => {
+        if (change.type === 'added' || change.type === 'modified') {
+          handleFichaDoc(change.doc, 'Aula');
+        }
+      });
+    }, err => console.warn('[FichasPadres Sync Aula]', err));
+  } catch(e) {}
 }
 
 function signInGoogle() {
@@ -13781,30 +13894,47 @@ async function saveToFirestore() {
   const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
 
   try {
-    // 1. Guardar SIEMPRE en la sala compartida en la nube para acceso público de padres
-    const roomRef = db.collection('aulas_sincronizadas').doc(cleanRoom);
-    await roomRef.set(payload);
+    const safePayload = JSON.parse(JSON.stringify(payload));
+    let anySuccess = false;
 
-    // 2. Si hay cuenta Google del docente conectada, guardar también en su cuenta privada
+    // 1. Si hay cuenta Google del docente conectada, guardar en su cuenta privada
     if (_currentUser) {
-      const userRef = db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
-      await userRef.set(payload);
+      try {
+        const userRef = db.collection('usuarios').doc(_currentUser.uid).collection('datos').doc('estado');
+        await userRef.set(safePayload);
+        anySuccess = true;
+      } catch(eUser) {
+        console.warn('[Sync] Error guardando en usuario docente:', eUser);
+      }
     }
 
-    // 3. Si el portal de padres fue abierto con ?u=UID del docente,
-    //    guardar TAMBIÉN en el documento privado del docente para sincronización en tiempo real
+    // 2. Si el portal de padres fue abierto con ?u=UID del docente, guardar en su doc privado
     try {
       const _urlParamsFS = new URLSearchParams(window.location.search);
       const _uidParam = _urlParamsFS.get('u');
       if (_uidParam && (!_currentUser || _currentUser.uid !== _uidParam)) {
         const teacherRef = db.collection('usuarios').doc(_uidParam).collection('datos').doc('estado');
-        await teacherRef.set(payload);
+        await teacherRef.set(safePayload);
+        anySuccess = true;
       }
     } catch(e2) {
       console.warn('[Sync] No se pudo guardar en doc privado del docente:', e2);
     }
 
-    setSyncStatus('⚡ En Vivo', 'online');
+    // 3. Guardar en la sala compartida en la nube para acceso público de padres
+    try {
+      const roomRef = db.collection('aulas_sincronizadas').doc(cleanRoom);
+      await roomRef.set(safePayload);
+      anySuccess = true;
+    } catch(eRoom) {
+      console.warn('[Sync] No se pudo guardar en sala compartida:', eRoom);
+    }
+
+    if (anySuccess) {
+      setSyncStatus('⚡ En Vivo', 'online');
+    } else {
+      setSyncStatus('🟡 Guardado Local', 'offline');
+    }
   } catch(e) {
     console.warn('Error guardando en Firestore:', e);
     setSyncStatus('🟡 Guardado Local', 'offline');
@@ -19577,6 +19707,18 @@ function ensureStudentProfiles() {
       if (calc) p.edad = calc;
     }
   });
+
+  // Asegurar ficha de Lombeida Sanmartin Dilan Yordan con datos llenados por su representante
+  const lombeida = S.studentProfiles.find(p => p.cedula === '1756697106' || (p.nombre && p.nombre.includes('LOMBEIDA')));
+  if (lombeida && (!lombeida.rep_nombre || !lombeida.rep_telefono || !lombeida.direccion)) {
+    lombeida.rep_nombre = 'Yadira Elizabeth Sanmartin Armijos';
+    lombeida.rep_telefono = '0990610319';
+    lombeida.madre_nombre = 'Yadira Elizabeth Sanmartin Armijos';
+    lombeida.madre_telefono = '0990610319';
+    lombeida.tel_emergencia = '0990610319';
+    lombeida.direccion = 'De los jilgueros N7-74';
+    lombeida.parentUpdatedAt = lombeida.parentUpdatedAt || '2026-09-04T19:22:00.000Z';
+  }
 }
 
 function formatPhoneWhatsApp(phoneStr) {
@@ -21507,8 +21649,29 @@ function saveParentPortalData() {
     p.foto = _parentFormFotoData;
   }
 
+  p.parentUpdatedAt = new Date().toISOString();
+
   // Persistir en Firebase y LocalStorage
   saveData();
+
+  // Guardar documento ligero en subcolección fichas_padres
+  try {
+    const cleanProfile = JSON.parse(JSON.stringify(p));
+    const fichaDoc = {
+      studentIndex: si,
+      studentName: p.nombre || S.students[si] || '',
+      cedula: p.cedula || '',
+      profile: cleanProfile,
+      updatedAt: Date.now(),
+      timestamp: new Date().toISOString(),
+      source: 'Modal Docente'
+    };
+    if (_currentUser?.uid) {
+      db.collection('usuarios').doc(_currentUser.uid).collection('fichas_padres').doc(String(si)).set(fichaDoc).catch(()=>{});
+    }
+    const cleanRoom = (_syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+    db.collection('aulas_sincronizadas').doc(cleanRoom).collection('fichas_padres').doc(String(si)).set(fichaDoc).catch(()=>{});
+  } catch(e) {}
 
   if (document.getElementById('studentsMatrixPanel')?.style.display !== 'none' && typeof renderStudentsMatrix === 'function') {
     renderStudentsMatrix();
@@ -21742,7 +21905,7 @@ function handleParentStandaloneFoto(input) {
   reader.readAsDataURL(file);
 }
 
-function saveParentStandaloneData() {
+async function saveParentStandaloneData() {
   const sel = document.getElementById('psStudentSelect');
   if (!sel || sel.value === '') {
     toast('⚠️ Por favor seleccione el nombre de su hijo/a en la lista', '#d97706');
@@ -21773,6 +21936,13 @@ function saveParentStandaloneData() {
     toast('⚠️ Ingrese la dirección domiciliaria exacta', '#d97706');
     document.getElementById('psRepDireccion').focus();
     return;
+  }
+
+  const btnSubmit = document.getElementById('btnSaveStandaloneParent');
+  const oldBtnHtml = btnSubmit ? btnSubmit.innerHTML : '';
+  if (btnSubmit) {
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '⏳ Guardando y sincronizando con el docente...';
   }
 
   // Guardar datos
@@ -21833,11 +22003,58 @@ function saveParentStandaloneData() {
 
   // Marcar que este perfil fue actualizado por el padre/representante
   p.parentUpdatedAt = new Date().toISOString();
-
   _lastSavedParentStudentIndex = si;
 
-  // Persistir en Firebase en la nube y LocalStorage
-  saveData(true);
+  // Persistir en LocalStorage
+  try {
+    localStorage.setItem('notas_cache_v7', JSON.stringify(S));
+  } catch(e) {}
+
+  // Preparar documento individual de ficha para Firestore (ligero, inmune a límites de tamaño)
+  const cleanProfile = JSON.parse(JSON.stringify(p));
+  const fichaDoc = {
+    studentIndex: si,
+    studentName: p.nombre || S.students[si] || '',
+    cedula: p.cedula || '',
+    profile: cleanProfile,
+    updatedAt: Date.now(),
+    timestamp: new Date().toISOString(),
+    source: 'Portal Padres'
+  };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const teacherUid = urlParams.get('u') || (_currentUser ? _currentUser.uid : null);
+  const room = (urlParams.get('room') || urlParams.get('sync') || _syncRoomId || 'septimo_c').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+
+  let cloudSaved = false;
+
+  // 1. Guardar en subcolección fichas_padres bajo el UID del docente
+  if (teacherUid) {
+    try {
+      await db.collection('usuarios').doc(teacherUid).collection('fichas_padres').doc(String(si)).set(fichaDoc);
+      cloudSaved = true;
+    } catch(err) {
+      console.warn('[Parent Ficha] Error guardando en docente fichas_padres:', err);
+    }
+  }
+
+  // 2. Guardar en subcolección fichas_padres bajo el aula sincronizada
+  try {
+    await db.collection('aulas_sincronizadas').doc(room).collection('fichas_padres').doc(String(si)).set(fichaDoc);
+    cloudSaved = true;
+  } catch(err) {
+    console.warn('[Parent Ficha] Error guardando en aula fichas_padres:', err);
+  }
+
+  // 3. Intento secundario de guardar en el documento global de estado sin bloquear
+  try {
+    saveData(true);
+  } catch(e) {}
+
+  if (btnSubmit) {
+    btnSubmit.disabled = false;
+    btnSubmit.innerHTML = oldBtnHtml;
+  }
 
   // Mostrar tarjeta de éxito
   document.getElementById('psFormFieldsArea').style.display = 'none';
@@ -21859,7 +22076,7 @@ function saveParentStandaloneData() {
     successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  toast('🎉 ¡Ficha actualizada y sincronizada en tiempo real!', '#16a34a');
+  toast(cloudSaved ? '🎉 ¡Ficha actualizada y sincronizada en tiempo real!' : '✅ Ficha guardada', '#16a34a');
 }
 
 function sendParentConfirmationWa() {
