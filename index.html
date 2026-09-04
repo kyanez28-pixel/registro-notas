@@ -22,6 +22,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+<!-- SheetJS / XLSX para Importación y Exportación de Archivos Excel (.xlsx) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
 /* ══════════════════════════════════════════════════════
    DESIGN SYSTEM & CSS VARIABLES (ALTA DEFINICIÓN & CLARIDAD)
@@ -5379,6 +5382,8 @@ body.in-focus-mode {
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border-color);padding-top:12px">
         <button class="btn btn-primary" onclick="printCustomList()">🖨️ Imprimir Listado con Datos</button>
         <button class="btn btn-teal" onclick="exportCustomListXLSX()">📥 Exportar a Excel (.xlsx)</button>
+        <button class="btn btn-outline" style="border-color:#0d9488;color:#0d9488;background:#f0fdfa;font-weight:700" onclick="document.getElementById('customListImportFileInput').click()" title="Subir un archivo Excel descargado para restaurar o cargar un listado con todas sus casillas y datos">📥 Importar desde Excel (.xlsx)</button>
+        <input type="file" id="customListImportFileInput" accept=".xlsx,.xls" style="display:none" onchange="importCustomListFromXLSX(this)"/>
         <button class="btn btn-success" onclick="saveData(true)">💾 Guardar en la Nube</button>
         <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto">Nómina: <strong id="custNominaCount">40 estudiantes</strong></span>
       </div>
@@ -8066,6 +8071,7 @@ function ensureMats() {
   });
   if (S.am >= S.matsList.length) S.am = 0;
   if (typeof ensureDiagnostico === 'function') ensureDiagnostico();
+  if (typeof ensureHerramientas === 'function') ensureHerramientas();
 }
 
 // ══════════════════════════════════════════════════════
@@ -12882,8 +12888,34 @@ function applyRemoteState(newState, updatedAt, source) {
   if (!newState || typeof newState !== 'object') return;
   _isRemoteSyncing = true;
   
+  // 1. Resguardar y fusionar listas locales del Vault para NUNCA perder listados por sincronización
+  const vault = (typeof getCustomListsVault === 'function') ? getCustomListsVault() : { lists: [] };
+  const existingLists = (S && S.herramientas && Array.isArray(S.herramientas.lists)) ? S.herramientas.lists : (vault.lists || []);
+  const deletedIds = (S && S.herramientas && Array.isArray(S.herramientas._deletedListIds)) ? S.herramientas._deletedListIds : (vault.deletedListIds || []);
+  const activeListBefore = (S && S.herramientas && S.herramientas.activeListId) ? S.herramientas.activeListId : vault.activeListId;
+
   S = newState;
   ensureMats();
+  if (typeof ensureHerramientas === 'function') ensureHerramientas();
+
+  // Fusión de listas locales para que NINGUNA lista personalizada se pierda
+  if (Array.isArray(existingLists) && S.herramientas && Array.isArray(S.herramientas.lists)) {
+    existingLists.forEach(locList => {
+      if (locList && locList.id && !deletedIds.includes(locList.id)) {
+        const exists = S.herramientas.lists.some(rl => rl.id === locList.id);
+        if (!exists) {
+          S.herramientas.lists.push(locList);
+        }
+      }
+    });
+  }
+
+  if (activeListBefore && S.herramientas && S.herramientas.lists.some(l => l.id === activeListBefore)) {
+    S.herramientas.activeListId = activeListBefore;
+  }
+
+  if (typeof saveCustomListsVault === 'function') saveCustomListsVault();
+
   try {
     localStorage.setItem('notas_cache_v7', JSON.stringify(S));
   } catch(e) {}
@@ -12922,6 +12954,9 @@ function applyRemoteState(newState, updatedAt, source) {
   }
   if (typeof updateCronoProgressStats === 'function') {
     updateCronoProgressStats();
+  }
+  if (document.getElementById('herramientasPanel')?.style.display !== 'none' && typeof renderHerramientas === 'function') {
+    renderHerramientas();
   }
 
   const psPortal = document.getElementById('parentStandalonePortal');
@@ -15845,38 +15880,149 @@ function sanitizeListModel(list) {
   if (!list.data || typeof list.data !== 'object') list.data = {};
 }
 
+const CUSTOM_LISTS_VAULT_KEY = 'notas_custom_lists_vault_v1';
+
+function getCustomListsVault() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_LISTS_VAULT_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.lists)) {
+        return parsed;
+      }
+    }
+  } catch(e) {
+    console.warn('[Vault] Error leyendo bóveda de listas:', e);
+  }
+  return { lists: [], activeListId: null, deletedListIds: [] };
+}
+
+function saveCustomListsVault() {
+  try {
+    if (!S || !S.herramientas) return;
+    const deletedIds = S.herramientas._deletedListIds || [];
+    const payload = {
+      lists: (S.herramientas.lists || []).filter(l => l && !deletedIds.includes(l.id)),
+      activeListId: S.herramientas.activeListId,
+      deletedListIds: deletedIds,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(CUSTOM_LISTS_VAULT_KEY, JSON.stringify(payload));
+  } catch(e) {
+    console.warn('[Vault] Error guardando en bóveda de listas:', e);
+  }
+}
+
 function ensureHerramientas() {
   if (!S.herramientas) S.herramientas = {};
+  if (!S.herramientas._deletedListIds) S.herramientas._deletedListIds = [];
 
-  // 1. Listados Personalizados
-  if (!S.herramientas.lists || !Array.isArray(S.herramientas.lists) || S.herramientas.lists.length === 0) {
-    S.herramientas.lists = [
-      {
-        id: 'list_' + Date.now(),
-        title: 'NÓMINA GENERAL Y CÉDULAS DE ESTUDIANTES',
-        subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
-        orientation: 'portrait',
-        colCount: 2,
-        cols: ['Cédula de Identidad', 'Firma / Aclaración'],
-        colTypes: ['mat_cedula', 'firma'],
-        style: {
-          fontFamily: "'Inter', system-ui, sans-serif",
-          fontSize: '8.5pt',
-          rowPadding: 'medium',
-          colorTheme: 'vibrant',
-          textTransform: 'uppercase',
-          sheetWidth: 'auto'
-        },
-        data: {}
+  const vault = getCustomListsVault();
+  if (vault.deletedListIds && Array.isArray(vault.deletedListIds)) {
+    vault.deletedListIds.forEach(id => {
+      if (!S.herramientas._deletedListIds.includes(id)) {
+        S.herramientas._deletedListIds.push(id);
       }
-    ];
+    });
   }
+
+  // 1. Listados Personalizados: inicializar o restaurar desde la Bóveda Local
+  if (!S.herramientas.lists || !Array.isArray(S.herramientas.lists) || S.herramientas.lists.length === 0) {
+    if (vault.lists && vault.lists.length > 0) {
+      S.herramientas.lists = JSON.parse(JSON.stringify(vault.lists));
+    } else {
+      S.herramientas.lists = [
+        {
+          id: 'list_nomina_general_inicial',
+          title: 'NÓMINA GENERAL Y CÉDULAS DE ESTUDIANTES',
+          subtitle: (S.grado || 'Séptimo de Básica C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
+          orientation: 'portrait',
+          colCount: 2,
+          cols: ['Cédula de Identidad', 'Firma / Aclaración'],
+          colTypes: ['mat_cedula', 'firma'],
+          style: {
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: '8.5pt',
+            rowPadding: 'medium',
+            colorTheme: 'vibrant',
+            textTransform: 'uppercase',
+            sheetWidth: 'auto'
+          },
+          data: {}
+        }
+      ];
+    }
+  }
+
+  // Fusión con Vault: Asegurar que NINGUNA lista guardada en la Bóveda se pierda
+  if (vault.lists && Array.isArray(vault.lists)) {
+    vault.lists.forEach(vList => {
+      if (vList && vList.id && !S.herramientas._deletedListIds.includes(vList.id)) {
+        const idx = S.herramientas.lists.findIndex(l => l.id === vList.id);
+        if (idx === -1) {
+          S.herramientas.lists.push(vList);
+        }
+      }
+    });
+  }
+
+  // RESTAURACIÓN PERMANENTE DEL LISTADO DEL DOCENTE: "REGISTRO PAGO 1.50 LIMPIEZA"
+  const hasPagoLimpieza = S.herramientas.lists.some(l => 
+    (l.title || '').toUpperCase().includes('PAGO 1.50') || 
+    (l.title || '').toUpperCase().includes('PAGO 1,50') || 
+    (l.title || '').toUpperCase().includes('LIMPIEZA')
+  );
+  if (!hasPagoLimpieza && !S.herramientas._deletedListIds.includes('list_pago_150_limpieza')) {
+    const restoredLimpieza = {
+      id: 'list_pago_150_limpieza',
+      title: 'REGISTRO PAGO 1.50 LIMPIEZA',
+      subtitle: (S.grado || 'Séptimo C') + ' · Año Lectivo ' + (S.anio || '2026-2027'),
+      orientation: 'portrait',
+      colCount: 1,
+      cols: ['SEPTIEMBRE'],
+      colTypes: ['check'],
+      style: {
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontSize: '8.5pt',
+        rowPadding: 'medium',
+        colorTheme: 'vibrant',
+        textTransform: 'uppercase',
+        sheetWidth: 'auto'
+      },
+      data: {
+        0: { 0: false }, // 1. ALCIVAR MENDOZA AMY SOFIA: NO
+        1: { 0: true },  // 2. ALMEIDA ANZATUÑA EMILY ANAHI: SÍ
+        2: { 0: true },  // 3. ALMEIDA TACUAMAN DOMINIC JHARET: SÍ
+        3: { 0: true },  // 4. ANDINO ORTIZ ERICK JACOBO: SÍ
+        4: { 0: false }, // 5. ANDRADE ANGULO JAYKO DOMINICK: NO
+        5: { 0: false }, // 6. ANTE SUAMBRA MELISA BRIGITH: NO
+        6: { 0: true },  // 7. CAMPOS ESPINOSA JUSTER KAIL: SÍ
+        7: { 0: true },  // 8. CASTILLO ROJAS DOMINICK JAZIEL: SÍ
+        8: { 0: true },  // 9. CEDEÑO PINANJOTA ARLETH SALOME: SÍ
+        9: { 0: true },  // 10. CHILENO MEDINA CRISTOFER ALEJANDRO: SÍ
+        10: { 0: true }, // 11. CHONTA LLUMITAXI ALISSON ESTEFANIA: SÍ
+        11: { 0: true }, // 12. CISNEROS MORAN ALEJANDRO PAVEL: SÍ
+        12: { 0: true }, // 13. ENCARNACION INFANTE TIFANY ESTHER: SÍ
+        13: { 0: true }, // 14. FLORES ACERO CAMILA NOEMI: SÍ
+        14: { 0: false },// 15. GAGUY CABAY TAMIA MAYTE: NO
+        15: { 0: true }, // 16. GODOY CEDEÑO SAMANTHA AITANA: SÍ
+        16: { 0: true }  // 17. GUALOTO DIAZ SAMANTHA ESTEFANIA: SÍ
+      }
+    };
+    S.herramientas.lists.unshift(restoredLimpieza);
+    S.herramientas.activeListId = restoredLimpieza.id;
+  }
+
+  // Filtrar listas marcadas como eliminadas
+  S.herramientas.lists = S.herramientas.lists.filter(l => l && l.id && !S.herramientas._deletedListIds.includes(l.id));
 
   S.herramientas.lists.forEach(l => sanitizeListModel(l));
 
-  if (!S.herramientas.activeListId) {
-    S.herramientas.activeListId = S.herramientas.lists[0].id;
+  if (!S.herramientas.activeListId || !S.herramientas.lists.some(l => l.id === S.herramientas.activeListId)) {
+    S.herramientas.activeListId = S.herramientas.lists[0]?.id || null;
   }
+
+  saveCustomListsVault();
 
   // 2. Reuniones de Padres
   if (!S.herramientas.reuniones || !Array.isArray(S.herramientas.reuniones) || S.herramientas.reuniones.length === 0) {
@@ -16085,10 +16231,11 @@ function openNewCustomListModal() {
   sanitizeListModel(newList);
   S.herramientas.lists.push(newList);
   S.herramientas.activeListId = newList.id;
+  saveCustomListsVault();
   populateCustomListSelect();
   onSelectCustomList(newList.id);
   saveData();
-  toast('✔ Nuevo listado creado', '#16a34a');
+  toast('✔ Nuevo listado creado y asegurado', '#16a34a');
 }
 
 function duplicateCurrentCustomList() {
@@ -16100,10 +16247,11 @@ function duplicateCurrentCustomList() {
   sanitizeListModel(newList);
   S.herramientas.lists.push(newList);
   S.herramientas.activeListId = newList.id;
+  saveCustomListsVault();
   populateCustomListSelect();
   onSelectCustomList(newList.id);
   saveData();
-  toast('✔ Listado duplicado', '#2563eb');
+  toast('✔ Listado duplicado y guardado', '#2563eb');
 }
 
 function deleteCurrentCustomList() {
@@ -16113,15 +16261,22 @@ function deleteCurrentCustomList() {
     return;
   }
   const current = getCurrentCustomList();
-  if (!confirm('¿Está seguro de eliminar el listado "' + current.title + '"?')) return;
+  if (!confirm('¿Está seguro de ELIMINAR PERMANENTEMENTE el listado "' + current.title + '"?\n\nEsta acción quitará el listado de la aplicación y de la memoria guardada.')) return;
+  
+  if (!S.herramientas._deletedListIds) S.herramientas._deletedListIds = [];
+  S.herramientas._deletedListIds.push(current.id);
+  
   S.herramientas.lists = S.herramientas.lists.filter(l => l.id !== current.id);
   S.herramientas.activeListId = S.herramientas.lists[0].id;
+  
+  saveCustomListsVault();
   populateCustomListSelect();
   onSelectCustomList(S.herramientas.activeListId);
   saveData();
-  toast('🗑️ Listado eliminado', '#b45309');
+  toast('🗑️ Listado "' + current.title + '" eliminado', '#b45309');
 }
 
+var _customListMetaTimer = null;
 function onCustomListMetaInput() {
   const list = getCurrentCustomList();
   const tEl = document.getElementById('custDocTitle');
@@ -16130,12 +16285,19 @@ function onCustomListMetaInput() {
   if (sEl) list.subtitle = sEl.value.trim();
   populateCustomListSelect();
   updateCustomListPreview();
+  saveCustomListsVault();
+  clearTimeout(_customListMetaTimer);
+  _customListMetaTimer = setTimeout(() => {
+    saveData();
+  }, 450);
 }
 
 function onCustomListOrientationChange(val) {
   const list = getCurrentCustomList();
   list.orientation = val;
   updateCustomListPreview();
+  saveCustomListsVault();
+  saveData();
 }
 
 function onCustomStyleChange(prop, val) {
@@ -16333,6 +16495,11 @@ function onCustomColMetaChange(idx) {
   if (nameEl) list.cols[idx] = nameEl.value.trim() || ('Col ' + (idx+1));
   if (typeEl) list.colTypes[idx] = typeEl.value;
   updateCustomListPreview();
+  saveCustomListsVault();
+  clearTimeout(_customListMetaTimer);
+  _customListMetaTimer = setTimeout(() => {
+    saveData();
+  }, 450);
 }
 
 function openAutoFillModal() {
@@ -16431,13 +16598,46 @@ function syncAllListColsFromMatrix() {
 function applyListPreset(key) {
   const p = LIST_PRESETS[key];
   if (!p) return;
-  const list = getCurrentCustomList();
-  list.title = p.title;
-  list.subtitle = p.subtitle;
-  list.colCount = p.cols.length;
-  list.cols = [...p.cols];
-  list.colTypes = [...p.types];
-  list.data = {};
+  ensureHerramientas();
+
+  // Protección: Si la lista actual ya fue personalizada o tiene datos, CREAR UNA NUEVA LISTA para no sobrescribirla
+  const current = getCurrentCustomList();
+  const isCustomized = current && (
+    (current.title && current.title !== 'LISTADO DE CONTROL' && current.title !== 'NÓMINA GENERAL Y CÉDULAS DE ESTUDIANTES') ||
+    (current.data && Object.keys(current.data).length > 0)
+  );
+
+  let list;
+  if (isCustomized) {
+    list = {
+      id: 'list_' + Date.now(),
+      title: p.title,
+      subtitle: p.subtitle,
+      orientation: 'portrait',
+      colCount: p.cols.length,
+      cols: [...p.cols],
+      colTypes: [...p.types],
+      style: {
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontSize: '8.5pt',
+        rowPadding: 'medium',
+        colorTheme: 'vibrant',
+        textTransform: 'uppercase',
+        sheetWidth: 'auto'
+      },
+      data: {}
+    };
+    S.herramientas.lists.push(list);
+    S.herramientas.activeListId = list.id;
+  } else {
+    list = current;
+    list.title = p.title;
+    list.subtitle = p.subtitle;
+    list.colCount = p.cols.length;
+    list.cols = [...p.cols];
+    list.colTypes = [...p.types];
+    list.data = {};
+  }
 
   const sorted = getSortedIndices();
   for (let c = 0; c < p.types.length; c++) {
@@ -16453,21 +16653,23 @@ function applyListPreset(key) {
   const tEl = document.getElementById('custDocTitle');
   const sEl = document.getElementById('custDocSubtitle');
   const cEl = document.getElementById('custDocColCount');
-  if (tEl) tEl.value = p.title;
-  if (sEl) sEl.value = p.subtitle;
-  if (cEl) cEl.value = p.cols.length;
+  if (tEl) tEl.value = list.title;
+  if (sEl) sEl.value = list.subtitle;
+  if (cEl) cEl.value = list.cols.length;
 
+  saveCustomListsVault();
   populateCustomListSelect();
   renderCustomColsConfig();
   updateCustomListPreview();
   saveData();
-  toast('✔ Plantilla "' + p.title.split(' ')[0] + '..." aplicada', '#16a34a');
+  toast(isCustomized ? ('✔ Nueva lista "' + p.title.split(' ')[0] + '..." creada desde plantilla') : ('✔ Plantilla "' + p.title.split(' ')[0] + '..." aplicada'), '#16a34a');
 }
 
 function setCustomCellText(si, colIdx, val) {
   const list = getCurrentCustomList();
   if (!list.data[si]) list.data[si] = {};
   list.data[si][colIdx] = val;
+  saveCustomListsVault();
   saveData();
 }
 
@@ -16476,6 +16678,7 @@ function toggleCustomCellCheck(si, colIdx) {
   if (!list.data[si]) list.data[si] = {};
   list.data[si][colIdx] = !list.data[si][colIdx];
   updateCustomListPreview();
+  saveCustomListsVault();
   saveData();
 }
 
@@ -16723,6 +16926,166 @@ function printCustomList() {
   }
   styleEl.innerHTML = '@page { size: ' + orientation + '; margin: 6mm 5mm; }';
   window.print();
+}
+
+function importCustomListFromXLSX(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+
+  const parseWorkbook = (workbook) => {
+    try {
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+      if (!rows || rows.length < 4) {
+        toast('⚠️ El archivo Excel no contiene un formato de listado válido', '#dc2626');
+        return;
+      }
+
+      // Título en fila 2 (índice 1)
+      let title = 'LISTADO IMPORTADO';
+      if (rows[1] && rows[1][0] && String(rows[1][0]).trim()) {
+        title = String(rows[1][0]).trim().toUpperCase();
+      } else if (file.name) {
+        title = file.name.replace(/\.[^/.]+$/, '').toUpperCase();
+      }
+
+      // Subtítulo en fila 3 (índice 2)
+      let subtitle = (S.grado || 'Séptimo C') + ' · Año Lectivo ' + (S.anio || '2026-2027');
+      if (rows[2] && rows[2][0] && String(rows[2][0]).trim()) {
+        subtitle = String(rows[2][0]).trim();
+      }
+
+      // Buscar fila de encabezados
+      let headerRowIdx = -1;
+      for (let r = 0; r < Math.min(10, rows.length); r++) {
+        const lineStr = (rows[r] || []).map(c => String(c).toUpperCase()).join(' ');
+        if (lineStr.includes('#') && (lineStr.includes('NOMINA') || lineStr.includes('NÓMINA') || lineStr.includes('ESTUDIANTE'))) {
+          headerRowIdx = r;
+          break;
+        }
+      }
+      if (headerRowIdx === -1) headerRowIdx = 5;
+
+      const headerRow = rows[headerRowIdx] || [];
+      const importedCols = [];
+      const importedColTypes = [];
+
+      for (let c = 2; c < headerRow.length; c++) {
+        const colTitle = String(headerRow[c] || '').trim();
+        if (colTitle) {
+          importedCols.push(colTitle);
+          let isCheck = false;
+          for (let r = headerRowIdx + 1; r < Math.min(headerRowIdx + 15, rows.length); r++) {
+            const cellVal = String(rows[r] ? rows[r][c] : '').trim().toUpperCase();
+            if (cellVal === 'SÍ' || cellVal === 'SI' || cellVal === 'NO' || cellVal === '☑ SÍ' || cellVal === '▢ NO' || cellVal === 'TRUE' || cellVal === 'FALSE') {
+              isCheck = true;
+              break;
+            }
+          }
+          importedColTypes.push(isCheck ? 'check' : 'texto');
+        }
+      }
+
+      if (importedCols.length === 0) {
+        importedCols.push('Columna 1');
+        importedColTypes.push('check');
+      }
+
+      const newList = {
+        id: 'list_' + Date.now(),
+        title: title,
+        subtitle: subtitle,
+        orientation: importedCols.length > 3 ? 'landscape' : 'portrait',
+        colCount: importedCols.length,
+        cols: importedCols,
+        colTypes: importedColTypes,
+        style: {
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: '8.5pt',
+          rowPadding: 'medium',
+          colorTheme: 'vibrant',
+          textTransform: 'uppercase',
+          sheetWidth: 'auto'
+        },
+        data: {}
+      };
+
+      const sorted = getSortedIndices();
+      const norm = s => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, ' ');
+
+      for (let r = headerRowIdx + 1; r < rows.length; r++) {
+        const row = rows[r] || [];
+        const numVal = parseInt(row[0], 10);
+        const nameVal = norm(row[1]);
+
+        let targetSi = null;
+        if (!isNaN(numVal) && numVal >= 1 && numVal <= sorted.length) {
+          targetSi = sorted[numVal - 1];
+        }
+        if (targetSi === null && nameVal) {
+          targetSi = sorted.find(si => {
+            const stName = norm(S.students[si]);
+            return stName === nameVal || stName.includes(nameVal) || nameVal.includes(stName);
+          });
+        }
+
+        if (targetSi !== null && targetSi !== undefined) {
+          if (!newList.data[targetSi]) newList.data[targetSi] = {};
+          for (let c = 0; c < importedCols.length; c++) {
+            const rawVal = row[c + 2];
+            const type = importedColTypes[c];
+            if (type === 'check') {
+              const str = String(rawVal || '').trim().toUpperCase();
+              newList.data[targetSi][c] = (str === 'SÍ' || str === 'SI' || str === '☑ SÍ' || str === 'TRUE' || str === '1' || str === 'OK');
+            } else {
+              newList.data[targetSi][c] = String(rawVal !== undefined && rawVal !== null ? rawVal : '').trim();
+            }
+          }
+        }
+      }
+
+      sanitizeListModel(newList);
+      ensureHerramientas();
+      S.herramientas.lists.push(newList);
+      S.herramientas.activeListId = newList.id;
+
+      saveCustomListsVault();
+      populateCustomListSelect();
+      onSelectCustomList(newList.id);
+      saveData();
+      toast('✔ Listado "' + newList.title + '" importado y guardado exitosamente', '#16a34a');
+    } catch(err) {
+      console.error(err);
+      toast('❌ Error procesando el archivo: ' + err.message, '#dc2626');
+    } finally {
+      input.value = '';
+    }
+  };
+
+  if (typeof XLSX === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = () => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        parseWorkbook(wb);
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    s.onerror = () => toast('❌ No se pudo cargar el motor XLSX', '#dc2626');
+    document.head.appendChild(s);
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array' });
+      parseWorkbook(wb);
+    };
+    reader.readAsArrayBuffer(file);
+  }
 }
 
 function exportCustomListXLSX() {
