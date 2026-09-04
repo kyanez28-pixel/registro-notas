@@ -8089,8 +8089,27 @@ function ensureMats() {
 var _isRemoteSyncing = false;
 let _saveTimeout = null;
 
+function getAttendanceVault() {
+  try {
+    const raw = localStorage.getItem('notas_asistencia_vault_v1');
+    return raw ? JSON.parse(raw) : {};
+  } catch(e) {
+    return {};
+  }
+}
+
+function saveAttendanceVault(att) {
+  try {
+    if (!att || typeof att !== 'object') return;
+    localStorage.setItem('notas_asistencia_vault_v1', JSON.stringify(att));
+  } catch(e) {}
+}
+
 function saveData(manual) {
   if (_isRemoteSyncing) return;
+  if (S && S.asistencia) {
+    saveAttendanceVault(S.asistencia);
+  }
   try {
     localStorage.setItem('notas_cache_v7', JSON.stringify(S));
   } catch(e) {}
@@ -10560,17 +10579,45 @@ function formatFullDate(dateStr) {
 function ensureAttendanceData() {
   if (!S.asistencia) S.asistencia = {};
 
-  // Asegurar que el 3 de Septiembre de 2026 (primer día oficial de clases de Séptimo C) esté registrado
+  // 1. Restaurar días guardados desde el Vault local de Asistencia
+  if (typeof getAttendanceVault === 'function') {
+    const vault = getAttendanceVault();
+    Object.keys(vault).forEach(d => {
+      if (vault[d] && Object.keys(vault[d]).length > 0) {
+        if (!S.asistencia[d] || Object.keys(S.asistencia[d]).length === 0) {
+          S.asistencia[d] = vault[d];
+        }
+      }
+    });
+  }
+
+  // 2. Limpiar registros previos al 03 de Septiembre (inicio del año lectivo) para no adulterar estadísticas
+  if (S.asistencia['2026-09-01']) delete S.asistencia['2026-09-01'];
+  if (S.asistencia['2026-09-02']) delete S.asistencia['2026-09-02'];
+
+  // 3. Garantizar que el 3 de Septiembre de 2026 (primer día oficial) tenga registradas sus 4 faltas
   if (!S.asistencia['2026-09-03']) {
-    if (S.asistencia['2026-09-01'] && Object.keys(S.asistencia['2026-09-01']).length > 0) {
-      // Si se tomó lista en 2026-09-01 por estar fijada esa fecha en el selector, traspasar a 2026-09-03
-      S.asistencia['2026-09-03'] = JSON.parse(JSON.stringify(S.asistencia['2026-09-01']));
-    } else {
-      S.asistencia['2026-09-03'] = {};
-      S.students.forEach((_, si) => {
-        S.asistencia['2026-09-03'][si] = 'P';
-      });
-    }
+    S.asistencia['2026-09-03'] = {};
+    S.students.forEach((_, si) => {
+      S.asistencia['2026-09-03'][si] = 'P';
+    });
+  }
+
+  const sep3 = S.asistencia['2026-09-03'];
+  const hasFaltas3 = Object.values(sep3).some(v => v === 'F');
+  if (!hasFaltas3) {
+    S.students.forEach((name, si) => {
+      const up = (name || '').toUpperCase();
+      if (up.includes('ALCIVAR') && up.includes('AMY')) sep3[si] = 'F';
+      else if (up.includes('ANTE') && up.includes('MELISA')) sep3[si] = 'F';
+      else if ((up.includes('INIGUEZ') || up.includes('IÑIGUEZ')) && up.includes('DEMY')) sep3[si] = 'F';
+      else if (up.includes('VELASCO') && up.includes('ESTEBAN')) sep3[si] = 'F';
+      else if (!sep3[si]) sep3[si] = 'P';
+    });
+  }
+
+  if (typeof saveAttendanceVault === 'function') {
+    saveAttendanceVault(S.asistencia);
   }
 }
 
@@ -10620,6 +10667,7 @@ function deleteCurrentAttDate() {
   }
   if (confirm(`¿Está seguro de eliminar el registro de asistencia del ${formatFullDate(dateStr)}?`)) {
     delete S.asistencia[dateStr];
+    if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
     saveData();
     renderAttendance();
     renderAttHistoryModalList();
@@ -10632,11 +10680,31 @@ function deleteAttDate(dateStr) {
   if (!dateStr || !S.asistencia || !S.asistencia[dateStr]) return;
   if (confirm(`¿Eliminar el registro de asistencia del ${formatFullDate(dateStr)}?`)) {
     delete S.asistencia[dateStr];
+    if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
     saveData();
     renderAttendance();
     renderAttHistoryModalList();
     renderRecordedDatesList();
     toast(`🗑️ Registro del ${formatDate(dateStr)} eliminado`, '#16a34a');
+  }
+}
+
+function cleanAttBefore(limitDate = '2026-09-03') {
+  if (!S.asistencia) return;
+  const keys = Object.keys(S.asistencia);
+  const toDelete = keys.filter(d => d < limitDate || Object.keys(S.asistencia[d] || {}).length === 0);
+  if (!toDelete.length) {
+    toast(`No hay registros previos al inicio oficial (${formatDate(limitDate)})`, '#3b82f6');
+    return;
+  }
+  if (confirm(`¿Está seguro de eliminar ${toDelete.length} días previos al inicio de clases (${formatDate(limitDate)})?\n\nEsto dejará únicamente las asistencias tomadas desde el 03 de Septiembre de 2026 en adelante.`)) {
+    toDelete.forEach(d => { delete S.asistencia[d]; });
+    if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
+    saveData();
+    renderAttendance();
+    renderAttHistoryModalList();
+    renderRecordedDatesList();
+    toast(`🧹 Se eliminaron ${toDelete.length} registros anteriores al inicio de clases`, '#16a34a');
   }
 }
 
@@ -10849,27 +10917,34 @@ function renderAttendance() {
   const dateInp = document.getElementById('attDate');
   if (!dateInp) return;
   
-  // SOLUCIÓN CLAVE: Siempre sugerir la fecha actual de HOY en lugar de quedarse estancada en 01/09/2026
+  // Siempre sugerir la fecha actual de HOY en lugar de quedarse estancada
   if (!dateInp.value) {
     dateInp.value = getTodayDateStr();
   }
   const dateStr = dateInp.value;
 
   ensureAttendanceData();
-  const dayAtt = S.asistencia[dateStr] || {};
-  const isRecorded = Object.keys(dayAtt).length > 0;
+  const dayAtt = (S.asistencia && S.asistencia[dateStr]) ? S.asistencia[dateStr] : null;
+  const isRecorded = !!(dayAtt && Object.keys(dayAtt).length > 0);
   const isToday = dateStr === getTodayDateStr();
   const fullDateTitle = formatFullDate(dateStr);
+
+  const dObj = new Date(dateStr + 'T12:00:00');
+  const dayOfWeek = dObj.getDay();
+  const isSat = dayOfWeek === 6;
+  const isSun = dayOfWeek === 0;
+  const isWeekendDay = isSat || isSun;
+  const isPriorToSchoolYear = dateStr < '2026-09-03';
 
   // Configuración de período de inasistencias (Semana / Mes / Trimestre)
   if (!S.attAbsPeriod) S.attAbsPeriod = 'trim';
   const isVisible = S.attAbsVisible !== false;
 
-  // Filtrar solo fechas que pertenezcan al año escolar oficial (>= 2026-09-01)
-  let relevantDates = Object.keys(S.asistencia).filter(d => {
-    if (d < '2026-09-01') return false; // Omitir agosto en cálculos oficiales
+  // Filtrar solo fechas que pertenezcan al año escolar oficial (>= 2026-09-03) Y que tengan registros guardados
+  let relevantDates = Object.keys(S.asistencia || {}).filter(d => {
+    if (d < '2026-09-03') return false; // El año escolar inició el 03 de Septiembre
     return Object.keys(S.asistencia[d] || {}).length > 0;
-  });
+  }).sort();
   let periodLabel = 'Todo el Trimestre';
 
   if (S.attAbsPeriod === 'week') {
@@ -10889,10 +10964,10 @@ function renderAttendance() {
   S.students.forEach((_, si) => {
     let countF = 0, countT = 0, countJ = 0;
     relevantDates.forEach(dt => {
-      const val = S.asistencia[dt][si];
+      const val = (S.asistencia[dt] || {})[si];
       if (val === 'F') countF++;
       if (val === 'T') countT++;
-      if (val === 'J') countJ++;
+      if (val === 'J' || val === 'FJ') countJ++;
     });
     absStats[si] = { F: countF, T: countT, J: countJ, pct: Math.round((countF / totalDays) * 100) };
   });
@@ -10924,7 +10999,7 @@ function renderAttendance() {
       }
 
       absBarEl.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border-color);padding-bottom:6px">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:gap:8px;border-bottom:1px solid var(--border-color);padding-bottom:6px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">📊 Inasistencias:</span>
             <div style="display:inline-flex;background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:2px;gap:2px">
@@ -10948,9 +11023,14 @@ function renderAttendance() {
   let gridHTML = '<div class="att-grid">';
   S.students.forEach((name, si) => {
     if (searchVal && !name.toLowerCase().includes(searchVal)) return;
-    const currentVal = dayAtt[si] || 'P';
-    const borderAccent = currentVal === 'P' ? 'border-left: 4px solid #16a34a;' : (currentVal === 'F' ? 'border-left: 4px solid #dc2626;' : (currentVal === 'T' ? 'border-left: 4px solid #d97706;' : 'border-left: 4px solid #2563eb;'));
-    gridHTML += `<div class="att-row" style="${borderAccent}">
+    const currentVal = isRecorded ? (dayAtt[si] || 'P') : null;
+    let borderAccent = 'border-left: 4px solid var(--border-color);';
+    if (currentVal === 'P') borderAccent = 'border-left: 4px solid #16a34a;';
+    else if (currentVal === 'F') borderAccent = 'border-left: 4px solid #dc2626;';
+    else if (currentVal === 'T') borderAccent = 'border-left: 4px solid #d97706;';
+    else if (currentVal === 'J' || currentVal === 'FJ') borderAccent = 'border-left: 4px solid #2563eb;';
+
+    gridHTML += `<div class="att-row" style="${borderAccent};${!isRecorded ? 'opacity:0.92;background:var(--bg-card)' : ''}">
       <div class="att-student-info">
         <div class="att-num">${si+1}</div>
         <div class="att-name" title="${escVal(name)}">${escHTML(name)}</div>
@@ -10959,7 +11039,7 @@ function renderAttendance() {
         <button class="att-btn P ${currentVal==='P'?'active':''}" onclick="setAttState(${si}, 'P')" title="Presente">P</button>
         <button class="att-btn F ${currentVal==='F'?'active':''}" onclick="setAttState(${si}, 'F')" title="Falta">F</button>
         <button class="att-btn T ${currentVal==='T'?'active':''}" onclick="setAttState(${si}, 'T')" title="Tardanza">T</button>
-        <button class="att-btn J ${currentVal==='J'?'active':''}" onclick="setAttState(${si}, 'J')" title="Justificada">J</button>
+        <button class="att-btn J ${(currentVal==='J'||currentVal==='FJ')?'active':''}" onclick="setAttState(${si}, 'J')" title="Justificada">J</button>
       </div>
     </div>`;
   });
@@ -10968,39 +11048,71 @@ function renderAttendance() {
   if (gridEl) gridEl.innerHTML = gridHTML;
 
   let pCount = 0, fCount = 0, tCount = 0, jCount = 0;
-  S.students.forEach((_, si) => {
-    const v = dayAtt[si] || 'P';
-    if (v==='P') pCount++;
-    if (v==='F') fCount++;
-    if (v==='T') tCount++;
-    if (v==='J') jCount++;
-  });
+  if (isRecorded) {
+    S.students.forEach((_, si) => {
+      const v = dayAtt[si] || 'P';
+      if (v==='P') pCount++;
+      if (v==='F') fCount++;
+      if (v==='T') tCount++;
+      if (v==='J' || v==='FJ') jCount++;
+    });
+  }
+
+  let statusBadgeHtml = '';
+  if (isRecorded) {
+    statusBadgeHtml = `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:900;box-shadow:0 1px 3px rgba(0,0,0,0.05);background:#dcfce7;color:#15803d;border:1.5px solid #86efac">
+        <span style="font-size:1rem">🟢</span>
+        <span>Día Guardado con Éxito</span>
+        <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle}${isToday ? ' · HOY' : ''})</span>
+      </div>
+    `;
+  } else if (isPriorToSchoolYear) {
+    statusBadgeHtml = `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:800;background:#fef9c3;color:#854d0e;border:1.5px solid #fde047">
+        <span style="font-size:1rem">🗓️</span>
+        <span>Previo al Inicio de Clases (Inició el 03 de Septiembre) — Sin Asistencia</span>
+        <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle})</span>
+      </div>
+    `;
+  } else if (isWeekendDay) {
+    statusBadgeHtml = `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:800;background:#ede9fe;color:#5b21b6;border:1.5px solid #c4b5fd">
+        <span style="font-size:1rem">🏖️</span>
+        <span>Fin de Semana (${isSat ? 'Sábado' : 'Domingo'}) · Día No Laborable — Sin Asistencia</span>
+        <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle})</span>
+      </div>
+    `;
+  } else {
+    statusBadgeHtml = `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:800;background:#fef9c3;color:#854d0e;border:1.5px solid #fde047">
+        <span style="font-size:1rem">🟡</span>
+        <span>Día Pendiente de Registrar Asistencia</span>
+        <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle}${isToday ? ' · HOY' : ''})</span>
+      </div>
+    `;
+  }
 
   const sumEl = document.getElementById('attSummary');
   if (sumEl) {
     sumEl.innerHTML = `
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%">
-        <!-- Indicador de Estado de Guardado -->
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:0.84rem;font-weight:900;box-shadow:0 1px 3px rgba(0,0,0,0.05);background:${isRecorded ? '#dcfce7' : '#fef9c3'};color:${isRecorded ? '#15803d' : '#854d0e'};border:1.5px solid ${isRecorded ? '#86efac' : '#fde047'}">
-          <span style="font-size:1rem">${isRecorded ? '🟢' : '🟡'}</span>
-          <span>${isRecorded ? 'Día Guardado con Éxito' : 'Día Pendiente de Guardar'}</span>
-          <span style="opacity:0.85;font-weight:700;font-size:0.75rem">(${fullDateTitle}${isToday ? ' · HOY' : ''})</span>
-        </div>
+        ${statusBadgeHtml}
 
-        <span style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
-          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:${isRecorded ? '#dcfce7' : 'var(--bg-card-subtle)'};color:${isRecorded ? '#15803d' : 'var(--text-muted)'};border:1px solid ${isRecorded ? '#86efac' : 'var(--border-color)'};padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800">
+          <span style="width:8px;height:8px;border-radius:50%;background:${isRecorded ? '#16a34a' : '#94a3b8'}"></span>
           Presentes: ${pCount}
         </span>
-        <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
-          <span style="width:8px;height:8px;border-radius:50%;background:#dc2626"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:${fCount > 0 ? '#fee2e2' : 'var(--bg-card-subtle)'};color:${fCount > 0 ? '#b91c1c' : 'var(--text-muted)'};border:1px solid ${fCount > 0 ? '#fca5a5' : 'var(--border-color)'};padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800">
+          <span style="width:8px;height:8px;border-radius:50%;background:${fCount > 0 ? '#dc2626' : '#94a3b8'}"></span>
           Faltas: ${fCount}
         </span>
-        <span style="display:inline-flex;align-items:center;gap:6px;background:#fef3c7;color:#92400e;border:1px solid #fde047;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
-          <span style="width:8px;height:8px;border-radius:50%;background:#d97706"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:${tCount > 0 ? '#fef3c7' : 'var(--bg-card-subtle)'};color:${tCount > 0 ? '#92400e' : 'var(--text-muted)'};border:1px solid ${tCount > 0 ? '#fde047' : 'var(--border-color)'};padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800">
+          <span style="width:8px;height:8px;border-radius:50%;background:${tCount > 0 ? '#d97706' : '#94a3b8'}"></span>
           Tardanzas: ${tCount}
         </span>
-        <span style="display:inline-flex;align-items:center;gap:6px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
-          <span style="width:8px;height:8px;border-radius:50%;background:#2563eb"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:${jCount > 0 ? '#dbeafe' : 'var(--bg-card-subtle)'};color:${jCount > 0 ? '#1e40af' : 'var(--text-muted)'};border:1px solid ${jCount > 0 ? '#93c5fd' : 'var(--border-color)'};padding:4px 14px;border-radius:20px;font-size:0.82rem;font-weight:800">
+          <span style="width:8px;height:8px;border-radius:50%;background:${jCount > 0 ? '#2563eb' : '#94a3b8'}"></span>
           Justificadas: ${jCount}
         </span>
 
@@ -11016,8 +11128,15 @@ function setAttState(si, state) {
   const dateInp = document.getElementById('attDate');
   const dateStr = (dateInp && dateInp.value) ? dateInp.value : getTodayDateStr();
   if (!S.asistencia) S.asistencia = {};
-  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
-  S.asistencia[dateStr][si] = state;
+  if (!S.asistencia[dateStr] || Object.keys(S.asistencia[dateStr]).length === 0) {
+    S.asistencia[dateStr] = {};
+    S.students.forEach((_, idx) => {
+      S.asistencia[dateStr][idx] = (idx === si) ? state : 'P';
+    });
+  } else {
+    S.asistencia[dateStr][si] = state;
+  }
+  if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
   saveData();
   renderAttendance();
 }
@@ -11026,10 +11145,11 @@ function attMarkAll(state) {
   const dateInp = document.getElementById('attDate');
   const dateStr = (dateInp && dateInp.value) ? dateInp.value : getTodayDateStr();
   if (!S.asistencia) S.asistencia = {};
-  if (!S.asistencia[dateStr]) S.asistencia[dateStr] = {};
+  S.asistencia[dateStr] = {};
   S.students.forEach((_, si) => {
     S.asistencia[dateStr][si] = state;
   });
+  if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
   saveData();
   renderAttendance();
   toast(`✔ Todos marcados como ${state==='P'?'Presentes':'Falta'} (${formatDate(dateStr)}) · Guardado`, '#16a34a');
@@ -11038,9 +11158,9 @@ function attMarkAll(state) {
 function exportAttendanceXLSX() {
   if (!S.asistencia) S.asistencia = {};
   
-  // Filtrar para exportar únicamente fechas oficiales del año lectivo (>= 2026-09-01)
+  // Filtrar para exportar únicamente fechas oficiales del año lectivo (>= 2026-09-03)
   let dates = Object.keys(S.asistencia).filter(d => {
-    if (d < '2026-09-01') return false; // Excluir pruebas de agosto
+    if (d < '2026-09-03') return false; // Excluir fechas antes del inicio oficial
     return Object.keys(S.asistencia[d] || {}).length > 0;
   }).sort();
 
@@ -11288,8 +11408,9 @@ function exportAttendanceXLSX() {
 
 function getStudentAttendanceStats(si) {
   if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100 };
-  const trimStartDate = S.calendar?.trimStart || '';
+  const trimStartDate = S.calendar?.trimStart || '2026-09-03';
   const dates = Object.keys(S.asistencia).filter(d => {
+    if (d < '2026-09-03') return false;
     if (trimStartDate && d < trimStartDate) return false;
     return S.asistencia[d] && S.asistencia[d][si] !== undefined;
   });
@@ -13402,6 +13523,10 @@ function applyRemoteState(newState, updatedAt, source) {
   const deletedIds = (S && S.herramientas && Array.isArray(S.herramientas._deletedListIds)) ? S.herramientas._deletedListIds : (vault.deletedListIds || []);
   const activeListBefore = (S && S.herramientas && S.herramientas.activeListId) ? S.herramientas.activeListId : vault.activeListId;
 
+  // 1.b Resguardar Asistencia local del Vault para NUNCA perder registros
+  const attVault = (typeof getAttendanceVault === 'function') ? getAttendanceVault() : {};
+  const currentAtt = (S && S.asistencia) ? S.asistencia : {};
+
   S = newState;
   ensureMats();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
@@ -13422,7 +13547,27 @@ function applyRemoteState(newState, updatedAt, source) {
     S.herramientas.activeListId = activeListBefore;
   }
 
+  // Fusión de Asistencia para que NINGÚN día guardado ni faltas se pierdan por sync remoto
+  if (!S.asistencia) S.asistencia = {};
+  const allDatesToPreserve = new Set([...Object.keys(attVault), ...Object.keys(currentAtt)]);
+  allDatesToPreserve.forEach(dt => {
+    const locDay = attVault[dt] || currentAtt[dt];
+    if (locDay && Object.keys(locDay).length > 0) {
+      if (!S.asistencia[dt] || Object.keys(S.asistencia[dt]).length === 0) {
+        S.asistencia[dt] = locDay;
+      } else {
+        const localHasNonP = Object.values(locDay).some(v => v === 'F' || v === 'T' || v === 'J');
+        const remoteHasNonP = Object.values(S.asistencia[dt]).some(v => v === 'F' || v === 'T' || v === 'J');
+        if (localHasNonP && !remoteHasNonP) {
+          S.asistencia[dt] = locDay;
+        }
+      }
+    }
+  });
+
+  if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
   if (typeof saveCustomListsVault === 'function') saveCustomListsVault();
+  if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
 
   try {
     localStorage.setItem('notas_cache_v7', JSON.stringify(S));
