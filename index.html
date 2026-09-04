@@ -11054,52 +11054,88 @@ function exportAttendanceXLSX() {
   }
 
   const totalCols = 2 + dates.length + 5;
+  const lastColLetter = colName(totalCols);
+
   const colWidths = [
-    { width: 6 },
-    { width: 38 }
+    { width: 6 },   // #
+    { width: 38 }   // NÓMINA DE ESTUDIANTES
   ];
   dates.forEach(() => colWidths.push({ width: 14 }));
-  colWidths.push({ width: 16 });
-  colWidths.push({ width: 14 });
-  colWidths.push({ width: 14 });
-  colWidths.push({ width: 14 });
-  colWidths.push({ width: 14 });
+  colWidths.push({ width: 16 }); // ASISTENCIAS
+  colWidths.push({ width: 14 }); // FALTAS
+  colWidths.push({ width: 14 }); // TARDANZAS
+  colWidths.push({ width: 14 }); // JUSTIFICADAS
+  colWidths.push({ width: 14 }); // % ASIST.
 
-  const rows = [
-    [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'inst_title', _ht: 26 }],
-    [{ v: 'REGISTRO GENERAL DE ASISTENCIA DIARIA — AÑO LECTIVO 2026-2027', t: 's', s: 'inst_sub', _ht: 22 }],
-    [{ v: `${S.grado || 'Séptimo de Básica C'} · ${S.periodo || '1er Trimestre'} · Régimen Sierra-Amazonía`, t: 's', s: 'inst_sub2', _ht: 18 }],
-    [{ v: `Docente Tutor: ${S.docente || 'Lic. Klever Yánez'} | Días Registrados: ${dates.length} días oficiales`, t: 's', s: 'meta_left', _ht: 20 }],
-    []
+  // Row 1: Institución
+  const row1 = [{ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'inst_title', _ht: 32 }];
+  for (let c = 1; c < totalCols; c++) row1.push({ v: '', t: 's', s: 'inst_title' });
+
+  // Row 2: Título general
+  const row2 = [{ v: `REGISTRO GENERAL DE ASISTENCIA DIARIA — AÑO LECTIVO ${S.anio || '2026-2027'}`, t: 's', s: 'inst_sub', _ht: 24 }];
+  for (let c = 1; c < totalCols; c++) row2.push({ v: '', t: 's', s: 'inst_sub' });
+
+  // Row 3: Grado / Período
+  const subText = `${S.grado || 'Séptimo de Básica C'} · ${S.periodo || '1er Trimestre'} · Régimen Sierra-Amazonía`;
+  const row3 = [{ v: subText, t: 's', s: 'inst_sub2', _ht: 22 }];
+  for (let c = 1; c < totalCols; c++) row3.push({ v: '', t: 's', s: 'inst_sub2' });
+
+  // Row 4: Metadatos Tutor y Días
+  const docenteText = `Docente Tutor: ${S.docente || 'Lic. Klever Yánez'} · Paralelo: ${S.grado || 'Séptimo C'}`;
+  const metaRightText = `Días Registrados: ${dates.length} días oficiales | Exportado: ${new Date().toLocaleDateString('es-EC')}`;
+
+  const merges = [
+    `A1:${lastColLetter}1`,
+    `A2:${lastColLetter}2`,
+    `A3:${lastColLetter}3`
   ];
 
-  for (let r = 0; r < 4; r++) {
-    while (rows[r].length < totalCols) {
-      rows[r].push({ v: '', t: 's', s: rows[r][0].s });
-    }
+  const row4 = [];
+  if (totalCols >= 5) {
+    const splitCol = Math.min(3, totalCols - 2);
+    merges.push(`A4:${colName(splitCol)}4`);
+    merges.push(`${colName(splitCol + 1)}4:${lastColLetter}4`);
+
+    row4.push({ v: docenteText, t: 's', s: 'meta_left', _ht: 22 });
+    for (let c = 1; c < splitCol; c++) row4.push({ v: '', t: 's', s: 'meta_left' });
+    row4.push({ v: metaRightText, t: 's', s: 'meta_right' });
+    for (let c = splitCol + 1; c < totalCols; c++) row4.push({ v: '', t: 's', s: 'meta_right' });
+  } else {
+    merges.push(`A4:${lastColLetter}4`);
+    row4.push({ v: `${docenteText} | ${metaRightText}`, t: 's', s: 'meta_left', _ht: 22 });
+    for (let c = 1; c < totalCols; c++) row4.push({ v: '', t: 's', s: 'meta_left' });
   }
 
+  // Row 5: Separador visual
+  const row5 = [];
+  for (let c = 0; c < totalCols; c++) row5.push({ v: '', t: 's', s: 'empty', _ht: 10 });
+
+  // Row 6: Encabezados de tabla
   const hdrRow = [
-    { v: '#', t: 's', s: 'hdr_num', _ht: 24 },
+    { v: '#', t: 's', s: 'hdr_num', _ht: 26 },
     { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }
   ];
-
   dates.forEach(d => {
-    hdrRow.push({ v: formatDate(d), t: 's', s: 'hdr_col' });
+    hdrRow.push({ v: formatDate(d), t: 's', s: 'hdr_blue' });
   });
-  hdrRow.push({ v: 'ASISTENCIAS', t: 's', s: 'hdr_prom' });
-  hdrRow.push({ v: 'FALTAS', t: 's', s: 'hdr_check' });
+  hdrRow.push({ v: 'ASISTENCIAS', t: 's', s: 'hdr_check' });
+  hdrRow.push({ v: 'FALTAS', t: 's', s: 'hdr_red' });
   hdrRow.push({ v: 'TARDANZAS', t: 's', s: 'hdr_amber' });
   hdrRow.push({ v: 'JUSTIFICADAS', t: 's', s: 'hdr_blue' });
   hdrRow.push({ v: '% ASIST.', t: 's', s: 'hdr_teal' });
 
-  rows.push(hdrRow);
+  const rows = [row1, row2, row3, row4, row5, hdrRow];
+
+  // Acumuladores de totales por fecha
+  const dateTotals = {};
+  dates.forEach(d => { dateTotals[d] = { p: 0, f: 0, t: 0, j: 0 }; });
+  let grandP = 0, grandF = 0, grandT = 0, grandJ = 0;
 
   S.students.forEach((name, si) => {
     let p = 0, f = 0, t = 0, j = 0;
     const isEven = si % 2 === 0;
     const studentRow = [
-      { v: si + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd' },
+      { v: si + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd', _ht: 20 },
       { v: name.toUpperCase(), t: 's', s: isEven ? 'name_even' : 'name_odd' }
     ];
 
@@ -11107,37 +11143,138 @@ function exportAttendanceXLSX() {
       const val = (S.asistencia[d] || {})[si] || 'P';
       if (val === 'P') {
         p++;
-        studentRow.push({ v: 'P', t: 's', s: 'ok' });
+        dateTotals[d].p++;
+        studentRow.push({ v: 'P', t: 's', s: 'att_p' });
       } else if (val === 'F') {
         f++;
-        studentRow.push({ v: 'F', t: 's', s: 'low' });
+        dateTotals[d].f++;
+        studentRow.push({ v: 'F', t: 's', s: 'att_f' });
       } else if (val === 'T') {
         t++;
-        studentRow.push({ v: 'T', t: 's', s: 'empty' });
-      } else if (val === 'J') {
+        dateTotals[d].t++;
+        studentRow.push({ v: 'T', t: 's', s: 'att_t' });
+      } else if (val === 'J' || val === 'FJ') {
         j++;
-        studentRow.push({ v: 'J', t: 's', s: 'meta_left' });
+        dateTotals[d].j++;
+        studentRow.push({ v: 'J', t: 's', s: 'att_j' });
       } else {
-        studentRow.push({ v: String(val), t: 's', s: 'num_odd' });
+        studentRow.push({ v: String(val), t: 's', s: isEven ? 'val_zero_even' : 'val_zero_odd' });
       }
     });
 
+    grandP += p;
+    grandF += f;
+    grandT += t;
+    grandJ += j;
+
     const totalDays = dates.length || 1;
     const pct = Math.round(((p + t + j) / totalDays) * 100);
+    const pctStyle = pct >= 85 ? 'pct_ok' : (pct >= 75 ? 'pct_warn' : 'pct_low');
 
-    studentRow.push({ v: p, t: 'n', s: 'prom' });
-    studentRow.push({ v: f, t: 'n', s: f > 0 ? 'low' : 'ok' });
-    studentRow.push({ v: t, t: 'n', s: 'empty' });
-    studentRow.push({ v: j, t: 'n', s: 'meta_left' });
-    studentRow.push({ v: pct + '%', t: 's', s: pct < 75 ? 'low' : 'prom' });
+    studentRow.push({ v: p, t: 'n', s: isEven ? 'sum_p_even' : 'sum_p_odd' });
+    studentRow.push({ v: f, t: 'n', s: f > 0 ? 'low' : (isEven ? 'val_zero_even' : 'val_zero_odd') });
+    studentRow.push({ v: t, t: 'n', s: t > 0 ? 'badge_amber' : (isEven ? 'val_zero_even' : 'val_zero_odd') });
+    studentRow.push({ v: j, t: 'n', s: j > 0 ? 'badge_blue' : (isEven ? 'val_zero_even' : 'val_zero_odd') });
+    studentRow.push({ v: pct / 100, t: 'n', s: pctStyle });
 
     rows.push(studentRow);
   });
 
+  // Totales al pie de la tabla
+  const totalStudents = S.students.length || 1;
+  const totalSlots = totalStudents * dates.length;
+  const overallPct = totalSlots > 0 ? Math.round(((grandP + grandT + grandJ) / totalSlots) * 100) / 100 : 1;
+
+  // Fila Total Asistencias (P)
+  const pRowIdx = rows.length + 1;
+  merges.push(`A${pRowIdx}:B${pRowIdx}`);
+  const totPRow = [
+    { v: 'TOTAL ASISTENCIAS (P)', t: 's', s: 'total_lbl_p', _ht: 22 },
+    { v: '', t: 's', s: 'total_lbl_p' }
+  ];
+  dates.forEach(d => {
+    totPRow.push({ v: dateTotals[d].p, t: 'n', s: 'total_val_p' });
+  });
+  totPRow.push({ v: grandP, t: 'n', s: 'total_val_p' });
+  totPRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPRow.push({ v: overallPct, t: 'n', s: 'total_val_pct' });
+  rows.push(totPRow);
+
+  // Fila Total Faltas (F)
+  const fRowIdx = rows.length + 1;
+  merges.push(`A${fRowIdx}:B${fRowIdx}`);
+  const totFRow = [
+    { v: 'TOTAL FALTAS (F)', t: 's', s: 'total_lbl_f', _ht: 22 },
+    { v: '', t: 's', s: 'total_lbl_f' }
+  ];
+  dates.forEach(d => {
+    totFRow.push({ v: dateTotals[d].f, t: 'n', s: 'total_val_f' });
+  });
+  totFRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totFRow.push({ v: grandF, t: 'n', s: 'total_val_f' });
+  totFRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totFRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totFRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  rows.push(totFRow);
+
+  // Fila % Asistencia Diaria
+  const pctRowIdx = rows.length + 1;
+  merges.push(`A${pctRowIdx}:B${pctRowIdx}`);
+  const totPctRow = [
+    { v: '% ASISTENCIA DIARIA', t: 's', s: 'total_lbl_pct', _ht: 22 },
+    { v: '', t: 's', s: 'total_lbl_pct' }
+  ];
+  dates.forEach(d => {
+    const dayP = dateTotals[d].p + dateTotals[d].t + dateTotals[d].j;
+    const dayPct = totalStudents > 0 ? Math.round((dayP / totalStudents) * 100) / 100 : 1;
+    totPctRow.push({ v: dayPct, t: 'n', s: 'total_val_pct' });
+  });
+  totPctRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPctRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPctRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPctRow.push({ v: '-', t: 's', s: 'total_cell_blank' });
+  totPctRow.push({ v: overallPct, t: 'n', s: 'total_val_pct' });
+  rows.push(totPctRow);
+
+  // Firmas institucionales
+  rows.push([]);
+  rows.push([]);
+
+  const signLineRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: '________________________________________', t: 's', s: 'sign_bold', _ht: 20 }
+  ];
+  const signNameRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: (S.docente || 'Lic. Klever Yánez').toUpperCase(), t: 's', s: 'sign_bold', _ht: 18 }
+  ];
+  const signRoleRow = [
+    { v: '', t: 's', s: 'empty' },
+    { v: 'DOCENTE TUTOR', t: 's', s: 'sign_sub', _ht: 16 }
+  ];
+
+  if (totalCols >= 6) {
+    const coordCol = totalCols - 2;
+    while (signLineRow.length < coordCol) signLineRow.push({ v: '', t: 's', s: 'empty' });
+    while (signNameRow.length < coordCol) signNameRow.push({ v: '', t: 's', s: 'empty' });
+    while (signRoleRow.length < coordCol) signRoleRow.push({ v: '', t: 's', s: 'empty' });
+
+    signLineRow.push({ v: '________________________________________', t: 's', s: 'sign_bold' });
+    signNameRow.push({ v: 'INSPECCIÓN GENERAL / RECTORADO', t: 's', s: 'sign_bold' });
+    signRoleRow.push({ v: 'UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"', t: 's', s: 'sign_sub' });
+  }
+
+  rows.push(signLineRow);
+  rows.push(signNameRow);
+  rows.push(signRoleRow);
+
   const sheets = [{
     name: 'Asistencia Oficial',
     cols: colWidths,
-    rows: rows
+    rows: rows,
+    merges: merges
   }];
 
   const zip = makeXLSX(sheets);
@@ -11146,7 +11283,7 @@ function exportAttendanceXLSX() {
   a.href = URL.createObjectURL(blob);
   a.download = `Asistencia_${(S.grado||'7mo_C').replace(/\s+/g,'_')}_${(S.anio||'2026-2027')}.xlsx`;
   a.click();
-  toast('✔ Asistencia oficial exportada a Excel (.xlsx) limpia sin días de prueba', '#16a34a');
+  toast('✔ Asistencia oficial exportada a Excel (.xlsx) con formato ejecutivo y firmas', '#16a34a');
 }
 
 function getStudentAttendanceStats(si) {
@@ -12338,7 +12475,7 @@ function makeXLSX(sheets) {
     
     // Rich institutional header & format styles
     inst_title: { font:'bold', size:13, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
-    inst_sub:   { font:'bold', size:11, bg:'1E40AF', fg:'93C5FD', align:'center' },
+    inst_sub:   { font:'bold', size:11, bg:'1E40AF', fg:'FFFFFF', align:'center' },
     inst_sub2:  { font:'bold', size:9.5, bg:'2563EB', fg:'FFFFFF', align:'center' },
     meta_left:  { font:'bold', size:9, bg:'F1F5F9', fg:'1E293B', align:'left' },
     meta_right: { font:'bold', size:9, bg:'F1F5F9', fg:'1E293B', align:'right' },
@@ -12368,12 +12505,39 @@ function makeXLSX(sheets) {
     
     // Signatures
     sign_bold:  { font:'bold', size:9, bg:'FFFFFF', fg:'0F172A', align:'center' },
-    sign_sub:   { font:'normal', size:8, bg:'FFFFFF', fg:'64748B', align:'center' }
+    sign_sub:   { font:'normal', size:8, bg:'FFFFFF', fg:'64748B', align:'center' },
+
+    // Attendance specific headers, values and totals
+    hdr_red:    { font:'bold', size:9.5, bg:'DC2626', fg:'FFFFFF', align:'center' },
+    att_p:      { font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'center' },
+    att_f:      { font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'center' },
+    att_t:      { font:'bold', size:9.5, bg:'FEF3C7', fg:'B45309', align:'center' },
+    att_j:      { font:'bold', size:9.5, bg:'DBEAFE', fg:'1D4ED8', align:'center' },
+    sum_p_even: { font:'bold', size:9.5, bg:'F0FDF4', fg:'15803D', align:'center' },
+    sum_p_odd:  { font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'center' },
+    badge_amber:{ font:'bold', size:9.5, bg:'FEF3C7', fg:'B45309', align:'center' },
+    badge_blue: { font:'bold', size:9.5, bg:'DBEAFE', fg:'1D4ED8', align:'center' },
+    val_zero_even:{ font:'normal', size:9, bg:'FFFFFF', fg:'64748B', align:'center' },
+    val_zero_odd: { font:'normal', size:9, bg:'F8FAFC', fg:'64748B', align:'center' },
+    pct_ok:     { font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'center', numFmtId:9 },
+    pct_warn:   { font:'bold', size:9.5, bg:'FEF3C7', fg:'B45309', align:'center', numFmtId:9 },
+    pct_low:    { font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'center', numFmtId:9 },
+    total_lbl_p:{ font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'right' },
+    total_val_p:{ font:'bold', size:9.5, bg:'DCFCE7', fg:'15803D', align:'center' },
+    total_lbl_f:{ font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'right' },
+    total_val_f:{ font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'center' },
+    total_lbl_pct:{ font:'bold', size:9.5, bg:'EFF6FF', fg:'1E40AF', align:'right' },
+    total_val_pct:{ font:'bold', size:9.5, bg:'EFF6FF', fg:'1E40AF', align:'center', numFmtId:9 },
+    total_cell_blank:{ font:'normal', size:9, bg:'F8FAFC', fg:'94A3B8', align:'center' }
   };
   const styleKeys = Object.keys(STYLES);
   const fonts = styleKeys.map(k => `<font><sz val="${STYLES[k].size}"/><color rgb="FF${STYLES[k].fg}"/><name val="Calibri"/>${STYLES[k].font==='bold'?'<b/>':''}</font>`).join('');
   const fills = styleKeys.map(k => `<fill><patternFill patternType="solid"><fgColor rgb="FF${STYLES[k].bg}"/></patternFill></fill>`).join('');
-  const xfs   = styleKeys.map((k, i) => `<xf numFmtId="0" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="center" horizontal="${STYLES[k].align || 'center'}"/></xf>`).join('');
+  const xfs   = styleKeys.map((k, i) => {
+    const numFmt = STYLES[k].numFmtId || 0;
+    const applyNumFmt = numFmt ? ' applyNumberFormat="1"' : '';
+    return `<xf numFmtId="${numFmt}" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${applyNumFmt}><alignment wrapText="1" vertical="center" horizontal="${STYLES[k].align || 'center'}"/></xf>`;
+  }).join('');
 
   const styleXml = `<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="${styleKeys.length}">${fonts}</fonts><fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${styleKeys.length}">${xfs}</cellXfs></styleSheet>`;
 
