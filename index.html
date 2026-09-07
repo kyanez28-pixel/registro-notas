@@ -193,6 +193,101 @@ body.dark {
 
 
 
+
+/* ══════════════════════════════════════════════════════
+   ESTILOS CRONOGRAMA DE MOMENTOS CÍVICOS (CALDERÓN 2)
+   ══════════════════════════════════════════════════════ */
+.civico-highlight-7mo {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.02) 100%) !important;
+  border-left: 5px solid #d97706 !important;
+}
+.civico-tag-7mo {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff !important;
+  font-weight: 900;
+  font-size: 0.76rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 5px rgba(217,119,6,0.28);
+  letter-spacing: 0.2px;
+}
+.civico-tag-escuela {
+  background: #e0f2fe;
+  color: #0369a1 !important;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+}
+.civico-tag-colegio {
+  background: #f1f5f9;
+  color: #475569 !important;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+.civico-tag-valor {
+  background: #ecfdf5;
+  color: #047857 !important;
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid #a7f3d0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.civico-filter-btn {
+  padding: 6px 13px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.civico-filter-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.civico-filter-btn.active {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+}
+.civico-filter-btn.active-7mo {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #ffffff !important;
+  border-color: #d97706 !important;
+  box-shadow: 0 2px 6px rgba(217,119,6,0.35);
+}
+.civico-stat-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.civico-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 /* ══════════════════════════════════════════════════════
    GLOBAL RESETS & TIPOGRAFÍA DE ALTA DEFINICIÓN
    ══════════════════════════════════════════════════════ */
@@ -3206,6 +3301,11 @@ body.in-focus-mode {
         <span class="sidebar-btn-text">Cronograma &amp; Agenda</span>
         <span class="sidebar-btn-badge" id="cronoProgressBadge" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe">En Vivo</span>
       </button>
+      <button id="viewMinutosCivicos" class="sidebar-btn" onclick="openMinutosCivicosModule()" title="Cronograma Institucional de Momentos Cívicos 2026-2027 (U.E.F. Calderón 2)">
+        <span class="sidebar-btn-icon">🎖️</span>
+        <span class="sidebar-btn-text">Minutos Cívicos</span>
+        <span class="sidebar-btn-badge" style="background:#fef3c7;color:#92400e;border-color:#fcd34d">7mo EGB</span>
+      </button>
 
       <button id="viewHerramientas" class="sidebar-btn" onclick="switchView('herramientas')" title="Herramientas de aula, formatos personalizables, reuniones, bitácora de atención y citaciones">
         <span class="sidebar-btn-icon">🛠️</span>
@@ -4448,6 +4548,9 @@ body.in-focus-mode {
     <button id="tabBtnCrono6" class="btn btn-outline" onclick="switchCronoModuleTab(6)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;background:rgba(124,58,237,0.1);border-color:#a855f7;color:#7c3aed">
       📚 6. Orientaciones MINEDEC 2026-2027
     </button>
+    <button id="tabBtnCrono7" class="btn btn-outline" onclick="switchCronoModuleTab(7)" style="font-size:0.82rem;white-space:nowrap;font-weight:800;background:rgba(245,158,11,0.1);border-color:#f59e0b;color:#b45309">
+      🎖️ 7. Minutos Cívicos (44 Fechas)
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -5178,6 +5281,242 @@ body.in-focus-mode {
         <a href="https://www.gutenberg.org/browse/languages/es" target="_blank" style="background:var(--bg-card-subtle);padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;color:var(--primary);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:6px">
           <span>🔗 Project Gutenberg (Español)</span>
         </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PESTAÑA 7: CRONOGRAMA INSTITUCIONAL DE MOMENTOS CÍVICOS
+       (U.E.F. "CALDERÓN 2" · 2026 - 2027 · ACUERDO 00024-A)
+       ══════════════════════════════════════════════════════════ -->
+  <div id="cronoModuleTab7" style="display:none">
+
+    <!-- Banner Principal -->
+    <div style="background:linear-gradient(135deg,#78350f 0%,#b45309 45%,#d97706 85%,#f59e0b 100%);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;color:#fff;box-shadow:var(--shadow-md)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+            🎖️
+          </div>
+          <div>
+            <div style="font-size:1.22rem;font-weight:900;letter-spacing:0.2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span>Cronograma Institucional de Momentos Cívicos 2026 - 2027</span>
+              <span style="font-size:0.72rem;background:#ffffff;color:#78350f;padding:3px 10px;border-radius:99px;font-weight:900">U.E.F. CALDERÓN 2</span>
+              <span style="font-size:0.72rem;background:rgba(255,255,255,0.28);padding:3px 10px;border-radius:99px;font-weight:800">44 Fechas Oficiales</span>
+            </div>
+            <div style="font-size:0.78rem;opacity:.94;margin-top:4px;display:flex;gap:14px;flex-wrap:wrap">
+              <span>🏛️ Vicerrectorado · Ajustado al Acuerdo Ministerial MINEDEC-2026-00024-A</span>
+              <span>🏫 <strong>Escuela (1.° a 7.°):</strong> 14:00 - 14:20</span>
+              <span>🎓 <strong>Colegio (8.° a 3.° BGU):</strong> 14:25 - 14:45</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button class="btn" style="background:#ffffff;color:#78350f;border:none;font-weight:900;font-size:0.8rem;padding:7px 13px;box-shadow:0 3px 8px rgba(0,0,0,0.12)" onclick="printMinutosCivicos()" title="Imprimir reporte oficial del Cronograma de Momentos Cívicos con firmas de autoridades">
+            🖨️ Imprimir Cronograma
+          </button>
+          <button class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.45);font-weight:800;font-size:0.8rem;padding:7px 12px" onclick="exportMinutosCivicosXLSX()" title="Descargar planilla Excel (.xlsx) con todos los momentos cívicos y estados">
+            📊 Exportar Excel
+          </button>
+          <button class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.45);font-weight:800;font-size:0.8rem;padding:7px 12px" onclick="copyCivicosWhatsApp()" title="Copiar resumen de próximos momentos cívicos para WhatsApp de padres o docentes">
+            📲 WhatsApp
+          </button>
+          <a href="./CRONOGRAMA%20DE%20MINUTOS%20C%C3%8DVICOS.pdf" target="_blank" class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.45);font-weight:800;font-size:0.8rem;padding:7px 12px;text-decoration:none;display:inline-flex;align-items:center;gap:5px" title="Abrir archivo PDF original en nueva pestaña">
+            📄 Ver PDF Original
+          </a>
+          <button class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.45);font-weight:800;font-size:0.8rem;padding:7px 12px" onclick="showCivicosDirectricesModal()" title="Ver directrices del Vicerrectorado y firmas de las autoridades">
+            📜 Directrices
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjetas de Métricas & Próximo Momento Cívico -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
+      
+      <!-- Total Momentos Cívicos -->
+      <div class="civico-stat-card" style="border-left:4px solid #2563eb">
+        <div style="width:42px;height:42px;border-radius:10px;background:#dbeafe;color:#1e40af;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+          📅
+        </div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;color:var(--text-light);text-transform:uppercase">Total Programados</div>
+          <div style="font-size:1.22rem;font-weight:900;color:var(--text-main)" id="statCivicosTotal">44 Fechas</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">13 en 1°T · 15 en 2°T · 16 en 3°T</div>
+        </div>
+      </div>
+
+      <!-- Responsabilidad de Séptimo EGB (Mi Grado) -->
+      <div class="civico-stat-card" style="border-left:4px solid #d97706;background:linear-gradient(135deg,rgba(245,158,11,0.06) 0%,rgba(217,119,6,0.02) 100%)">
+        <div style="width:42px;height:42px;border-radius:10px;background:#fef3c7;color:#92400e;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+          🌟
+        </div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;color:#92400e;text-transform:uppercase">Séptimo EGB (Mi Grado)</div>
+          <div style="font-size:1.22rem;font-weight:900;color:#78350f" id="statCivicos7mo">7 Fechas Clave</div>
+          <div style="font-size:0.7rem;color:#b45309" id="statCivicos7moProgress">0 / 7 cumplidas</div>
+        </div>
+      </div>
+
+      <!-- Próximo Momento Cívico -->
+      <div class="civico-stat-card" style="border-left:4px solid #059669;grid-column:span 1">
+        <div style="width:42px;height:42px;border-radius:10px;background:#d1fae5;color:#065f46;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+          ⏳
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:0.7rem;font-weight:800;color:#065f46;text-transform:uppercase">Próximo Momento Cívico</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="statCivicosNextTitle">14/09/2026 · Día de la Democracia</div>
+          <div style="font-size:0.72rem;color:var(--primary);font-weight:800" id="statCivicosNextSub">⭐ Responsable: ¡7.º EGB!</div>
+        </div>
+      </div>
+
+      <!-- Evidencias Fotográficas -->
+      <div class="civico-stat-card" style="border-left:4px solid #7c3aed">
+        <div style="width:42px;height:42px;border-radius:10px;background:#ede9fe;color:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+          📸
+        </div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;color:#6d28d9;text-transform:uppercase">Evidencias Fotográficas</div>
+          <div style="font-size:1.22rem;font-weight:900;color:var(--text-main)" id="statCivicosFotos">4 Fotos x Actividad</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">Envío a Vicerrectorado el mismo día</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Barra de Filtros y Búsqueda Interactiva -->
+    <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        
+        <!-- Filtro por Trimestre -->
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:0.74rem;font-weight:800;color:var(--text-light);margin-right:2px">TRIMESTRE:</span>
+          <button class="civico-filter-btn active" id="civTrimBtn0" onclick="setCivicosTrimFilter(0)">Todos (44)</button>
+          <button class="civico-filter-btn" id="civTrimBtn1" onclick="setCivicosTrimFilter(1)">1.° Trimestre (13)</button>
+          <button class="civico-filter-btn" id="civTrimBtn2" onclick="setCivicosTrimFilter(2)">2.° Trimestre (15)</button>
+          <button class="civico-filter-btn" id="civTrimBtn3" onclick="setCivicosTrimFilter(3)">3.° Trimestre (16)</button>
+        </div>
+
+        <!-- Filtro por Grado -->
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:0.74rem;font-weight:800;color:var(--text-light);margin-right:2px">GRADO:</span>
+          <button class="civico-filter-btn active-7mo" id="civGradeBtn7mo" onclick="setCivicosGradeFilter('7mo')" title="Ver solo los 7 momentos donde Séptimo de Básica es el grado responsable">
+            🌟 Séptimo (7.º EGB)
+          </button>
+          <button class="civico-filter-btn" id="civGradeBtnEscuela" onclick="setCivicosGradeFilter('escuela')">🏫 Escuela (1°-7°)</button>
+          <button class="civico-filter-btn" id="civGradeBtnColegio" onclick="setCivicosGradeFilter('colegio')">🎓 Colegio (8°-3°BGU)</button>
+          <button class="civico-filter-btn" id="civGradeBtnAll" onclick="setCivicosGradeFilter('all')">Todos</button>
+        </div>
+
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle)">
+        
+        <!-- Buscador -->
+        <div style="position:relative;flex:1;min-width:260px">
+          <input type="text" id="civicosSearchInput" placeholder="🔍 Buscar por tema, efeméride, valor del mes o curso responsable..." style="width:100%;padding:8px 12px;padding-left:36px;border-radius:8px;border:1.5px solid var(--border-color);font-size:0.85rem;background:var(--bg-app);color:var(--text-main)" oninput="onCivicosSearchChange(this.value)">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6;font-size:0.9rem">🔎</span>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span id="civicosFilteredCount" style="font-size:0.78rem;font-weight:800;color:var(--text-muted)">Mostrando 44 momentos</span>
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:5px 9px" onclick="toggleAllCivicoTasks(true)" title="Marcar como cumplidos los eventos mostrados">✔ Marcar Visibles</button>
+          <button class="btn btn-outline" style="font-size:0.72rem;padding:5px 9px" onclick="toggleAllCivicoTasks(false)" title="Desmarcar los eventos mostrados">⏳ Desmarcar</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tabla Oficial de Minutos Cívicos -->
+    <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:18px">
+      <div style="overflow-x:auto;max-height:680px">
+        <table class="inst-crono-table" id="minutosCivicosTable">
+          <thead style="background:var(--bg-card-subtle);border-bottom:2px solid var(--border-color);position:sticky;top:0;z-index:5">
+            <tr>
+              <th style="width:52px;text-align:center;padding:12px 6px">N°</th>
+              <th style="width:85px;text-align:center;padding:12px 6px">Trimestre</th>
+              <th style="width:130px;text-align:center;padding:12px 8px">Fecha</th>
+              <th style="text-align:left;padding:12px 12px">Tema / Efeméride &amp; Valor del Mes</th>
+              <th style="width:170px;text-align:center;padding:12px 8px">Bloque Escuela<br><small style="font-weight:600;font-size:0.72rem;opacity:.8">(14:00 - 14:20)</small></th>
+              <th style="width:170px;text-align:center;padding:12px 8px">Bloque Colegio<br><small style="font-weight:600;font-size:0.72rem;opacity:.8">(14:25 - 14:45)</small></th>
+              <th style="width:120px;text-align:center;padding:12px 8px">Cumplimiento</th>
+              <th style="width:130px;text-align:center;padding:12px 8px">📸 4 Fotos</th>
+              <th style="width:120px;text-align:center;padding:12px 8px">Notas</th>
+            </tr>
+          </thead>
+          <tbody id="minutosCivicosTableBody">
+            <!-- Renderizado dinámico vía JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cuadro Informativo: Directrices Institucionales Oficiales & Firmas -->
+    <div style="background:linear-gradient(135deg,rgba(30,58,138,0.04) 0%,rgba(37,99,235,0.02) 100%);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-xs)">
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--border-subtle);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.5rem">📜</span>
+          <div>
+            <h4 style="margin:0;font-size:1.05rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+              Disposiciones &amp; Directrices Oficiales para Docentes
+            </h4>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">
+              Vicerrectorado · Unidad Educativa Fiscal "Calderón 2" · Cumplimiento Obligatorio
+            </div>
+          </div>
+        </div>
+        <span style="font-size:0.72rem;background:#dbeafe;color:#1e40af;padding:4px 10px;border-radius:99px;font-weight:800">
+          Acuerdo Ministerial MINEDEC-2026-00024-A
+        </span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:18px">
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">1.</span>
+          <div><strong>Planificación:</strong> Todos los momentos cívicos deben ejecutarse en función de lo planificado, evitando la improvisación.</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">2.</span>
+          <div><strong>Amplificación:</strong> El <strong>Lic. Guillermo Veintimilla</strong> es el responsable del equipo de audio juntamente con los compañeros del momento cívico.</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">3.</span>
+          <div><strong>Puntualidad:</strong> Estar puntuales en el patio o formación en cada momento cívico según su bloque.</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">4.</span>
+          <div><strong>Tiempos:</strong> La participación debe ajustarse al tiempo: <strong>Escuela (14:00 - 14:20)</strong> y <strong>Colegio (14:25 - 14:45)</strong>; que no sean extensos.</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">5.</span>
+          <div><strong>Evidencias (4 Fotografías):</strong> Los años responsables deben evidenciar la actividad con <strong>4 fotos</strong> para archivo institucional, enviadas el mismo día a vicerrectorado.</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;display:flex;gap:8px;font-size:0.8rem">
+          <span style="color:#d97706;font-weight:900">6.</span>
+          <div><strong>Disciplina:</strong> Cada tutor controlará la disciplina y compostura de su grupo durante todo el programa cívico.</div>
+        </div>
+      </div>
+
+      <!-- Firmas Oficiales -->
+      <div style="border-top:1px solid var(--border-color);padding-top:16px;display:flex;justify-content:space-around;flex-wrap:wrap;gap:20px;text-align:center">
+        <div style="min-width:180px">
+          <div style="font-weight:900;color:var(--text-main);font-size:0.88rem">MSc. Elsa Álvarez</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800;text-transform:uppercase">Rectora</div>
+          <div style="font-size:0.68rem;color:var(--text-muted)">U.E.F. "Calderón 2"</div>
+        </div>
+        <div style="min-width:180px">
+          <div style="font-weight:900;color:var(--text-main);font-size:0.88rem">MSc. Mauricio Guachamín</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800;text-transform:uppercase">Vicerrector</div>
+          <div style="font-size:0.68rem;color:var(--text-muted)">U.E.F. "Calderón 2"</div>
+        </div>
+        <div style="min-width:180px">
+          <div style="font-weight:900;color:var(--text-main);font-size:0.88rem">MSc. Evelyn Silva</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800;text-transform:uppercase">Inspectora General</div>
+          <div style="font-size:0.68rem;color:var(--text-muted)">U.E.F. "Calderón 2"</div>
+        </div>
       </div>
     </div>
 
@@ -6277,6 +6616,93 @@ body.in-focus-mode {
         Autoridades: Rectora, Vicerrector, Junta Académica e Inspección General
       </div>
       <button class="btn btn-primary" onclick="closeCronogramaModal()">Entendido</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL DE DIRECTRICES OFICIALES DE MOMENTOS CÍVICOS ══ -->
+<div id="civicosDirectricesModal" class="mo" style="z-index:10020" onclick="if(event.target===this)closeCivicosDirectricesModal()">
+  <div class="md" style="max-width:680px;width:95%;border-radius:16px;padding:24px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--shadow-xl);background:#ffffff !important">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border-color);padding-bottom:12px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem">📜</div>
+        <div>
+          <h3 style="margin:0;font-size:1.15rem;font-weight:900;color:var(--text-main);border:none;padding:0">
+            Directrices para Momentos Cívicos (2026-2027)
+          </h3>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">
+            U.E.F. "Calderón 2" · Vicerrectorado · Acuerdo Ministerial MINEDEC-2026-00024-A
+          </div>
+        </div>
+      </div>
+      <button onclick="closeCivicosDirectricesModal()" class="btn btn-outline" style="padding:4px 10px;font-size:0.85rem">✕</button>
+    </div>
+
+    <div style="overflow-y:auto;flex:1;padding-right:4px;font-size:0.86rem;line-height:1.65;color:var(--text-main)">
+      <p style="font-weight:800;color:#92400e;margin-bottom:10px">Estimados docentes:</p>
+      <ul style="padding-left:20px;display:flex;flex-direction:column;gap:10px">
+        <li><strong>Ejecución según plan:</strong> Todos los momentos cívicos deben ejecutarse en función de lo planificado.</li>
+        <li><strong>Equipo de Amplificación:</strong> El <strong>Lic. Guillermo Veintimilla</strong> es el responsable del equipo de amplificación juntamente con los compañeros que tienen el momento cívico.</li>
+        <li><strong>Puntualidad:</strong> Estar puntuales en cada momento cívico.</li>
+        <li><strong>Planificación sin improvisar:</strong> Los momentos cívicos deben ser planificados para que no exista la improvisación de los mismos.</li>
+        <li><strong>Duración:</strong> La participación se ajuste al tiempo establecido: <strong>Bloque Escuela (14:00 - 14:20)</strong> y <strong>Bloque Colegio (14:25 - 14:45)</strong>; que no sean momentos cívicos extensos.</li>
+        <li><strong>Evidencias obligatorias:</strong> Los años, áreas y comisiones responsables deben evidenciar la participación con <strong>4 fotografías</strong> para el archivo institucional debiendo enviar el mismo día en que se ejecuta la actividad a vicerrectorado.</li>
+        <li><strong>Disciplina:</strong> Cada tutor controlará la disciplina de su grupo durante el programa.</li>
+        <li><strong>Novedades:</strong> Cualquier novedad con respecto al cronograma hacernos llegar con la debida anticipación.</li>
+        <li><strong>Compromiso:</strong> Esperamos su activa y entusiasta participación en este calendario de los momentos cívicos.</li>
+      </ul>
+
+      <div style="margin-top:24px;border-top:1.5px solid var(--border-color);padding-top:16px;display:flex;justify-content:space-around;text-align:center;gap:14px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:900">MSc. Elsa Álvarez</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800">Rectora</div>
+        </div>
+        <div>
+          <div style="font-weight:900">MSc. Mauricio Guachamín</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800">Vicerrector</div>
+        </div>
+        <div>
+          <div style="font-weight:900">MSc. Evelyn Silva</div>
+          <div style="font-size:0.75rem;color:var(--text-light);font-weight:800">Inspectora General</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;justify-content:flex-end;border-top:1px solid var(--border-color);padding-top:10px">
+      <button onclick="closeCivicosDirectricesModal()" class="btn btn-primary" style="font-weight:800">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL DE NOTAS / ESTUDIANTES RESPONSABLES DEL MOMENTO CÍVICO ══ -->
+<div id="civicoNoteModal" class="mo" style="z-index:10022" onclick="if(event.target===this)closeCivicoNoteModal()">
+  <div class="md" style="max-width:540px;width:95%;border-radius:16px;padding:22px;box-shadow:var(--shadow-xl);background:#ffffff !important">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--border-color);padding-bottom:10px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.4rem">📝</span>
+        <div>
+          <h3 style="margin:0;font-size:1.05rem;font-weight:900;color:var(--text-main);border:none;padding:0" id="civicoNoteModalTitle">
+            Notas del Momento Cívico
+          </h3>
+          <div style="font-size:0.72rem;color:var(--text-muted)" id="civicoNoteModalDate">—</div>
+        </div>
+      </div>
+      <button onclick="closeCivicoNoteModal()" class="btn btn-outline" style="padding:3px 8px;font-size:0.8rem">✕</button>
+    </div>
+
+    <div style="font-size:0.82rem;color:var(--text-main);margin-bottom:12px">
+      <label style="display:block;font-weight:800;margin-bottom:5px;color:var(--text-light)">
+        Estudiantes encargados, tema de conferencia, poesías, carteles u observaciones:
+      </label>
+      <textarea id="civicoNoteTextarea" rows="5" placeholder="Ejemplo: Conferencia a cargo de Juan Pérez, Juramento a la Bandera por María Gómez, coordinar micrófono con Lic. Veintimilla..." style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border-color);font-size:0.84rem;background:var(--bg-app);color:var(--text-main);box-sizing:border-box;font-family:inherit"></textarea>
+    </div>
+
+    <input type="hidden" id="civicoNoteActiveId">
+
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="closeCivicoNoteModal()" class="btn btn-outline">Cancelar</button>
+      <button onclick="saveCivicoNote()" class="btn btn-primary" style="font-weight:800">💾 Guardar Nota</button>
     </div>
   </div>
 </div>
@@ -10435,6 +10861,7 @@ function switchView(v) {
     'export':       'viewExport',
     'config':       'viewConfig',
     'cronograma':   'viewCronograma',
+    'minutosCivicos': 'viewMinutosCivicos',
     'herramientas': 'viewHerramientas'
   };
 
@@ -23064,10 +23491,13 @@ function ensureCronoData() {
   if (!S.instCronoChecklist) S.instCronoChecklist = {};
   if (!S.instCronoNotes) S.instCronoNotes = {};
   if (!S.docenteQuickNotes) S.docenteQuickNotes = [];
+  if (!S.civicosChecklist) S.civicosChecklist = {};
+  if (!S.civicosNotes) S.civicosNotes = {};
+  if (!S.civicosFotos) S.civicosFotos = {};
 }
 
 function switchCronoModuleTab(tabIdx) {
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 7; i++) {
     const view = document.getElementById('cronoModuleTab' + i);
     const btn  = document.getElementById('tabBtnCrono' + i);
     if (view) view.style.display = (i === tabIdx) ? 'block' : 'none';
@@ -23079,6 +23509,9 @@ function switchCronoModuleTab(tabIdx) {
         } else if (i === 6) {
           btn.className = 'btn';
           btn.style.cssText = 'background:#7c3aed;color:#fff;border-color:#7c3aed;font-weight:900;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
+        } else if (i === 7) {
+          btn.className = 'btn';
+          btn.style.cssText = 'background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:6px 14px;font-size:0.82rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.35)';
         } else {
           btn.className = 'btn btn-primary';
           btn.style.cssText = 'font-weight:900;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
@@ -23089,6 +23522,8 @@ function switchCronoModuleTab(tabIdx) {
           btn.style.cssText = 'background:rgba(5,150,105,0.08);color:#065f46;border-color:#a7f3d0;font-weight:800;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
         } else if (i === 6) {
           btn.style.cssText = 'background:rgba(124,58,237,0.08);color:#7c3aed;border-color:#c4b5fd;font-weight:800;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
+        } else if (i === 7) {
+          btn.style.cssText = 'background:rgba(245,158,11,0.08);color:#b45309;border-color:#fde68a;font-weight:800;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
         } else {
           btn.style.cssText = 'font-weight:800;padding:6px 14px;font-size:0.82rem;white-space:nowrap';
         }
@@ -23098,7 +23533,609 @@ function switchCronoModuleTab(tabIdx) {
 
   if (tabIdx === 1) renderInstCronograma();
   else if (tabIdx === 2) renderCronoAgenda();
+  else if (tabIdx === 7) renderMinutosCivicos();
 }
+
+
+// ══════════════════════════════════════════════════════════════
+// MÓDULO OFICIAL: CRONOGRAMA DE MOMENTOS CÍVICOS 2026 - 2027
+// (U.E.F. CALDERÓN 2 · VICERRECTORADO · ACUERDO 00024-A)
+// ══════════════════════════════════════════════════════════════
+
+const MINUTOS_CIVICOS_DATA = [{"id": "mc_1", "trim": 1, "dia": "Lunes", "fecha": "14/09/2026", "iso": "2026-09-14", "tema": "Día Internacional de la Democracia", "valor": "Democracia y Participación", "escuela": "7.º EGB", "colegio": "3.º BGU", "myGrade": true}, {"id": "mc_2", "trim": 1, "dia": "Lunes", "fecha": "21/09/2026", "iso": "2026-09-21", "tema": "Día Internacional de la Paz", "valor": "La Paz", "escuela": "6.º EGB", "colegio": "2.º BGU", "myGrade": false}, {"id": "mc_3", "trim": 1, "dia": "Lunes", "fecha": "28/09/2026", "iso": "2026-09-28", "tema": "Día de la Bandera Nacional (conmemora 26/09)", "valor": "Identidad y Patriotismo", "escuela": "5.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_4", "trim": 1, "dia": "Lunes", "fecha": "05/10/2026", "iso": "2026-10-05", "tema": "Día Mundial de los Docentes", "valor": "El Respeto", "escuela": "4.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_5", "trim": 1, "dia": "Lunes", "fecha": "12/10/2026", "iso": "2026-10-12", "tema": "Día de la Interculturalidad y la Pluriculturalidad", "valor": "Interculturalidad", "escuela": "3.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_6", "trim": 1, "dia": "Lunes", "fecha": "19/10/2026", "iso": "2026-10-19", "tema": "Día Mundial de la Alimentación Saludable", "valor": "La Responsabilidad", "escuela": "2.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_7", "trim": 1, "dia": "Lunes", "fecha": "26/10/2026", "iso": "2026-10-26", "tema": "Día Internacional de las Naciones Unidas", "valor": "Cooperación y Paz", "escuela": "1.º EGB", "colegio": "3.º BGU", "myGrade": false}, {"id": "mc_8", "trim": 1, "dia": "Viernes", "fecha": "30/10/2026", "iso": "2026-10-30", "tema": "Día del Escudo Nacional", "valor": "Civismo", "escuela": "6.º EGB", "colegio": "2.º BGU", "myGrade": false}, {"id": "mc_9", "trim": 1, "dia": "Miércoles", "fecha": "04/11/2026", "iso": "2026-11-04", "tema": "Independencia de Cuenca", "valor": "Historia y Civismo", "escuela": "5.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_10", "trim": 1, "dia": "Lunes", "fecha": "09/11/2026", "iso": "2026-11-09", "tema": "Día Mundial de la Ciencia", "valor": "La Perseverancia", "escuela": "4.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_11", "trim": 1, "dia": "Lunes", "fecha": "16/11/2026", "iso": "2026-11-16", "tema": "Día Internacional para la Tolerancia", "valor": "La Tolerancia", "escuela": "3.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_12", "trim": 1, "dia": "Lunes", "fecha": "23/11/2026", "iso": "2026-11-23", "tema": "Día del Himno Nacional del Ecuador (conmemora 26/11)", "valor": "Identidad Nacional", "escuela": "2.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_13", "trim": 1, "dia": "Lunes", "fecha": "30/11/2026", "iso": "2026-11-30", "tema": "Día Mundial de la Prevención del Acoso Escolar", "valor": "Buen Trato y Respeto", "escuela": "7.º EGB", "colegio": "3.º BGU", "myGrade": true}, {"id": "mc_14", "trim": 2, "dia": "Lunes", "fecha": "07/12/2026", "iso": "2026-12-07", "tema": "Fundación de Quito", "valor": "El Patrimonio Cultural", "escuela": "6.º EGB", "colegio": "2.º BGU", "myGrade": false}, {"id": "mc_15", "trim": 2, "dia": "Viernes", "fecha": "11/12/2026", "iso": "2026-12-11", "tema": "Día Mundial de los Derechos Humanos", "valor": "La Generosidad", "escuela": "3.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_16", "trim": 2, "dia": "Lunes", "fecha": "14/12/2026", "iso": "2026-12-14", "tema": "Valor del Mes: La Gratitud y la Solidaridad", "valor": "La Gratitud y la Solidaridad", "escuela": "5.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_17", "trim": 2, "dia": "Lunes", "fecha": "21/12/2026", "iso": "2026-12-21", "tema": "Unión Familiar y Convivencia Armónica", "valor": "Convivencia Familiar", "escuela": "4.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_18", "trim": 2, "dia": "Lunes", "fecha": "04/01/2027", "iso": "2027-01-04", "tema": "Minuto Cívico de Inicio de Año", "valor": "La Paz", "escuela": "2.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_19", "trim": 2, "dia": "Lunes", "fecha": "11/01/2027", "iso": "2027-01-11", "tema": "Día del Periodista Ecuatoriano", "valor": "La Verdad y la Honestidad", "escuela": "1.º EGB", "colegio": "3.º BGU", "myGrade": false}, {"id": "mc_20", "trim": 2, "dia": "Lunes", "fecha": "18/01/2027", "iso": "2027-01-18", "tema": "Valor del Mes: La Autodisciplina y el Esfuerzo", "valor": "La Autodisciplina y el Esfuerzo", "escuela": "7.º EGB", "colegio": "2.º BGU", "myGrade": true}, {"id": "mc_21", "trim": 2, "dia": "Lunes", "fecha": "25/01/2027", "iso": "2027-01-25", "tema": "Día Mundial de la Educación Ambiental", "valor": "Cuidado del Entorno", "escuela": "6.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_22", "trim": 2, "dia": "Lunes", "fecha": "01/02/2027", "iso": "2027-02-01", "tema": "Valor del Mes: La Sinceridad", "valor": "La Sinceridad", "escuela": "1.º EGB (Preparatoria)", "colegio": "3.º BGU", "myGrade": false}, {"id": "mc_23", "trim": 2, "dia": "Lunes", "fecha": "08/02/2027", "iso": "2027-02-08", "tema": "Valor del Mes: La Amistad y el Buen Trato", "valor": "La Amistad y el Buen Trato", "escuela": "5.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_24", "trim": 2, "dia": "Lunes", "fecha": "15/02/2027", "iso": "2027-02-15", "tema": "Día Mundial contra el Cáncer Infantil", "valor": "La Empatía", "escuela": "4.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_25", "trim": 2, "dia": "Lunes", "fecha": "22/02/2027", "iso": "2027-02-22", "tema": "Día del Civismo y de la Unidad Nacional", "valor": "Civismo y Unidad", "escuela": "3.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_26", "trim": 2, "dia": "Lunes", "fecha": "01/03/2027", "iso": "2027-03-01", "tema": "Valor del Mes: La Solidaridad", "valor": "La Solidaridad", "escuela": "7.º EGB", "colegio": "2.º BGU", "myGrade": true}, {"id": "mc_27", "trim": 2, "dia": "Lunes", "fecha": "08/03/2027", "iso": "2027-03-08", "tema": "Día Internacional de la Mujer", "valor": "Igualdad y Respeto", "escuela": "2.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_28", "trim": 2, "dia": "Lunes", "fecha": "15/03/2027", "iso": "2027-03-15", "tema": "Día Mundial de los Derechos del Consumidor", "valor": "La Prudencia", "escuela": "1.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_29", "trim": 3, "dia": "Lunes", "fecha": "22/03/2027", "iso": "2027-03-22", "tema": "Día Mundial del Agua", "valor": "Sostenibilidad y Vida", "escuela": "6.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_30", "trim": 3, "dia": "Lunes", "fecha": "29/03/2027", "iso": "2027-03-29", "tema": "Valor del Mes: La Toma de Iniciativa", "valor": "La Toma de Iniciativa", "escuela": "6.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_31", "trim": 3, "dia": "Viernes", "fecha": "02/04/2027", "iso": "2027-04-02", "tema": "Reflexión Cívica", "valor": "La Toma de Iniciativa", "escuela": "5.º EGB", "colegio": "10.º EGB", "myGrade": false}, {"id": "mc_32", "trim": 3, "dia": "Lunes", "fecha": "05/04/2027", "iso": "2027-04-05", "tema": "Día Mundial de la Actividad Física y la Salud", "valor": "Salud y Bienestar", "escuela": "4.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_33", "trim": 3, "dia": "Lunes", "fecha": "12/04/2027", "iso": "2027-04-12", "tema": "Día del Maestro Ecuatoriano (conmemora 13/04)", "valor": "Gratitud a los Docentes", "escuela": "3.º EGB", "colegio": "3.º BGU", "myGrade": false}, {"id": "mc_34", "trim": 3, "dia": "Lunes", "fecha": "19/04/2027", "iso": "2027-04-19", "tema": "Día Mundial del Libro y del Derecho de Autor", "valor": "Amor a la Lectura", "escuela": "2.º EGB", "colegio": "2.º BGU", "myGrade": false}, {"id": "mc_35", "trim": 3, "dia": "Lunes", "fecha": "26/04/2027", "iso": "2027-04-26", "tema": "Día Mundial de la Propiedad Intelectual", "valor": "Honestidad Académica", "escuela": "1.º EGB", "colegio": "1.º BGU", "myGrade": false}, {"id": "mc_36", "trim": 3, "dia": "Lunes", "fecha": "03/05/2027", "iso": "2027-05-03", "tema": "Día del Trabajo / Reciclaje", "valor": "La Convivencia", "escuela": "4.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_37", "trim": 3, "dia": "Lunes", "fecha": "10/05/2027", "iso": "2027-05-10", "tema": "Día de la Madre / Día del Árbol", "valor": "Amor Familiar y Naturaleza", "escuela": "7.º EGB", "colegio": "10.º EGB", "myGrade": true}, {"id": "mc_38", "trim": 3, "dia": "Lunes", "fecha": "17/05/2027", "iso": "2027-05-17", "tema": "Día Mundial de Internet / Ciudadanía Digital Responsable", "valor": "Ciudadanía Digital Responsable", "escuela": "6.º EGB", "colegio": "9.º EGB", "myGrade": false}, {"id": "mc_39", "trim": 3, "dia": "Lunes", "fecha": "24/05/2027", "iso": "2027-05-24", "tema": "Batalla de Pichincha", "valor": "Patriotismo y Libertad", "escuela": "5.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_40", "trim": 3, "dia": "Lunes", "fecha": "31/05/2027", "iso": "2027-05-31", "tema": "Día Mundial sin Tabaco / Vida Saludable", "valor": "Vida Saludable", "escuela": "4.º EGB", "colegio": "3.º BGU", "myGrade": false}, {"id": "mc_41", "trim": 3, "dia": "Lunes", "fecha": "07/06/2027", "iso": "2027-06-07", "tema": "Cierre de Año / Éxito Escolar", "valor": "El Éxito", "escuela": "3.º y 2.º EGB", "colegio": "8.º EGB", "myGrade": false}, {"id": "mc_42", "trim": 3, "dia": "Lunes", "fecha": "14/06/2027", "iso": "2027-06-14", "tema": "Día Universal del Niño y la Niña / Día del Estudiante", "valor": "Derechos de la Niñez", "escuela": "1.º EGB", "colegio": "2.º BGU", "myGrade": false}, {"id": "mc_43", "trim": 3, "dia": "Lunes", "fecha": "21/06/2027", "iso": "2027-06-21", "tema": "Fiesta del Inti Raymi / Interculturalidad", "valor": "Interculturalidad", "escuela": "7.º EGB", "colegio": "1.º BGU", "myGrade": true}, {"id": "mc_44", "trim": 3, "dia": "Lunes", "fecha": "28/06/2027", "iso": "2027-06-28", "tema": "Cierre del Año Lectivo / Reconocimiento al Esfuerzo", "valor": "Reconocimiento al Esfuerzo", "escuela": "1.º a 7.º EGB", "colegio": "8.º a 3.º BGU", "myGrade": true}];
+
+let _civicosTrimFilter = 0; // 0: Todos, 1: 1er T, 2: 2do T, 3: 3er T
+let _civicosGradeFilter = '7mo'; // '7mo', 'escuela', 'colegio', 'all'
+let _civicosSearchText = '';
+
+function openMinutosCivicosModule() {
+  switchView('cronograma');
+  switchCronoModuleTab(7);
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('viewMinutosCivicos');
+  if (btn) btn.classList.add('active');
+  const cronoBtn = document.getElementById('viewCronograma');
+  if (cronoBtn) cronoBtn.classList.remove('active');
+  if (typeof closeMobileSidebar === 'function') closeMobileSidebar();
+}
+
+function renderMinutosCivicos() {
+  ensureCronoData();
+  const todayStr = typeof getTodayDateStr === 'function' ? getTodayDateStr() : new Date().toISOString().slice(0, 10);
+  
+  // 1. Estadísticas y Métricas
+  let totalCount = MINUTOS_CIVICOS_DATA.length;
+  let myGradeCount = 0;
+  let myGradeDone = 0;
+  let nextUpcoming = null;
+  let minDiff = 9999;
+
+  MINUTOS_CIVICOS_DATA.forEach(item => {
+    const is7mo = !!item.myGrade;
+    const isDone = !!(S.civicosChecklist && S.civicosChecklist[item.id]);
+    if (is7mo) {
+      myGradeCount++;
+      if (isDone) myGradeDone++;
+    }
+
+    // Calcular días restantes
+    if (item.iso >= todayStr) {
+      const d1 = new Date(todayStr.replace(/-/g, '/'));
+      const d2 = new Date(item.iso.replace(/-/g, '/'));
+      const diffDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+      if (diffDays < minDiff) {
+        minDiff = diffDays;
+        nextUpcoming = { item, diffDays };
+      }
+    }
+  });
+
+  // Actualizar stats
+  const statTotal = document.getElementById('statCivicosTotal');
+  if (statTotal) statTotal.textContent = totalCount + ' Fechas';
+
+  const stat7moProg = document.getElementById('statCivicos7moProgress');
+  if (stat7moProg) stat7moProg.textContent = myGradeDone + ' / ' + myGradeCount + ' cumplidas';
+
+  const statNextTitle = document.getElementById('statCivicosNextTitle');
+  const statNextSub   = document.getElementById('statCivicosNextSub');
+  if (nextUpcoming) {
+    const diffText = nextUpcoming.diffDays === 0 ? '¡HOY!' : (nextUpcoming.diffDays === 1 ? '¡Mañana!' : 'en ' + nextUpcoming.diffDays + ' días');
+    if (statNextTitle) statNextTitle.textContent = nextUpcoming.item.fecha + ' · ' + nextUpcoming.item.tema;
+    if (statNextSub) {
+      const resp = nextUpcoming.item.myGrade ? '⭐ Responsable: ¡Séptimo EGB!' : ('Responsable: ' + nextUpcoming.item.escuela + ' / ' + nextUpcoming.item.colegio);
+      statNextSub.textContent = diffText + ' · ' + resp;
+    }
+  } else {
+    if (statNextTitle) statNextTitle.textContent = 'Año lectivo completado';
+    if (statNextSub) statNextSub.textContent = 'Todos los momentos cívicos concluidos';
+  }
+
+  // 2. Renderizar tabla con filtros aplicados
+  renderMinutosCivicosTable();
+}
+
+function setCivicosTrimFilter(trim) {
+  _civicosTrimFilter = trim;
+  for (let t = 0; t <= 3; t++) {
+    const btn = document.getElementById('civTrimBtn' + t);
+    if (btn) {
+      if (t === trim) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  }
+  renderMinutosCivicosTable();
+}
+
+function setCivicosGradeFilter(filter) {
+  _civicosGradeFilter = filter;
+  const map = {
+    '7mo': 'civGradeBtn7mo',
+    'escuela': 'civGradeBtnEscuela',
+    'colegio': 'civGradeBtnColegio',
+    'all': 'civGradeBtnAll'
+  };
+  Object.keys(map).forEach(k => {
+    const b = document.getElementById(map[k]);
+    if (b) {
+      if (k === filter) {
+        b.className = (k === '7mo') ? 'civico-filter-btn active-7mo' : 'civico-filter-btn active';
+      } else {
+        b.className = 'civico-filter-btn';
+      }
+    }
+  });
+  renderMinutosCivicosTable();
+}
+
+function onCivicosSearchChange(val) {
+  _civicosSearchText = (val || '').trim().toLowerCase();
+  renderMinutosCivicosTable();
+}
+
+function renderMinutosCivicosTable() {
+  ensureCronoData();
+  const todayStr = typeof getTodayDateStr === 'function' ? getTodayDateStr() : new Date().toISOString().slice(0, 10);
+  const tbody = document.getElementById('minutosCivicosTableBody');
+  if (!tbody) return;
+
+  const filtered = MINUTOS_CIVICOS_DATA.filter(item => {
+    // Filtro trimestre
+    if (_civicosTrimFilter > 0 && item.trim !== _civicosTrimFilter) return false;
+
+    // Filtro grado
+    if (_civicosGradeFilter === '7mo') {
+      if (!item.myGrade) return false;
+    } else if (_civicosGradeFilter === 'escuela') {
+      if (!item.escuela) return false;
+    } else if (_civicosGradeFilter === 'colegio') {
+      if (!item.colegio) return false;
+    }
+
+    // Búsqueda texto
+    if (_civicosSearchText) {
+      const str = (item.dia + ' ' + item.fecha + ' ' + item.tema + ' ' + (item.valor || '') + ' ' + item.escuela + ' ' + item.colegio).toLowerCase();
+      if (!str.includes(_civicosSearchText)) return false;
+    }
+
+    return true;
+  });
+
+  const countBadge = document.getElementById('civicosFilteredCount');
+  if (countBadge) {
+    countBadge.textContent = 'Mostrando ' + filtered.length + ' de ' + MINUTOS_CIVICOS_DATA.length + ' momentos';
+  }
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align:center;padding:32px;color:var(--text-muted);font-size:0.9rem">
+          🔍 No se encontraron momentos cívicos con los filtros seleccionados.
+          <div style="margin-top:8px">
+            <button class="btn btn-outline" style="font-size:0.75rem" onclick="setCivicosTrimFilter(0);setCivicosGradeFilter('all');">Restablecer Filtros</button>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(item => {
+    const is7mo = !!item.myGrade;
+    const isDone = !!(S.civicosChecklist && S.civicosChecklist[item.id]);
+    const hasFotos = !!(S.civicosFotos && S.civicosFotos[item.id]);
+    const note = (S.civicosNotes && S.civicosNotes[item.id]) || '';
+
+    const isToday = item.iso === todayStr;
+    const isUpcoming = item.iso > todayStr;
+
+    let dateBadge = '';
+    if (isToday) {
+      dateBadge = '<span style="display:block;background:#059669;color:#fff;font-size:0.68rem;padding:2px 6px;border-radius:4px;font-weight:900;margin-top:3px">⚡ ¡HOY!</span>';
+    } else if (isUpcoming) {
+      const d1 = new Date(todayStr.replace(/-/g, '/'));
+      const d2 = new Date(item.iso.replace(/-/g, '/'));
+      const diff = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+      if (diff <= 7) {
+        dateBadge = '<span style="display:block;background:#2563eb;color:#fff;font-size:0.66rem;padding:2px 5px;border-radius:4px;font-weight:800;margin-top:3px">En ' + diff + ' días</span>';
+      }
+    }
+
+    const rowClass = is7mo ? 'civico-highlight-7mo' : '';
+
+    html += `
+      <tr class="${rowClass}" style="border-bottom:1px solid var(--border-color);transition:background 0.15s ease">
+        
+        <!-- N° -->
+        <td style="text-align:center;font-weight:800;color:var(--text-muted);font-size:0.8rem;padding:10px 4px">
+          ${item.id.replace('mc_', '')}
+        </td>
+
+        <!-- Trimestre -->
+        <td style="text-align:center;padding:10px 6px">
+          <span style="font-size:0.72rem;font-weight:800;background:var(--bg-card-subtle);border:1px solid var(--border-color);padding:3px 8px;border-radius:6px;color:var(--text-main);white-space:nowrap">
+            ${item.trim}.° Trim.
+          </span>
+        </td>
+
+        <!-- Fecha -->
+        <td style="text-align:center;padding:10px 8px">
+          <div style="font-weight:900;color:var(--text-main);font-size:0.88rem;font-family:var(--font-mono)">
+            ${item.fecha}
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-light);font-weight:700">
+            ${item.dia}
+          </div>
+          ${dateBadge}
+        </td>
+
+        <!-- Tema y Valor -->
+        <td style="padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-weight:800;color:var(--text-main);font-size:0.88rem">
+              ${escHTML(item.tema)}
+            </span>
+            ${is7mo ? '<span class="civico-tag-7mo">⭐ Asignado a Séptimo</span>' : ''}
+          </div>
+          ${item.valor ? `
+            <div style="margin-top:4px">
+              <span class="civico-tag-valor">💎 Valor: ${escHTML(item.valor)}</span>
+            </div>
+          ` : ''}
+          ${note ? `
+            <div style="margin-top:5px;font-size:0.74rem;background:var(--bg-card-subtle);border-left:3px solid var(--primary);padding:3px 8px;border-radius:4px;color:var(--text-muted)">
+              📌 ${escHTML(note)}
+            </div>
+          ` : ''}
+        </td>
+
+        <!-- Bloque Escuela (14:00 - 14:20) -->
+        <td style="text-align:center;padding:10px 8px">
+          ${is7mo ? `
+            <span class="civico-tag-7mo" style="font-size:0.82rem;padding:4px 10px">
+              🏫 ${escHTML(item.escuela)}
+            </span>
+          ` : `
+            <span class="civico-tag-escuela">
+              ${escHTML(item.escuela)}
+            </span>
+          `}
+        </td>
+
+        <!-- Bloque Colegio (14:25 - 14:45) -->
+        <td style="text-align:center;padding:10px 8px">
+          <span class="civico-tag-colegio">
+            ${escHTML(item.colegio)}
+          </span>
+        </td>
+
+        <!-- Cumplimiento -->
+        <td style="text-align:center;padding:10px 6px">
+          <button onclick="toggleCivicoCheck('${item.id}')" class="btn" style="padding:4px 10px;font-size:0.75rem;font-weight:900;border-radius:20px;display:inline-flex;align-items:center;gap:4px;${isDone ? 'background:#10b981;color:#fff;border:none;' : 'background:transparent;border:1.5px solid var(--border-color);color:var(--text-muted);'}" title="Marcar como ejecutado">
+            ${isDone ? '✔ Realizado' : '⏳ Pendiente'}
+          </button>
+        </td>
+
+        <!-- 4 Fotos -->
+        <td style="text-align:center;padding:10px 6px">
+          <button onclick="toggleCivicoFoto('${item.id}')" class="btn" style="padding:4px 8px;font-size:0.73rem;font-weight:800;border-radius:6px;display:inline-flex;align-items:center;gap:3px;${hasFotos ? 'background:#8b5cf6;color:#fff;border:none;' : 'background:var(--bg-card-subtle);border:1px solid var(--border-color);color:var(--text-muted);'}" title="Control de 4 fotos enviadas a Vicerrectorado">
+            ${hasFotos ? '📸 4 Fotos ✔' : '📷 Sin fotos'}
+          </button>
+        </td>
+
+        <!-- Acciones / Notas -->
+        <td style="text-align:center;padding:10px 6px">
+          <button onclick="openCivicoNoteModal('${item.id}')" class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;font-weight:700;display:inline-flex;align-items:center;gap:4px" title="Agregar nota o alumnos comisionados">
+            ✏️ ${note ? 'Ver Nota' : 'Nota'}
+          </button>
+        </td>
+
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function toggleCivicoCheck(id) {
+  ensureCronoData();
+  if (!S.civicosChecklist) S.civicosChecklist = {};
+  S.civicosChecklist[id] = !S.civicosChecklist[id];
+  saveData();
+  renderMinutosCivicos();
+  const isDone = S.civicosChecklist[id];
+  toast(isDone ? '✔ Momento Cívico marcado como realizado' : '⏳ Momento Cívico marcado como pendiente', isDone ? '#10b981' : '#f59e0b');
+}
+
+function toggleCivicoFoto(id) {
+  ensureCronoData();
+  if (!S.civicosFotos) S.civicosFotos = {};
+  S.civicosFotos[id] = !S.civicosFotos[id];
+  saveData();
+  renderMinutosCivicos();
+  const hasFotos = S.civicosFotos[id];
+  toast(hasFotos ? '📸 4 Fotografías registradas para Vicerrectorado' : '📷 Fotos desmarcadas', hasFotos ? '#8b5cf6' : '#6b7280');
+}
+
+function toggleAllCivicoTasks(mark) {
+  ensureCronoData();
+  if (!S.civicosChecklist) S.civicosChecklist = {};
+  MINUTOS_CIVICOS_DATA.forEach(item => {
+    if (_civicosTrimFilter > 0 && item.trim !== _civicosTrimFilter) return;
+    if (_civicosGradeFilter === '7mo' && !item.myGrade) return;
+    S.civicosChecklist[item.id] = mark;
+  });
+  saveData();
+  renderMinutosCivicos();
+  toast(mark ? '✔ Eventos marcados como realizados' : '⏳ Eventos marcados como pendientes', mark ? '#10b981' : '#f59e0b');
+}
+
+function openCivicoNoteModal(id) {
+  ensureCronoData();
+  const item = MINUTOS_CIVICOS_DATA.find(x => x.id === id);
+  if (!item) return;
+
+  const modal = document.getElementById('civicoNoteModal');
+  const titleEl = document.getElementById('civicoNoteModalTitle');
+  const dateEl = document.getElementById('civicoNoteModalDate');
+  const txtEl = document.getElementById('civicoNoteTextarea');
+  const idEl = document.getElementById('civicoNoteActiveId');
+
+  if (titleEl) titleEl.textContent = item.tema + ' (' + item.escuela + ')';
+  if (dateEl) dateEl.textContent = item.dia + ' ' + item.fecha + ' · Trimestre ' + item.trim;
+  if (idEl) idEl.value = id;
+  if (txtEl) txtEl.value = (S.civicosNotes && S.civicosNotes[id]) || '';
+
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeCivicoNoteModal() {
+  const modal = document.getElementById('civicoNoteModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function saveCivicoNote() {
+  ensureCronoData();
+  const idEl = document.getElementById('civicoNoteActiveId');
+  const txtEl = document.getElementById('civicoNoteTextarea');
+  if (!idEl) return;
+  const id = idEl.value;
+  const note = (txtEl ? txtEl.value : '').trim();
+
+  if (!S.civicosNotes) S.civicosNotes = {};
+  if (note) S.civicosNotes[id] = note;
+  else delete S.civicosNotes[id];
+
+  saveData();
+  closeCivicoNoteModal();
+  renderMinutosCivicos();
+  toast('💾 Nota de Momento Cívico guardada correctamente', '#2563eb');
+}
+
+function showCivicosDirectricesModal() {
+  const m = document.getElementById('civicosDirectricesModal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeCivicosDirectricesModal() {
+  const m = document.getElementById('civicosDirectricesModal');
+  if (m) m.style.display = 'none';
+}
+
+function printMinutosCivicos() {
+  ensureCronoData();
+  const w = window.open('', '_blank');
+  let rows = '';
+
+  MINUTOS_CIVICOS_DATA.forEach((item, idx) => {
+    const isDone = !!(S.civicosChecklist && S.civicosChecklist[item.id]);
+    const hasFotos = !!(S.civicosFotos && S.civicosFotos[item.id]);
+    const note = (S.civicosNotes && S.civicosNotes[item.id]) || '';
+    const is7mo = !!item.myGrade;
+
+    rows += `
+      <tr style="${is7mo ? 'background-color:#fffbeb;font-weight:bold;' : ''}">
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1">${idx + 1}</td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1">${item.trim}° Trim.</td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1"><strong>${item.fecha}</strong><br><small>${item.dia}</small></td>
+        <td style="padding:6px 10px;border:1px solid #cbd5e1">
+          <div><strong>${escHTML(item.tema)}</strong></div>
+          ${item.valor ? `<div style="font-size:0.75rem;color:#047857">Valor: ${escHTML(item.valor)}</div>` : ''}
+          ${note ? `<div style="font-size:0.75rem;color:#475569;font-style:italic">Nota: ${escHTML(note)}</div>` : ''}
+        </td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1;${is7mo ? 'color:#b45309;font-weight:bold;' : ''}">
+          ${escHTML(item.escuela)}
+        </td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1">
+          ${escHTML(item.colegio)}
+        </td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1;font-weight:bold;color:${isDone ? '#15803d' : '#b45309'}">
+          ${isDone ? '✔ CUMPLIDO' : '⏳ PENDIENTE'}
+        </td>
+        <td style="text-align:center;padding:6px;border:1px solid #cbd5e1">
+          ${hasFotos ? '📸 4 Fotos ✔' : '—'}
+        </td>
+      </tr>
+    `;
+  });
+
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Cronograma Institucional de Momentos Cívicos (2026 - 2027) · UEF Calderón 2</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 20px; color: #0f172a; font-size: 11.5px; }
+        .header { text-align: center; margin-bottom: 16px; border-bottom: 2px solid #0f172a; padding-bottom: 12px; }
+        .header h1 { font-size: 16px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header h2 { font-size: 13px; margin: 0 0 4px 0; color: #1e3a8a; }
+        .header h3 { font-size: 11px; margin: 0; font-weight: normal; color: #475569; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 7px 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .directrices { margin-top: 20px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; background: #f8fafc; font-size: 10.5px; }
+        .directrices h4 { margin: 0 0 8px 0; color: #0f172a; text-transform: uppercase; font-size: 11px; }
+        .directrices ol { margin: 0; padding-left: 20px; line-height: 1.5; }
+        .firmas { margin-top: 35px; display: flex; justify-content: space-around; text-align: center; }
+        .firma-box { width: 220px; border-top: 1px solid #0f172a; padding-top: 5px; font-size: 10.5px; }
+        @media print {
+          body { margin: 10mm; font-size: 10.5px; }
+          .no-print { display: none !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="no-print" style="text-align:right;margin-bottom:12px">
+        <button onclick="window.print()" style="padding:8px 16px;background:#1e3a8a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:bold">🖨 Imprimir</button>
+      </div>
+      <div class="header">
+        <h1>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h1>
+        <h2>VICERRECTORADO · CRONOGRAMA INSTITUCIONAL DE MOMENTOS CÍVICOS (2026 - 2027)</h2>
+        <h3>Ajustado al Acuerdo Ministerial Nro. MINEDEC-MINEDEC-2026-00024-A · Estructura por Bloques Horarios</h3>
+        <div style="margin-top:6px;font-size:11px;font-weight:bold">
+          <span>Escuela (1.° a 7.° EGB): 14:00 - 14:20</span> &nbsp;|&nbsp;
+          <span>Colegio (8.° a 3.° BGU): 14:25 - 14:45</span> &nbsp;|&nbsp;
+          <span>Docente Tutor: ${escHTML(S.docente || 'Mg. Luis Lema')} · Curso: ${escHTML(S.grado || 'Séptimo C')}</span>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px">N°</th>
+            <th style="width:65px">Trim.</th>
+            <th style="width:80px">Fecha</th>
+            <th>Tema / Efeméride &amp; Valor del Mes</th>
+            <th style="width:130px">Bloque Escuela (14:00-14:20)</th>
+            <th style="width:130px">Bloque Colegio (14:25-14:45)</th>
+            <th style="width:85px">Estado</th>
+            <th style="width:80px">Evidencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+      <div class="directrices">
+        <h4>Directrices Institucionales Oficiales</h4>
+        <ol>
+          <li>Todos los momentos cívicos deben ejecutarse en función de lo planificado.</li>
+          <li>El Lic. Guillermo Veintimilla es el responsable del equipo de amplificación juntamente con los compañeros del momento cívico.</li>
+          <li>Estar puntuales en cada momento cívico.</li>
+          <li>Los momentos cívicos deben ser planificados para que no exista improvisación.</li>
+          <li>La participación se ajusta al tiempo establecido: Escuela 14:00-14:20 / Colegio 14:25-14:45.</li>
+          <li>Evidenciar participación con 4 fotografías para el archivo institucional enviadas el mismo día a vicerrectorado.</li>
+          <li>Cada tutor controlará la disciplina de su grupo durante el programa.</li>
+        </ol>
+      </div>
+
+      <div class="firmas">
+        <div class="firma-box">
+          <strong>MSc. Elsa Álvarez</strong><br>
+          Rectora
+        </div>
+        <div class="firma-box">
+          <strong>MSc. Mauricio Guachamín</strong><br>
+          Vicerrector
+        </div>
+        <div class="firma-box">
+          <strong>MSc. Evelyn Silva</strong><br>
+          Inspectora General
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+}
+
+function exportMinutosCivicosXLSX() {
+  if (typeof XLSX === 'undefined') {
+    toast('⚠️ Librería SheetJS (XLSX) no disponible', '#dc2626');
+    return;
+  }
+  ensureCronoData();
+
+  const data = [
+    ['UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"'],
+    ['VICERRECTORADO · CRONOGRAMA INSTITUCIONAL DE MOMENTOS CÍVICOS (2026 - 2027)'],
+    ['Acuerdo Ministerial Nro. MINEDEC-MINEDEC-2026-00024-A'],
+    ['Docente Tutor:', S.docente || 'Mg. Luis Lema', 'Grado:', S.grado || 'Séptimo C', 'Fecha de Reporte:', new Date().toLocaleDateString('es-EC')],
+    [],
+    ['N°', 'Trimestre', 'Día', 'Fecha', 'Tema / Efeméride', 'Valor del Mes', 'Bloque Escuela (14:00-14:20)', 'Bloque Colegio (14:25-14:45)', 'Séptimo EGB Responsable', 'Estado Cumplimiento', '4 Fotos Enviadas', 'Notas Docente']
+  ];
+
+  MINUTOS_CIVICOS_DATA.forEach((item, idx) => {
+    const isDone = !!(S.civicosChecklist && S.civicosChecklist[item.id]);
+    const hasFotos = !!(S.civicosFotos && S.civicosFotos[item.id]);
+    const note = (S.civicosNotes && S.civicosNotes[item.id]) || '';
+
+    data.push([
+      idx + 1,
+      item.trim + '° Trimestre',
+      item.dia,
+      item.fecha,
+      item.tema,
+      item.valor || '',
+      item.escuela,
+      item.colegio,
+      item.myGrade ? 'SÍ' : 'NO',
+      isDone ? 'CUMPLIDO' : 'PENDIENTE',
+      hasFotos ? 'SÍ (4 FOTOS)' : 'PENDIENTE',
+      note
+    ]);
+  });
+
+  // Directrices
+  data.push([]);
+  data.push(['DIRECTRICES DEL VICERRECTORADO:']);
+  data.push(['1. Todos los momentos cívicos deben ejecutarse en función de lo planificado.']);
+  data.push(['2. Responsable de amplificación: Lic. Guillermo Veintimilla.']);
+  data.push(['3. Puntualidad y cumplimiento estricto del tiempo (Escuela 14:00-14:20 / Colegio 14:25-14:45).']);
+  data.push(['4. Evidencias obligatorias: 4 fotografías enviadas a vicerrectorado el mismo día.']);
+  data.push(['5. Autoridades: MSc. Elsa Álvarez (Rectora), MSc. Mauricio Guachamín (Vicerrector), MSc. Evelyn Silva (Inspectora).']);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+
+  ws['!cols'] = [
+    { wch: 5 },  // N°
+    { wch: 14 }, // Trim
+    { wch: 10 }, // Día
+    { wch: 12 }, // Fecha
+    { wch: 38 }, // Tema
+    { wch: 25 }, // Valor
+    { wch: 26 }, // Escuela
+    { wch: 26 }, // Colegio
+    { wch: 22 }, // 7mo
+    { wch: 18 }, // Estado
+    { wch: 16 }, // Fotos
+    { wch: 35 }  // Notas
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'MOMENTOS CÍVICOS 26-27');
+  XLSX.writeFile(wb, 'Cronograma_Momentos_Civicos_Calderon2_2026-2027.xlsx');
+  toast('📊 Archivo Excel de Momentos Cívicos generado exitosamente', '#16a34a');
+}
+
+function copyCivicosWhatsApp() {
+  const todayStr = typeof getTodayDateStr === 'function' ? getTodayDateStr() : new Date().toISOString().slice(0, 10);
+  const upcoming = MINUTOS_CIVICOS_DATA.filter(x => x.iso >= todayStr).slice(0, 5);
+
+  const lines = [
+    '🇪🇨 *U.E.F. CALDERÓN 2 — MOMENTOS CÍVICOS 2026-2027*',
+    '🏛️ *Vicerrectorado · Bloques Horarios:*',
+    '• Escuela (1.° a 7.° EGB): 14:00 - 14:20',
+    '• Colegio (8.° a 3.° BGU): 14:25 - 14:45',
+    '',
+    '📅 *PRÓXIMAS FECHAS PROGRAMADAS:*'
+  ];
+
+  upcoming.forEach(item => {
+    const mark7mo = item.myGrade ? ' ⭐ *¡SÉPTIMO EGB RESPONSABLE!*' : '';
+    lines.push('• *' + item.fecha + ' (' + item.dia + '):* ' + item.tema + mark7mo);
+    if (item.valor) lines.push('   _Valor: ' + item.valor + '_');
+    lines.push('   Escuela: ' + item.escuela + ' | Colegio: ' + item.colegio);
+  });
+
+  lines.push('');
+  lines.push('📌 *Recordatorio:* Responsable de amplificación: Lic. Guillermo Veintimilla. Evidenciar participación con 4 fotografías el mismo día a vicerrectorado.');
+
+  const msg = lines.join('\n');
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).then(() => {
+      toast('📲 Mensaje para WhatsApp copiado al portapapeles', '#16a34a');
+    }).catch(() => {
+      prompt('Copie el siguiente texto para WhatsApp:', msg);
+    });
+  } else {
+    prompt('Copie el siguiente texto para WhatsApp:', msg);
+  }
+}
+
 
 // Parser robusto de fechas del Cronograma Institucional
 function parseInstCronoDateRange(dateStr, monthHint, defaultYear = 2026) {
