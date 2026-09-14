@@ -15,7 +15,8 @@
     "metodologia": "Dinámicas grupales vivenciales, círculo de diálogo y acuerdos de aula.",
     "recurso": "Guía Docente pág. 7-8, Fichas de Habilidades para la Vida.",
     "evaluacion": "Participación activa, respeto a normas de convivencia y expresión socioemocional.",
-    "tipo": "diagnostico"
+    "tipo": "diagnostico",
+    "bloquePlanif": "Diagnóstico y Nivelación"
   },
   {
     "sem": 2,
@@ -33,7 +34,8 @@
     "metodologia": "Prueba diagnóstica individual, tabulación estadística y mapa de calor de alertas.",
     "recurso": "Texto Lengua 7 pág. 8-9, Matriz de tabulación diagnóstica SIEE.",
     "evaluacion": "Rúbrica diagnóstica ministerial (Conecta y Nivela).",
-    "tipo": "diagnostico"
+    "tipo": "diagnostico",
+    "bloquePlanif": "Diagnóstico y Nivelación"
   },
   {
     "sem": 3,
@@ -51,7 +53,8 @@
     "metodologia": "Talleres cooperativos en parejas, fichas de refuerzo y retroalimentación formativa.",
     "recurso": "Guía Docente pág. 10-11 (Estrategias DFA y adaptaciones Grado 1 y 2).",
     "evaluacion": "Monitoreo formativo de superación de alertas tempranas.",
-    "tipo": "nivelacion"
+    "tipo": "nivelacion",
+    "bloquePlanif": "Diagnóstico y Nivelación"
   },
   {
     "sem": 4,
@@ -69,7 +72,8 @@
     "metodologia": "Ciclo ERCA. Articulación Proyecto Nutri-Vida: análisis del texto instructivo modelo, uso de la coma en series de acciones y 1.er borrador de la receta andina/costeña/amazónica.",
     "recurso": "Texto págs. 12-17, Guía docente pág. 12.",
     "evaluacion": "I.LL.3.1.1. Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad. (I.3., S.2.)",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Fase CREA: Proyecto Nutri-Vida"
   },
   {
     "sem": 5,
@@ -87,7 +91,8 @@
     "metodologia": "Ciclo ERCA. Articulación Proyecto Nutri-Vida: revisión con lista de cotejo, pase a limpio del Recetario Ilustrado Intercultural y degustación saludable.",
     "recurso": "Texto págs. 18-25, Guía docente pág. 13.",
     "evaluacion": "I.LL.3.2.1. Escucha discursos orales, parafrasea su contenido y participa respetuosamente. (J.3., I.4.)",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Fase CREA: Proyecto Nutri-Vida"
   },
   {
     "sem": 6,
@@ -105,7 +110,8 @@
     "metodologia": "Pedagogía Crítica y fases lectoras (antes, durante y después). Ficha de préstamo de biblioteca escolar. (Feriado 09 Oct).",
     "recurso": "Texto págs. 26-37, Biblioteca escolar / recursos web.",
     "evaluacion": "I.LL.3.3.2. Realiza inferencias fundamentales y valora el contenido de textos científicos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
   },
   {
     "sem": 7,
@@ -123,7 +129,8 @@
     "metodologia": "Aula Invertida: análisis de modelos de notas científicas, mapa de planificación textual y cuadros sinópticos del verbo.",
     "recurso": "Texto págs. 38-47, Guía docente pág. 14.",
     "evaluacion": "I.LL.3.6.1. Produce textos informativos usando el proceso de escritura y elementos gramaticales apropiados.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
   },
   {
     "sem": 8,
@@ -141,7 +148,8 @@
     "metodologia": "Ciclo ERCA: laboratorio de conjugación verbal, corrección guiada de errores y ejercitación del punto y coma.",
     "recurso": "Texto págs. 48-53, Fichas de aplicación ortográfica.",
     "evaluacion": "I.LL.3.6.3. Aplica elementos gramaticales y ortográficos en producciones escritas con coherencia y cohesión.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
   },
   {
     "sem": 9,
@@ -159,7 +167,8 @@
     "metodologia": "ABP / Gamificación: taller de creación de viñetas de historietas mitológicas y aplicación de prueba sumativa de unidad.",
     "recurso": "Texto págs. 54-71, Rúbrica de autoevaluación pág. 71.",
     "evaluacion": "I.LL.3.7.1. Reconoce en textos literarios los elementos característicos y recrea historias mediante formatos visuales.",
-    "tipo": "evaluacion_unidad"
+    "tipo": "evaluacion_unidad",
+    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
   },
   {
     "sem": 10,
@@ -177,7 +186,8 @@
     "metodologia": "ABP: confección del Diccionario de Ecuatorianismos y sociolectos regionales. (Feriados 02-03 Nov).",
     "recurso": "Texto págs. 74-79, Guía docente pág. 15.",
     "evaluacion": "I.LL.3.1.2. Indaga sobre las influencias lingüísticas y dialectos del castellano como expresión de identidad.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
   },
   {
     "sem": 11,
@@ -195,7 +205,8 @@
     "metodologia": "Ciclo ERCA y Cine-foro: proyección de fragmento audiovisual histórico, ronda de debate guiado y consensos.",
     "recurso": "Texto págs. 80-87, Guía docente pág. 16.",
     "evaluacion": "I.LL.3.2.2. Propone intervenciones orales organizadas, adapta el vocabulario y busca acuerdos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
   },
   {
     "sem": 12,
@@ -213,7 +224,8 @@
     "metodologia": "Pedagogía Crítica: tabla comparativa de fuentes históricas, lectura comentada y análisis de versiones del pasado.",
     "recurso": "Texto págs. 88-99, Biblioteca digital escolar.",
     "evaluacion": "I.LL.3.4.1. Lee con fluidez en contextos escolares y comprende contenidos implícitos de crónicas y relatos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
   },
   {
     "sem": 13,
@@ -231,7 +243,8 @@
     "metodologia": "Aplicación de instrumentos de evaluación sumativa trimestral estructurada y retroalimentación individual.",
     "recurso": "Cuestionarios trimestrales aprobados por Vicerrectorado.",
     "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo institucional.",
-    "tipo": "evaluacion_trimestre"
+    "tipo": "evaluacion_trimestre",
+    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
   },
   {
     "sem": 14,
@@ -249,7 +262,8 @@
     "metodologia": "Pedagogía Crítica: descomposición de relatos históricos en párrafos temáticos y redacción guiada.",
     "recurso": "Texto págs. 100-109, Guía docente pág. 17.",
     "evaluacion": "I.LL.3.6.3. Escribe relatos organizados en párrafos con unidad de sentido y conectores cronológicos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
   },
   {
     "sem": 15,
@@ -267,7 +281,8 @@
     "metodologia": "Ciclo ERCA: dinámica de sustitución de adverbios en relatos históricos y fichas de ejercicios sintácticos.",
     "recurso": "Texto págs. 110-114, Guía docente pág. 17.",
     "evaluacion": "I.LL.3.6.3. Integra adverbios y locuciones con precisión para enriquecer la descripción y narración.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
   },
   {
     "sem": 16,
@@ -285,7 +300,8 @@
     "metodologia": "Ciclo ERCA: taller de edición entre pares, cacería de errores ortográficos y publicación en mural del aula.",
     "recurso": "Texto págs. 115-116, Rúbrica de redacción histórica.",
     "evaluacion": "I.LL.3.6.1. Aplica el proceso de escritura y normas ortográficas de la j en textos narrativos históricos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 17,
@@ -303,7 +319,8 @@
     "metodologia": "Taller lúdico poético: declamación navideña/cultural, identificación de figuras literarias. (Vacaciones 25 Dic al 01 Ene).",
     "recurso": "Texto págs. 116-129, Antología de poetas ecuatorianos.",
     "evaluacion": "I.LL.3.7.1. Reconoce en poemas los elementos métricos, recursos estilísticos y figuras retóricas.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 18,
@@ -321,7 +338,8 @@
     "metodologia": "Pedagogía Crítica y Taller Creativo: ilustración de microgramas en cartulina y aplicación de prueba sumativa de Unidad 2.",
     "recurso": "Texto págs. 130-133, Guía docente pág. 18.",
     "evaluacion": "I.LL.3.7.1. Recrea textos poéticos breves basándose en vivencias y aprecia el valor estético de la lírica.",
-    "tipo": "evaluacion_unidad"
+    "tipo": "evaluacion_unidad",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 19,
@@ -339,7 +357,8 @@
     "metodologia": "Gamificación: juego de memoria y relación de modismos ecuatorianos (chapa, bacán, palabrear, cachas) con su contexto social.",
     "recurso": "Texto págs. 136-141, Guía docente pág. 19.",
     "evaluacion": "I.LL.3.1.2. Valora los modismos y refranes como parte de la identidad cultural ecuatoriana.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 20,
@@ -357,7 +376,8 @@
     "metodologia": "Aula Invertida: preparación de una estrofa elegida, ensayo frente al espejo/parejas y puesta en escena en mini recital de aula.",
     "recurso": "Texto págs. 142-148, Guía docente pág. 20.",
     "evaluacion": "I.LL.3.2.1. Declamación con fluidez, adecuada entonación y lenguaje no verbal pertinente.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 21,
@@ -375,7 +395,8 @@
     "metodologia": "Pedagogía Crítica: dinámica de roles para desterrar estereotipos y lectura comentada de biografías de líderes de la paz.",
     "recurso": "Texto págs. 149-157, Guía docente pág. 21.",
     "evaluacion": "I.LL.3.2.2. Reflexiona sobre estereotipos en discursos y lee con fluidez textos biográficos informativos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 22,
@@ -393,7 +414,8 @@
     "metodologia": "Ciclo ERCA: navegación asistida en el aula de computación, aplicación de lista de cotejo de confiabilidad web.",
     "recurso": "Texto págs. 158-161, Ficha de verificación web.",
     "evaluacion": "I.LL.3.3.2. Reconoce el punto de vista del autor e identifica fuentes web válidas para el aprendizaje.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 23,
@@ -411,7 +433,8 @@
     "metodologia": "ABP: Proyecto de vida 'El baúl de mis recuerdos', elaboración de la línea de tiempo biográfica personal. (Feriado Carnaval 08-09 Feb).",
     "recurso": "Texto págs. 162-170, Fotografías y recuerdos familiares.",
     "evaluacion": "I.LL.3.6.1. Planifica y redacta textos autobiográficos con secuencia lógica y relevancia vivencial.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 24,
@@ -429,7 +452,8 @@
     "metodologia": "Aula Invertida: fichas de conexión de oraciones, corrección en parejas del borrador autobiográfico.",
     "recurso": "Texto págs. 171-176, Guía docente pág. 22.",
     "evaluacion": "I.LL.3.6.3. Emplea conectores y preposiciones con propiedad para lograr cohesión en sus escritos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 25,
@@ -447,7 +471,8 @@
     "metodologia": "Gamificación y Ciclo ERCA: 'El tribunal de la ortografía', dictados reflexivos y redacción final de la autobiografía.",
     "recurso": "Texto págs. 177-178, Ficha de homófonos.",
     "evaluacion": "I.LL.3.6.3. Aplica correctamente la ortografía del verbo haber y palabras homófonas en producciones escritas.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 26,
@@ -465,7 +490,8 @@
     "metodologia": "Pedagogía Crítica: círculos de lectura compartida de fragmentos seleccionados de novelas juveniles.",
     "recurso": "Texto págs. 178-191, Guía docente pág. 23.",
     "evaluacion": "I.LL.3.7.1. Identifica el conflicto central, evolución de personajes y atmósfera en novelas cortas.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 27,
@@ -483,7 +509,8 @@
     "metodologia": "Aplicación de pruebas trimestrales estructuradas y rúbricas de evaluación del proyecto.",
     "recurso": "Exámenes trimestrales aprobados por Vicerrectorado.",
     "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo del 2do Trimestre.",
-    "tipo": "evaluacion_trimestre"
+    "tipo": "evaluacion_trimestre",
+    "bloquePlanif": "Planificación N° 2 (2do Trimestre)"
   },
   {
     "sem": 28,
@@ -501,7 +528,8 @@
     "metodologia": "Ciclo ERCA: galería de historias en el aula y resolución de la prueba sumativa de Unidad 3.",
     "recurso": "Texto págs. 192-195, Rúbrica sumativa pág. 195.",
     "evaluacion": "I.LL.3.7.1. Crea capítulos de historias ficcionales aplicando recursos del lenguaje narrativo.",
-    "tipo": "evaluacion_unidad"
+    "tipo": "evaluacion_unidad",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 29,
@@ -519,7 +547,8 @@
     "metodologia": "Gamificación: dinámicas de simulación de barreras de comunicación y mensajes cifrados. (Feriado 26 Mar: Viernes Santo).",
     "recurso": "Texto págs. 198-203, Guía docente pág. 24.",
     "evaluacion": "I.LL.3.1.1. Identifica los elementos del circuito de la comunicación y promueve el diálogo asertivo.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 30,
@@ -537,7 +566,8 @@
     "metodologia": "Ciclo ERCA: mesa redonda escolar sobre el cuidado del agua y el entorno natural.",
     "recurso": "Texto págs. 204-210, Guía docente pág. 26.",
     "evaluacion": "I.LL.3.2.2. Participa en situaciones comunicativas orales, argumenta sus posturas y respeta acuerdos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 31,
@@ -555,7 +585,8 @@
     "metodologia": "ABP / Taller vivencial: Mini Festival de Oratoria 'Voces Jóvenes por el Mundo'.",
     "recurso": "Texto pág. 211, Rúbrica de expresión oral de la Guía pág. 26.",
     "evaluacion": "I.LL.3.2.1. Pronuncia discursos breves con soltura, convicción y lenguaje corporal adecuado.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 32,
@@ -573,7 +604,8 @@
     "metodologia": "Pedagogía Crítica: lectura reflexiva de discursos de líderes mundiales (Gandhi, Mandela, Malala) y debate en clase.",
     "recurso": "Texto págs. 212-222, Recursos audiovisuales.",
     "evaluacion": "I.LL.3.4.1. Decodifica y comprende textos de oratoria reconociendo su intención persuasiva.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 33,
@@ -591,7 +623,8 @@
     "metodologia": "ABP Institucional: Maratón de lectura, elaboración colectiva de diagramas de Venn en papelógrafos.",
     "recurso": "Texto pág. 223, Agenda de la Fiesta de la Lectura Calderón 2.",
     "evaluacion": "I.LL.3.3.4. Sintetiza y contrasta conceptos centrales mediante organizadores gráficos estructurados.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 34,
@@ -609,7 +642,8 @@
     "metodologia": "Aula Invertida: análisis de discursos modelo, lluvia de argumentos y redacción del primer borrador. (Feriado 30 Abr).",
     "recurso": "Texto págs. 224-230, Guía docente pág. 27.",
     "evaluacion": "I.LL.3.6.1. Redacta discursos estructurados utilizando conectores y argumentos fundamentados.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 35,
@@ -627,7 +661,8 @@
     "metodologia": "Ciclo ERCA: taller de enriquecimiento descriptivo del discurso incorporando adjetivos connotativos de impacto.",
     "recurso": "Texto págs. 231-235, Guía docente pág. 27.",
     "evaluacion": "I.LL.3.6.3. Aplica adjetivos connotativos con adecuada concordancia para conferir viveza al discurso.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 36,
@@ -645,7 +680,8 @@
     "metodologia": "Ciclo ERCA: cuadros comparativos de adjetivos connotativos vs. no connotativos y ejercicios de precisión.",
     "recurso": "Texto págs. 236-237, Guía docente pág. 28.",
     "evaluacion": "I.LL.3.6.3. Discrimina y emplea adjetivos demostrativos, posesivos y numerales con exactitud gramatical.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 37,
@@ -663,7 +699,8 @@
     "metodologia": "Feria de Proyectos Interdisciplinarios (20-21 mayo): lectura pública de discursos y mural de homónimos. (Feriado 24 May).",
     "recurso": "Texto págs. 238-239, Stands de proyectos escolares.",
     "evaluacion": "I.LL.3.6.3. Corrige ambigüedades y errores en palabras homónimas en textos de autoría propia.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 38,
@@ -681,7 +718,8 @@
     "metodologia": "Ciclo ERCA: lectura dramatizada en atril con cambios de voz y caracterización de personajes.",
     "recurso": "Texto págs. 240-245, Guía docente pág. 29.",
     "evaluacion": "I.LL.3.7.1. Identifica las acotaciones, parlamentos y estructura de escenas en guiones dramáticos.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 39,
@@ -699,7 +737,8 @@
     "metodologia": "ABP: Pequeña compañía de teatro escolar, preparación de vestuario sencillo y ensayo general de obras.",
     "recurso": "Texto págs. 246-248, Escenario de aula.",
     "evaluacion": "I.LL.3.7.1. Participa activamente en la escritura y puesta en escena de piezas de microteatro.",
-    "tipo": "clase"
+    "tipo": "clase",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   },
   {
     "sem": 40,
@@ -717,6 +756,7 @@
     "metodologia": "Evaluación sumativa estructurada, metacognición grupal y entrega del portafolio final de Lengua y Literatura.",
     "recurso": "Texto págs. 249-251, Rúbrica final de autoevaluación pág. 251.",
     "evaluacion": "I.LL.3.6.3. y I.LL.3.7.1. Logro pleno de los objetivos del área de Lengua y Literatura para Básica Media.",
-    "tipo": "evaluacion_unidad"
+    "tipo": "evaluacion_unidad",
+    "bloquePlanif": "Planificación N° 3 (3er Trimestre)"
   }
 ]
