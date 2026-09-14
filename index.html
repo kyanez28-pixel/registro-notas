@@ -3991,45 +3991,635 @@ body.in-focus-mode {
 <!-- ══ VISTA: PROYECTO INTERDISCIPLINARIO ══ -->
 <div id="piPanel" style="display:none" class="content">
 
-  <!-- Encabezado del Módulo PI -->
-  <div style="background:linear-gradient(135deg,#d97706,#b45309);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:14px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <div>
-      <div style="font-size:1.05rem;font-weight:900;letter-spacing:0.3px">📚 Evaluación del Proyecto Interdisciplinario</div>
-      <div style="font-size:0.75rem;opacity:.85;margin-top:3px">Componente Sumativo (30%) · Rúbrica Ministerial MINEDEC · Acuerdo MINEDUC-2024-00031-A</div>
+  <!-- Encabezado Principal del Módulo PI -->
+  <div style="background:linear-gradient(135deg,#b45309 0%,#d97706 40%,#f59e0b 80%,#fbbf24 100%);border-radius:var(--radius-md);padding:20px 24px;margin-bottom:16px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:var(--shadow-md)">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.35)">
+        🥗
+      </div>
+      <div>
+        <div style="font-size:1.3rem;font-weight:900;letter-spacing:0.2px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span>Proyecto Interdisciplinario: Nutri-Vida</span>
+          <span style="font-size:0.75rem;background:#78350f;color:#fef3c7;padding:2px 10px;border-radius:99px;font-weight:900;border:1px solid #fde68a">FASE CREA (30%)</span>
+        </div>
+        <div style="font-size:0.84rem;opacity:.95;margin-top:4px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span>🏛️ U.E.F. "Calderón 2"</span>
+          <span>•</span>
+          <span>7.° EGB Media</span>
+          <span>•</span>
+          <span>🗓️ Semanas 4 y 5 (21 Sep - 02 Oct 2026)</span>
+          <span>•</span>
+          <span>Acuerdo MINEDUC-2024-00031-A</span>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" style="background:rgba(255,255,255,0.25);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="syncPiToSubjects()" data-tip="Pasar automáticamente las notas del PI a la columna PI (30% Sumativo) de cada materia">⚡ Sincronizar a Asignaturas (30%)</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openCopyColumnModal()">📋 Copiar Columna</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="openPiConfig()">⚙ Configurar Proyecto</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.4)" onclick="exportPiXLSX()">📊 Excel PI</button>
+
+    <!-- Botones de Acción Global -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <button class="btn" style="background:#fff;color:#92400e;border-color:#fff;font-weight:900;font-size:0.82rem;padding:7px 15px;box-shadow:0 2px 8px rgba(0,0,0,0.15);border-radius:8px" onclick="printPiGuia()">
+        🖨️ Imprimir Guía del Proyecto
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-weight:800;font-size:0.82rem;padding:7px 14px;border-radius:8px" onclick="syncPiToSubjects()" data-tip="Pasar notas del PI a la columna PI (30% Sumativo) de cada materia">
+        ⚡ Sincronizar a Asignaturas (30%)
+      </button>
+      <button class="btn" style="background:rgba(255,255,255,0.22);color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-weight:800;font-size:0.82rem;padding:7px 14px;border-radius:8px" onclick="exportPiXLSX()">
+        📊 Excel Calificaciones
+      </button>
     </div>
   </div>
 
-  <!-- Info del Proyecto -->
-  <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.78rem"></div>
-
-  <!-- Leyenda de Rúbrica -->
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center">
-    <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-right:4px">ESCALA RÚcBRICA:</span>
-    <span style="background:#16a34a;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">10 — Excelente</span>
-    <span style="background:#2563eb;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">8-9 — Muy Bueno</span>
-    <span style="background:#ca8a04;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">6-7 — En Proceso</span>
-    <span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">1-5 — Inicio</span>
+  <!-- Pestañas de Navegación del Módulo PI -->
+  <div style="display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
+    <button id="piSubTab_guia" class="btn" onclick="switchPiSubTab('guia')" style="background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)">
+      📖 1. Guía &amp; Planificación Didáctica (Fase CREA · Semanas 4 y 5)
+    </button>
+    <button id="piSubTab_notas" class="btn btn-outline" onclick="switchPiSubTab('notas')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+      📊 2. Matriz de Calificaciones &amp; Rúbrica (30% Sumativo)
+    </button>
   </div>
 
-  <!-- Tabla de Calificaciones PI -->
-  <div class="tw" style="max-height:calc(100vh - 320px)">
-    <table id="piTable">
-      <thead id="piTh"></thead>
-      <tbody id="piTb"></tbody>
-    </table>
+  <!-- ══════════════════════════════════════════════════════
+       SUB-VISTA 1: GUÍA COMPLETA Y PLANIFICACIÓN DEL PROYECTO
+       ══════════════════════════════════════════════════════ -->
+  <div id="piView_guia" style="display:block">
+
+    <!-- Tarjeta de Identificación Institucional -->
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:16px;box-shadow:var(--shadow-sm);border-left:5px solid #d97706">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+        <div>
+          <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:6px;text-transform:uppercase">
+            PROYECTO INTERDISCIPLINARIO · EGB MEDIA (7.° GRADO)
+          </span>
+          <h3 style="margin:8px 0 4px 0;font-size:1.25rem;font-weight:900;color:var(--text-main)">
+            Nutri-Vida: Mi Cocina Saludable y Económica
+          </h3>
+          <div style="font-size:0.86rem;color:var(--text-light);font-weight:600">
+            Producto Final: <strong>Recetario Ilustrado Intercultural y Nutritivo</strong> (con cálculo de costos, valor nutricional y traducción al inglés).
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:0.75rem;color:var(--text-muted);font-weight:700">CRONOGRAMA DE APLICACIÓN</div>
+          <div style="font-size:0.9rem;font-weight:900;color:#d97706;margin-top:2px">Semanas 4 y 5 (10 Días)</div>
+          <div style="font-size:0.76rem;color:var(--text-muted)">21 Sep al 02 Oct 2026</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(217,119,6,0.06);border-radius:8px;padding:12px 16px;border:1px solid rgba(217,119,6,0.2);margin-top:10px">
+        <div style="font-weight:900;font-size:0.82rem;color:#b45309;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+          <span>🎯</span> <span>Objetivo de Aprendizaje Ministerial:</span>
+        </div>
+        <div style="font-size:0.84rem;color:var(--text-main);line-height:1.55">
+          Los estudiantes comprenderán la relación entre una <strong>nutrición equilibrada</strong>, el <strong>gasto energético</strong>, el <strong>origen de los alimentos ecuatorianos</strong> y su <strong>costo</strong>, mediante el cálculo de precios y presupuestos con números decimales, guías instructivas e infografías para fomentar estilos de vida saludables y económicos.
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIs del Proyecto -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px">
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #10b981">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Recetas Regionales</div>
+        <div style="font-size:1.35rem;font-weight:900;color:#047857;margin-top:4px">3 Platos Base</div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">Sierra, Costa y Amazonía</div>
+      </div>
+
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #3b82f6">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Costo Recetario Completo</div>
+        <div style="font-size:1.35rem;font-weight:900;color:#1d4ed8;margin-top:4px">$6.50 (4 pers.)</div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">$16.25 escalado a 10 pers.</div>
+      </div>
+
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #8b5cf6">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Asignaturas Articuladas</div>
+        <div style="font-size:1.35rem;font-weight:900;color:#6d28d9;margin-top:4px">7 Áreas del Saber</div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">Lengua, Mate, CN, CS, ECA, Inglés, EF</div>
+      </div>
+
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #f59e0b">
+        <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Ponderación Oficial</div>
+        <div style="font-size:1.35rem;font-weight:900;color:#b45309;margin-top:4px">30% Sumativo</div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">Acuerdo MINEDUC-2024-00031-A</div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: RECETARIO BASE Y COSTOS (INSUMO DE TRABAJO) -->
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:18px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.06);padding-bottom:10px">
+        <div>
+          <h4 style="margin:0;font-size:1.05rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px">
+            <span>🍲</span> <span>Recetario Base del Proyecto (Insumo Interdisciplinar)</span>
+          </h4>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:3px">
+            Cada ingrediente cuenta con su función nutricional (CN) y precio referencial de mercado para 4 personas (Matemática).
+          </div>
+        </div>
+        <span style="font-size:0.75rem;font-weight:800;background:rgba(16,185,129,0.12);color:#047857;padding:4px 12px;border-radius:99px;border:1px solid #a7f3d0">
+          3 Regiones Continentales
+        </span>
+      </div>
+
+      <!-- Cuadrícula de las 3 Recetas -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:18px">
+
+        <!-- Receta 1: Sierra -->
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;border-top:4px solid #3b82f6;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:0.72rem;font-weight:900;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:6px">REGIÓN SIERRA</span>
+              <span style="font-size:0.8rem;font-weight:900;color:#1e40af">Total: $2.70</span>
+            </div>
+            <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:4px">
+              Receta 1: Ensalada andina de quinua, chochos y camote
+            </div>
+            <div style="font-size:0.76rem;color:var(--text-muted);margin-bottom:12px">
+              Costo por porción (4 personas): <strong>$0.68</strong> · Provincias: Chimborazo, Cotopaxi
+            </div>
+
+            <table style="width:100%;border-collapse:collapse;font-size:0.76rem">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-color);color:var(--text-muted);text-align:left">
+                  <th style="padding:4px 0">Ingrediente</th>
+                  <th style="padding:4px 0">Cant.</th>
+                  <th style="padding:4px 0">Nutriente</th>
+                  <th style="padding:4px 0;text-align:right">Costo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Quinua cocida</td>
+                  <td>3/4 taza</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.90</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Chochos desamargados</td>
+                  <td>1/2 taza</td>
+                  <td><span style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Constructor</span></td>
+                  <td style="text-align:right;font-weight:800">$0.70</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Camote picado</td>
+                  <td>2/3 taza</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.35</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Tomate picado</td>
+                  <td>1/4 taza</td>
+                  <td><span style="background:#d1fae5;color:#065f46;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Regulador</span></td>
+                  <td style="text-align:right;font-weight:800">$0.25</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Pimiento picado</td>
+                  <td>1/4 taza</td>
+                  <td><span style="background:#d1fae5;color:#065f46;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Regulador</span></td>
+                  <td style="text-align:right;font-weight:800">$0.20</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0;font-weight:700">Aceite de oliva</td>
+                  <td>1/8 taza</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.30</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:0.73rem;background:rgba(59,130,246,0.08);padding:6px 10px;border-radius:6px;color:#1e40af">
+            💡 <strong>Superalimento:</strong> La quinua y el chocho aportan proteína vegetal completa y hierro.
+          </div>
+        </div>
+
+        <!-- Receta 2: Costa -->
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;border-top:4px solid #10b981;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:0.72rem;font-weight:900;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:6px">REGIÓN COSTA</span>
+              <span style="font-size:0.8rem;font-weight:900;color:#065f46">Total: $1.65</span>
+            </div>
+            <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:4px">
+              Receta 2: Bolón de verde relleno de queso costeño
+            </div>
+            <div style="font-size:0.76rem;color:var(--text-muted);margin-bottom:12px">
+              Costo por porción (4 personas): <strong>$0.41</strong> (¡La más económica!) · Provincias: Manabí, Guayas
+            </div>
+
+            <table style="width:100%;border-collapse:collapse;font-size:0.76rem">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-color);color:var(--text-muted);text-align:left">
+                  <th style="padding:4px 0">Ingrediente</th>
+                  <th style="padding:4px 0">Cant.</th>
+                  <th style="padding:4px 0">Nutriente</th>
+                  <th style="padding:4px 0;text-align:right">Costo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Plátano verde</td>
+                  <td>2 un.</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.50</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Queso fresco rallado</td>
+                  <td>1/2 taza</td>
+                  <td><span style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Constructor</span></td>
+                  <td style="text-align:right;font-weight:800">$1.00</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0;font-weight:700">Aceite vegetal</td>
+                  <td>2 cdas.</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.15</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:0.73rem;background:rgba(16,185,129,0.08);padding:6px 10px;border-radius:6px;color:#065f46">
+            💡 <strong>Nutrición:</strong> Carbohidrato complejo de absorción lenta con calcio y proteína láctea.
+          </div>
+        </div>
+
+        <!-- Receta 3: Amazonía -->
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;border-top:4px solid #8b5cf6;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:0.72rem;font-weight:900;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:6px">REGIÓN AMAZÓNICA</span>
+              <span style="font-size:0.8rem;font-weight:900;color:#5b21b6">Total: $2.15</span>
+            </div>
+            <div style="font-weight:900;font-size:0.95rem;color:var(--text-main);margin-bottom:4px">
+              Receta 3: Batido amazónico de banano, cacao y naranja
+            </div>
+            <div style="font-size:0.76rem;color:var(--text-muted);margin-bottom:12px">
+              Costo por porción (4 personas): <strong>$0.54</strong> · Provincias: Napo, Sucumbíos, Los Ríos
+            </div>
+
+            <table style="width:100%;border-collapse:collapse;font-size:0.76rem">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-color);color:var(--text-muted);text-align:left">
+                  <th style="padding:4px 0">Ingrediente</th>
+                  <th style="padding:4px 0">Cant.</th>
+                  <th style="padding:4px 0">Nutriente</th>
+                  <th style="padding:4px 0;text-align:right">Costo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Banano maduro</td>
+                  <td>2 un.</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.30</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Cacao en polvo puro</td>
+                  <td>1/4 taza</td>
+                  <td><span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Energético</span></td>
+                  <td style="text-align:right;font-weight:800">$0.60</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--border-color)">
+                  <td style="padding:4px 0;font-weight:700">Jugo de naranja</td>
+                  <td>1 taza (3 un.)</td>
+                  <td><span style="background:#d1fae5;color:#065f46;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Regulador</span></td>
+                  <td style="text-align:right;font-weight:800">$0.45</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0;font-weight:700">Yogur natural</td>
+                  <td>1 taza</td>
+                  <td><span style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:4px;font-size:0.68rem;font-weight:800">Constructor</span></td>
+                  <td style="text-align:right;font-weight:800">$0.80</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:0.73rem;background:rgba(139,92,246,0.08);padding:6px 10px;border-radius:6px;color:#5b21b6">
+            💡 <strong>Antioxidante:</strong> Cacao puro amazónico con Vitamina C de la naranja y probióticos del yogur.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabla Comparativa de Costos Escalados y Retos Matemáticos -->
+      <div style="background:rgba(0,0,0,0.02);border:1px solid var(--border-color);border-radius:10px;padding:16px">
+        <div style="font-weight:900;font-size:0.88rem;color:var(--text-main);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span>📐</span> <span>Matemática Aplicada: Escalado de Presupuesto a 10 Personas (× 2.5) y Feria del Aula</span>
+        </div>
+        
+        <div style="overflow-x:auto;margin-bottom:12px">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+            <thead>
+              <tr style="background:var(--table-header-bg);border-bottom:2px solid var(--border-color);text-align:left">
+                <th style="padding:8px 10px">Receta / Plato</th>
+                <th style="padding:8px 10px">Región</th>
+                <th style="padding:8px 10px">Base (4 pers.)</th>
+                <th style="padding:8px 10px">Costo por Porción</th>
+                <th style="padding:8px 10px;background:rgba(217,119,6,0.1);color:#92400e;font-weight:900">Escalado (10 pers. · × 2.5)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--border-color)">
+                <td style="padding:8px 10px;font-weight:700">Receta 1: Ensalada andina</td>
+                <td>Sierra</td>
+                <td style="font-weight:800">$2.70</td>
+                <td>$0.68 / porción</td>
+                <td style="font-weight:900;color:#92400e;background:rgba(217,119,6,0.04)">$2.70 × 2.5 = <strong>$6.75</strong></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border-color)">
+                <td style="padding:8px 10px;font-weight:700">Receta 2: Bolón de verde</td>
+                <td>Costa</td>
+                <td style="font-weight:800">$1.65</td>
+                <td>$0.41 / porción</td>
+                <td style="font-weight:900;color:#92400e;background:rgba(217,119,6,0.04)">$1.65 × 2.5 = <strong>$4.13</strong></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border-color)">
+                <td style="padding:8px 10px;font-weight:700">Receta 3: Batido amazónico</td>
+                <td>Amazonía</td>
+                <td style="font-weight:800">$2.15</td>
+                <td>$0.54 / porción</td>
+                <td style="font-weight:900;color:#92400e;background:rgba(217,119,6,0.04)">$2.15 × 2.5 = <strong>$5.38</strong></td>
+              </tr>
+              <tr style="font-weight:900;background:rgba(16,185,129,0.08)">
+                <td style="padding:8px 10px;color:#047857">TOTAL RECETARIO COMPLETO</td>
+                <td>Nacional</td>
+                <td style="color:#047857">$6.50</td>
+                <td>Prom: $0.54 / porción</td>
+                <td style="color:#047857"><strong>$16.25</strong> (10 pers.)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;font-size:0.78rem;color:var(--text-main)">
+          <div style="background:var(--card-bg);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+            💵 <strong>Cálculo de Vuelto (Sustracción):</strong> Si pagas la Receta 2 para 10 personas ($4.13) con un billete de $10, recibes: <code>$10.00 − $4.13 = $5.87</code> de vuelto.
+          </div>
+          <div style="background:var(--card-bg);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+            🛒 <strong>Combo Sierra + Amazonía:</strong> Comprar los ingredientes de R1 ($2.70) y R3 ($2.15) juntos para 4 personas cuesta: <code>$2.70 + $2.15 = $4.85</code>.
+          </div>
+          <div style="background:var(--card-bg);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+            📈 <strong>Diferencia de Costos:</strong> La Receta 1 cuesta <code>$6.75 − $4.13 = $2.62</code> más que la Receta 2 para 10 personas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: ACTIVIDADES INTERDISCIPLINARES POR SEMANA -->
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px 22px;margin-bottom:18px;box-shadow:var(--shadow-sm)">
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;border-bottom:1px solid rgba(0,0,0,0.06);padding-bottom:12px">
+        <div>
+          <h4 style="margin:0;font-size:1.05rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px">
+            <span>🗓️</span> <span>Planificación de Actividades por Asignatura (Fase CREA)</span>
+          </h4>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:3px">
+            Selecciona la semana para revisar las consignas pedagógicas articuladas en las 7 materias:
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button id="btnPiWeek_1" class="btn" onclick="switchPiWeekTab(1)" style="background:#0284c7;color:#fff;border-color:#0284c7;font-weight:900;font-size:0.8rem;padding:7px 15px;border-radius:8px">
+            📍 Semana 1 (Sem. 4 · 21 al 25 Sep)
+          </button>
+          <button id="btnPiWeek_2" class="btn btn-outline" onclick="switchPiWeekTab(2)" style="font-weight:800;font-size:0.8rem;padding:7px 15px;border-radius:8px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+            🏁 Semana 2 (Sem. 5 · 28 Sep al 02 Oct)
+          </button>
+        </div>
+      </div>
+
+      <!-- SEMANA 1 (SEMANA 4 DEL AÑO): ANÁLISIS NUTRICIONAL Y COSTOS -->
+      <div id="piWeekActivities_1" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:12px">
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #10b981">
+          <div style="font-weight:900;font-size:0.84rem;color:#047857;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🔬</span> <span>Ciencias Naturales (Ref. I.CN.3.5.1.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            En grupos, clasifican los ingredientes de su receta en <strong>constructores, energéticos y reguladores</strong> en la pirámide alimenticia. Responden si su plato aporta más energía, proteínas o vitaminas y argumentan la importancia del balance de nutrientes.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #3b82f6">
+          <div style="font-weight:900;font-size:0.84rem;color:#1d4ed8;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>📐</span> <span>Matemática (Ref. I.M.3.5.1.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            <strong>Adición de decimales:</strong> suman el costo total de los ingredientes de su receta para 4 personas. <strong>División:</strong> calculan el costo por porción. <strong>Multiplicación:</strong> escalan el costo a 10 personas (× 2.5). Resuelven problemas de presupuesto y vuelto con billetes de $10.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #f59e0b">
+          <div style="font-weight:900;font-size:0.84rem;color:#b45309;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🌎</span> <span>Ciencias Sociales (Ref. I.CS.3.10.1.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Ubican en un mapa mudo las 4 regiones del Ecuador. Investigan la provincia productora de cada ingrediente (Quinua: Chimborazo, Cacao: Los Ríos, Naranja: El Oro, Plátano: Manabí). Reflexionan sobre la <strong>interculturalidad</strong> y soberanía alimentaria.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #8b5cf6">
+          <div style="font-weight:900;font-size:0.84rem;color:#6d28d9;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>📚</span> <span>Lengua y Literatura (Ref. I.LL.3.6.4.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Analizan el texto modelo de receta instructiva identificando el <strong>uso normativo de la coma</strong> para enumerar acciones consecutivas y separar conectores de orden temporal (<em>"primero", "luego", "finalmente"</em>). Redactan el 1er borrador de su receta.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #ec4899">
+          <div style="font-weight:900;font-size:0.84rem;color:#be185d;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🇬🇧</span> <span>Inglés (Ref. I.EFL.3.15.1.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Crean el glosario bilingüe de alimentos (<em>quinoa, plantain, sweet potato, cheese, cocoa</em>) y verbos de cocina (<em>mix, chop, add, blend, peel, boil</em>). Traducen una instrucción clave de preparación al inglés.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #14b8a6">
+          <div style="font-weight:900;font-size:0.84rem;color:#0f766e;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🎨</span> <span>Educación Artística - ECA (Ref. I.ECA.3.3.2.)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Bosquejo a lápiz de la presentación final del platillo, aplicando principios de composición visual, encuadre centrado e ingredientes protagónicos visibles con contraste de color.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #ef4444;grid-column:1/-1">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-weight:900;font-size:0.84rem;color:#b91c1c;display:flex;align-items:center;gap:6px">
+              <span>🏃</span> <span>Educación Física (Ref. I.EF.3.5.1.) — Medición del Pulso y Gasto Energético</span>
+            </div>
+            <span style="font-size:0.72rem;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-weight:800">12 años · FCM: 208 lpm</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Activación física previa a la cocina: registran el pulso en reposo (60–90 lpm) y tras 3 minutos de rutina aeróbica moderada (104–146 lpm). Relacionan el gasto calórico con la ingesta de alimentos energéticos y justifican la importancia de la hidratación.
+          </div>
+          <div style="margin-top:8px;font-size:0.76rem;background:rgba(220,38,38,0.06);padding:6px 12px;border-radius:6px;color:#991b1b;font-weight:700">
+            📌 <strong>Producto Intermedio (Semana 1):</strong> Ficha técnica de la receta por grupo con tabla nutricional, tabla de costos escalada a 10 personas, mapa de origen y primer borrador del texto instructivo.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SEMANA 2 (SEMANA 5 DEL AÑO): MONTAJE DEL RECETARIO Y FERIA DEL AULA -->
+      <div id="piWeekActivities_2" style="display:none;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:12px">
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #10b981">
+          <div style="font-weight:900;font-size:0.84rem;color:#047857;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🔬</span> <span>Ciencias Naturales (Lista de Cotejo)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Verifican con lista de cotejo que la ficha final contenga al menos un ingrediente constructor, energético y regulador. Si falta alguno, proponen un acompañamiento saludable (ej. fruta de estación).
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #3b82f6">
+          <div style="font-weight:900;font-size:0.84rem;color:#1d4ed8;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>📐</span> <span>Matemática (Coevaluación y Tarjeta de Precio)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Intercambian tablas de costos para verificar operaciones decimales. Calculan el costo total del curso ($6.50 para 4 personas y $16.25 para 10 personas). Diseñan la tarjeta de precio sugerido para la feria del aula.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #f59e0b">
+          <div style="font-weight:900;font-size:0.84rem;color:#b45309;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🌎</span> <span>Ciencias Sociales (Mural Intercultural)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Elaboran la ficha descriptiva regional (provincia, clima y producto destacado). Pegan su ficha junto al mapa del Ecuador elaborando el <strong>Gran Mural Intercultural del Aula</strong>.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #8b5cf6">
+          <div style="font-weight:900;font-size:0.84rem;color:#6d28d9;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>📚</span> <span>Lengua y Literatura (Edición Final)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Revisión final con lista de cotejo: uso adecuado de comas, conectores lógicos, claridad y caligrafía. Pasan la receta en limpio para incorporarla formalmente al recetario encuadernado.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #ec4899">
+          <div style="font-weight:900;font-size:0.84rem;color:#be185d;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🇬🇧</span> <span>Inglés (Ficha Bilingüe)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Traducción final del título (<em>"Andean Salad", "Green Plantain Bolon", "Amazonian Smoothie"</em>) y de la lista de ingredientes para la versión bilingüe del recetario.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #14b8a6">
+          <div style="font-weight:900;font-size:0.84rem;color:#0f766e;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🎨</span> <span>ECA (Ilustración Publicitaria a Color)</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Ilustración publicitaria final con lápices de color o acuarelas, aplicando técnicas de luz, sombra y contraste cromático para destacar el apetito visual del plato.
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border-color);border-radius:8px;padding:12px 14px;border-left:4px solid #ef4444;grid-column:1/-1">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-weight:900;font-size:0.84rem;color:#b91c1c;display:flex;align-items:center;gap:6px">
+              <span>🏃</span> <span>Educación Física &amp; Feria Gastronómica del Aula</span>
+            </div>
+            <span style="font-size:0.72rem;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-weight:800">Cierre del Proyecto</span>
+          </div>
+          <div style="font-size:0.79rem;color:var(--text-main);line-height:1.45">
+            Rutina aeróbica y control de pulso cardíaco. <strong>Evento de Cierre:</strong> Exposición del <em>Recetario Ilustrado Intercultural y Nutritivo</em>, feria gastronómica en el aula y degustación compartida de alimentos saludables.
+          </div>
+          <div style="margin-top:8px;font-size:0.76rem;background:rgba(16,185,129,0.1);padding:6px 12px;border-radius:6px;color:#065f46;font-weight:800">
+            🏆 <strong>Producto Final Completo:</strong> Recetario Ilustrado Intercultural y Nutritivo encuadernado, con recetas regionales, valores nutricionales, presupuesto con decimales para 4 y 10 personas, y fichas en inglés.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN: INDICADORES OFICIALES, COMPROMISOS Y AUTOEVALUACIÓN -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:18px">
+      
+      <!-- Indicadores Oficiales MINEDEC -->
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow-sm)">
+        <h4 style="margin:0 0 10px 0;font-size:0.95rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:6px">
+          <span>📊</span> <span>Indicadores de Evaluación Oficiales</span>
+        </h4>
+        <div style="font-size:0.78rem;line-height:1.5;color:var(--text-main);display:flex;flex-direction:column;gap:8px">
+          <div><strong>Lengua y Lit.:</strong> Escribe textos instructivos con lenguaje preciso y uso de la coma (Ref. I.LL.3.6.4.).</div>
+          <div><strong>Matemática:</strong> Operaciones con decimales (suma, resta, mult.) y presupuestos (Ref. I.M.3.5.1.).</div>
+          <div><strong>Ciencias Nat.:</strong> Clasifica alimentos en constructores, energéticos y reguladores (Ref. I.CN.3.5.1.).</div>
+          <div><strong>Ciencias Soc.:</strong> Ubica origen de la producción agrícola en regiones del país (Ref. I.CS.3.10.1.).</div>
+          <div><strong>ECA:</strong> Técnicas de dibujo o fotografía publicitaria en alimentos (Ref. I.ECA.3.3.2.).</div>
+          <div><strong>Inglés:</strong> Food vocabulary and action cooking verbs in simple recipes (Ref. I.EFL.3.15.1.).</div>
+          <div><strong>Ed. Física:</strong> Actividad física e hidratación según gasto energético (Ref. I.EF.3.5.1.).</div>
+        </div>
+      </div>
+
+      <!-- Compromisos y Autoevaluación -->
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow-sm)">
+        <h4 style="margin:0 0 10px 0;font-size:0.95rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:6px">
+          <span>🤝</span> <span>Compromisos &amp; Autoevaluación del Estudiante</span>
+        </h4>
+        <div style="font-size:0.78rem;line-height:1.5;color:var(--text-main)">
+          <div style="font-weight:800;color:#047857;margin-bottom:4px">Compromisos:</div>
+          <ul style="margin:0 0 10px 18px;padding:0">
+            <li>Evitar el consumo de bebidas hiper-azucaradas y comida chatarra.</li>
+            <li>Colaborar activamente en la preparación de alimentos saludables en el hogar.</li>
+          </ul>
+
+          <div style="font-weight:800;color:#1d4ed8;margin-bottom:4px">Preguntas de Autoevaluación:</div>
+          <ol style="margin:0 0 0 18px;padding:0">
+            <li>¿Aprendí a calcular el costo de una receta y a comparar precios?</li>
+            <li>¿Sé clasificar los alimentos según sus nutrientes principales?</li>
+            <li>¿Puedo ubicar en el mapa del Ecuador el origen de los productos que consumo?</li>
+          </ol>
+        </div>
+        <div style="margin-top:14px;text-align:right">
+          <button class="btn btn-primary" onclick="switchPiSubTab('notas')" style="font-size:0.8rem;font-weight:800">
+            Ir a Registrar Calificaciones (30%) ➡️
+          </button>
+        </div>
+      </div>
+
+    </div>
+
   </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       SUB-VISTA 2: REGISTRO DE CALIFICACIONES & RÚBRICA (30%)
+       ══════════════════════════════════════════════════════ -->
+  <div id="piView_notas" style="display:none">
+
+    <!-- Info del Proyecto -->
+    <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.78rem"></div>
+
+    <!-- Leyenda de Rúbrica -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-right:4px">ESCALA RÚBRICA:</span>
+        <span style="background:#16a34a;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">10 — Excelente</span>
+        <span style="background:#2563eb;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">8-9 — Muy Bueno</span>
+        <span style="background:#ca8a04;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">6-7 — En Proceso</span>
+        <span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">1-5 — Inicio</span>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" style="font-size:0.76rem;font-weight:800;padding:5px 12px" onclick="openPiConfig()">⚙ Configurar Proyecto</button>
+        <button class="btn btn-outline" style="font-size:0.76rem;font-weight:800;padding:5px 12px" onclick="openCopyColumnModal()">📋 Copiar Columna</button>
+      </div>
+    </div>
+
+    <!-- Tabla de Calificaciones PI -->
+    <div class="tw" style="max-height:calc(100vh - 320px)">
+      <table id="piTable">
+        <thead id="piTh"></thead>
+        <tbody id="piTb"></tbody>
+      </table>
+    </div>
+
+  </div>
+
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     VISTA: EVALUACIÓN DIAGNÓSTICA & SISTEMA DE RESULTADOS
-     (FASES CONECTA & NIVELA · MINEDEC 2026-2027 · UEF CALDERÓN 2)
-     ══════════════════════════════════════════════════════════════ -->
+
 <div id="diagnosticoPanel" style="display:none" class="content">
 
   <!-- Banner Superior Institucional -->
@@ -4996,10 +5586,22 @@ body.in-focus-mode {
           Lanzamiento y ejecución del Proyecto Interdisciplinario. Articulación de asignaturas para evidenciar logros cognitivos,
           procedimentales y actitudinales de la nivelación. Trabajo cooperativo, resolución de problemas y producto final.
         </div>
-        <div style="background:#fef3c7;border-radius:8px;padding:10px 14px;font-size:0.8rem;color:#78350f">
-          <div style="font-weight:800;margin-bottom:4px">📊 Ponderación Sumativa — Acuerdo MINEDUC-2024-00031-A:</div>
-          <div style="line-height:1.6">El proyecto interdisciplinar constituye el <strong>30% Sumativo</strong> del trimestre.
-          Rúbrica de 5 indicadores: pertinencia, aplicación de contenidos, calidad del trabajo, colaboración y creatividad.</div>
+        <div style="background:#fef3c7;border-radius:8px;padding:12px 14px;font-size:0.8rem;color:#78350f;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+            <span style="font-weight:900;font-size:0.86rem;color:#92400e">🥗 Proyecto Oficial 7.° EGB: «Nutri-Vida: Mi Cocina Saludable y Económica»</span>
+            <span style="font-size:0.7rem;background:#d97706;color:#fff;padding:2px 8px;border-radius:4px;font-weight:800">30% Sumativo Trimestre 1</span>
+          </div>
+          <div style="line-height:1.55;margin-bottom:8px">
+            <strong>Producto Final:</strong> Recetario Ilustrado Intercultural y Nutritivo con cálculo de costos en números decimales (4 y 10 personas), clasificación nutricional y fichas bilingües en inglés.<br>
+            <strong>3 Recetas Regionales:</strong> Ensalada andina (Sierra · $2.70) · Bolón de verde (Costa · $1.65) · Batido amazónico (Amazonía · $2.15).<br>
+            <strong>7 Asignaturas Articuladas:</strong> Lengua y Lit., Matemática, Ciencias Nat., Ciencias Soc., ECA, Inglés y Educación Física.
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-size:0.75rem;color:#b45309;font-weight:700">Acuerdo MINEDUC-2024-00031-A · Rúbrica Ministerial de 5 indicadores (20% c/u)</span>
+            <button class="btn" onclick="switchView('pi'); switchPiSubTab('guia');" style="background:#92400e;color:#fff;border-color:#92400e;font-size:0.78rem;font-weight:900;padding:5px 12px;border-radius:6px">
+              🚀 Ver Guía y Calificar en Proyecto Interdisc. ➡️
+            </button>
+          </div>
         </div>
       </div>
 
@@ -14683,9 +15285,9 @@ window.addEventListener('offline', () => { setSyncStatus('🟡 Sin conexión', '
 // ══════════════════════════════════════════════════════
 
 const PI_DEFAULT_CONFIG = {
-  titulo:   'PROYECTO INTERDISCIPLINARIO — TRIMESTRE I',
-  tema:     '',
-  fecha:    '',
+  titulo:   'Nutri-Vida: Mi Cocina Saludable y Económica',
+  tema:     'Recetario Ilustrado Intercultural y Nutritivo (Costos y Nutrición)',
+  fecha:    'Semanas 4 y 5 (21 Sep - 02 Oct 2026)',
   indicadores: [
     { id: 'PI1', nombre: 'Relación con el tema central del proyecto',       peso: 20 },
     { id: 'PI2', nombre: 'Aplicación de contenidos de la asignatura',       peso: 20 },
@@ -14792,6 +15394,119 @@ function handlePiPaste(e, startSi, startMat, startIndId) {
     toast(`📋 ¡Se pegaron ${count} calificaciones en el Proyecto Interdisciplinario!`, '#16a34a');
   }
 }
+
+
+function switchPiSubTab(tab) {
+  const vGuia = document.getElementById('piView_guia');
+  const vNotas = document.getElementById('piView_notas');
+  const bGuia = document.getElementById('piSubTab_guia');
+  const bNotas = document.getElementById('piSubTab_notas');
+
+  if (tab === 'guia') {
+    if (vGuia) vGuia.style.display = 'block';
+    if (vNotas) vNotas.style.display = 'none';
+    if (bGuia) {
+      bGuia.className = 'btn';
+      bGuia.style.cssText = 'background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)';
+    }
+    if (bNotas) {
+      bNotas.className = 'btn btn-outline';
+      bNotas.style.cssText = 'font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)';
+    }
+  } else {
+    if (vGuia) vGuia.style.display = 'none';
+    if (vNotas) vNotas.style.display = 'block';
+    if (bNotas) {
+      bNotas.className = 'btn';
+      bNotas.style.cssText = 'background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)';
+    }
+    if (bGuia) {
+      bGuia.className = 'btn btn-outline';
+      bGuia.style.cssText = 'font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)';
+    }
+    renderPi();
+  }
+}
+
+function switchPiWeekTab(w) {
+  const w1 = document.getElementById('piWeekActivities_1');
+  const w2 = document.getElementById('piWeekActivities_2');
+  const b1 = document.getElementById('btnPiWeek_1');
+  const b2 = document.getElementById('btnPiWeek_2');
+
+  if (w === 1) {
+    if (w1) w1.style.display = 'grid';
+    if (w2) w2.style.display = 'none';
+    if (b1) {
+      b1.className = 'btn';
+      b1.style.cssText = 'background:#0284c7;color:#fff;border-color:#0284c7;font-weight:900;font-size:0.8rem;padding:7px 15px;border-radius:8px';
+    }
+    if (b2) {
+      b2.className = 'btn btn-outline';
+      b2.style.cssText = 'font-weight:800;font-size:0.8rem;padding:7px 15px;border-radius:8px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)';
+    }
+  } else {
+    if (w1) w1.style.display = 'none';
+    if (w2) w2.style.display = 'grid';
+    if (b2) {
+      b2.className = 'btn';
+      b2.style.cssText = 'background:#0284c7;color:#fff;border-color:#0284c7;font-weight:900;font-size:0.8rem;padding:7px 15px;border-radius:8px';
+    }
+    if (b1) {
+      b1.className = 'btn btn-outline';
+      b1.style.cssText = 'font-weight:800;font-size:0.8rem;padding:7px 15px;border-radius:8px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)';
+    }
+  }
+}
+
+function printPiGuia() {
+  const contentEl = document.getElementById('piView_guia');
+  if (!contentEl) return;
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Guía del Proyecto Interdisciplinario Nutri-Vida - 7mo EGB Calderón 2</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8.5pt; color: #111; margin: 12mm 10mm; line-height: 1.45; }
+        h1 { font-size: 13pt; margin: 0 0 4px 0; text-align: center; font-weight: 900; text-transform: uppercase; }
+        h2 { font-size: 10pt; margin: 0 0 10px 0; text-align: center; color: #92400e; font-weight: 800; }
+        .meta-box { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; font-size: 8pt; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 8pt; }
+        th, td { border: 1px solid #ccc; padding: 5px 7px; text-align: left; }
+        th { background: #f8fafc; font-weight: 800; }
+        h3 { font-size: 9.5pt; margin: 12px 0 4px 0; color: #1e3a8a; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
+        @media print {
+          @page { size: portrait; margin: 10mm; }
+          button { display: none !important; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Unidad Educativa Fiscal "Calderón 2"</h1>
+      <h2>Proyecto Interdisciplinario: Nutri-Vida — Mi Cocina Saludable y Económica</h2>
+      <div class="meta-box">
+        <div><b>Subnivel:</b> Básica Media (7.° EGB "C")</div>
+        <div><b>Año Lectivo:</b> 2026 - 2027</div>
+        <div><b>Fase:</b> CREA (Semanas 4 y 5 · 21 Sep - 02 Oct)</div>
+        <div><b>Ponderación:</b> 30% Sumativo</div>
+      </div>
+      ${contentEl.innerHTML}
+      <div style="margin-top:35px;display:flex;justify-content:space-around;text-align:center;font-size:8pt">
+        <div style="border-top:1px solid #000;width:180px;padding-top:4px">Docente Tutor</div>
+        <div style="border-top:1px solid #000;width:180px;padding-top:4px">Comisión Pedagógica</div>
+        <div style="border-top:1px solid #000;width:180px;padding-top:4px">Vicerrectorado</div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 400);
+}
+
 
 function renderPi() {
   ensurePi();
@@ -26518,7 +27233,7 @@ if ('serviceWorker' in navigator) {
 // PLANIFICADOR CURRICULAR ANUAL (PCA) & DISTRIBUCIÓN SEMANAL
 // LENGUA Y LITERATURA 7MO EGB (MAYA + MINEDUC) — 2026-2027
 // ══════════════════════════════════════════════════════
-const PCA_LENGUA_DATA = [{"sem": 1, "trim": 1, "fechas": "01/09 al 04/09/2026", "unidad": "Diagnóstico y Adaptación", "uNum": 0, "tituloUnidad": "Adaptación y Diagnóstico Socioemocional", "bloque": "Diagnóstico / Convivencia", "tema": "Bienvenida y adaptación al aula. Acuerdos de convivencia, dinámica socioemocional y reconocimiento grupal.", "paginas": "Material Institucional / Fichas DECE", "dcd": "Evaluación socioemocional y establecimiento de compromisos éticos y comunicativos en el aula.", "gramatica": "", "ortografia": "", "metodologia": "Dinámicas grupales vivenciales, círculo de diálogo y acuerdos de aula.", "recurso": "Guía Docente pág. 7-8, Fichas de Habilidades para la Vida.", "evaluacion": "Participación activa, respeto a normas de convivencia y expresión socioemocional.", "tipo": "diagnostico"}, {"sem": 2, "trim": 1, "fechas": "07/09 al 11/09/2026", "unidad": "Diagnóstico", "uNum": 0, "tituloUnidad": "Evaluación Diagnóstica de Destrezas", "bloque": "Diagnóstico Pedagógico", "tema": "Evaluación diagnóstica inicial: prueba de conocimientos previos de 6to EGB (comprensión lectora, dialectos y gramática).", "paginas": "Texto Págs. 8 - 9", "dcd": "I.LL.3.1.2., I.LL.3.2.2., I.LL.3.3.2., I.LL.3.6.1., I.LL.3.7.1. (Diagnóstico integral del subnivel).", "gramatica": "Sujeto, predicado, modificadores connotativos y no connotativos.", "ortografia": "Uso de prefijos hemi-, hipo-, hiper-, hue-.", "metodologia": "Prueba diagnóstica individual, tabulación estadística y mapa de calor de alertas.", "recurso": "Texto Lengua 7 pág. 8-9, Matriz de tabulación diagnóstica SIEE.", "evaluacion": "Rúbrica diagnóstica ministerial (Conecta y Nivela).", "tipo": "diagnostico"}, {"sem": 3, "trim": 1, "fechas": "14/09 al 18/09/2026", "unidad": "Nivelación", "uNum": 0, "tituloUnidad": "Nivelación de Habilidades y Destrezas", "bloque": "Nivelación Curricular", "tema": "Nivelación y refuerzo focalizado: estructura de la oración simple, coherencia en párrafos breves y estrategias de lectura.", "paginas": "Guía pág. 10 - 11 / Cuaderno de trabajo", "dcd": "LL.3.4.1. Relatar textos con secuencia lógica y manejo básico de conectores.", "gramatica": "Concordancia sustantivo-adjetivo y orden lógico oracional.", "ortografia": "Uso de mayúsculas y punto seguido.", "metodologia": "Talleres cooperativos en parejas, fichas de refuerzo y retroalimentación formativa.", "recurso": "Guía Docente pág. 10-11 (Estrategias DFA y adaptaciones Grado 1 y 2).", "evaluacion": "Monitoreo formativo de superación de alertas tempranas.", "tipo": "nivelacion"}, {"sem": 4, "trim": 1, "fechas": "21/09 al 25/09/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Lengua y Cultura", "tema": "Orígenes de la escritura: de la oralidad a los primeros sistemas gráficos. Mesopotamia, escritura cuneiforme y jeroglíficos.", "paginas": "Texto Págs. 12 - 17", "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la lengua escrita como herramienta cultural.", "gramatica": "Función social y comunicativa del texto escrito frente a la oralidad.", "ortografia": "Evolución de los primeros signos fonéticos y alfabetos antiguos.", "metodologia": "Gamificación y Ciclo ERCA: línea de tiempo de la escritura, descifrado de jeroglíficos y tablillas de arcilla.", "recurso": "Texto págs. 12-17, Guía docente pág. 12.", "evaluacion": "I.LL.3.1.1. Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad. (I.3., S.2.)", "tipo": "clase"}, {"sem": 5, "trim": 1, "fechas": "28/09 al 02/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Comunicación Oral", "tema": "Discursos y juicios de valor: estructura de un discurso, escucha activa y análisis crítico (M. Luther King). Taller: Hoy me convertiré en vendedor de sueños.", "paginas": "Texto Págs. 18 - 25", "dcd": "LL.3.2.1. Escuchar discursos orales y formular juicios de valor sobre su contenido y forma, y participar de manera respetuosa.", "gramatica": "Estructuras básicas del discurso oral y argumentación inicial.", "ortografia": "Pronunciación, modulación de la voz y pausas orales.", "metodologia": "Ciclo ERCA: análisis del video 'Yo tengo un sueño', lluvia de ideas, formulación de juicios de valor y taller oral de simulación.", "recurso": "Texto págs. 18-25, Guía docente pág. 13.", "evaluacion": "I.LL.3.2.1. Escucha discursos orales, parafrasea su contenido y participa respetuosamente. (J.3., I.4.)", "tipo": "clase"}, {"sem": 6, "trim": 1, "fechas": "05/10 al 09/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Lectura y Recursos", "tema": "Leo para acercarme a la ciencia: textos de divulgación científica (paleontología, dinosaurios). Uso de recursos: Préstamo de libros en la biblioteca escolar.", "paginas": "Texto Págs. 26 - 37", "dcd": "LL.3.3.5. Valorar los aspectos de forma y el contenido de un texto científico a partir de criterios preestablecidos. / LL.3.3.8. Leer con fluidez y entonación.", "gramatica": "Estructura del artículo científico: introducción, desarrollo y conclusiones.", "ortografia": "Lectura paratextual, glosario científico y términos especializados.", "metodologia": "Pedagogía Crítica y fases lectoras (antes, durante y después). Ficha de préstamo de biblioteca escolar. (Feriado 09 Oct).", "recurso": "Texto págs. 26-37, Biblioteca escolar / recursos web.", "evaluacion": "I.LL.3.3.2. Realiza inferencias fundamentales y valora el contenido de textos científicos.", "tipo": "clase"}, {"sem": 7, "trim": 1, "fechas": "12/10 al 16/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Escritura (Texto y Gramática I)", "tema": "Escribo una nota científica: estructura, planificación y redacción del borrador. Gramática: El verbo (concepto y accidentes gramaticales: persona, número, tiempo).", "paginas": "Texto Págs. 38 - 47", "dcd": "LL.3.4.1. Relatar textos con secuencia lógica, manejo de conectores. / LL.3.4.6. Autorregular la producción escrita mediante planificación.", "gramatica": "El verbo y sus accidentes gramaticales: persona (1ra, 2da, 3ra), número (singular, plural), tiempo (presente, pasado, futuro).", "ortografia": "Separación silábica, concordancia verbal con el núcleo del sujeto.", "metodologia": "Aula Invertida: análisis de modelos de notas científicas, mapa de planificación textual y cuadros sinópticos del verbo.", "recurso": "Texto págs. 38-47, Guía docente pág. 14.", "evaluacion": "I.LL.3.6.1. Produce textos informativos usando el proceso de escritura y elementos gramaticales apropiados.", "tipo": "clase"}, {"sem": 8, "trim": 1, "fechas": "19/10 al 23/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Escritura (Gramática II y Ortografía)", "tema": "Modos verbales (indicativo, subjuntivo, imperativo). Tiempos simples y compuestos. Voz activa y voz pasiva. Ortografía: Uso del punto y coma (;).", "paginas": "Texto Págs. 48 - 53", "dcd": "LL.3.4.10. Expresar sus ideas con precisión e integrar en las producciones escritas el verbo, sus tiempos, modos y modificadores.", "gramatica": "Modo indicativo, subjuntivo e imperativo; voz activa frente a voz pasiva; conjugación en tiempos compuestos.", "ortografia": "Reglas de uso del punto y coma (;) en oraciones complejas y yuxtapuestas.", "metodologia": "Ciclo ERCA: laboratorio de conjugación verbal, corrección guiada de errores y ejercitación del punto y coma.", "recurso": "Texto págs. 48-53, Fichas de aplicación ortográfica.", "evaluacion": "I.LL.3.6.3. Aplica elementos gramaticales y ortográficos en producciones escritas con coherencia y cohesión.", "tipo": "clase"}, {"sem": 9, "trim": 1, "fechas": "26/10 al 30/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Literatura y Evaluación U1", "tema": "Disfruto de los mitos: concepto, características, mitos de creación, dioses y héroes. Escritura creativa: Historieta mitológica. Evaluación sumativa Unidad 1.", "paginas": "Texto Págs. 54 - 71", "dcd": "LL.3.5.1. Reconocer en un texto literario los elementos característicos que le dan sentido. / LL.3.4.13. Producir historietas con recursos diversos.", "gramatica": "Estructura del mito: personajes sobrenaturales, tiempo remoto, función explicativa del origen cósmico.", "ortografia": "Guiones en diálogos de historieta y signos de exclamación/interrogación.", "metodologia": "ABP / Gamificación: taller de creación de viñetas de historietas mitológicas y aplicación de prueba sumativa de unidad.", "recurso": "Texto págs. 54-71, Rúbrica de autoevaluación pág. 71.", "evaluacion": "I.LL.3.7.1. Reconoce en textos literarios los elementos característicos y recrea historias mediante formatos visuales.", "tipo": "evaluacion_unidad"}, {"sem": 10, "trim": 1, "fechas": "02/11 al 06/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Lengua y Cultura", "tema": "Los dialectos del Ecuador: variedades lingüísticas de la Costa, Sierra y Amazonía. Quichuismos y respeto a la interculturalidad.", "paginas": "Texto Págs. 74 - 79", "dcd": "LL.3.1.2. Indagar sobre las influencias lingüísticas y culturales que explican los dialectos del castellano en el Ecuador.", "gramatica": "Variedades diatópicas y léxico patrimonial de las nacionalidades indígenas y pueblos afroecuatoriano y montubio.", "ortografia": "Grafías y préstamos lingüísticos originarios integrados al castellano ecuatoriano.", "metodologia": "ABP: confección del Diccionario de Ecuatorianismos y sociolectos regionales. (Feriados 02-03 Nov).", "recurso": "Texto págs. 74-79, Guía docente pág. 15.", "evaluacion": "I.LL.3.1.2. Indaga sobre las influencias lingüísticas y dialectos del castellano como expresión de identidad.", "tipo": "clase"}, {"sem": 11, "trim": 1, "fechas": "09/11 al 13/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Comunicación Oral", "tema": "Comparto mis ideas y aprendo de los demás: el diálogo formal, la escucha activa y la búsqueda de acuerdos. Taller: Participemos de un cine-foro.", "paginas": "Texto Págs. 80 - 87", "dcd": "LL.3.2.2. Proponer intervenciones orales con una intención comunicativa, organizar el discurso y respetar los turnos de habla.", "gramatica": "Fórmulas de cortesía, turnos de conversación y argumentos de sustento.", "ortografia": "Modulación, claridad articulatoria y volumen adecuado en la interacción grupal.", "metodologia": "Ciclo ERCA y Cine-foro: proyección de fragmento audiovisual histórico, ronda de debate guiado y consensos.", "recurso": "Texto págs. 80-87, Guía docente pág. 16.", "evaluacion": "I.LL.3.2.2. Propone intervenciones orales organizadas, adapta el vocabulario y busca acuerdos.", "tipo": "clase"}, {"sem": 12, "trim": 1, "fechas": "16/11 al 20/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Lectura y Recursos", "tema": "Leo para conocer sobre mis raíces: textos históricos, relatos del pasado incaico y crónicas. Uso de recursos: Criterios para comparar y contrastar fuentes.", "paginas": "Texto Págs. 88 - 99", "dcd": "LL.3.3.8. Leer con fluidez y entonación. / LL.3.3.2. Comprender contenidos implícitos mediante inferencias. / LL.3.3.6. Contrastar fuentes.", "gramatica": "Textos narrativos históricos y crónicas coloniales. Verificación de veracidad.", "ortografia": "Estrategias de lectura inferencial, subrayado de ideas centrales e indicios textuales.", "metodologia": "Pedagogía Crítica: tabla comparativa de fuentes históricas, lectura comentada y análisis de versiones del pasado.", "recurso": "Texto págs. 88-99, Biblioteca digital escolar.", "evaluacion": "I.LL.3.4.1. Lee con fluidez en contextos escolares y comprende contenidos implícitos de crónicas y relatos.", "tipo": "clase"}, {"sem": 13, "trim": 1, "fechas": "23/11 al 27/11/2026", "unidad": "Evaluación Trimestral", "uNum": 1, "tituloUnidad": "Evaluaciones del Primer Trimestre", "bloque": "Evaluación Trimestral", "tema": "Semana de Evaluaciones del Primer Trimestre (del 24 al 30 de noviembre). Consolidación de portafolio y proyecto interdisciplinar N° 1.", "paginas": "Instrumentos Trimestrales / Sistema SIEE", "dcd": "Evaluación sumativa de destrezas priorizadas de Unidad 1 e inicio de Unidad 2.", "gramatica": "Sustantivos, verbos, modos, el mito, los dialectos y la nota científica.", "ortografia": "Uso del punto y coma y aplicación de normas ortográficas trabajadas.", "metodologia": "Aplicación de instrumentos de evaluación sumativa trimestral estructurada y retroalimentación individual.", "recurso": "Cuestionarios trimestrales aprobados por Vicerrectorado.", "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo institucional.", "tipo": "evaluacion_trimestre"}, {"sem": 14, "trim": 2, "fechas": "30/11 al 04/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Texto y Estructura)", "tema": "Escribo un relato histórico: características y secuencia cronológica. La estructura del párrafo: idea principal y secundarias.", "paginas": "Texto Págs. 100 - 109", "dcd": "LL.3.4.9. Organizar las ideas con unidad de sentido a partir de la construcción de párrafos. / LL.3.4.1. Relatar con secuencia lógica.", "gramatica": "Estructura del párrafo, oración temática central y oraciones de soporte / ampliación.", "ortografia": "Conectores temporales (al principio, luego, posteriormente, finalmente) y de orden.", "metodologia": "Pedagogía Crítica: descomposición de relatos históricos en párrafos temáticos y redacción guiada.", "recurso": "Texto págs. 100-109, Guía docente pág. 17.", "evaluacion": "I.LL.3.6.3. Escribe relatos organizados en párrafos con unidad de sentido y conectores cronológicos.", "tipo": "clase"}, {"sem": 15, "trim": 2, "fechas": "07/12 al 11/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Gramática)", "tema": "El adverbio: concepto y clasificación (lugar, tiempo, modo, cantidad, afirmación, negación, duda). Adverbios en -mente y locuciones adverbiales.", "paginas": "Texto Págs. 110 - 114", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar adverbios y sus modificadores en las producciones escritas.", "gramatica": "Clasificación de los adverbios; formación de adverbios derivados con el sufijo -mente; locuciones adverbiales comunes.", "ortografia": "Conservación de la tilde en adjetivos al añadir el sufijo -mente (fácilmente, rápidamente).", "metodologia": "Ciclo ERCA: dinámica de sustitución de adverbios en relatos históricos y fichas de ejercicios sintácticos.", "recurso": "Texto págs. 110-114, Guía docente pág. 17.", "evaluacion": "I.LL.3.6.3. Integra adverbios y locuciones con precisión para enriquecer la descripción y narración.", "tipo": "clase"}, {"sem": 16, "trim": 2, "fechas": "14/12 al 18/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Ortografía)", "tema": "Reglas ortográficas del uso de la 'J': verbos en -jar y -jear; palabras terminadas en -jería, -jero, -jera. Redacción final del relato histórico.", "paginas": "Texto Págs. 115 - 116", "dcd": "LL.3.4.6. Autorregular la producción escrita mediante revisión, corrección y publicación.", "gramatica": "Concordancia temporal y cohesión textual del relato histórico elaborado por el estudiante.", "ortografia": "Uso de la J en formas verbales sin g ni j en el infinitivo (dijo, trajo, condujo) y palabras en -jería.", "metodologia": "Ciclo ERCA: taller de edición entre pares, cacería de errores ortográficos y publicación en mural del aula.", "recurso": "Texto págs. 115-116, Rúbrica de redacción histórica.", "evaluacion": "I.LL.3.6.1. Aplica el proceso de escritura y normas ortográficas de la j en textos narrativos históricos.", "tipo": "clase"}, {"sem": 17, "trim": 2, "fechas": "21/12 al 24/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Literatura", "tema": "Disfruto de los poemas de autor: estructura lírica (verso, estrofa, rima asonante y consonante, métrica y ritmo). Figuras literarias (metáfora, símil, personificación).", "paginas": "Texto Págs. 116 - 129", "dcd": "LL.3.5.1. Reconocer en un texto literario los elementos característicos que le dan sentido (poesía).", "gramatica": "Lenguaje figurado y recursos poéticos de los autores hispanoamericanos.", "ortografia": "Acentuación rítmica, pausas versales y rima.", "metodologia": "Taller lúdico poético: declamación navideña/cultural, identificación de figuras literarias. (Vacaciones 25 Dic al 01 Ene).", "recurso": "Texto págs. 116-129, Antología de poetas ecuatorianos.", "evaluacion": "I.LL.3.7.1. Reconoce en poemas los elementos métricos, recursos estilísticos y figuras retóricas.", "tipo": "clase"}, {"sem": 18, "trim": 2, "fechas": "04/01 al 08/01/2027", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura Creativa y Evaluación U2", "tema": "Escritura creativa: Los microgramas de mi mundo (Jorge Carrera Andrade). Elaboración de poemas breves. Evaluación sumativa Unidad 2.", "paginas": "Texto Págs. 130 - 133", "dcd": "LL.3.5.1. Reconocer elementos líricos. / LL.3.5.2. Participar en discusiones y creación de textos poéticos breves.", "gramatica": "Síntesis lírica: el micrograma como retrato poético de seres u objetos de la naturaleza.", "ortografia": "Puntuación expresiva y rima asonante en versos cortos.", "metodologia": "Pedagogía Crítica y Taller Creativo: ilustración de microgramas en cartulina y aplicación de prueba sumativa de Unidad 2.", "recurso": "Texto págs. 130-133, Guía docente pág. 18.", "evaluacion": "I.LL.3.7.1. Recrea textos poéticos breves basándose en vivencias y aprecia el valor estético de la lírica.", "tipo": "evaluacion_unidad"}, {"sem": 19, "trim": 2, "fechas": "11/01 al 15/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Lengua y Cultura", "tema": "Modismos: manifestación de cultura e identidad. Refranes, frases proverbiales y modismos de las regiones del Ecuador.", "paginas": "Texto Págs. 136 - 141", "dcd": "LL.3.1.2. Indagar sobre las influencias lingüísticas y culturales que explican los modismos del castellano en el Ecuador.", "gramatica": "Significado literal frente a significado figurado en refranes y modismos tradicionales.", "ortografia": "Ortografía en expresiones coloquiales de tradición oral.", "metodologia": "Gamificación: juego de memoria y relación de modismos ecuatorianos (chapa, bacán, palabrear, cachas) con su contexto social.", "recurso": "Texto págs. 136-141, Guía docente pág. 19.", "evaluacion": "I.LL.3.1.2. Valora los modismos y refranes como parte de la identidad cultural ecuatoriana.", "tipo": "clase"}, {"sem": 20, "trim": 2, "fechas": "18/01 al 22/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Comunicación Oral", "tema": "El recital poético: la declamación ante el público, modulación de la voz, dicción, pausas, mirada y expresión corporal.", "paginas": "Texto Págs. 142 - 148", "dcd": "LL.3.2.1. Escuchar discursos orales, poemas y formular juicios de valor sobre su dicción y expresividad.", "gramatica": "Recursos paralingüísticos en la oratoria y declamación poética.", "ortografia": "Entonación de poemas, silencios dramáticos y énfasis vocal.", "metodologia": "Aula Invertida: preparación de una estrofa elegida, ensayo frente al espejo/parejas y puesta en escena en mini recital de aula.", "recurso": "Texto págs. 142-148, Guía docente pág. 20.", "evaluacion": "I.LL.3.2.1. Declamación con fluidez, adecuada entonación y lenguaje no verbal pertinente.", "tipo": "clase"}, {"sem": 21, "trim": 2, "fechas": "25/01 al 29/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Taller Oral y Lectura I", "tema": "Taller oral: Mensajes con palabras prohibidas (superar estereotipos y prejuicios). Lectura: Leo sobre personajes que cambiaron el mundo (biografías).", "paginas": "Texto Págs. 149 - 157", "dcd": "LL.3.2.4. Reflexionar sobre los efectos del uso de estereotipos y prejuicios en la comunicación. / LL.3.3.8. Fluidez lectora.", "gramatica": "Uso de lenguaje inclusivo, asertivo y libre de discriminación.", "ortografia": "Lectura biográfica guiada: fechas, cronología y vocabulario socioemocional.", "metodologia": "Pedagogía Crítica: dinámica de roles para desterrar estereotipos y lectura comentada de biografías de líderes de la paz.", "recurso": "Texto págs. 149-157, Guía docente pág. 21.", "evaluacion": "I.LL.3.2.2. Reflexiona sobre estereotipos en discursos y lee con fluidez textos biográficos informativos.", "tipo": "clase"}, {"sem": 22, "trim": 2, "fechas": "01/02 al 05/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Lectura y Recursos II", "tema": "Comprensión de biografías y punto de vista del autor. Uso de recursos: Criterios para seleccionar y validar páginas web confiables.", "paginas": "Texto Págs. 158 - 161", "dcd": "LL.3.3.10. Reconocer el punto de vista del autor y las motivaciones en el texto. / LL.3.3.6. Consultar fuentes web confiables.", "gramatica": "Marcadores de subjetividad en biografías y análisis crítico de la información en línea.", "ortografia": "Citas textuales cortas y registro formal de referencias electrónicas.", "metodologia": "Ciclo ERCA: navegación asistida en el aula de computación, aplicación de lista de cotejo de confiabilidad web.", "recurso": "Texto págs. 158-161, Ficha de verificación web.", "evaluacion": "I.LL.3.3.2. Reconoce el punto de vista del autor e identifica fuentes web válidas para el aprendizaje.", "tipo": "clase"}, {"sem": 23, "trim": 2, "fechas": "08/02 al 12/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Autobiografía)", "tema": "Escribo mi historia: la autobiografía, anécdotas en primera persona y selección de momentos significativos de vida. Planificación.", "paginas": "Texto Págs. 162 - 170", "dcd": "LL.3.4.6. Autorregular la producción escrita mediante planificación y lluvia de ideas. / LL.3.4.1. Relatar en primera persona.", "gramatica": "Narrativa en primera persona del singular (yo) y tiempos verbales pretéritos.", "ortografia": "Uso de la coma enumerativa y de vocativo en relatos de anécdotas.", "metodologia": "ABP: Proyecto de vida 'El baúl de mis recuerdos', elaboración de la línea de tiempo biográfica personal. (Feriado Carnaval 08-09 Feb).", "recurso": "Texto págs. 162-170, Fotografías y recuerdos familiares.", "evaluacion": "I.LL.3.6.1. Planifica y redacta textos autobiográficos con secuencia lógica y relevancia vivencial.", "tipo": "clase"}, {"sem": 24, "trim": 2, "fechas": "15/02 al 19/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Gramática)", "tema": "Preposiciones, conjunciones y nexos sintácticos en la oración. Conectores de causa y consecuencia para articular episodios de la vida.", "paginas": "Texto Págs. 171 - 176", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar en producciones escritas preposiciones, conjunciones y conectores lógicos.", "gramatica": "Lista y función de preposiciones (a, ante, bajo, con, contra, de, desde...); conjunciones coordinantes y subordinantes.", "ortografia": "Uso de conectores de causa (porque, ya que, puesto que) y consecuencia (por lo tanto, en consecuencia).", "metodologia": "Aula Invertida: fichas de conexión de oraciones, corrección en parejas del borrador autobiográfico.", "recurso": "Texto págs. 171-176, Guía docente pág. 22.", "evaluacion": "I.LL.3.6.3. Emplea conectores y preposiciones con propiedad para lograr cohesión en sus escritos.", "tipo": "clase"}, {"sem": 25, "trim": 2, "fechas": "22/02 al 26/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Ortografía)", "tema": "Ortografía del verbo 'haber': tiempos compuestos y forma impersonal (hay, había, hubo). Diferenciación: haber/a ver, hay/ahí/¡ay!.", "paginas": "Texto Págs. 177 - 178", "dcd": "LL.3.4.10. y LL.3.4.13. Producir textos escritos aplicando convenciones gramaticales y ortográficas normativas.", "gramatica": "El verbo haber como auxiliar de participios (-ado, -ido) e impersonalidad estricta.", "ortografia": "Homófonos de alta frecuencia: a ver / haber, hay / ahí / ¡ay!, hecho / echo.", "metodologia": "Gamificación y Ciclo ERCA: 'El tribunal de la ortografía', dictados reflexivos y redacción final de la autobiografía.", "recurso": "Texto págs. 177-178, Ficha de homófonos.", "evaluacion": "I.LL.3.6.3. Aplica correctamente la ortografía del verbo haber y palabras homófonas en producciones escritas.", "tipo": "clase"}, {"sem": 26, "trim": 2, "fechas": "01/03 al 05/03/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Literatura", "tema": "Disfruto de la novela corta: estructura narrativa, capítulos, personajes principales y secundarios, conflicto y resolución.", "paginas": "Texto Págs. 178 - 191", "dcd": "LL.3.5.1. Reconocer en la novela corta los elementos característicos que le dan sentido.", "gramatica": "Tipos de narrador (protagonista, omnisciente, testigo) y descripción de atmósferas y ambientes.", "ortografia": "Uso de comillas en citas y diálogos de personajes.", "metodologia": "Pedagogía Crítica: círculos de lectura compartida de fragmentos seleccionados de novelas juveniles.", "recurso": "Texto págs. 178-191, Guía docente pág. 23.", "evaluacion": "I.LL.3.7.1. Identifica el conflicto central, evolución de personajes y atmósfera en novelas cortas.", "tipo": "clase"}, {"sem": 27, "trim": 2, "fechas": "08/03 al 12/03/2027", "unidad": "Evaluación Trimestral", "uNum": 2, "tituloUnidad": "Evaluaciones del Segundo Trimestre", "bloque": "Evaluación Trimestral", "tema": "Semana de Evaluaciones del Segundo Trimestre (del 08 al 12 de marzo). Entrega de fase 3-4 del Proyecto Integrador. Juntas de curso (15/03).", "paginas": "Instrumentos Trimestrales / Sistema SIEE", "dcd": "Evaluación sumativa de destrezas priorizadas de Unidades 2 y 3.", "gramatica": "Adverbios, preposiciones, relato histórico, novela corta y autobiografía.", "ortografia": "Uso de J, reglas del verbo haber y homófonos.", "metodologia": "Aplicación de pruebas trimestrales estructuradas y rúbricas de evaluación del proyecto.", "recurso": "Exámenes trimestrales aprobados por Vicerrectorado.", "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo del 2do Trimestre.", "tipo": "evaluacion_trimestre"}, {"sem": 28, "trim": 3, "fechas": "15/03 al 19/03/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura Creativa y Evaluación U3", "tema": "Escritura creativa: Ideas para crear una historia (planificación y escritura de un capítulo de novela corta). Evaluación sumativa Unidad 3.", "paginas": "Texto Págs. 192 - 195", "dcd": "LL.3.5.2. Participar en discusiones sobre textos literarios. / LL.3.3.4. Autorregular la comprensión lectora.", "gramatica": "Técnicas para generar intriga y descripción de personajes inolvidables.", "ortografia": "Revisión final de puntuación y coherencia capitular.", "metodologia": "Ciclo ERCA: galería de historias en el aula y resolución de la prueba sumativa de Unidad 3.", "recurso": "Texto págs. 192-195, Rúbrica sumativa pág. 195.", "evaluacion": "I.LL.3.7.1. Crea capítulos de historias ficcionales aplicando recursos del lenguaje narrativo.", "tipo": "evaluacion_unidad"}, {"sem": 29, "trim": 3, "fechas": "22/03 al 26/03/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Lengua y Cultura", "tema": "Circuito de la comunicación: emisor, receptor, mensaje, código, canal y contexto. Ruidos y barreras comunicativas. Asertividad.", "paginas": "Texto Págs. 198 - 203", "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la comunicación efectiva.", "gramatica": "Elementos del acto comunicativo y funciones del lenguaje (informativa, expresiva, apelativa).", "ortografia": "Signos lingüísticos y no lingüísticos en la interacción social.", "metodologia": "Gamificación: dinámicas de simulación de barreras de comunicación y mensajes cifrados. (Feriado 26 Mar: Viernes Santo).", "recurso": "Texto págs. 198-203, Guía docente pág. 24.", "evaluacion": "I.LL.3.1.1. Identifica los elementos del circuito de la comunicación y promueve el diálogo asertivo.", "tipo": "clase"}, {"sem": 30, "trim": 3, "fechas": "29/03 al 02/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Comunicación Oral", "tema": "Herramientas para una mejor comunicación: técnicas de comunicación grupal (la exposición, el debate y la mesa redonda). Argumentos.", "paginas": "Texto Págs. 204 - 210", "dcd": "LL.3.2.2. Proponer intervenciones orales con intención comunicativa, organizar el discurso con estructuras básicas de la lengua oral.", "gramatica": "Estructura del argumento (afirmación, razonamiento, evidencia) y conectores argumentativos.", "ortografia": "Registro formal del habla y dicción en intervenciones públicas.", "metodologia": "Ciclo ERCA: mesa redonda escolar sobre el cuidado del agua y el entorno natural.", "recurso": "Texto págs. 204-210, Guía docente pág. 26.", "evaluacion": "I.LL.3.2.2. Participa en situaciones comunicativas orales, argumenta sus posturas y respeta acuerdos.", "tipo": "clase"}, {"sem": 31, "trim": 3, "fechas": "05/04 al 09/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Taller Oral", "tema": "Taller de Comunicación Oral: 'Mi voz se escucha'. El arte de la oratoria infantil: postura, respiración, contacto visual y proyección de la voz.", "paginas": "Texto Pág. 211", "dcd": "LL.3.2.2. Organizar el discurso según las estructuras de la lengua oral y utilizar vocabulario pertinente.", "gramatica": "Elaboración de fichas de apoyo para la oratoria pública.", "ortografia": "Pausas de énfasis, modulación expresiva y control de la velocidad al hablar.", "metodologia": "ABP / Taller vivencial: Mini Festival de Oratoria 'Voces Jóvenes por el Mundo'.", "recurso": "Texto pág. 211, Rúbrica de expresión oral de la Guía pág. 26.", "evaluacion": "I.LL.3.2.1. Pronuncia discursos breves con soltura, convicción y lenguaje corporal adecuado.", "tipo": "clase"}, {"sem": 32, "trim": 3, "fechas": "12/04 al 16/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Lectura", "tema": "Leo para conocer a grandes oradores: discursos históricos célebres (defensa de los derechos de la niñez, equidad y paz mundial).", "paginas": "Texto Págs. 212 - 222", "dcd": "LL.3.3.4. Autorregular la comprensión mediante estrategias cognitivas de parafraseo y formulación de preguntas. / LL.3.3.11. Decodificación.", "gramatica": "La tesis, el propósito persuasivo y las ideas de apoyo en textos oratorios.", "ortografia": "Vocabulario de oratoria: retórica, elocuencia, arenga, persuasión.", "metodologia": "Pedagogía Crítica: lectura reflexiva de discursos de líderes mundiales (Gandhi, Mandela, Malala) y debate en clase.", "recurso": "Texto págs. 212-222, Recursos audiovisuales.", "evaluacion": "I.LL.3.4.1. Decodifica y comprende textos de oratoria reconociendo su intención persuasiva.", "tipo": "clase"}, {"sem": 33, "trim": 3, "fechas": "19/04 al 23/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Recursos y Fiesta de la Lectura", "tema": "Organizadores gráficos para comparar: diagramas de Venn y matrices de comparación. Participación en la Fiesta Institucional de la Lectura (22-23 abr).", "paginas": "Texto Pág. 223 / Actividades institucionales", "dcd": "LL.3.3.4. Aplicar estrategias de síntesis y organización gráfica de la información.", "gramatica": "Relaciones lógicas de semejanza, diferencia, causa y consecuencia mediante gráficos.", "ortografia": "Precisión léxica y concisión en resúmenes esquemáticos.", "metodologia": "ABP Institucional: Maratón de lectura, elaboración colectiva de diagramas de Venn en papelógrafos.", "recurso": "Texto pág. 223, Agenda de la Fiesta de la Lectura Calderón 2.", "evaluacion": "I.LL.3.3.4. Sintetiza y contrasta conceptos centrales mediante organizadores gráficos estructurados.", "tipo": "clase"}, {"sem": 34, "trim": 3, "fechas": "26/04 al 30/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Texto argumentativo)", "tema": "Escribo un discurso: estructura formal (saludo, introducción con tesis, desarrollo de argumentos sustentados y conclusión exhortativa).", "paginas": "Texto Págs. 224 - 230", "dcd": "LL.3.4.1. Relatar y argumentar con secuencia lógica, manejo de conectores y coherencia en el tiempo verbal. / LL.3.4.6. Planificar.", "gramatica": "Conectores argumentativos: en primer lugar, por consiguiente, además, finalmente.", "ortografia": "Uso de mayúsculas en títulos honoríficos y fórmulas protocolarias de saludo.", "metodologia": "Aula Invertida: análisis de discursos modelo, lluvia de argumentos y redacción del primer borrador. (Feriado 30 Abr).", "recurso": "Texto págs. 224-230, Guía docente pág. 27.", "evaluacion": "I.LL.3.6.1. Redacta discursos estructurados utilizando conectores y argumentos fundamentados.", "tipo": "clase"}, {"sem": 35, "trim": 3, "fechas": "03/05 al 07/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Gramática I)", "tema": "El adjetivo: adjetivos connotativos (calificativos y epítetos). Grados del adjetivo (positivo, comparativo, superlativo). Concordancia nominal.", "paginas": "Texto Págs. 231 - 235", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar en las producciones escritas el adjetivo connotativo y sus grados.", "gramatica": "Adjetivos connotativos; regla de concordancia en género y número entre sustantivo y adjetivo; epítetos poéticos.", "ortografia": "Terminaciones en superlativo (-ísimo, -érrimo) y reglas de tilde.", "metodologia": "Ciclo ERCA: taller de enriquecimiento descriptivo del discurso incorporando adjetivos connotativos de impacto.", "recurso": "Texto págs. 231-235, Guía docente pág. 27.", "evaluacion": "I.LL.3.6.3. Aplica adjetivos connotativos con adecuada concordancia para conferir viveza al discurso.", "tipo": "clase"}, {"sem": 36, "trim": 3, "fechas": "10/05 al 14/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Gramática II)", "tema": "Adjetivos no connotativos: demostrativos (este, ese, aquel), posesivos (mi, tu, su, nuestro), indefinidos (alguno, ningún) y numerales.", "paginas": "Texto Págs. 236 - 237", "dcd": "LL.3.4.10. Integrar con precisión adjetivos demostrativos, posesivos, indefinidos y numerales en la redacción.", "gramatica": "Diferencia entre adjetivo determinativo (acompaña al sustantivo) y pronombre (lo reemplaza).", "ortografia": "Numerales cardinales, ordinales (undécimo, vigésimo), múltiplos y partitivos.", "metodologia": "Ciclo ERCA: cuadros comparativos de adjetivos connotativos vs. no connotativos y ejercicios de precisión.", "recurso": "Texto págs. 236-237, Guía docente pág. 28.", "evaluacion": "I.LL.3.6.3. Discrimina y emplea adjetivos demostrativos, posesivos y numerales con exactitud gramatical.", "tipo": "clase"}, {"sem": 37, "trim": 3, "fechas": "17/05 al 21/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Ortografía)", "tema": "Palabras homónimas: homógrafas y homófonas. Diferenciación y uso en contexto. Revisión final del discurso institucional.", "paginas": "Texto Págs. 238 - 239", "dcd": "LL.3.4.10. y LL.3.4.6. Revisar, pulir y publicar discursos escritos aplicando corrección ortográfica de homónimos.", "gramatica": "Precisión semántica: distinguir entre significados homófonos en contexto oracional.", "ortografia": "Pares homófonos frecuentes: tuvo / tubo, echo / hecho, vasto / basto, cima / sima.", "metodologia": "Feria de Proyectos Interdisciplinarios (20-21 mayo): lectura pública de discursos y mural de homónimos. (Feriado 24 May).", "recurso": "Texto págs. 238-239, Stands de proyectos escolares.", "evaluacion": "I.LL.3.6.3. Corrige ambigüedades y errores en palabras homónimas en textos de autoría propia.", "tipo": "clase"}, {"sem": 38, "trim": 3, "fechas": "24/05 al 28/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Literatura", "tema": "Disfruto del teatro: el género dramático, estructura del guion teatral, acotaciones escénicas, diálogos de personajes, actos y escenas.", "paginas": "Texto Págs. 240 - 245", "dcd": "LL.3.5.1. Reconocer en una obra de teatro los elementos característicos que le dan sentido (guion, acotaciones, personajes).", "gramatica": "Estructura del texto dramático frente al texto narrativo y poético.", "ortografia": "Uso de paréntesis en acotaciones teatrales y guiones largos en parlamentos.", "metodologia": "Ciclo ERCA: lectura dramatizada en atril con cambios de voz y caracterización de personajes.", "recurso": "Texto págs. 240-245, Guía docente pág. 29.", "evaluacion": "I.LL.3.7.1. Identifica las acotaciones, parlamentos y estructura de escenas en guiones dramáticos.", "tipo": "clase"}, {"sem": 39, "trim": 3, "fechas": "31/05 al 04/06/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura Creativa", "tema": "¡A la escena!: creación colectiva de un guion teatral breve. Elaboración de acotaciones, reparto de personajes y ensayo escénico.", "paginas": "Texto Págs. 246 - 248", "dcd": "LL.3.5.2. Participar en discusiones sobre obras literarias. / LL.3.5.3. Recrear obras teatrales en colectivo.", "gramatica": "Construcción de diálogos vivos, verosímiles y con ritmo dramático.", "ortografia": "Puntuación de diálogos teatrales, signos de interrogación y exclamación.", "metodologia": "ABP: Pequeña compañía de teatro escolar, preparación de vestuario sencillo y ensayo general de obras.", "recurso": "Texto págs. 246-248, Escenario de aula.", "evaluacion": "I.LL.3.7.1. Participa activamente en la escritura y puesta en escena de piezas de microteatro.", "tipo": "clase"}, {"sem": 40, "trim": 3, "fechas": "07/06 al 11/06/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Evaluación Sumativa y Cierre", "tema": "Evaluación sumativa Unidad 4 y autoevaluación final del texto escolar. Consolidación curricular anual de 7mo EGB.", "paginas": "Texto Págs. 249 - 251", "dcd": "Evaluación integral de destrezas con criterio de desempeño de la Unidad 4 y del subnivel Media.", "gramatica": "Síntesis anual de categorías gramaticales: sustantivos, verbos, adverbios y adjetivos.", "ortografia": "Síntesis ortográfica: puntuación, acentuación y normas dudosas.", "metodologia": "Evaluación sumativa estructurada, metacognición grupal y entrega del portafolio final de Lengua y Literatura.", "recurso": "Texto págs. 249-251, Rúbrica final de autoevaluación pág. 251.", "evaluacion": "I.LL.3.6.3. y I.LL.3.7.1. Logro pleno de los objetivos del área de Lengua y Literatura para Básica Media.", "tipo": "evaluacion_unidad"}];
+const PCA_LENGUA_DATA = [{"sem": 1, "trim": 1, "fechas": "01/09 al 04/09/2026", "unidad": "Diagnóstico y Adaptación", "uNum": 0, "tituloUnidad": "Adaptación y Diagnóstico Socioemocional", "bloque": "Diagnóstico / Convivencia", "tema": "Bienvenida y adaptación al aula. Acuerdos de convivencia, dinámica socioemocional y reconocimiento grupal.", "paginas": "Material Institucional / Fichas DECE", "dcd": "Evaluación socioemocional y establecimiento de compromisos éticos y comunicativos en el aula.", "gramatica": "", "ortografia": "", "metodologia": "Dinámicas grupales vivenciales, círculo de diálogo y acuerdos de aula.", "recurso": "Guía Docente pág. 7-8, Fichas de Habilidades para la Vida.", "evaluacion": "Participación activa, respeto a normas de convivencia y expresión socioemocional.", "tipo": "diagnostico"}, {"sem": 2, "trim": 1, "fechas": "07/09 al 11/09/2026", "unidad": "Diagnóstico", "uNum": 0, "tituloUnidad": "Evaluación Diagnóstica de Destrezas", "bloque": "Diagnóstico Pedagógico", "tema": "Evaluación diagnóstica inicial: prueba de conocimientos previos de 6to EGB (comprensión lectora, dialectos y gramática).", "paginas": "Texto Págs. 8 - 9", "dcd": "I.LL.3.1.2., I.LL.3.2.2., I.LL.3.3.2., I.LL.3.6.1., I.LL.3.7.1. (Diagnóstico integral del subnivel).", "gramatica": "Sujeto, predicado, modificadores connotativos y no connotativos.", "ortografia": "Uso de prefijos hemi-, hipo-, hiper-, hue-.", "metodologia": "Prueba diagnóstica individual, tabulación estadística y mapa de calor de alertas.", "recurso": "Texto Lengua 7 pág. 8-9, Matriz de tabulación diagnóstica SIEE.", "evaluacion": "Rúbrica diagnóstica ministerial (Conecta y Nivela).", "tipo": "diagnostico"}, {"sem": 3, "trim": 1, "fechas": "14/09 al 18/09/2026", "unidad": "Nivelación", "uNum": 0, "tituloUnidad": "Nivelación de Habilidades y Destrezas", "bloque": "Nivelación Curricular", "tema": "Nivelación y refuerzo focalizado: estructura de la oración simple, coherencia en párrafos breves y estrategias de lectura.", "paginas": "Guía pág. 10 - 11 / Cuaderno de trabajo", "dcd": "LL.3.4.1. Relatar textos con secuencia lógica y manejo básico de conectores.", "gramatica": "Concordancia sustantivo-adjetivo y orden lógico oracional.", "ortografia": "Uso de mayúsculas y punto seguido.", "metodologia": "Talleres cooperativos en parejas, fichas de refuerzo y retroalimentación formativa.", "recurso": "Guía Docente pág. 10-11 (Estrategias DFA y adaptaciones Grado 1 y 2).", "evaluacion": "Monitoreo formativo de superación de alertas tempranas.", "tipo": "nivelacion"}, {"sem": 4, "trim": 1, "fechas": "21/09 al 25/09/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Lengua y Cultura", "tema": "Orígenes de la escritura: de la oralidad a los primeros sistemas gráficos. 🟡 FASE CREA (Sem. 1/2): Proyecto Nutri-Vida (Textos instructivos y cálculo de costos).", "paginas": "Texto Págs. 12 - 17", "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la lengua escrita como herramienta cultural.", "gramatica": "Función social y comunicativa del texto escrito frente a la oralidad.", "ortografia": "Evolución de los primeros signos fonéticos y alfabetos antiguos.", "metodologia": "Ciclo ERCA. Articulación Proyecto Nutri-Vida: análisis del texto instructivo modelo, uso de la coma en series de acciones y 1.er borrador de la receta andina/costeña/amazónica.", "recurso": "Texto págs. 12-17, Guía docente pág. 12.", "evaluacion": "I.LL.3.1.1. Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad. (I.3., S.2.)", "tipo": "clase"}, {"sem": 5, "trim": 1, "fechas": "28/09 al 02/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Comunicación Oral", "tema": "Discursos orales y textos instructivos: uso normativo de la coma. 🟡 FASE CREA (Sem. 2/2): Montaje del Recetario Nutri-Vida y Feria del Aula.", "paginas": "Texto Págs. 18 - 25", "dcd": "LL.3.2.1. Escuchar discursos orales y formular juicios de valor sobre su contenido y forma, y participar de manera respetuosa.", "gramatica": "Estructuras básicas del discurso oral y argumentación inicial.", "ortografia": "Pronunciación, modulación de la voz y pausas orales.", "metodologia": "Ciclo ERCA. Articulación Proyecto Nutri-Vida: revisión con lista de cotejo, pase a limpio del Recetario Ilustrado Intercultural y degustación saludable.", "recurso": "Texto págs. 18-25, Guía docente pág. 13.", "evaluacion": "I.LL.3.2.1. Escucha discursos orales, parafrasea su contenido y participa respetuosamente. (J.3., I.4.)", "tipo": "clase"}, {"sem": 6, "trim": 1, "fechas": "05/10 al 09/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Lectura y Recursos", "tema": "Leo para acercarme a la ciencia: textos de divulgación científica (paleontología, dinosaurios). Uso de recursos: Préstamo de libros en la biblioteca escolar.", "paginas": "Texto Págs. 26 - 37", "dcd": "LL.3.3.5. Valorar los aspectos de forma y el contenido de un texto científico a partir de criterios preestablecidos. / LL.3.3.8. Leer con fluidez y entonación.", "gramatica": "Estructura del artículo científico: introducción, desarrollo y conclusiones.", "ortografia": "Lectura paratextual, glosario científico y términos especializados.", "metodologia": "Pedagogía Crítica y fases lectoras (antes, durante y después). Ficha de préstamo de biblioteca escolar. (Feriado 09 Oct).", "recurso": "Texto págs. 26-37, Biblioteca escolar / recursos web.", "evaluacion": "I.LL.3.3.2. Realiza inferencias fundamentales y valora el contenido de textos científicos.", "tipo": "clase"}, {"sem": 7, "trim": 1, "fechas": "12/10 al 16/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Escritura (Texto y Gramática I)", "tema": "Escribo una nota científica: estructura, planificación y redacción del borrador. Gramática: El verbo (concepto y accidentes gramaticales: persona, número, tiempo).", "paginas": "Texto Págs. 38 - 47", "dcd": "LL.3.4.1. Relatar textos con secuencia lógica, manejo de conectores. / LL.3.4.6. Autorregular la producción escrita mediante planificación.", "gramatica": "El verbo y sus accidentes gramaticales: persona (1ra, 2da, 3ra), número (singular, plural), tiempo (presente, pasado, futuro).", "ortografia": "Separación silábica, concordancia verbal con el núcleo del sujeto.", "metodologia": "Aula Invertida: análisis de modelos de notas científicas, mapa de planificación textual y cuadros sinópticos del verbo.", "recurso": "Texto págs. 38-47, Guía docente pág. 14.", "evaluacion": "I.LL.3.6.1. Produce textos informativos usando el proceso de escritura y elementos gramaticales apropiados.", "tipo": "clase"}, {"sem": 8, "trim": 1, "fechas": "19/10 al 23/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Escritura (Gramática II y Ortografía)", "tema": "Modos verbales (indicativo, subjuntivo, imperativo). Tiempos simples y compuestos. Voz activa y voz pasiva. Ortografía: Uso del punto y coma (;).", "paginas": "Texto Págs. 48 - 53", "dcd": "LL.3.4.10. Expresar sus ideas con precisión e integrar en las producciones escritas el verbo, sus tiempos, modos y modificadores.", "gramatica": "Modo indicativo, subjuntivo e imperativo; voz activa frente a voz pasiva; conjugación en tiempos compuestos.", "ortografia": "Reglas de uso del punto y coma (;) en oraciones complejas y yuxtapuestas.", "metodologia": "Ciclo ERCA: laboratorio de conjugación verbal, corrección guiada de errores y ejercitación del punto y coma.", "recurso": "Texto págs. 48-53, Fichas de aplicación ortográfica.", "evaluacion": "I.LL.3.6.3. Aplica elementos gramaticales y ortográficos en producciones escritas con coherencia y cohesión.", "tipo": "clase"}, {"sem": 9, "trim": 1, "fechas": "26/10 al 30/10/2026", "unidad": "Unidad 1", "uNum": 1, "tituloUnidad": "Las palabras me ayudan a comprender el mundo", "bloque": "Literatura y Evaluación U1", "tema": "Disfruto de los mitos: concepto, características, mitos de creación, dioses y héroes. Escritura creativa: Historieta mitológica. Evaluación sumativa Unidad 1.", "paginas": "Texto Págs. 54 - 71", "dcd": "LL.3.5.1. Reconocer en un texto literario los elementos característicos que le dan sentido. / LL.3.4.13. Producir historietas con recursos diversos.", "gramatica": "Estructura del mito: personajes sobrenaturales, tiempo remoto, función explicativa del origen cósmico.", "ortografia": "Guiones en diálogos de historieta y signos de exclamación/interrogación.", "metodologia": "ABP / Gamificación: taller de creación de viñetas de historietas mitológicas y aplicación de prueba sumativa de unidad.", "recurso": "Texto págs. 54-71, Rúbrica de autoevaluación pág. 71.", "evaluacion": "I.LL.3.7.1. Reconoce en textos literarios los elementos característicos y recrea historias mediante formatos visuales.", "tipo": "evaluacion_unidad"}, {"sem": 10, "trim": 1, "fechas": "02/11 al 06/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Lengua y Cultura", "tema": "Los dialectos del Ecuador: variedades lingüísticas de la Costa, Sierra y Amazonía. Quichuismos y respeto a la interculturalidad.", "paginas": "Texto Págs. 74 - 79", "dcd": "LL.3.1.2. Indagar sobre las influencias lingüísticas y culturales que explican los dialectos del castellano en el Ecuador.", "gramatica": "Variedades diatópicas y léxico patrimonial de las nacionalidades indígenas y pueblos afroecuatoriano y montubio.", "ortografia": "Grafías y préstamos lingüísticos originarios integrados al castellano ecuatoriano.", "metodologia": "ABP: confección del Diccionario de Ecuatorianismos y sociolectos regionales. (Feriados 02-03 Nov).", "recurso": "Texto págs. 74-79, Guía docente pág. 15.", "evaluacion": "I.LL.3.1.2. Indaga sobre las influencias lingüísticas y dialectos del castellano como expresión de identidad.", "tipo": "clase"}, {"sem": 11, "trim": 1, "fechas": "09/11 al 13/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Comunicación Oral", "tema": "Comparto mis ideas y aprendo de los demás: el diálogo formal, la escucha activa y la búsqueda de acuerdos. Taller: Participemos de un cine-foro.", "paginas": "Texto Págs. 80 - 87", "dcd": "LL.3.2.2. Proponer intervenciones orales con una intención comunicativa, organizar el discurso y respetar los turnos de habla.", "gramatica": "Fórmulas de cortesía, turnos de conversación y argumentos de sustento.", "ortografia": "Modulación, claridad articulatoria y volumen adecuado en la interacción grupal.", "metodologia": "Ciclo ERCA y Cine-foro: proyección de fragmento audiovisual histórico, ronda de debate guiado y consensos.", "recurso": "Texto págs. 80-87, Guía docente pág. 16.", "evaluacion": "I.LL.3.2.2. Propone intervenciones orales organizadas, adapta el vocabulario y busca acuerdos.", "tipo": "clase"}, {"sem": 12, "trim": 1, "fechas": "16/11 al 20/11/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Lectura y Recursos", "tema": "Leo para conocer sobre mis raíces: textos históricos, relatos del pasado incaico y crónicas. Uso de recursos: Criterios para comparar y contrastar fuentes.", "paginas": "Texto Págs. 88 - 99", "dcd": "LL.3.3.8. Leer con fluidez y entonación. / LL.3.3.2. Comprender contenidos implícitos mediante inferencias. / LL.3.3.6. Contrastar fuentes.", "gramatica": "Textos narrativos históricos y crónicas coloniales. Verificación de veracidad.", "ortografia": "Estrategias de lectura inferencial, subrayado de ideas centrales e indicios textuales.", "metodologia": "Pedagogía Crítica: tabla comparativa de fuentes históricas, lectura comentada y análisis de versiones del pasado.", "recurso": "Texto págs. 88-99, Biblioteca digital escolar.", "evaluacion": "I.LL.3.4.1. Lee con fluidez en contextos escolares y comprende contenidos implícitos de crónicas y relatos.", "tipo": "clase"}, {"sem": 13, "trim": 1, "fechas": "23/11 al 27/11/2026", "unidad": "Evaluación Trimestral", "uNum": 1, "tituloUnidad": "Evaluaciones del Primer Trimestre", "bloque": "Evaluación Trimestral", "tema": "Semana de Evaluaciones del Primer Trimestre (del 24 al 30 de noviembre). Consolidación de portafolio y proyecto interdisciplinar N° 1.", "paginas": "Instrumentos Trimestrales / Sistema SIEE", "dcd": "Evaluación sumativa de destrezas priorizadas de Unidad 1 e inicio de Unidad 2.", "gramatica": "Sustantivos, verbos, modos, el mito, los dialectos y la nota científica.", "ortografia": "Uso del punto y coma y aplicación de normas ortográficas trabajadas.", "metodologia": "Aplicación de instrumentos de evaluación sumativa trimestral estructurada y retroalimentación individual.", "recurso": "Cuestionarios trimestrales aprobados por Vicerrectorado.", "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo institucional.", "tipo": "evaluacion_trimestre"}, {"sem": 14, "trim": 2, "fechas": "30/11 al 04/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Texto y Estructura)", "tema": "Escribo un relato histórico: características y secuencia cronológica. La estructura del párrafo: idea principal y secundarias.", "paginas": "Texto Págs. 100 - 109", "dcd": "LL.3.4.9. Organizar las ideas con unidad de sentido a partir de la construcción de párrafos. / LL.3.4.1. Relatar con secuencia lógica.", "gramatica": "Estructura del párrafo, oración temática central y oraciones de soporte / ampliación.", "ortografia": "Conectores temporales (al principio, luego, posteriormente, finalmente) y de orden.", "metodologia": "Pedagogía Crítica: descomposición de relatos históricos en párrafos temáticos y redacción guiada.", "recurso": "Texto págs. 100-109, Guía docente pág. 17.", "evaluacion": "I.LL.3.6.3. Escribe relatos organizados en párrafos con unidad de sentido y conectores cronológicos.", "tipo": "clase"}, {"sem": 15, "trim": 2, "fechas": "07/12 al 11/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Gramática)", "tema": "El adverbio: concepto y clasificación (lugar, tiempo, modo, cantidad, afirmación, negación, duda). Adverbios en -mente y locuciones adverbiales.", "paginas": "Texto Págs. 110 - 114", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar adverbios y sus modificadores en las producciones escritas.", "gramatica": "Clasificación de los adverbios; formación de adverbios derivados con el sufijo -mente; locuciones adverbiales comunes.", "ortografia": "Conservación de la tilde en adjetivos al añadir el sufijo -mente (fácilmente, rápidamente).", "metodologia": "Ciclo ERCA: dinámica de sustitución de adverbios en relatos históricos y fichas de ejercicios sintácticos.", "recurso": "Texto págs. 110-114, Guía docente pág. 17.", "evaluacion": "I.LL.3.6.3. Integra adverbios y locuciones con precisión para enriquecer la descripción y narración.", "tipo": "clase"}, {"sem": 16, "trim": 2, "fechas": "14/12 al 18/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura (Ortografía)", "tema": "Reglas ortográficas del uso de la 'J': verbos en -jar y -jear; palabras terminadas en -jería, -jero, -jera. Redacción final del relato histórico.", "paginas": "Texto Págs. 115 - 116", "dcd": "LL.3.4.6. Autorregular la producción escrita mediante revisión, corrección y publicación.", "gramatica": "Concordancia temporal y cohesión textual del relato histórico elaborado por el estudiante.", "ortografia": "Uso de la J en formas verbales sin g ni j en el infinitivo (dijo, trajo, condujo) y palabras en -jería.", "metodologia": "Ciclo ERCA: taller de edición entre pares, cacería de errores ortográficos y publicación en mural del aula.", "recurso": "Texto págs. 115-116, Rúbrica de redacción histórica.", "evaluacion": "I.LL.3.6.1. Aplica el proceso de escritura y normas ortográficas de la j en textos narrativos históricos.", "tipo": "clase"}, {"sem": 17, "trim": 2, "fechas": "21/12 al 24/12/2026", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Literatura", "tema": "Disfruto de los poemas de autor: estructura lírica (verso, estrofa, rima asonante y consonante, métrica y ritmo). Figuras literarias (metáfora, símil, personificación).", "paginas": "Texto Págs. 116 - 129", "dcd": "LL.3.5.1. Reconocer en un texto literario los elementos característicos que le dan sentido (poesía).", "gramatica": "Lenguaje figurado y recursos poéticos de los autores hispanoamericanos.", "ortografia": "Acentuación rítmica, pausas versales y rima.", "metodologia": "Taller lúdico poético: declamación navideña/cultural, identificación de figuras literarias. (Vacaciones 25 Dic al 01 Ene).", "recurso": "Texto págs. 116-129, Antología de poetas ecuatorianos.", "evaluacion": "I.LL.3.7.1. Reconoce en poemas los elementos métricos, recursos estilísticos y figuras retóricas.", "tipo": "clase"}, {"sem": 18, "trim": 2, "fechas": "04/01 al 08/01/2027", "unidad": "Unidad 2", "uNum": 2, "tituloUnidad": "Palabras para entender el pasado", "bloque": "Escritura Creativa y Evaluación U2", "tema": "Escritura creativa: Los microgramas de mi mundo (Jorge Carrera Andrade). Elaboración de poemas breves. Evaluación sumativa Unidad 2.", "paginas": "Texto Págs. 130 - 133", "dcd": "LL.3.5.1. Reconocer elementos líricos. / LL.3.5.2. Participar en discusiones y creación de textos poéticos breves.", "gramatica": "Síntesis lírica: el micrograma como retrato poético de seres u objetos de la naturaleza.", "ortografia": "Puntuación expresiva y rima asonante en versos cortos.", "metodologia": "Pedagogía Crítica y Taller Creativo: ilustración de microgramas en cartulina y aplicación de prueba sumativa de Unidad 2.", "recurso": "Texto págs. 130-133, Guía docente pág. 18.", "evaluacion": "I.LL.3.7.1. Recrea textos poéticos breves basándose en vivencias y aprecia el valor estético de la lírica.", "tipo": "evaluacion_unidad"}, {"sem": 19, "trim": 2, "fechas": "11/01 al 15/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Lengua y Cultura", "tema": "Modismos: manifestación de cultura e identidad. Refranes, frases proverbiales y modismos de las regiones del Ecuador.", "paginas": "Texto Págs. 136 - 141", "dcd": "LL.3.1.2. Indagar sobre las influencias lingüísticas y culturales que explican los modismos del castellano en el Ecuador.", "gramatica": "Significado literal frente a significado figurado en refranes y modismos tradicionales.", "ortografia": "Ortografía en expresiones coloquiales de tradición oral.", "metodologia": "Gamificación: juego de memoria y relación de modismos ecuatorianos (chapa, bacán, palabrear, cachas) con su contexto social.", "recurso": "Texto págs. 136-141, Guía docente pág. 19.", "evaluacion": "I.LL.3.1.2. Valora los modismos y refranes como parte de la identidad cultural ecuatoriana.", "tipo": "clase"}, {"sem": 20, "trim": 2, "fechas": "18/01 al 22/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Comunicación Oral", "tema": "El recital poético: la declamación ante el público, modulación de la voz, dicción, pausas, mirada y expresión corporal.", "paginas": "Texto Págs. 142 - 148", "dcd": "LL.3.2.1. Escuchar discursos orales, poemas y formular juicios de valor sobre su dicción y expresividad.", "gramatica": "Recursos paralingüísticos en la oratoria y declamación poética.", "ortografia": "Entonación de poemas, silencios dramáticos y énfasis vocal.", "metodologia": "Aula Invertida: preparación de una estrofa elegida, ensayo frente al espejo/parejas y puesta en escena en mini recital de aula.", "recurso": "Texto págs. 142-148, Guía docente pág. 20.", "evaluacion": "I.LL.3.2.1. Declamación con fluidez, adecuada entonación y lenguaje no verbal pertinente.", "tipo": "clase"}, {"sem": 21, "trim": 2, "fechas": "25/01 al 29/01/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Taller Oral y Lectura I", "tema": "Taller oral: Mensajes con palabras prohibidas (superar estereotipos y prejuicios). Lectura: Leo sobre personajes que cambiaron el mundo (biografías).", "paginas": "Texto Págs. 149 - 157", "dcd": "LL.3.2.4. Reflexionar sobre los efectos del uso de estereotipos y prejuicios en la comunicación. / LL.3.3.8. Fluidez lectora.", "gramatica": "Uso de lenguaje inclusivo, asertivo y libre de discriminación.", "ortografia": "Lectura biográfica guiada: fechas, cronología y vocabulario socioemocional.", "metodologia": "Pedagogía Crítica: dinámica de roles para desterrar estereotipos y lectura comentada de biografías de líderes de la paz.", "recurso": "Texto págs. 149-157, Guía docente pág. 21.", "evaluacion": "I.LL.3.2.2. Reflexiona sobre estereotipos en discursos y lee con fluidez textos biográficos informativos.", "tipo": "clase"}, {"sem": 22, "trim": 2, "fechas": "01/02 al 05/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Lectura y Recursos II", "tema": "Comprensión de biografías y punto de vista del autor. Uso de recursos: Criterios para seleccionar y validar páginas web confiables.", "paginas": "Texto Págs. 158 - 161", "dcd": "LL.3.3.10. Reconocer el punto de vista del autor y las motivaciones en el texto. / LL.3.3.6. Consultar fuentes web confiables.", "gramatica": "Marcadores de subjetividad en biografías y análisis crítico de la información en línea.", "ortografia": "Citas textuales cortas y registro formal de referencias electrónicas.", "metodologia": "Ciclo ERCA: navegación asistida en el aula de computación, aplicación de lista de cotejo de confiabilidad web.", "recurso": "Texto págs. 158-161, Ficha de verificación web.", "evaluacion": "I.LL.3.3.2. Reconoce el punto de vista del autor e identifica fuentes web válidas para el aprendizaje.", "tipo": "clase"}, {"sem": 23, "trim": 2, "fechas": "08/02 al 12/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Autobiografía)", "tema": "Escribo mi historia: la autobiografía, anécdotas en primera persona y selección de momentos significativos de vida. Planificación.", "paginas": "Texto Págs. 162 - 170", "dcd": "LL.3.4.6. Autorregular la producción escrita mediante planificación y lluvia de ideas. / LL.3.4.1. Relatar en primera persona.", "gramatica": "Narrativa en primera persona del singular (yo) y tiempos verbales pretéritos.", "ortografia": "Uso de la coma enumerativa y de vocativo en relatos de anécdotas.", "metodologia": "ABP: Proyecto de vida 'El baúl de mis recuerdos', elaboración de la línea de tiempo biográfica personal. (Feriado Carnaval 08-09 Feb).", "recurso": "Texto págs. 162-170, Fotografías y recuerdos familiares.", "evaluacion": "I.LL.3.6.1. Planifica y redacta textos autobiográficos con secuencia lógica y relevancia vivencial.", "tipo": "clase"}, {"sem": 24, "trim": 2, "fechas": "15/02 al 19/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Gramática)", "tema": "Preposiciones, conjunciones y nexos sintácticos en la oración. Conectores de causa y consecuencia para articular episodios de la vida.", "paginas": "Texto Págs. 171 - 176", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar en producciones escritas preposiciones, conjunciones y conectores lógicos.", "gramatica": "Lista y función de preposiciones (a, ante, bajo, con, contra, de, desde...); conjunciones coordinantes y subordinantes.", "ortografia": "Uso de conectores de causa (porque, ya que, puesto que) y consecuencia (por lo tanto, en consecuencia).", "metodologia": "Aula Invertida: fichas de conexión de oraciones, corrección en parejas del borrador autobiográfico.", "recurso": "Texto págs. 171-176, Guía docente pág. 22.", "evaluacion": "I.LL.3.6.3. Emplea conectores y preposiciones con propiedad para lograr cohesión en sus escritos.", "tipo": "clase"}, {"sem": 25, "trim": 2, "fechas": "22/02 al 26/02/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura (Ortografía)", "tema": "Ortografía del verbo 'haber': tiempos compuestos y forma impersonal (hay, había, hubo). Diferenciación: haber/a ver, hay/ahí/¡ay!.", "paginas": "Texto Págs. 177 - 178", "dcd": "LL.3.4.10. y LL.3.4.13. Producir textos escritos aplicando convenciones gramaticales y ortográficas normativas.", "gramatica": "El verbo haber como auxiliar de participios (-ado, -ido) e impersonalidad estricta.", "ortografia": "Homófonos de alta frecuencia: a ver / haber, hay / ahí / ¡ay!, hecho / echo.", "metodologia": "Gamificación y Ciclo ERCA: 'El tribunal de la ortografía', dictados reflexivos y redacción final de la autobiografía.", "recurso": "Texto págs. 177-178, Ficha de homófonos.", "evaluacion": "I.LL.3.6.3. Aplica correctamente la ortografía del verbo haber y palabras homófonas en producciones escritas.", "tipo": "clase"}, {"sem": 26, "trim": 2, "fechas": "01/03 al 05/03/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Literatura", "tema": "Disfruto de la novela corta: estructura narrativa, capítulos, personajes principales y secundarios, conflicto y resolución.", "paginas": "Texto Págs. 178 - 191", "dcd": "LL.3.5.1. Reconocer en la novela corta los elementos característicos que le dan sentido.", "gramatica": "Tipos de narrador (protagonista, omnisciente, testigo) y descripción de atmósferas y ambientes.", "ortografia": "Uso de comillas en citas y diálogos de personajes.", "metodologia": "Pedagogía Crítica: círculos de lectura compartida de fragmentos seleccionados de novelas juveniles.", "recurso": "Texto págs. 178-191, Guía docente pág. 23.", "evaluacion": "I.LL.3.7.1. Identifica el conflicto central, evolución de personajes y atmósfera en novelas cortas.", "tipo": "clase"}, {"sem": 27, "trim": 2, "fechas": "08/03 al 12/03/2027", "unidad": "Evaluación Trimestral", "uNum": 2, "tituloUnidad": "Evaluaciones del Segundo Trimestre", "bloque": "Evaluación Trimestral", "tema": "Semana de Evaluaciones del Segundo Trimestre (del 08 al 12 de marzo). Entrega de fase 3-4 del Proyecto Integrador. Juntas de curso (15/03).", "paginas": "Instrumentos Trimestrales / Sistema SIEE", "dcd": "Evaluación sumativa de destrezas priorizadas de Unidades 2 y 3.", "gramatica": "Adverbios, preposiciones, relato histórico, novela corta y autobiografía.", "ortografia": "Uso de J, reglas del verbo haber y homófonos.", "metodologia": "Aplicación de pruebas trimestrales estructuradas y rúbricas de evaluación del proyecto.", "recurso": "Exámenes trimestrales aprobados por Vicerrectorado.", "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo del 2do Trimestre.", "tipo": "evaluacion_trimestre"}, {"sem": 28, "trim": 3, "fechas": "15/03 al 19/03/2027", "unidad": "Unidad 3", "uNum": 3, "tituloUnidad": "Palabras para conocerme y conocer a los demás", "bloque": "Escritura Creativa y Evaluación U3", "tema": "Escritura creativa: Ideas para crear una historia (planificación y escritura de un capítulo de novela corta). Evaluación sumativa Unidad 3.", "paginas": "Texto Págs. 192 - 195", "dcd": "LL.3.5.2. Participar en discusiones sobre textos literarios. / LL.3.3.4. Autorregular la comprensión lectora.", "gramatica": "Técnicas para generar intriga y descripción de personajes inolvidables.", "ortografia": "Revisión final de puntuación y coherencia capitular.", "metodologia": "Ciclo ERCA: galería de historias en el aula y resolución de la prueba sumativa de Unidad 3.", "recurso": "Texto págs. 192-195, Rúbrica sumativa pág. 195.", "evaluacion": "I.LL.3.7.1. Crea capítulos de historias ficcionales aplicando recursos del lenguaje narrativo.", "tipo": "evaluacion_unidad"}, {"sem": 29, "trim": 3, "fechas": "22/03 al 26/03/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Lengua y Cultura", "tema": "Circuito de la comunicación: emisor, receptor, mensaje, código, canal y contexto. Ruidos y barreras comunicativas. Asertividad.", "paginas": "Texto Págs. 198 - 203", "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la comunicación efectiva.", "gramatica": "Elementos del acto comunicativo y funciones del lenguaje (informativa, expresiva, apelativa).", "ortografia": "Signos lingüísticos y no lingüísticos en la interacción social.", "metodologia": "Gamificación: dinámicas de simulación de barreras de comunicación y mensajes cifrados. (Feriado 26 Mar: Viernes Santo).", "recurso": "Texto págs. 198-203, Guía docente pág. 24.", "evaluacion": "I.LL.3.1.1. Identifica los elementos del circuito de la comunicación y promueve el diálogo asertivo.", "tipo": "clase"}, {"sem": 30, "trim": 3, "fechas": "29/03 al 02/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Comunicación Oral", "tema": "Herramientas para una mejor comunicación: técnicas de comunicación grupal (la exposición, el debate y la mesa redonda). Argumentos.", "paginas": "Texto Págs. 204 - 210", "dcd": "LL.3.2.2. Proponer intervenciones orales con intención comunicativa, organizar el discurso con estructuras básicas de la lengua oral.", "gramatica": "Estructura del argumento (afirmación, razonamiento, evidencia) y conectores argumentativos.", "ortografia": "Registro formal del habla y dicción en intervenciones públicas.", "metodologia": "Ciclo ERCA: mesa redonda escolar sobre el cuidado del agua y el entorno natural.", "recurso": "Texto págs. 204-210, Guía docente pág. 26.", "evaluacion": "I.LL.3.2.2. Participa en situaciones comunicativas orales, argumenta sus posturas y respeta acuerdos.", "tipo": "clase"}, {"sem": 31, "trim": 3, "fechas": "05/04 al 09/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Taller Oral", "tema": "Taller de Comunicación Oral: 'Mi voz se escucha'. El arte de la oratoria infantil: postura, respiración, contacto visual y proyección de la voz.", "paginas": "Texto Pág. 211", "dcd": "LL.3.2.2. Organizar el discurso según las estructuras de la lengua oral y utilizar vocabulario pertinente.", "gramatica": "Elaboración de fichas de apoyo para la oratoria pública.", "ortografia": "Pausas de énfasis, modulación expresiva y control de la velocidad al hablar.", "metodologia": "ABP / Taller vivencial: Mini Festival de Oratoria 'Voces Jóvenes por el Mundo'.", "recurso": "Texto pág. 211, Rúbrica de expresión oral de la Guía pág. 26.", "evaluacion": "I.LL.3.2.1. Pronuncia discursos breves con soltura, convicción y lenguaje corporal adecuado.", "tipo": "clase"}, {"sem": 32, "trim": 3, "fechas": "12/04 al 16/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Lectura", "tema": "Leo para conocer a grandes oradores: discursos históricos célebres (defensa de los derechos de la niñez, equidad y paz mundial).", "paginas": "Texto Págs. 212 - 222", "dcd": "LL.3.3.4. Autorregular la comprensión mediante estrategias cognitivas de parafraseo y formulación de preguntas. / LL.3.3.11. Decodificación.", "gramatica": "La tesis, el propósito persuasivo y las ideas de apoyo en textos oratorios.", "ortografia": "Vocabulario de oratoria: retórica, elocuencia, arenga, persuasión.", "metodologia": "Pedagogía Crítica: lectura reflexiva de discursos de líderes mundiales (Gandhi, Mandela, Malala) y debate en clase.", "recurso": "Texto págs. 212-222, Recursos audiovisuales.", "evaluacion": "I.LL.3.4.1. Decodifica y comprende textos de oratoria reconociendo su intención persuasiva.", "tipo": "clase"}, {"sem": 33, "trim": 3, "fechas": "19/04 al 23/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Recursos y Fiesta de la Lectura", "tema": "Organizadores gráficos para comparar: diagramas de Venn y matrices de comparación. Participación en la Fiesta Institucional de la Lectura (22-23 abr).", "paginas": "Texto Pág. 223 / Actividades institucionales", "dcd": "LL.3.3.4. Aplicar estrategias de síntesis y organización gráfica de la información.", "gramatica": "Relaciones lógicas de semejanza, diferencia, causa y consecuencia mediante gráficos.", "ortografia": "Precisión léxica y concisión en resúmenes esquemáticos.", "metodologia": "ABP Institucional: Maratón de lectura, elaboración colectiva de diagramas de Venn en papelógrafos.", "recurso": "Texto pág. 223, Agenda de la Fiesta de la Lectura Calderón 2.", "evaluacion": "I.LL.3.3.4. Sintetiza y contrasta conceptos centrales mediante organizadores gráficos estructurados.", "tipo": "clase"}, {"sem": 34, "trim": 3, "fechas": "26/04 al 30/04/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Texto argumentativo)", "tema": "Escribo un discurso: estructura formal (saludo, introducción con tesis, desarrollo de argumentos sustentados y conclusión exhortativa).", "paginas": "Texto Págs. 224 - 230", "dcd": "LL.3.4.1. Relatar y argumentar con secuencia lógica, manejo de conectores y coherencia en el tiempo verbal. / LL.3.4.6. Planificar.", "gramatica": "Conectores argumentativos: en primer lugar, por consiguiente, además, finalmente.", "ortografia": "Uso de mayúsculas en títulos honoríficos y fórmulas protocolarias de saludo.", "metodologia": "Aula Invertida: análisis de discursos modelo, lluvia de argumentos y redacción del primer borrador. (Feriado 30 Abr).", "recurso": "Texto págs. 224-230, Guía docente pág. 27.", "evaluacion": "I.LL.3.6.1. Redacta discursos estructurados utilizando conectores y argumentos fundamentados.", "tipo": "clase"}, {"sem": 35, "trim": 3, "fechas": "03/05 al 07/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Gramática I)", "tema": "El adjetivo: adjetivos connotativos (calificativos y epítetos). Grados del adjetivo (positivo, comparativo, superlativo). Concordancia nominal.", "paginas": "Texto Págs. 231 - 235", "dcd": "LL.3.4.10. Expresar ideas con precisión e integrar en las producciones escritas el adjetivo connotativo y sus grados.", "gramatica": "Adjetivos connotativos; regla de concordancia en género y número entre sustantivo y adjetivo; epítetos poéticos.", "ortografia": "Terminaciones en superlativo (-ísimo, -érrimo) y reglas de tilde.", "metodologia": "Ciclo ERCA: taller de enriquecimiento descriptivo del discurso incorporando adjetivos connotativos de impacto.", "recurso": "Texto págs. 231-235, Guía docente pág. 27.", "evaluacion": "I.LL.3.6.3. Aplica adjetivos connotativos con adecuada concordancia para conferir viveza al discurso.", "tipo": "clase"}, {"sem": 36, "trim": 3, "fechas": "10/05 al 14/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Gramática II)", "tema": "Adjetivos no connotativos: demostrativos (este, ese, aquel), posesivos (mi, tu, su, nuestro), indefinidos (alguno, ningún) y numerales.", "paginas": "Texto Págs. 236 - 237", "dcd": "LL.3.4.10. Integrar con precisión adjetivos demostrativos, posesivos, indefinidos y numerales en la redacción.", "gramatica": "Diferencia entre adjetivo determinativo (acompaña al sustantivo) y pronombre (lo reemplaza).", "ortografia": "Numerales cardinales, ordinales (undécimo, vigésimo), múltiplos y partitivos.", "metodologia": "Ciclo ERCA: cuadros comparativos de adjetivos connotativos vs. no connotativos y ejercicios de precisión.", "recurso": "Texto págs. 236-237, Guía docente pág. 28.", "evaluacion": "I.LL.3.6.3. Discrimina y emplea adjetivos demostrativos, posesivos y numerales con exactitud gramatical.", "tipo": "clase"}, {"sem": 37, "trim": 3, "fechas": "17/05 al 21/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura (Ortografía)", "tema": "Palabras homónimas: homógrafas y homófonas. Diferenciación y uso en contexto. Revisión final del discurso institucional.", "paginas": "Texto Págs. 238 - 239", "dcd": "LL.3.4.10. y LL.3.4.6. Revisar, pulir y publicar discursos escritos aplicando corrección ortográfica de homónimos.", "gramatica": "Precisión semántica: distinguir entre significados homófonos en contexto oracional.", "ortografia": "Pares homófonos frecuentes: tuvo / tubo, echo / hecho, vasto / basto, cima / sima.", "metodologia": "Feria de Proyectos Interdisciplinarios (20-21 mayo): lectura pública de discursos y mural de homónimos. (Feriado 24 May).", "recurso": "Texto págs. 238-239, Stands de proyectos escolares.", "evaluacion": "I.LL.3.6.3. Corrige ambigüedades y errores en palabras homónimas en textos de autoría propia.", "tipo": "clase"}, {"sem": 38, "trim": 3, "fechas": "24/05 al 28/05/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Literatura", "tema": "Disfruto del teatro: el género dramático, estructura del guion teatral, acotaciones escénicas, diálogos de personajes, actos y escenas.", "paginas": "Texto Págs. 240 - 245", "dcd": "LL.3.5.1. Reconocer en una obra de teatro los elementos característicos que le dan sentido (guion, acotaciones, personajes).", "gramatica": "Estructura del texto dramático frente al texto narrativo y poético.", "ortografia": "Uso de paréntesis en acotaciones teatrales y guiones largos en parlamentos.", "metodologia": "Ciclo ERCA: lectura dramatizada en atril con cambios de voz y caracterización de personajes.", "recurso": "Texto págs. 240-245, Guía docente pág. 29.", "evaluacion": "I.LL.3.7.1. Identifica las acotaciones, parlamentos y estructura de escenas en guiones dramáticos.", "tipo": "clase"}, {"sem": 39, "trim": 3, "fechas": "31/05 al 04/06/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Escritura Creativa", "tema": "¡A la escena!: creación colectiva de un guion teatral breve. Elaboración de acotaciones, reparto de personajes y ensayo escénico.", "paginas": "Texto Págs. 246 - 248", "dcd": "LL.3.5.2. Participar en discusiones sobre obras literarias. / LL.3.5.3. Recrear obras teatrales en colectivo.", "gramatica": "Construcción de diálogos vivos, verosímiles y con ritmo dramático.", "ortografia": "Puntuación de diálogos teatrales, signos de interrogación y exclamación.", "metodologia": "ABP: Pequeña compañía de teatro escolar, preparación de vestuario sencillo y ensayo general de obras.", "recurso": "Texto págs. 246-248, Escenario de aula.", "evaluacion": "I.LL.3.7.1. Participa activamente en la escritura y puesta en escena de piezas de microteatro.", "tipo": "clase"}, {"sem": 40, "trim": 3, "fechas": "07/06 al 11/06/2027", "unidad": "Unidad 4", "uNum": 4, "tituloUnidad": "Palabras para conocer el mundo", "bloque": "Evaluación Sumativa y Cierre", "tema": "Evaluación sumativa Unidad 4 y autoevaluación final del texto escolar. Consolidación curricular anual de 7mo EGB.", "paginas": "Texto Págs. 249 - 251", "dcd": "Evaluación integral de destrezas con criterio de desempeño de la Unidad 4 y del subnivel Media.", "gramatica": "Síntesis anual de categorías gramaticales: sustantivos, verbos, adverbios y adjetivos.", "ortografia": "Síntesis ortográfica: puntuación, acentuación y normas dudosas.", "metodologia": "Evaluación sumativa estructurada, metacognición grupal y entrega del portafolio final de Lengua y Literatura.", "recurso": "Texto págs. 249-251, Rúbrica final de autoevaluación pág. 251.", "evaluacion": "I.LL.3.6.3. y I.LL.3.7.1. Logro pleno de los objetivos del área de Lengua y Literatura para Básica Media.", "tipo": "evaluacion_unidad"}];
 
 let currentPcaTrimFilter = 'all';
 let pcaViewMode = 'cards'; // 'cards' o 'table'
