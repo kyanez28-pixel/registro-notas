@@ -5534,8 +5534,8 @@ body.in-focus-mode {
 
 
   <!-- ══════════════════════════════════════════════════════
-     VISTA: PLANIFICADOR CURRICULAR ANUAL (PCA) & DISTRIBUCIÓN SEMANAL
-     LENGUA Y LITERATURA 7MO EGB (2026-2027) — MAYA EDICIONES & MINEDUC
+     VISTA: PLANIFICADOR CURRICULAR ANUAL (PCA 7MO LENGUA Y LITERATURA)
+     MAYA EDICIONES & MINEDUC 2026-2027 · U.E.F. CALDERÓN 2
      ══════════════════════════════════════════════════════ -->
 <div id="pcaPanel" style="display:none" class="content">
 
@@ -5543,38 +5543,84 @@ body.in-focus-mode {
   <div style="background:linear-gradient(135deg,#064e3b 0%,#047857 40%,#059669 75%,#10b981 100%);border-radius:var(--radius-md);padding:22px 26px;margin-bottom:18px;color:#fff;box-shadow:var(--shadow-md)">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
       
-      <div style="display:flex;align-items:center;gap:18px">
-        <div style="width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.3)">
+      <div style="display:flex;align-items:center;gap:16px;min-width:300px;flex:1">
+        <div style="width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.3)">
           📖
         </div>
         <div>
-          <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.3px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:1.35rem;font-weight:900;letter-spacing:0.2px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <span>Planificador PCA &amp; Distribución Semanal — Lengua y Literatura 7.° EGB</span>
-            <span style="font-size:0.75rem;background:#fef3c7;color:#92400e;padding:3px 12px;border-radius:99px;font-weight:900;border:1px solid #fde68a">2026 - 2027</span>
+            <span style="font-size:0.75rem;background:#fef3c7;color:#92400e;padding:2px 10px;border-radius:99px;font-weight:900;border:1px solid #fde68a">2026 - 2027</span>
           </div>
-          <div style="font-size:0.86rem;opacity:0.95;margin-top:5px;font-weight:600;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="font-size:0.84rem;opacity:0.95;margin-top:5px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <span>🏛️ U.E.F. "Calderón 2"</span>
             <span>•</span>
-            <span>📚 Texto Maya Ediciones (251 págs.) &amp; Guía Docente MinEduc</span>
+            <span>📚 Texto Maya Ediciones (251 págs.)</span>
+            <span>•</span>
+            <span>📘 Guía Docente MinEduc</span>
             <span>•</span>
             <span>⏱️ 5 Períodos/Sem. (200 horas anuales)</span>
           </div>
         </div>
       </div>
 
+      <!-- Botones de Acción -->
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <button class="btn" onclick="printPcaLengua()" style="background:#fff;color:#047857;border-color:#fff;font-weight:900;font-size:0.84rem;padding:8px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.15);border-radius:8px">
+        <button class="btn" id="btnTogglePcaView" onclick="togglePcaViewMode()" style="background:#fff;color:#047857;border-color:#fff;font-weight:900;font-size:0.84rem;padding:8px 16px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">
+          📋 Vista Matriz Oficial PCA
+        </button>
+        <button class="btn" onclick="printPcaLengua()" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);font-weight:800;font-size:0.84rem;padding:8px 15px;border-radius:8px">
           🖨️ Imprimir Planificación
         </button>
         <button class="btn" onclick="exportPcaCSV()" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);font-weight:800;font-size:0.84rem;padding:8px 15px;border-radius:8px">
           📥 Descargar Excel (.csv)
         </button>
-        <button class="btn" id="btnTogglePcaView" onclick="togglePcaViewMode()" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);font-weight:800;font-size:0.84rem;padding:8px 15px;border-radius:8px">
-          📋 Vista Matriz Oficial PCA
-        </button>
       </div>
 
     </div>
+  </div>
+
+  <!-- KPIs de Resumen Curricular -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px">
+    
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #10b981">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Semanas del Año</span>
+        <span style="font-size:1.2rem">🗓️</span>
+      </div>
+      <div style="font-size:1.45rem;font-weight:900;color:#047857;margin-top:4px">40 Semanas</div>
+      <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">36 Efectivas + 4 Diag./Eval.</div>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #3b82f6">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Texto de Estudio</span>
+        <span style="font-size:1.2rem">📚</span>
+      </div>
+      <div style="font-size:1.45rem;font-weight:900;color:#1d4ed8;margin-top:4px">4 Unidades</div>
+      <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">251 Páginas (Maya Ediciones)</div>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #8b5cf6">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Carga Horaria</span>
+        <span style="font-size:1.2rem">⏱️</span>
+      </div>
+      <div style="font-size:1.45rem;font-weight:900;color:#6d28d9;margin-top:4px">200 Períodos</div>
+      <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">5 Horas Pedagógicas / Sem.</div>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #f59e0b">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Avance Impartido</span>
+        <span style="font-size:1.2rem">📈</span>
+      </div>
+      <div style="font-size:1.45rem;font-weight:900;color:#b45309;margin-top:4px" id="pcaProgressText">0 / 40 Sem. (0%)</div>
+      <div style="width:100%;height:6px;background:rgba(0,0,0,0.06);border-radius:99px;margin-top:6px;overflow:hidden">
+        <div id="pcaProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,#f59e0b,#10b981);border-radius:99px;transition:width 0.4s ease"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Pestañas Grandes de Navegación por Trimestre -->
@@ -5582,82 +5628,93 @@ body.in-focus-mode {
     <button id="pcaTrimTab_all" class="btn" onclick="switchPcaTrimTab('all')" style="background:#047857;color:#fff;border-color:#047857;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(4,120,87,0.3)">
       🌟 Todo el Año (40 Semanas)
     </button>
-    <button id="pcaTrimTab_1" class="btn btn-outline" onclick="switchPcaTrimTab('1')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color)">
-      1️⃣ 1.ᵉʳ Trimestre (Sem 1 a 13) · U1
+    <button id="pcaTrimTab_1" class="btn btn-outline" onclick="switchPcaTrimTab('1')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+      1️⃣ 1er Trimestre (Sem 1 a 13) · U1
     </button>
-    <button id="pcaTrimTab_2" class="btn btn-outline" onclick="switchPcaTrimTab('2')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color)">
-      2️⃣ 2.º Trimestre (Sem 14 a 27) · U2 y U3
+    <button id="pcaTrimTab_2" class="btn btn-outline" onclick="switchPcaTrimTab('2')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+      2️⃣ 2do Trimestre (Sem 14 a 27) · U2 y U3
     </button>
-    <button id="pcaTrimTab_3" class="btn btn-outline" onclick="switchPcaTrimTab('3')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color)">
-      3️⃣ 3.ᵉʳ Trimestre (Sem 28 a 40) · U3 y U4
+    <button id="pcaTrimTab_3" class="btn btn-outline" onclick="switchPcaTrimTab('3')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+      3️⃣ 3er Trimestre (Sem 28 a 40) · U3 y U4
     </button>
-    <button id="pcaTrimTab_diag" class="btn btn-outline" onclick="switchPcaTrimTab('diag')" style="font-weight:800;padding:9px 16px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color)">
+    <button id="pcaTrimTab_diag" class="btn btn-outline" onclick="switchPcaTrimTab('diag')" style="font-weight:800;padding:9px 16px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
       🎯 Diagnóstico &amp; Nivelación (Sem 1 a 3)
     </button>
   </div>
 
   <!-- Resumen de las 4 Unidades del Libro (Guía Visual Rápida) -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:18px">
-    
-    <div onclick="filterByUnidadCard('u1')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #3b82f6;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:0.75rem;font-weight:900;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:6px">UNIDAD 1 · 6 SEMANAS</span>
-        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 10 - 71</span>
-      </div>
-      <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Las palabras me ayudan a comprender el mundo</div>
-      <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
-        Orígenes de la escritura, la nota científica, el verbo y sus modos, punto y coma, y los mitos.
-      </div>
+  <div style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">
+        📚 Unidades Temáticas del Texto Maya Ediciones (Clic en cualquiera para filtrar):
+      </span>
+      <button onclick="switchPcaTrimTab('all')" style="background:none;border:none;color:#047857;font-size:0.75rem;font-weight:800;cursor:pointer;text-decoration:underline">
+        Ver todas las unidades
+      </button>
     </div>
 
-    <div onclick="filterByUnidadCard('u2')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #8b5cf6;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:0.75rem;font-weight:900;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:6px">UNIDAD 2 · 8 SEMANAS</span>
-        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 72 - 133</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px">
+      
+      <div id="pcaUnitCard_u1" onclick="filterByUnidadCard('u1')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #3b82f6;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.75rem;font-weight:900;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:6px">UNIDAD 1 · 6 SEMANAS</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 10 - 71</span>
+        </div>
+        <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Las palabras me ayudan a comprender el mundo</div>
+        <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
+          Orígenes de la escritura, la nota científica, el verbo y sus modos, punto y coma, y los mitos.
+        </div>
       </div>
-      <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para entender el pasado</div>
-      <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
-        Dialectos del Ecuador, relato histórico, párrafo, adverbios, uso de la J y poesía de autor.
-      </div>
-    </div>
 
-    <div onclick="filterByUnidadCard('u3')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #f59e0b;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px">UNIDAD 3 · 12 SEMANAS</span>
-        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 134 - 195</span>
+      <div id="pcaUnitCard_u2" onclick="filterByUnidadCard('u2')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #8b5cf6;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.75rem;font-weight:900;background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:6px">UNIDAD 2 · 8 SEMANAS</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 72 - 133</span>
+        </div>
+        <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para entender el pasado</div>
+        <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
+          Dialectos del Ecuador, relato histórico, párrafo, adverbios, uso de la J y poesía de autor.
+        </div>
       </div>
-      <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para conocerme y conocer a los demás</div>
-      <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
-        Modismos, recital poético, biografías, autobiografía, preposiciones, verbo haber y novela corta.
-      </div>
-    </div>
 
-    <div onclick="filterByUnidadCard('u4')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #10b981;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:0.75rem;font-weight:900;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:6px">UNIDAD 4 · 10 SEMANAS</span>
-        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 196 - 251</span>
+      <div id="pcaUnitCard_u3" onclick="filterByUnidadCard('u3')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #f59e0b;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px">UNIDAD 3 · 12 SEMANAS</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 134 - 195</span>
+        </div>
+        <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para conocerme y conocer a los demás</div>
+        <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
+          Modismos, recital poético, biografías, autobiografía, preposiciones, verbo haber y novela corta.
+        </div>
       </div>
-      <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para conocer el mundo</div>
-      <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
-        Circuito comunicativo, debate, oratoria, el discurso, adjetivos connotativos/no connotativos y teatro.
-      </div>
-    </div>
 
+      <div id="pcaUnitCard_u4" onclick="filterByUnidadCard('u4')" style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;border-left:5px solid #10b981;box-shadow:var(--shadow-sm);transition:all 0.2s ease">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.75rem;font-weight:900;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:6px">UNIDAD 4 · 10 SEMANAS</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700">Págs. 196 - 251</span>
+        </div>
+        <div style="font-weight:900;font-size:0.92rem;color:var(--text-main);margin-top:6px">Palabras para conocer el mundo</div>
+        <div style="font-size:0.76rem;color:var(--text-light);margin-top:4px;line-height:1.35">
+          Circuito comunicativo, debate, oratoria, el discurso, adjetivos connotativos/no connotativos y teatro.
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- Barra de Filtros, Búsqueda y Progreso -->
+  <!-- Barra de Filtros, Búsqueda y Salto Rápido a Semana -->
   <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:18px;box-shadow:var(--shadow-sm)">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       
       <!-- Buscador -->
-      <div style="position:relative;flex:1;min-width:280px">
-        <input type="text" id="pcaSearchInput" oninput="onPcaFilterChange()" placeholder="🔍 Buscar por tema, destreza (DCD), página, verbo, adverbio, ortografía..." style="width:100%;padding:9px 36px 9px 14px;border-radius:10px;border:1px solid var(--border-color);font-size:0.84rem;background:var(--input-bg);color:var(--text-main);font-weight:600">
+      <div style="position:relative;flex:1;min-width:260px">
+        <input type="text" id="pcaSearchInput" oninput="onPcaFilterChange()" placeholder="🔍 Buscar por tema, destreza (DCD), página, verbo, ortografía..." style="width:100%;padding:9px 36px 9px 14px;border-radius:8px;border:1px solid var(--border-color);font-size:0.84rem;background:var(--input-bg);color:var(--text-main);font-weight:600">
         <button onclick="clearPcaSearch()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.9rem">✕</button>
       </div>
 
-      <!-- Filtro por Bloque -->
+      <!-- Filtro por Bloque Curricular -->
       <div style="display:flex;align-items:center;gap:8px">
-        <label style="font-size:0.76rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Bloque:</label>
+        <label style="font-size:0.74rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Bloque:</label>
         <select id="pcaFilterBloque" onchange="onPcaFilterChange()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;font-weight:800;background:var(--input-bg);color:var(--text-main)">
           <option value="all">🌐 Todos los Bloques</option>
           <option value="Lengua y Cultura">🏛️ Lengua y Cultura</option>
@@ -5668,19 +5725,21 @@ body.in-focus-mode {
         </select>
       </div>
 
-      <!-- Barra de Progreso y Contador -->
-      <div style="display:flex;align-items:center;gap:12px;background:rgba(0,0,0,0.03);padding:6px 14px;border-radius:8px;border:1px solid var(--border-color)">
-        <div style="display:flex;flex-direction:column;gap:2px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-            <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted)">AVANCE ANUAL:</span>
-            <span id="pcaProgressText" style="font-size:0.74rem;font-weight:900;color:#047857">0 / 40 Sem. (0%)</span>
-          </div>
-          <div style="width:140px;height:6px;background:rgba(0,0,0,0.08);border-radius:99px;overflow:hidden">
-            <div id="pcaProgressBar" style="width:0%;height:100%;background:#10b981;border-radius:99px;transition:width 0.3s ease"></div>
-          </div>
-        </div>
+      <!-- Salto Rápido a Semana -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:0.74rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Ir a:</label>
+        <select id="pcaJumpWeek" onchange="jumpToPcaWeek(this.value)" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;font-weight:800;background:var(--input-bg);color:var(--text-main)">
+          <option value="">⚡ Saltar a Semana...</option>
+          <!-- Las opciones de las 40 semanas se inyectan dinámicamente -->
+        </select>
+      </div>
 
-        <span id="pcaResultCountBadge" style="font-size:0.78rem;background:rgba(16,185,129,0.12);color:#047857;padding:5px 10px;border-radius:6px;font-weight:900;border:1px solid #a7f3d0">
+      <!-- Limpiar y Contador -->
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn btn-outline" onclick="resetPcaFilters()" style="font-size:0.78rem;font-weight:800;padding:7px 12px;border-radius:8px" title="Limpiar todos los filtros y búsqueda">
+          🔄 Limpiar
+        </button>
+        <span id="pcaResultCountBadge" style="font-size:0.8rem;background:rgba(16,185,129,0.12);color:#047857;padding:6px 12px;border-radius:8px;font-weight:900;border:1px solid #a7f3d0">
           40 semanas
         </span>
       </div>
@@ -5699,139 +5758,6 @@ body.in-focus-mode {
   </div>
 
 </div>
-
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <button class="btn" onclick="printPcaLengua()" style="background:#fff;color:#047857;border-color:#fff;font-weight:900;font-size:0.82rem;padding:7px 15px;box-shadow:0 2px 8px rgba(0,0,0,0.15);border-radius:8px">
-            🖨️ Imprimir Planificación
-          </button>
-          <button class="btn" onclick="exportPcaCSV()" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);font-weight:800;font-size:0.82rem;padding:7px 14px;border-radius:8px">
-            📥 Exportar Excel/CSV
-          </button>
-          <button class="btn" id="btnTogglePcaView" onclick="togglePcaViewMode()" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);font-weight:800;font-size:0.82rem;padding:7px 14px;border-radius:8px">
-            📋 Vista Matriz PCA
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- KPIs de Resumen Curricular -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:16px">
-      
-      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #10b981">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Semanas del Año</span>
-          <span style="font-size:1.2rem">🗓️</span>
-        </div>
-        <div style="font-size:1.5rem;font-weight:900;color:#047857;margin-top:4px">40 Semanas</div>
-        <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">36 Efectivas + 4 Diag./Eval.</div>
-      </div>
-
-      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #3b82f6">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Texto de Estudio</span>
-          <span style="font-size:1.2rem">📚</span>
-        </div>
-        <div style="font-size:1.5rem;font-weight:900;color:#1d4ed8;margin-top:4px">4 Unidades</div>
-        <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">251 Páginas (Maya Ediciones)</div>
-      </div>
-
-      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #8b5cf6">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Carga Horaria</span>
-          <span style="font-size:1.2rem">⏱️</span>
-        </div>
-        <div style="font-size:1.5rem;font-weight:900;color:#6d28d9;margin-top:4px">200 Períodos</div>
-        <div style="font-size:0.75rem;color:var(--text-light);font-weight:600;margin-top:2px">5 Horas Pedagógicas / Sem.</div>
-      </div>
-
-      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;box-shadow:var(--shadow-sm);border-left:4px solid #f59e0b">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.5px">Avance Impartido</span>
-          <span style="font-size:1.2rem" id="pcaProgressIcon">⏳</span>
-        </div>
-        <div style="font-size:1.5rem;font-weight:900;color:#b45309;margin-top:4px" id="pcaProgressText">0 / 40 Sem.</div>
-        <div style="width:100%;height:6px;background:rgba(0,0,0,0.06);border-radius:99px;margin-top:6px;overflow:hidden">
-          <div id="pcaProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,#f59e0b,#10b981);border-radius:99px;transition:width 0.4s ease"></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Barra de Filtros y Búsqueda -->
-    <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        
-        <!-- Filtros select -->
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;min-width:280px">
-          
-          <div style="display:flex;flex-direction:column;gap:3px">
-            <label style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Trimestre</label>
-            <select id="pcaFilterTrim" onchange="onPcaFilterChange()" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;font-weight:800;background:var(--input-bg);color:var(--text-main)">
-              <option value="all">🌟 Todos los Trimestres</option>
-              <option value="1">1️⃣ Primer Trimestre (Sem 1 a 13)</option>
-              <option value="2">2️⃣ Segundo Trimestre (Sem 14 a 27)</option>
-              <option value="3">3️⃣ Tercer Trimestre (Sem 28 a 40)</option>
-            </select>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:3px">
-            <label style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Unidad del Libro</label>
-            <select id="pcaFilterUnidad" onchange="onPcaFilterChange()" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;font-weight:800;background:var(--input-bg);color:var(--text-main)">
-              <option value="all">📚 Todas las Unidades</option>
-              <option value="diag">🎯 Diagnóstico y Nivelación</option>
-              <option value="u1">📘 Unidad 1: Comprender el mundo</option>
-              <option value="u2">📙 Unidad 2: Entender el pasado</option>
-              <option value="u3">📗 Unidad 3: Conocerme y conocer</option>
-              <option value="u4">📕 Unidad 4: Conocer el mundo</option>
-              <option value="eval">🏁 Evaluaciones Trimestrales</option>
-            </select>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:3px">
-            <label style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Bloque Curricular</label>
-            <select id="pcaFilterBloque" onchange="onPcaFilterChange()" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;font-weight:800;background:var(--input-bg);color:var(--text-main)">
-              <option value="all">🌐 Todos los Bloques</option>
-              <option value="Lengua y Cultura">🏛️ Lengua y Cultura</option>
-              <option value="Comunicación Oral">🗣️ Comunicación Oral</option>
-              <option value="Lectura">📖 Lectura y Recursos</option>
-              <option value="Escritura">✍️ Escritura y Gramática</option>
-              <option value="Literatura">🎭 Literatura y Creatividad</option>
-            </select>
-          </div>
-
-        </div>
-
-        <!-- Buscador -->
-        <div style="display:flex;flex-direction:column;gap:3px;min-width:260px;flex:1">
-          <label style="font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase">Búsqueda Rápida</label>
-          <div style="position:relative">
-            <input type="text" id="pcaSearchInput" oninput="onPcaFilterChange()" placeholder="🔍 Buscar tema, DCD, página, ortografía, verbo, adverbio..." style="width:100%;padding:7px 34px 7px 12px;border-radius:8px;border:1px solid var(--border-color);font-size:0.82rem;background:var(--input-bg);color:var(--text-main)">
-            <button onclick="clearPcaSearch()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.85rem">✕</button>
-          </div>
-        </div>
-
-        <div style="display:flex;align-items:flex-end;gap:8px">
-          <button class="btn btn-outline" onclick="resetPcaFilters()" style="font-size:0.78rem;font-weight:800;padding:7px 12px" title="Limpiar todos los filtros">
-            🔄 Limpiar
-          </button>
-          <span id="pcaResultCountBadge" style="font-size:0.78rem;background:rgba(16,185,129,0.1);color:#047857;padding:6px 12px;border-radius:8px;font-weight:900;border:1px solid #a7f3d0">
-            40 de 40 semanas
-          </span>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Contenedor Principal de la Planificación (Cards View & Table View) -->
-    <div id="pcaContainerCards" style="display:grid;grid-template-columns:1fr;gap:14px">
-      <!-- Se inyecta dinámicamente con renderPcaLengua() -->
-    </div>
-
-    <div id="pcaContainerTable" style="display:none;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);overflow-x:auto;box-shadow:var(--shadow-sm)">
-      <!-- Se inyecta dinámicamente en vista Matriz PCA -->
-    </div>
-
-  </div>
 
 
 <!-- ══════════════════════════════════════════════════════
@@ -11247,6 +11173,7 @@ function switchView(v) {
   if (v === 'estudiantes') renderStudentsMatrix();
   if (v === 'cronograma') renderCronogramaModule();
   if (v === 'herramientas') renderHerramientas();
+  if (v === 'pca') renderPcaLengua();
 }
 
 function toggleSidebarCollapse() {
@@ -26613,11 +26540,22 @@ function switchPcaTrimTab(tabKey) {
     }
   });
 
+  // Limpiar estilos activos de las tarjetas de unidades
+  ['u1', 'u2', 'u3', 'u4'].forEach(u => {
+    const card = document.getElementById('pcaUnitCard_' + u);
+    if (card) {
+      card.style.outline = 'none';
+      card.style.transform = 'none';
+      card.style.boxShadow = 'var(--shadow-sm)';
+    }
+  });
+
   renderPcaLengua();
 }
 
 function filterByUnidadCard(uKey) {
   currentPcaTrimFilter = uKey;
+  
   // Desactivar estilo de tabs de trimestre
   const tabs = ['all', '1', '2', '3', 'diag'];
   tabs.forEach(t => {
@@ -26627,7 +26565,65 @@ function filterByUnidadCard(uKey) {
       btn.style.cssText = 'font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)';
     }
   });
+
+  // Resaltar la unidad seleccionada
+  ['u1', 'u2', 'u3', 'u4'].forEach(u => {
+    const card = document.getElementById('pcaUnitCard_' + u);
+    if (card) {
+      if (u === uKey) {
+        card.style.outline = '2px solid #047857';
+        card.style.transform = 'translateY(-2px)';
+        card.style.boxShadow = '0 6px 16px rgba(4,120,87,0.18)';
+      } else {
+        card.style.outline = 'none';
+        card.style.transform = 'none';
+        card.style.boxShadow = 'var(--shadow-sm)';
+      }
+    }
+  });
+
   renderPcaLengua();
+}
+
+function resetPcaFilters() {
+  currentPcaTrimFilter = 'all';
+  const inp = document.getElementById('pcaSearchInput');
+  if (inp) inp.value = '';
+  const selB = document.getElementById('pcaFilterBloque');
+  if (selB) selB.value = 'all';
+  const jmp = document.getElementById('pcaJumpWeek');
+  if (jmp) jmp.value = '';
+  switchPcaTrimTab('all');
+}
+
+function jumpToPcaWeek(sem) {
+  if (!sem) return;
+  const targetSem = parseInt(sem, 10);
+  
+  // Si la semana no está visible con el filtro actual, cambiar a "Todo el Año"
+  const item = PCA_LENGUA_DATA.find(x => x.sem === targetSem);
+  if (item) {
+    if (currentPcaTrimFilter !== 'all') {
+      switchPcaTrimTab('all');
+    }
+    setTimeout(() => {
+      const cardEl = document.getElementById('pcaCardSem_' + targetSem);
+      if (cardEl) {
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const origBorder = cardEl.style.border;
+        const origBoxShadow = cardEl.style.boxShadow;
+        cardEl.style.border = '2px solid #10b981';
+        cardEl.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.35), 0 8px 24px rgba(0,0,0,0.15)';
+        cardEl.style.transform = 'scale(1.015)';
+        cardEl.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+          cardEl.style.border = origBorder;
+          cardEl.style.boxShadow = origBoxShadow;
+          cardEl.style.transform = 'none';
+        }, 2200);
+      }
+    }, 60);
+  }
 }
 
 function getPcaChecklist() {
@@ -26656,7 +26652,7 @@ function togglePcaViewMode() {
   pcaViewMode = (pcaViewMode === 'cards') ? 'table' : 'cards';
   const btn = document.getElementById('btnTogglePcaView');
   if (btn) {
-    btn.innerHTML = (pcaViewMode === 'cards') ? '📋 Vista Matriz Oficial PCA' : '🗂️ Vista Cronograma Didáctico';
+    btn.innerHTML = (pcaViewMode === 'cards') ? '📋 Vista Matriz Oficial PCA' : '🗂️ Vista Fichas Semanales';
   }
   renderPcaLengua();
 }
@@ -26671,7 +26667,20 @@ function clearPcaSearch() {
   renderPcaLengua();
 }
 
+function initPcaJumpSelect() {
+  const sel = document.getElementById('pcaJumpWeek');
+  if (!sel || sel.options.length > 1) return;
+  PCA_LENGUA_DATA.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.sem;
+    opt.textContent = `Sem. ${item.sem} (${item.fechas}) · ${item.tema.length > 35 ? item.tema.substring(0, 35) + '...' : item.tema}`;
+    sel.appendChild(opt);
+  });
+}
+
 function renderPcaLengua() {
+  initPcaJumpSelect();
+
   const cardsBox = document.getElementById('pcaContainerCards');
   const tableBox = document.getElementById('pcaContainerTable');
   if (!cardsBox || !tableBox) return;
@@ -26681,7 +26690,7 @@ function renderPcaLengua() {
 
   const checklist = getPcaChecklist();
 
-  // Calcular progreso general
+  // Progreso general
   let completedCount = 0;
   PCA_LENGUA_DATA.forEach(item => {
     if (checklist[item.sem]) completedCount++;
@@ -26694,7 +26703,7 @@ function renderPcaLengua() {
 
   // Filtrado
   const filtered = PCA_LENGUA_DATA.filter(item => {
-    // Filtro Trimestre / Unidad activo
+    // Filtro Trimestre / Unidad
     if (currentPcaTrimFilter === '1' && item.trim !== 1) return false;
     if (currentPcaTrimFilter === '2' && item.trim !== 2) return false;
     if (currentPcaTrimFilter === '3' && item.trim !== 3) return false;
@@ -26758,11 +26767,11 @@ function getBloqueColor(b) {
 }
 
 function getUnidadColor(u) {
-  if (u.includes('1')) return { border: '#2563eb', badge: '#dbeafe', color: '#1e40af' };
-  if (u.includes('2')) return { border: '#7c3aed', badge: '#ede9fe', color: '#5b21b6' };
-  if (u.includes('3')) return { border: '#d97706', badge: '#fef3c7', color: '#92400e' };
-  if (u.includes('4')) return { border: '#059669', badge: '#d1fae5', color: '#065f46' };
-  return { border: '#475569', badge: '#f1f5f9', color: '#1e293b' };
+  if (u.includes('1')) return { border: '#2563eb', badge: '#dbeafe', color: '#1e40af', name: 'U1' };
+  if (u.includes('2')) return { border: '#7c3aed', badge: '#ede9fe', color: '#5b21b6', name: 'U2' };
+  if (u.includes('3')) return { border: '#d97706', badge: '#fef3c7', color: '#92400e', name: 'U3' };
+  if (u.includes('4')) return { border: '#059669', badge: '#d1fae5', color: '#065f46', name: 'U4' };
+  return { border: '#475569', badge: '#f1f5f9', color: '#1e293b', name: 'DIAG' };
 }
 
 function renderPcaCards(list, checklist, container) {
@@ -26772,7 +26781,7 @@ function renderPcaCards(list, checklist, container) {
         <div style="font-size:2.8rem;margin-bottom:10px">🔍</div>
         <div style="font-weight:900;font-size:1.1rem;color:var(--text-main)">No hay semanas que coincidan con el filtro o búsqueda actual.</div>
         <div style="font-size:0.84rem;margin-top:6px">Prueba cambiando a "🌟 Todo el Año" o limpiando el texto de búsqueda.</div>
-        <button class="btn btn-primary" onclick="switchPcaTrimTab('all'); clearPcaSearch();" style="margin-top:16px;font-size:0.84rem">Mostrar Todo el Año</button>
+        <button class="btn btn-primary" onclick="resetPcaFilters()" style="margin-top:16px;font-size:0.84rem">Mostrar Todo el Año</button>
       </div>
     `;
     return;
@@ -26785,23 +26794,26 @@ function renderPcaCards(list, checklist, container) {
     const uColor = getUnidadColor(item.unidad);
 
     html += `
-      <div style="background:var(--card-bg);border:1px solid ${isDone ? '#6ee7b7' : 'var(--border-color)'};border-radius:var(--radius-md);padding:18px 22px;box-shadow:var(--shadow-sm);border-left:6px solid ${uColor.border};${isDone ? 'background:rgba(16,185,129,0.03);' : ''}">
+      <div id="pcaCardSem_${item.sem}" style="background:var(--card-bg);border:1px solid ${isDone ? '#10b981' : 'var(--border-color)'};border-radius:var(--radius-md);padding:18px 22px;box-shadow:var(--shadow-sm);border-left:6px solid ${uColor.border};${isDone ? 'background:rgba(16,185,129,0.03);' : ''}transition:all 0.25s ease">
         
-        <!-- Fila Superior: Semana, Fechas, Trimestre, Bloque y Checkbox -->
+        <!-- Fila Superior: Semana, Fechas, Trimestre, Unidad, Páginas, Bloque y Checkbox -->
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(0,0,0,0.06);padding-bottom:12px;margin-bottom:14px">
           
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <span style="font-size:1.05rem;font-weight:900;background:${isDone ? '#047857' : '#0f172a'};color:#fff;padding:4px 12px;border-radius:8px;letter-spacing:0.4px">
+            <span style="font-size:1rem;font-weight:900;background:${isDone ? '#047857' : '#0f172a'};color:#fff;padding:4px 12px;border-radius:8px;letter-spacing:0.3px">
               SEMANA ${item.sem}
             </span>
             <span style="font-size:0.86rem;font-weight:800;color:var(--text-main)">
               🗓️ ${item.fechas}
             </span>
-            <span style="font-size:0.75rem;background:${uColor.badge};color:${uColor.color};padding:3px 10px;border-radius:99px;font-weight:800">
+            <span style="font-size:0.75rem;background:${uColor.badge};color:${uColor.color};padding:3px 10px;border-radius:99px;font-weight:900">
               ${item.trim}° Trimestre
             </span>
-            <span style="font-size:0.75rem;background:rgba(0,0,0,0.05);color:var(--text-light);padding:3px 10px;border-radius:8px;font-weight:700">
+            <span style="font-size:0.75rem;background:rgba(0,0,0,0.05);color:var(--text-main);padding:3px 10px;border-radius:8px;font-weight:700">
               ${item.unidad}
+            </span>
+            <span style="font-size:0.75rem;background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:8px;font-weight:900">
+              📖 Maya 7.°: ${item.paginas}
             </span>
           </div>
 
@@ -26818,34 +26830,26 @@ function renderPcaCards(list, checklist, container) {
 
         </div>
 
-        <!-- Tema Central y Páginas del Libro -->
+        <!-- Título del Tema -->
         <div style="margin-bottom:12px">
-          <div style="font-size:1.15rem;font-weight:900;color:var(--text-main);line-height:1.4">
+          <div style="font-size:1.12rem;font-weight:900;color:var(--text-main);line-height:1.4;letter-spacing:-0.2px">
             ${item.tema}
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:7px;flex-wrap:wrap">
-            <span style="font-size:0.8rem;background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:6px;font-weight:900;border:1px solid #fecaca;display:inline-flex;align-items:center;gap:5px">
-              <span>📖</span> <span>${item.paginas}</span>
-            </span>
-            <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700">
-              Unidad temática: <i>${item.tituloUnidad}</i>
-            </span>
           </div>
         </div>
 
-        <!-- Badges de Gramática y Ortografía -->
+        <!-- Gramática y Ortografía -->
         ${ (item.gramatica || item.ortografia) ? `
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;background:rgba(0,0,0,0.025);padding:10px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;background:rgba(0,0,0,0.02);padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.05)">
             ${ item.gramatica ? `
               <div style="font-size:0.82rem;color:#1e40af;display:flex;align-items:baseline;gap:6px">
-                <span style="font-weight:900;background:#dbeafe;padding:1px 6px;border-radius:4px">📝 Gramática:</span> 
-                <span style="font-weight:600">${item.gramatica}</span>
+                <span style="font-weight:900;background:#dbeafe;padding:2px 8px;border-radius:4px">📝 Gramática:</span> 
+                <span style="font-weight:700">${item.gramatica}</span>
               </div>
             ` : ''}
             ${ item.ortografia ? `
               <div style="font-size:0.82rem;color:#b45309;display:flex;align-items:baseline;gap:6px">
-                <span style="font-weight:900;background:#fef3c7;padding:1px 6px;border-radius:4px">✍️ Ortografía:</span> 
-                <span style="font-weight:600">${item.ortografia}</span>
+                <span style="font-weight:900;background:#fef3c7;padding:2px 8px;border-radius:4px">✍️ Ortografía:</span> 
+                <span style="font-weight:700">${item.ortografia}</span>
               </div>
             ` : ''}
           </div>
@@ -26853,20 +26857,20 @@ function renderPcaCards(list, checklist, container) {
 
         <!-- Destreza con Criterio de Desempeño (DCD) -->
         <div style="margin-bottom:12px;font-size:0.86rem;color:var(--text-main);line-height:1.5;background:rgba(37,99,235,0.05);border-left:4px solid #2563eb;padding:10px 14px;border-radius:0 8px 8px 0">
-          <span style="font-weight:900;color:#1d4ed8">🎯 Destreza (DCD):</span> ${item.dcd}
+          <span style="font-weight:900;color:#1d4ed8">🎯 Destreza con Criterio de Desempeño (DCD):</span> ${item.dcd}
         </div>
 
         <!-- Orientación Metodológica (Guía del Docente) & Evaluación -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;font-size:0.8rem">
           <div style="background:var(--input-bg);padding:10px 14px;border-radius:8px;border:1px solid var(--border-color);line-height:1.45">
-            <div style="font-weight:900;color:#047857;margin-bottom:3px;display:flex;align-items:center;gap:5px">
-              <span>💡</span> <span>¿Cómo dar la clase? (Guía Docente Maya):</span>
+            <div style="font-weight:900;color:#047857;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+              <span>💡</span> <span>Sugerencia Metodológica (Guía Maya / Ciclo ERCA):</span>
             </div>
             <div style="color:var(--text-main)">${item.metodologia}</div>
           </div>
           
           <div style="background:var(--input-bg);padding:10px 14px;border-radius:8px;border:1px solid var(--border-color);line-height:1.45">
-            <div style="font-weight:900;color:#6d28d9;margin-bottom:3px;display:flex;align-items:center;gap:5px">
+            <div style="font-weight:900;color:#6d28d9;margin-bottom:4px;display:flex;align-items:center;gap:6px">
               <span>📊</span> <span>Criterio / Indicador de Evaluación:</span>
             </div>
             <div style="color:var(--text-main)">${item.evaluacion}</div>
@@ -26928,22 +26932,32 @@ function renderPcaTable(list, checklist, container) {
   });
 
   container.innerHTML = `
-    <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
-      <thead>
-        <tr style="background:var(--table-header-bg);border-bottom:2px solid var(--border-color);text-align:left;font-size:0.76rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.4px">
-          <th style="padding:12px 14px;text-align:center">Semana</th>
-          <th style="padding:12px 14px">Unidad / Págs</th>
-          <th style="padding:12px 14px">Bloque</th>
-          <th style="padding:12px 14px">Temas &amp; Subtemas</th>
-          <th style="padding:12px 14px">DCD Priorizada</th>
-          <th style="padding:12px 14px">Metodología (Guía)</th>
-          <th style="padding:12px 14px">Indicador de Evaluación</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${trs}
-      </tbody>
-    </table>
+    <div style="padding:18px 22px;border-bottom:1px solid var(--border-color);background:rgba(0,0,0,0.02)">
+      <div style="font-weight:900;font-size:1.05rem;color:var(--text-main)">
+        🏛️ Matriz Curricular Oficial — Planificación Curricular Anual (PCA)
+      </div>
+      <div style="font-size:0.8rem;color:var(--text-light);margin-top:3px">
+        Ministerio de Educación del Ecuador · Subnivel Media: Séptimo EGB · Asignatura: Lengua y Literatura
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+        <thead>
+          <tr style="background:var(--table-header-bg);border-bottom:2px solid var(--border-color);text-align:left;font-size:0.76rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.4px">
+            <th style="padding:12px 14px;text-align:center">Semana</th>
+            <th style="padding:12px 14px">Unidad / Págs</th>
+            <th style="padding:12px 14px">Bloque</th>
+            <th style="padding:12px 14px">Temas &amp; Subtemas</th>
+            <th style="padding:12px 14px">DCD Priorizada</th>
+            <th style="padding:12px 14px">Metodología (Guía)</th>
+            <th style="padding:12px 14px">Indicador de Evaluación</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${trs}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -26963,65 +26977,94 @@ function printPcaLengua() {
       <meta charset="utf-8">
       <title>PCA 7mo EGB Lengua y Literatura 2026-2027 - UEF Calderón 2</title>
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8pt; color: #111; margin: 12mm 8mm; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8pt; color: #111; margin: 10mm 8mm; }
         h1 { font-size: 13pt; margin: 0 0 3px 0; text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
-        h2 { font-size: 9.5pt; margin: 0 0 10px 0; text-align: center; color: #333; font-weight: 800; }
-        .header-meta { margin-bottom: 10px; font-size: 8pt; border-bottom: 2px solid #000; padding-bottom: 5px; display: flex; justify-content: space-between; }
+        h2 { font-size: 9.5pt; margin: 0 0 8px 0; text-align: center; color: #333; font-weight: 800; }
+        .header-meta { margin-bottom: 8px; font-size: 8pt; border-bottom: 2px solid #000; padding-bottom: 5px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
         table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        th, td { border: 1px solid #555; padding: 4px 6px; vertical-align: top; text-align: left; font-size: 7.2pt; line-height: 1.25; }
-        th { background: #e5e5e5; font-weight: bold; text-transform: uppercase; }
-        .signatures { margin-top: 25px; display: flex; justify-content: space-around; text-align: center; font-size: 7.8pt; }
-        .sig-box { border-top: 1px solid #000; width: 28%; padding-top: 4px; }
+        th, td { border: 1px solid #ccc; padding: 4px 6px; font-size: 7.5pt; vertical-align: top; text-align: left; }
+        th { background-color: #f1f5f9; font-weight: 900; text-transform: uppercase; font-size: 7pt; }
         @media print {
           @page { size: landscape; margin: 8mm; }
+          button, input[type="checkbox"] { display: none; }
+          tr { page-break-inside: avoid; }
         }
       </style>
     </head>
     <body>
-      <h1>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h1>
-      <h2>PLANIFICACIÓN CURRICULAR ANUAL & DISTRIBUCIÓN SEMANAL — 7.° AÑO EGB — 2026-2027</h2>
+      <h1>Unidad Educativa Fiscal "Calderón 2"</h1>
+      <h2>Planificación Curricular Anual (PCA) &amp; Distribución Semanal — Lengua y Literatura 7.° EGB · 2026 - 2027</h2>
       <div class="header-meta">
-        <div><b>Área:</b> Lengua y Literatura &nbsp;|&nbsp; <b>Carga horaria:</b> 5 períodos/sem. &nbsp;|&nbsp; <b>Total:</b> 40 semanas (200 períodos)</div>
-        <div><b>Texto Oficial:</b> Lengua y Literatura 7 (Maya Ediciones &amp; MinEduc)</div>
+        <div><b>Docente:</b> Lic. Kevin Yánez</div>
+        <div><b>Grado / Paralelo:</b> Séptimo EGB "C"</div>
+        <div><b>Texto Oficial:</b> Maya Ediciones (251 págs.)</div>
+        <div><b>Carga Horaria:</b> 5 h/sem (200 horas)</div>
+        <div><b>Fecha:</b> ${new Date().toLocaleDateString('es-EC')}</div>
       </div>
       ${printArea.innerHTML}
-      <div class="signatures">
-        <div class="sig-box"><b>Lic. Klever Yánez</b><br>DOCENTE</div>
-        <div class="sig-box"><b>MSc. Mery Díaz</b><br>COORDINADORA DE ÁREA</div>
-        <div class="sig-box"><b>MSc. Mauricio Guachamín</b><br>VICERRECTOR</div>
+      <div style="margin-top:30px;display:flex;justify-content:space-around;text-align:center;font-size:8pt">
+        <div style="border-top:1px solid #000;width:200px;padding-top:5px">Docente de Área</div>
+        <div style="border-top:1px solid #000;width:200px;padding-top:5px">Comisión Técnico-Pedagógica</div>
+        <div style="border-top:1px solid #000;width:200px;padding-top:5px">Vicerrectorado</div>
       </div>
-      <scr` + `ipt>
-        window.onload = function() { window.print(); };
-      </scr` + `ipt>
     </body>
     </html>
   `);
   w.document.close();
+  setTimeout(() => {
+    w.print();
+  }, 400);
 
   pcaViewMode = origMode;
   renderPcaLengua();
 }
 
 function exportPcaCSV() {
-  let csv = 'Semana;Trimestre;Unidad;Bloque;Temas y Subtemas;Paginas;DCD;Gramatica;Ortografia;Metodologia;Evaluacion\n';
+  const checklist = getPcaChecklist();
+  const clean = (txt) => {
+    if (!txt) return '';
+    return '"' + String(txt).replace(/"/g, '""').replace(/\n/g, ' ') + '"';
+  };
+
+  const headers = [
+    'Semana',
+    'Fechas',
+    'Trimestre',
+    'Unidad',
+    'Titulo_Unidad',
+    'Paginas_Maya',
+    'Bloque_Curricular',
+    'Tema_Central',
+    'Destreza_DCD',
+    'Gramatica',
+    'Ortografia',
+    'Metodologia_Guia',
+    'Criterio_Evaluacion',
+    'Estado'
+  ];
+
+  let csv = headers.join(';') + '\r\n';
   PCA_LENGUA_DATA.forEach(it => {
-    const clean = (txt) => '"' + (txt || '').replace(/"/g, '""').replace(/\n/g, ' ') + '"';
+    const isDone = checklist[it.sem] ? 'Cumplida' : 'Pendiente';
     csv += [
       it.sem,
+      clean(it.fechas),
       it.trim,
       clean(it.unidad),
+      clean(it.tituloUnidad),
+      clean(it.paginas),
       clean(it.bloque),
       clean(it.tema),
-      clean(it.paginas),
       clean(it.dcd),
       clean(it.gramatica),
       clean(it.ortografia),
       clean(it.metodologia),
-      clean(it.evaluacion)
-    ].join(';') + '\n';
+      clean(it.evaluacion),
+      isDone
+    ].join(';') + '\r\n';
   });
 
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
