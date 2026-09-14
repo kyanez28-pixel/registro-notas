@@ -1,0 +1,5 @@
+# Ignore large PDFs to avoid GitHub file size limits
+*.pdf
+*.docx
+*.bak
+temp_script_*.js
