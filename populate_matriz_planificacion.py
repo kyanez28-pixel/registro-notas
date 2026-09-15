@@ -1,7 +1,110 @@
 # -*- coding: utf-8 -*-
 import docx
 from docx.shared import Pt, RGBColor
+from docx.oxml import parse_xml
 import copy
+
+def get_dua_subtable_xml():
+    return """<w:tbl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblPr>
+    <w:tblStyle w:val="Tablaconcuadrcula"/>
+    <w:tblW w:w="0" w:type="auto"/>
+    <w:jc w:val="center"/>
+    <w:tblLayout w:type="fixed"/>
+  </w:tblPr>
+  <w:tblGrid>
+    <w:gridCol w:w="683"/>
+    <w:gridCol w:w="683"/>
+    <w:gridCol w:w="683"/>
+  </w:tblGrid>
+  <w:tr>
+    <w:trPr>
+      <w:trHeight w:val="278"/>
+      <w:jc w:val="center"/>
+    </w:trPr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="683" w:type="dxa"/>
+        <w:shd w:val="clear" w:color="auto" w:fill="7030A0"/>
+      </w:tcPr>
+      <w:p>
+        <w:pPr>
+          <w:pStyle w:val="Sinespaciado"/>
+          <w:jc w:val="center"/>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+        </w:pPr>
+        <w:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+          <w:t>R</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="683" w:type="dxa"/>
+        <w:shd w:val="clear" w:color="auto" w:fill="00B0F0"/>
+      </w:tcPr>
+      <w:p>
+        <w:pPr>
+          <w:pStyle w:val="Sinespaciado"/>
+          <w:jc w:val="center"/>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+        </w:pPr>
+        <w:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+          <w:t>A-E</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:w="683" w:type="dxa"/>
+        <w:shd w:val="clear" w:color="auto" w:fill="538135"/>
+      </w:tcPr>
+      <w:p>
+        <w:pPr>
+          <w:pStyle w:val="Sinespaciado"/>
+          <w:jc w:val="center"/>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+        </w:pPr>
+        <w:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+            <w:b/>
+            <w:color w:val="FFFFFF"/>
+            <w:sz w:val="20"/>
+          </w:rPr>
+          <w:t>C-M</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>"""
 
 def build_plan():
     doc = docx.Document('MATRIZ DE PLANIFICACIÓN MICROCURRICULAR 26-27_ORIGINAL_BACKUP.docx')
@@ -44,19 +147,14 @@ def build_plan():
     r6 = table.rows[6]
     r6.cells[3].text = "CÍVICA, ÉTICA E INTEGRIDAD | EDUCACIÓN SOCIOEMOCIONAL | EDUCACIÓN PARA LA SEGURIDAD VIAL Y MOVILIDAD SOSTENIBLE"
 
-    # 3. Preparar las semanas de planificación
-    # Row 9 es la fila modelo. Necesitamos 7 semanas: Semanas 6, 7, 8, 9, 10, 11 y 12 (hasta el 23 de Noviembre de 2026).
-    # Clonamos row 9 6 veces antes de row 10 (Firmas de Responsabilidad).
+    # 3. Preparar las 7 semanas
     r9 = table.rows[9]
     r10 = table.rows[10]
 
-    cloned_rows = [r9]
     for _ in range(6):
         clone = copy.deepcopy(r9._tr)
         r10._tr.addprevious(clone)
 
-    # Re-obtener las filas del contenido
-    # Fila 9 es la primera, 10 es la segunda, ..., 15 es la séptima. Fila 16 será Firmas.
     weeks = [
         {
             "sem_title": "SEMANA 6 (05/10 al 09/10/2026) · LENGUA Y CULTURA",
@@ -73,7 +171,7 @@ def build_plan():
                     "mecanica": "Gamificación: Cada estudiante elige su 'Avatar Histórico' (Pintor Rupestre, Escriba Sumerio, Filósofo del Papiro o Escriba Digital) y recibe su bitácora de viaje con 100 Puntos de Sabiduría iniciales.",
                     "dua_rep": "Representación: Infografía visual de la pág. 12 con pinturas rupestres, tablillas sumerias, jeroglíficos y tecnología digital moderna.",
                     "dua_acc": "Acción y expresión: Selección de su avatar mediante dibujo o distintivo; participación oral en lluvia de ideas.",
-                    "dua_mot": "Compromiso - Motivación: Desafío de exploración histórica inmersiva con insignias y niveles de arqueólogo."
+                    "dua_mot": "Compromiso-Motivación: Desafío de exploración histórica inmersiva con insignias y niveles de arqueólogo."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “La Ruleta de los Soportes y la Línea del Tiempo”",
@@ -81,7 +179,7 @@ def build_plan():
                     "mecanica": "Gamificación: Cada asociación correcta otorga 10 puntos y desbloquea la carta de poder cívico 'Memoria Colectiva' (valor de la preservación de acuerdos y derechos de los pueblos).",
                     "dua_rep": "Representación: Muestras táctiles/visuales de papel, arcilla y pergamino; organizadores gráficos cromáticos en pizarra.",
                     "dua_acc": "Acción y expresión: Respuestas orales, construcción de una línea de tiempo cronológica en el cuaderno o dramatización rápida.",
-                    "dua_mot": "Compromiso - Motivación: Trabajo cooperativo en clanes con metas claras y recompensas inmediatas de equipo."
+                    "dua_mot": "Compromiso-Motivación: Trabajo cooperativo en clanes con metas claras y recompensas inmediatas de equipo."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “El Gran Código Criptográfico de los Escribas”",
@@ -89,7 +187,7 @@ def build_plan():
                     "mecanica": "Gamificación: Los equipos que decodifican el mensaje en tiempo récord ganan 'Estrellas de Criptografía' y se convierten en 'Descifradores Maestros'.",
                     "dua_rep": "Representación: Clave criptográfica visual de la pág. 18 proyectada y en hojas de trabajo.",
                     "dua_acc": "Acción y expresión: Resolución escrita individual o en parejas; opción de verbalizar o graficar el mensaje.",
-                    "dua_mot": "Compromiso - Motivación: Reto de resolución lógica de acertijos con retroalimentación formativa y lúdica."
+                    "dua_mot": "Compromiso-Motivación: Reto de resolución lógica de acertijos con retroalimentación formativa y lúdica."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “El Papiro de la Identidad y la Cultura Escrita”",
@@ -97,7 +195,7 @@ def build_plan():
                     "mecanica": "Gamificación: Condecoración colectiva con el diploma y título de 'Guardianes de la Memoria Humana'.",
                     "dua_rep": "Representación: Formatos variados en tarjetas pergamino impresas o cuadernos.",
                     "dua_acc": "Acción y expresión: Libertad de plasmar la conclusión en prosa, verso o cartel ilustrado.",
-                    "dua_mot": "Compromiso - Motivación: Reconocimiento del logro individual dentro de la producción colectiva del aula."
+                    "dua_mot": "Compromiso-Motivación: Reconocimiento del logro individual dentro de la producción colectiva del aula."
                 }
             ]
         },
@@ -116,7 +214,7 @@ def build_plan():
                     "mecanica": "Gamificación: 'Desafío del Micrófono Dorado': Cada estudiante recibe una tarjeta de orador y acumula puntos de elocuencia y empatía auditiva.",
                     "dua_rep": "Representación: Audio claro del discurso, viñeta gráfica del texto y preguntas guía en pizarra.",
                     "dua_acc": "Acción y expresión: Lluvia de ideas oral y dramatización de gestos corporales de confianza.",
-                    "dua_mot": "Compromiso - Motivación: Identificación con emociones reales y superación guiada del miedo escénico."
+                    "dua_mot": "Compromiso-Motivación: Identificación con emociones reales y superación guiada del miedo escénico."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “Desarmando el Discurso: El Rompecabezas Retórico”",
@@ -124,7 +222,7 @@ def build_plan():
                     "mecanica": "Gamificación: Dinámica 'Detectives de Argumentos': Ganan 15 puntos quienes identifiquen la idea principal y separen opiniones de hechos comprobables.",
                     "dua_rep": "Representación: Tarjetas de colores para cada parte del discurso (Verde: Inicio, Azul: Desarrollo, Naranja: Cierre).",
                     "dua_acc": "Acción y expresión: Ordenamiento físico de tarjetas en pizarra y resumen esquemático en cuaderno.",
-                    "dua_mot": "Compromiso - Motivación: Aprendizaje activo y deductivo mediante el análisis de discursos reales."
+                    "dua_mot": "Compromiso-Motivación: Aprendizaje activo y deductivo mediante el análisis de discursos reales."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “Torneo en Vivo: Vendedores de Sueños”",
@@ -132,7 +230,7 @@ def build_plan():
                     "mecanica": "Gamificación: Los compañeros del auditorio actúan como jurado calificador otorgando 'Estrellas de Juicio Constructivo' mediante una rúbrica sencilla.",
                     "dua_rep": "Representación: Guía paso a paso de la pág. 25 y cronómetro visual proyectado.",
                     "dua_acc": "Acción y expresión: Exposición oral en parejas con apoyo de una tarjeta síntesis.",
-                    "dua_mot": "Compromiso - Motivación: Empoderamiento de la voz del estudiante en un ambiente de respeto mutuo."
+                    "dua_mot": "Compromiso-Motivación: Empoderamiento de la voz del estudiante en un ambiente de respeto mutuo."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “El Podio de la Oratoria y Acuerdos de Escucha”",
@@ -140,7 +238,7 @@ def build_plan():
                     "mecanica": "Gamificación: Entrega de la insignia digital 'Maestro de la Elocuencia' a todos los participantes.",
                     "dua_rep": "Representación: Cartel síntesis con los compromisos de escucha asertiva.",
                     "dua_acc": "Acción y expresión: Formulación oral de compromisos personales de respeto a la palabra ajena.",
-                    "dua_mot": "Compromiso - Motivación: Celebración del crecimiento comunicativo grupal."
+                    "dua_mot": "Compromiso-Motivación: Celebración del crecimiento comunicativo grupal."
                 }
             ]
         },
@@ -159,7 +257,7 @@ def build_plan():
                     "mecanica": "Gamificación: Misión 'Cazadores de Fake News': Cada equipo recibe su pasaporte científico y el rango de 'Investigador Junior'.",
                     "dua_rep": "Representación: Imágenes paratextuales de fósiles de la pág. 26 y comparación visual entre una noticia falsa y un artículo formal.",
                     "dua_acc": "Acción y expresión: Lluvia de ideas y debates breves en mesas redondas.",
-                    "dua_mot": "Compromiso - Motivación: Despertar del espíritu crítico frente a la información digital."
+                    "dua_mot": "Compromiso-Motivación: Despertar del espíritu crítico frente a la información digital."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “Disección del Artículo Científico y la Biblioteca”",
@@ -167,7 +265,7 @@ def build_plan():
                     "mecanica": "Gamificación: 'Rally Bibliográfico': Puntos acumulables al identificar datos cuantitativos, citas de expertos y fuentes del texto.",
                     "dua_rep": "Representación: Organizador visual de llaves en pizarra y subrayado por colores de ideas clave.",
                     "dua_acc": "Acción y expresión: Registro en cuaderno y diseño de una ficha técnica de préstamo bibliotecario.",
-                    "dua_mot": "Compromiso - Motivación: Familiarización con la biblioteca como espacio de investigación autónoma."
+                    "dua_mot": "Compromiso-Motivación: Familiarización con la biblioteca como espacio de investigación autónoma."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “Laboratorio de Comprensión y Fichaje Científico”",
@@ -175,7 +273,7 @@ def build_plan():
                     "mecanica": "Gamificación: Los equipos que completan el fichaje sin errores de formato reciben la 'Insignia de Curador Científico'.",
                     "dua_rep": "Representación: Plantillas impresas de fichas bibliográficas y cuestionario del libro.",
                     "dua_acc": "Acción y expresión: Trabajo en duplas, argumentación escrita y validación mutua.",
-                    "dua_mot": "Compromiso - Motivación: Aplicación directa de los métodos de búsqueda y archivo documental."
+                    "dua_mot": "Compromiso-Motivación: Aplicación directa de los métodos de búsqueda y archivo documental."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “Publicación del Boletín de Paleontología”",
@@ -183,7 +281,7 @@ def build_plan():
                     "mecanica": "Gamificación: Ascenso de nivel a 'Investigador Científico de 7mo'.",
                     "dua_rep": "Representación: Mural de aula con las fichas de libros de divulgación investigados.",
                     "dua_acc": "Acción y expresión: Exposición oral rápida (1 minuto) por equipo.",
-                    "dua_mot": "Compromiso - Motivación: Celebración de la lectura comprensiva y rigurosa."
+                    "dua_mot": "Compromiso-Motivación: Celebración de la lectura comprensiva y rigurosa."
                 }
             ]
         },
@@ -202,7 +300,7 @@ def build_plan():
                     "mecanica": "Gamificación: Cada estudiante recibe su credencial de 'Periodista Científico' y un tablero de retos gramaticales.",
                     "dua_rep": "Representación: Modelo visual de nota científica breve en pág. 39 con titulares y párrafos numerados.",
                     "dua_acc": "Acción y expresión: Lluvia de ideas y elección del tema de investigación individual o en duplas.",
-                    "dua_mot": "Compromiso - Motivación: Sentido de propósito real: escribir para ser leídos por la comunidad escolar."
+                    "dua_mot": "Compromiso-Motivación: Sentido de propósito real: escribir para ser leídos por la comunidad escolar."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “El Tablero de Conjugación y el Laboratorio Gramatical”",
@@ -210,7 +308,7 @@ def build_plan():
                     "mecanica": "Gamificación: Reto 'Detectives del Verbo': Acumulan puntos al transformar oraciones a modo subjuntivo y colocar correctamente el punto y coma.",
                     "dua_rep": "Representación: Tablas cromáticas de conjugación y esquemas sinópticos de modos verbales.",
                     "dua_acc": "Acción y expresión: Ejercicios de conjugación en pizarra y transcripción organizada en cuaderno.",
-                    "dua_mot": "Compromiso - Motivación: Descubrimiento lógico y lúdico de la estructura gramatical del idioma."
+                    "dua_mot": "Compromiso-Motivación: Descubrimiento lógico y lúdico de la estructura gramatical del idioma."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “Redacción en Cabina y Laboratorio de Corrección”",
@@ -218,7 +316,7 @@ def build_plan():
                     "mecanica": "Gamificación: 'Sello Editorial de Calidad': Obtienen la insignia de 'Editor Riguroso' al corregir concordancias y puntuación.",
                     "dua_rep": "Representación: Plantilla guía de redacción estructurada y rúbrica de autoevaluación pág. 47.",
                     "dua_acc": "Acción y expresión: Escritura autónoma, corrección colaborativa entre pares y edición.",
-                    "dua_mot": "Compromiso - Motivación: Orgullo por la creación de un texto informativo de calidad."
+                    "dua_mot": "Compromiso-Motivación: Orgullo por la creación de un texto informativo de calidad."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “Edición Final y Publicación del Boletín”",
@@ -226,7 +324,7 @@ def build_plan():
                     "mecanica": "Gamificación: Publicación oficial de artículos y premiación con la medalla 'Pluma de Oro'.",
                     "dua_rep": "Representación: Ejemplar físico o digital compilado en el aula.",
                     "dua_acc": "Acción y expresión: Lectura compartida en asamblea de aula.",
-                    "dua_mot": "Compromiso - Motivación: Cierre exitoso del ciclo de producción escrita."
+                    "dua_mot": "Compromiso-Motivación: Cierre exitoso del ciclo de producción escrita."
                 }
             ]
         },
@@ -245,7 +343,7 @@ def build_plan():
                     "mecanica": "Gamificación: Los estudiantes se agrupan en 'Panteones Mitológicos' (Panteón Andino, Panteón Amazónico, Panteón Griego y Panteón Nórdico).",
                     "dua_rep": "Representación: Relato oral ambiental con efectos sonoros e ilustraciones míticas págs. 54-55.",
                     "dua_acc": "Acción y expresión: Comentarios orales de leyendas y relatos transmitidos por abuelos o familias.",
-                    "dua_mot": "Compromiso - Motivación: Conexión con lo sagrado, la fantasía y la identidad intercultural."
+                    "dua_mot": "Compromiso-Motivación: Conexión con lo sagrado, la fantasía y la identidad intercultural."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “El Círculo de la Cosmovisión y el Mito”",
@@ -253,7 +351,7 @@ def build_plan():
                     "mecanica": "Gamificación: 'El Oráculo de la Sabiduría': Desafíos de preguntas inferenciales sobre símbolos y enseñanzas éticas que otorgan gemas de sabiduría.",
                     "dua_rep": "Representación: Cuadro comparativo visual entre mito y realidad; mapas conceptuales de tipos de mitos.",
                     "dua_acc": "Acción y expresión: Lectura por roles y transcripción creativa del mapa mental en cuaderno.",
-                    "dua_mot": "Compromiso - Motivación: Respeto profundo por las diversas cosmovisiones y memoria histórica."
+                    "dua_mot": "Compromiso-Motivación: Respeto profundo por las diversas cosmovisiones y memoria histórica.",
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “El Ágora Mitológica y Talleres de Interpretación”",
@@ -261,7 +359,7 @@ def build_plan():
                     "mecanica": "Gamificación: Duelo de Panteones: Presentación breve del personaje mítico para ganar 'Puntos de Honor'.",
                     "dua_rep": "Representación: Cuestionarios estructurados del libro y fichas de personajes ilustradas.",
                     "dua_acc": "Acción y expresión: Producción plástica y argumentación escrita individual.",
-                    "dua_mot": "Compromiso - Motivación: Disfrute estético y recreación de la literatura tradicional."
+                    "dua_mot": "Compromiso-Motivación: Disfrute estético y recreación de la literatura tradicional."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “El Círculo de la Memoria Ancestral”",
@@ -269,7 +367,7 @@ def build_plan():
                     "mecanica": "Gamificación: Consagración de todos los panteones con el título de 'Custodios de los Mitos del Mundo'.",
                     "dua_rep": "Representación: Mural colectivo de personajes mitológicos.",
                     "dua_acc": "Acción y expresión: Socialización oral y apreciación estética entre pares.",
-                    "dua_mot": "Compromiso - Motivación: Valoración de la interculturalidad como tesoro vivo del Ecuador."
+                    "dua_mot": "Compromiso-Motivación: Valoración de la interculturalidad como tesoro vivo del Ecuador."
                 }
             ]
         },
@@ -288,7 +386,7 @@ def build_plan():
                     "mecanica": "Gamificación: Cada dupla recibe el rol de 'Guionista' e 'Ilustrador' y desbloquea el 'Kit de Viñetas'.",
                     "dua_rep": "Representación: Modelos visuales de tiras cómicas e historietas míticas en págs. 66-67.",
                     "dua_acc": "Acción y expresión: Análisis oral interactivo de bocadillos, cartelas y onomatopeyas sonoras.",
-                    "dua_mot": "Compromiso - Motivación: Entusiasmo infantil por el lenguaje dinámico del cómic."
+                    "dua_mot": "Compromiso-Motivación: Entusiasmo infantil por el lenguaje dinámico del cómic."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “El Laboratorio del Cómic y Repaso Conceptual”",
@@ -296,7 +394,7 @@ def build_plan():
                     "mecanica": "Gamificación: 'Trivia Sumativa de Repaso': Preguntas relámpago que otorgan 'Escudos del Conocimiento' para la prueba.",
                     "dua_rep": "Representación: Tipologías visuales de viñetas y mapa síntesis en pizarra.",
                     "dua_acc": "Acción y expresión: Boceto de storyboard previo en el cuaderno y resolución de dudas conceptuales.",
-                    "dua_mot": "Compromiso - Motivación: Seguridad y preparación integral para el cierre de la unidad."
+                    "dua_mot": "Compromiso-Motivación: Seguridad y preparación integral para el cierre de la unidad."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “Mesa de Dibujantes y Desafío Sumativo”",
@@ -304,7 +402,7 @@ def build_plan():
                     "mecanica": "Gamificación: Premiación con 'Insignias de Maestría Gráfica' por originalidad, ortografía y expresividad plástica.",
                     "dua_rep": "Representación: Formato de evaluación sumativa del texto escolar y plantillas de historieta.",
                     "dua_acc": "Acción y expresión: Producción plástica/literaria colaborativa y resolución autónoma de la prueba.",
-                    "dua_mot": "Compromiso - Motivación: Demostración tangible de las competencias adquiridas en el ciclo."
+                    "dua_mot": "Compromiso-Motivación: Demostración tangible de las competencias adquiridas en el ciclo."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “Inauguración de la Galería Mitológica”",
@@ -312,7 +410,7 @@ def build_plan():
                     "mecanica": "Gamificación: Clausura con diploma de 'Autores Consagrados de 7mo'.",
                     "dua_rep": "Representación: Mural escolar visitado por otros grados y docentes.",
                     "dua_acc": "Acción y expresión: Explicación oral de la historieta a los visitantes.",
-                    "dua_mot": "Compromiso - Motivación: Culminación exitosa y satisfacción por el producto final terminado."
+                    "dua_mot": "Compromiso-Motivación: Culminación exitosa y satisfacción por el producto final terminado."
                 }
             ]
         },
@@ -331,7 +429,7 @@ def build_plan():
                     "mecanica": "Gamificación: Cada equipo consolida su rango de 'Comité de Proyecto Interdisciplinar' y revisa su panel de hitos.",
                     "dua_rep": "Representación: Rúbrica ministerial proyectada en cartelera y cronograma semanal visible.",
                     "dua_acc": "Acción y expresión: Asamblea de equipo y distribución equitativa de roles para la sustentación.",
-                    "dua_mot": "Compromiso - Motivación: Entusiasmo por visibilizar el producto elaborado durante el trimestre."
+                    "dua_mot": "Compromiso-Motivación: Entusiasmo por visibilizar el producto elaborado durante el trimestre."
                 },
                 {
                     "titulo": "Fase 2: Comprensión – “Auditoría de Calidad y Retroalimentación entre Pares”",
@@ -339,7 +437,7 @@ def build_plan():
                     "mecanica": "Gamificación: Dinámica 'Control de Calidad': Obtienen sellos de validación al solventar observaciones de mejora.",
                     "dua_rep": "Representación: Lista de chequeo coevaluativa con criterios objetivos.",
                     "dua_acc": "Acción y expresión: Diálogo asertivo y sugerencias fundamentadas entre pares.",
-                    "dua_mot": "Compromiso - Motivación: Cultura de automejora y responsabilidad compartida."
+                    "dua_mot": "Compromiso-Motivación: Cultura de automejora y responsabilidad compartida."
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “Feria de Aula y Sustentación Pública”",
@@ -347,7 +445,7 @@ def build_plan():
                     "mecanica": "Gamificación: Evaluación con rúbrica ministerial y entrega de insignias de 'Impacto Comunitario'.",
                     "dua_rep": "Representación: Estands interactivos, dípticos informativos y paneles visuales.",
                     "dua_acc": "Acción y expresión: Disertación oral fluida y demostración práctica del producto final.",
-                    "dua_mot": "Compromiso - Motivación: Reconocimiento público del esfuerzo colectivo y aprendizaje colaborativo."
+                    "dua_mot": "Compromiso-Motivación: Reconocimiento público del esfuerzo colectivo y aprendizaje colaborativo."
                 },
                 {
                     "titulo": "Fase 4: Cierre – “Consolidación Final y Calificación Ministerial”",
@@ -355,7 +453,7 @@ def build_plan():
                     "mecanica": "Gamificación: Clausura institucional del proyecto con certificación de honor a los equipos destacados.",
                     "dua_rep": "Representación: Cuadro de calificaciones e informes cuantitativos y cualitativos.",
                     "dua_acc": "Acción y expresión: Reflexión individual escrita sobre los aprendizajes logrados y metas futuras.",
-                    "dua_mot": "Compromiso - Motivación: Coronación exitosa del Proyecto Integrador del Primer Trimestre."
+                    "dua_mot": "Compromiso-Motivación: Coronación exitosa del Proyecto Integrador del Primer Trimestre."
                 }
             ]
         }
@@ -395,7 +493,7 @@ def build_plan():
         r_act.font.size = Pt(10)
         p_met.paragraph_format.space_after = Pt(4)
 
-        # Fases con DUA
+        # Fases con DUA y Subtabla Badge
         for fase in week_info["fases"]:
             # Título de la fase
             p_fase = c6.add_paragraph()
@@ -434,9 +532,9 @@ def build_plan():
 
             # DUA detalles
             for label, text in [
-                ("  • Representación: ", fase["dua_rep"].replace("Representación: ", "")),
-                ("  • Acción y expresión: ", fase["dua_acc"].replace("Acción y expresión: ", "")),
-                ("  • Compromiso-Motivación: ", fase["dua_mot"].replace("Compromiso - Motivación: ", ""))
+                ("Representación: ", fase["dua_rep"].replace("Representación: ", "")),
+                ("Acción y expresión: ", fase["dua_acc"].replace("Acción y expresión: ", "")),
+                ("Compromiso-Motivación: ", fase["dua_mot"].replace("Compromiso-Motivación: ", ""))
             ]:
                 p_det = c6.add_paragraph()
                 r_lbl = p_det.add_run(label)
@@ -448,18 +546,24 @@ def build_plan():
                 r_txt.font.size = Pt(9)
                 p_det.paragraph_format.space_after = Pt(1)
 
+            # Insertar la subtabla DUA badge [ R | A-E | C-M ]
+            sub_tbl_xml = get_dua_subtable_xml()
+            sub_tbl_element = parse_xml(sub_tbl_xml)
+            c6._tc.append(sub_tbl_element)
+
+            # Párrafo separador después del badge
+            p_sep = c6.add_paragraph()
+            p_sep.paragraph_format.space_before = Pt(2)
+            p_sep.paragraph_format.space_after = Pt(2)
+
         # Col 13: Indicadores
         row.cells[13].text = week_info["indicador"]
 
         # Col 18: Actividades Evaluativas
         row.cells[18].text = week_info["evaluacion"]
 
-    # Ajustar Firmas de Responsabilidad en las filas posteriores (después de las 7 semanas)
-    # table.rows[16] es FIRMAS DE RESPONSABILIDAD
-    r_firmas_title = table.rows[16]
-    r_firmas_headers = table.rows[17]
+    # Firmas de Responsabilidad
     r_firmas_cargos = table.rows[18]
-    r_firmas_sign = table.rows[19]
     r_firmas_dates = table.rows[20]
 
     r_firmas_cargos.cells[0].text = "Docente:\nLic. Klever Yánez\nDocente de Lengua y Literatura"
@@ -472,7 +576,7 @@ def build_plan():
     r_firmas_dates.cells[10].text = "Fecha: 11/10/2026"
     r_firmas_dates.cells[15].text = "Fecha: 23/11/2026"
 
-    # Guardar en el archivo destino oficial
+    # Guardar en archivos
     target_file = 'MATRIZ DE PLANIFICACIÓN MICROCURRICULAR 26-27.docx'
     alt_file = 'MATRIZ DE PLANIFICACIÓN MICROCURRICULAR 26-27_ACTUALIZADA.docx'
     backup_target = 'PLANIFICACION_MICROCURRICULAR_7MO_LENGUA_1ER_TRIMESTRE.docx'
