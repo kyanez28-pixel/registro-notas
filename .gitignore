@@ -6,3 +6,8 @@
 !MATRIZ DE PLANIFICACIÓN MICROCURRICULAR 26-27.docx
 *.bak
 temp_script_*.js
+extracted_docx_media/
+media_extracted/
+assets_plan/
+__pycache__/
+*.py
