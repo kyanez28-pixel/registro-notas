@@ -111,7 +111,7 @@
     "recurso": "Texto págs. 26-37, Biblioteca escolar / recursos web.",
     "evaluacion": "I.LL.3.3.2. Realiza inferencias fundamentales y valora el contenido de textos científicos.",
     "tipo": "clase",
-    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 7,
@@ -130,7 +130,7 @@
     "recurso": "Texto págs. 38-47, Guía docente pág. 14.",
     "evaluacion": "I.LL.3.6.1. Produce textos informativos usando el proceso de escritura y elementos gramaticales apropiados.",
     "tipo": "clase",
-    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 8,
@@ -149,7 +149,7 @@
     "recurso": "Texto págs. 48-53, Fichas de aplicación ortográfica.",
     "evaluacion": "I.LL.3.6.3. Aplica elementos gramaticales y ortográficos en producciones escritas con coherencia y cohesión.",
     "tipo": "clase",
-    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 9,
@@ -168,7 +168,7 @@
     "recurso": "Texto págs. 54-71, Rúbrica de autoevaluación pág. 71.",
     "evaluacion": "I.LL.3.7.1. Reconoce en textos literarios los elementos característicos y recrea historias mediante formatos visuales.",
     "tipo": "evaluacion_unidad",
-    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 10,
@@ -187,7 +187,7 @@
     "recurso": "Texto págs. 74-79, Guía docente pág. 15.",
     "evaluacion": "I.LL.3.1.2. Indaga sobre las influencias lingüísticas y dialectos del castellano como expresión de identidad.",
     "tipo": "clase",
-    "bloquePlanif": "Planificación N° 1 (Inicio 05 Octubre · 6 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 11,
@@ -206,26 +206,26 @@
     "recurso": "Texto págs. 80-87, Guía docente pág. 16.",
     "evaluacion": "I.LL.3.2.2. Propone intervenciones orales organizadas, adapta el vocabulario y busca acuerdos.",
     "tipo": "clase",
-    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
+    "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)"
   },
   {
     "sem": 12,
     "trim": 1,
     "fechas": "16/11 al 20/11/2026",
-    "unidad": "Unidad 2",
+    "unidad": "Proyecto Integrador",
     "uNum": 2,
-    "tituloUnidad": "Palabras para entender el pasado",
-    "bloque": "Lectura y Recursos",
-    "tema": "Leo para conocer sobre mis raíces: textos históricos, relatos del pasado incaico y crónicas. Uso de recursos: Criterios para comparar y contrastar fuentes.",
-    "paginas": "Texto Págs. 88 - 99",
-    "dcd": "LL.3.3.8. Leer con fluidez y entonación. / LL.3.3.2. Comprender contenidos implícitos mediante inferencias. / LL.3.3.6. Contrastar fuentes.",
-    "gramatica": "Textos narrativos históricos y crónicas coloniales. Verificación de veracidad.",
-    "ortografia": "Estrategias de lectura inferencial, subrayado de ideas centrales e indicios textuales.",
-    "metodologia": "Pedagogía Crítica: tabla comparativa de fuentes históricas, lectura comentada y análisis de versiones del pasado.",
-    "recurso": "Texto págs. 88-99, Biblioteca digital escolar.",
-    "evaluacion": "I.LL.3.4.1. Lee con fluidez en contextos escolares y comprende contenidos implícitos de crónicas y relatos.",
-    "tipo": "clase",
-    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
+    "tituloUnidad": "Proyecto Integrador del 1er Trimestre",
+    "bloque": "Proyecto Interdisciplinario",
+    "tema": "Ejecución, consolidación y socialización del Proyecto Integrador del 1er Trimestre (16 al 23 de noviembre). Sustentación del producto final.",
+    "paginas": "Guía Proyecto Interdisciplinario / Rúbrica Ministerial",
+    "dcd": "LL.3.4.13. Producir textos según la situación comunicativa en formatos variados. / LL.3.2.2. Proponer intervenciones orales estructuradas.",
+    "gramatica": "Cohesión intertextual y adecuación de registros para la exposición pública.",
+    "ortografia": "Revisión y edición ortográfica final de los soportes visuales y escritos del proyecto.",
+    "metodologia": "ABP: montaje de estands de aula, presentación pública del producto interdisciplinario y evaluación auténtica con rúbrica ministerial.",
+    "recurso": "Guía oficial del Proyecto Interdisciplinario, rúbricas de evaluación del proyecto, estands de aula.",
+    "evaluacion": "I.LL.3.6.4. Publica y socializa los resultados de proyectos integradores mediante textos e intervenciones orales. (Calificación sumativa 30% del Proyecto).",
+    "tipo": "proyecto",
+    "bloquePlanif": "Proyecto Integrador (16 al 23 Nov · 1 sem)"
   },
   {
     "sem": 13,
@@ -244,7 +244,7 @@
     "recurso": "Cuestionarios trimestrales aprobados por Vicerrectorado.",
     "evaluacion": "Calificación trimestral del 70% formativo + 30% sumativo institucional.",
     "tipo": "evaluacion_trimestre",
-    "bloquePlanif": "Segundo Bloque de Planificación (Inicio 09 Noviembre · 5 semanas)"
+    "bloquePlanif": "Exámenes del 1er Trimestre (24 al 30 Nov · 1 sem)"
   },
   {
     "sem": 14,
