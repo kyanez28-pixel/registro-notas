@@ -1,5 +1,5 @@
 // Service Worker para PWA — Registro de Notas
-const CACHE_NAME = 'registro-notas-v97';
+const CACHE_NAME = 'registro-notas-v98';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,11 @@ const ASSETS = [
   './icon-512.png',
   './CRONOGRAMA DE MINUTOS CÍVICOS.pdf',
   './cronograma_minutos_civicos.json',
-  './pca_lengua_7mo.json'
+  './pca_lengua_7mo.json',
+  './proyecto_interdisciplinar_7mo_egb.json',
+  './proyecto_5to_egb.json',
+  './PROYECTO_INTERDISCIPLINAR_7MO_EGB.docx',
+  './PROYECTO-5TO EGB.pdf'
 ];
 
 self.addEventListener('install', (e) => {

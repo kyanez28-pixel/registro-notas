@@ -128,7 +128,7 @@ def build_plan():
     # Row 3
     r3 = table.rows[3]
     r3.cells[1].text = "SÉPTIMO"
-    r3.cells[7].text = "A, B, C, D Y E (Asignado: 7mo \"C\")"
+    r3.cells[7].text = "A, B, C, D Y E"
     r3.cells[12].text = "1°"
     r3.cells[18].text = "05/10/2026"
     r3.cells[20].text = "23 DE NOVIEMBRE DEL 2026"
@@ -157,13 +157,13 @@ def build_plan():
 
     weeks = [
         {
-            "sem_title": "SEMANA 6 (05/10 al 09/10/2026) · LENGUA Y CULTURA",
+            "sem_title": "SEMANA 1",
             "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la lengua escrita como herramienta cultural.",
-            "tema": "Tema: Orígenes de la escritura (de las pinturas rupestres a la era digital)\n\nMateriales:\nTexto de Lengua 7mo (Páginas 12 a 18)\nPizarra y marcadores de colores\nCuadernos de trabajo\nGuía Docente Maya/MinEduc pág. 12",
+            "tema": "Tema: Orígenes de la escritura (de las pinturas rupestres a la era digital)\n\nMateriales:\nTexto de Lengua 7mo (Páginas 12 a 17)\nPizarra y marcadores de colores\nCuadernos de trabajo\nGuía Docente Maya/MinEduc pág. 12",
             "indicador": "Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad en diferentes contextos y situaciones, atendiendo a la diversidad lingüística del Ecuador. I.LL.3.1.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de participación oral y taller de aplicación del texto (pág. 18).\n• Actividades: Descifrado de códigos de sustitución alfabética, línea de tiempo en el cuaderno y respuestas a preguntas reflexivas.",
+            "evaluacion": "• Instrumentos: Rúbrica de participación oral y taller de aplicación del texto (pág. 17).\n• Actividades: Descifrado de códigos de sustitución alfabética, línea de tiempo en el cuaderno y respuestas a preguntas reflexivas.",
             "metodologia": "GAMIFICACIÓN & APRENDIZAJE POR DESCUBRIMIENTO",
-            "actividad_nombre": "“Misión: Arqueólogos del Tiempo y el Enigma del Alfabeto Perdido” (Texto Pág. 12-18)",
+            "actividad_nombre": "“Misión: Arqueólogos del Tiempo y el Enigma del Alfabeto Perdido” (Texto Pág. 12-17)",
             "fases": [
                 {
                     "titulo": "Fase 1: Motivación – “Desbloqueando la Misión Arqueológica”",
@@ -183,9 +183,9 @@ def build_plan():
                 },
                 {
                     "titulo": "Fase 3: Aplicación – “El Gran Código Criptográfico de los Escribas”",
-                    "actividad": "Los estudiantes asumen el reto de la página 18 del texto escolar: descifrar el mensaje secreto utilizando el código de sustitución alfabética. Luego, responden a situaciones reales: ¿Por qué la palabra escrita ofrece mayor seguridad jurídica y personal que un acuerdo verbal?",
+                    "actividad": "Los estudiantes asumen el reto de la página 17 del texto escolar: descifrar el mensaje secreto utilizando el código de sustitución alfabética. Luego, responden a situaciones reales: ¿Por qué la palabra escrita ofrece mayor seguridad jurídica y personal que un acuerdo verbal?",
                     "mecanica": "Gamificación: Los equipos que decodifican el mensaje en tiempo récord ganan 'Estrellas de Criptografía' y se convierten en 'Descifradores Maestros'.",
-                    "dua_rep": "Representación: Clave criptográfica visual de la pág. 18 proyectada y en hojas de trabajo.",
+                    "dua_rep": "Representación: Clave criptográfica visual de la pág. 17 proyectada y en hojas de trabajo.",
                     "dua_acc": "Acción y expresión: Resolución escrita individual o en parejas; opción de verbalizar o graficar el mensaje.",
                     "dua_mot": "Compromiso-Motivación: Reto de resolución lógica de acertijos con retroalimentación formativa y lúdica."
                 },

@@ -1,0 +1,322 @@
+{
+  "institucion": "UNIDAD EDUCATIVA FISCAL \"CALDERÓN 2\"",
+  "periodo_lectivo": "2026-2027",
+  "tipo": "PROYECTO INTERDISCIPLINAR INSTITUCIONAL",
+  "subnivel": "Educación General Básica Media",
+  "grado": "7.° de EGB (Séptimo \"C\")",
+  "docente_tutor": "Lic. Klever Yanez",
+  "modelo_referencia": "Estructura Oficial Ministerial Institucional (Adaptado del Modelo de EGB Media Calderón 2)",
+  "duracion": "Anual (3 Trimestres / 2 semanas intensivas por trimestre = 6 semanas de ejecución total)",
+  "gran_idea": "Alimentación Saludable, Economía Familiar, Ciencia y Sostenibilidad",
+  "nombre_proyecto": "Nutri-Vida: Mi Cocina Saludable, Económica e Intercultural",
+  "objetivo_aprendizaje": "Los estudiantes de séptimo año de EGB comprenderán la relación entre una nutrición equilibrada, el gasto energético, el origen de los alimentos ecuatorianos, el presupuesto familiar y el uso de recursos comunicativos y digitales, mediante el cálculo de precios, producción de textos instructivos (recetas regionales) e investigación participativa para promover estilos de vida saludables y sostenibles en la comunidad escolar.",
+  "producto_final": {
+    "nombre": "Recetario Ilustrado Intercultural y Nutritivo & Guía de Presupuestos",
+    "descripcion": "Elaboración y publicación física y digital de un Recetario Regional Intercultural (Sierra, Costa y Amazonía) que integra el cálculo del costo por porción, presupuesto de ingredientes, clasificación nutricional, infografía publicitaria, pautas de hidratación y traducción básica de términos culinarios al inglés, presentado en la Feria Interdisciplinar del Aula."
+  },
+  "mapa_curricular": [
+    {
+      "asignatura": "Lengua y Literatura",
+      "dcd": "LL.3.4.13. Producir textos instructivos (recetas) con secuencia lógica, manejo de conectores temporales y normas de puntuación según la situación comunicativa.",
+      "indicador": "Ref. I.LL.3.6.4. Escribe textos instructivos (recetas) utilizando lenguaje preciso, conectores temporales y correcto uso de la coma enumerativa y de conector.",
+      "competencias": "Comunicativas y Digitales"
+    },
+    {
+      "asignatura": "Matemática",
+      "dcd": "M.3.1.28. Calcular, aplicando algoritmos de adición, sustracción y multiplicación con números decimales, el costo de ingredientes y presupuestos.",
+      "indicador": "Ref. I.M.3.5.1. Aplica operaciones con números decimales y estrategias de cálculo mental para determinar el costo de los ingredientes de una receta, elaborar presupuestos y comparar precios.",
+      "competencias": "Matemáticas y Digitales"
+    },
+    {
+      "asignatura": "Ciencias Naturales",
+      "dcd": "CN.3.2.7. Reconocer la importancia de la actividad física, la higiene corporal y la dieta equilibrada en la pirámide alimenticia.",
+      "indicador": "Ref. I.CN.3.5.1. Clasifica los alimentos en constructores, energéticos y reguladores en la pirámide alimenticia y analiza su aporte calórico y nutricional.",
+      "competencias": "Científicas y Socioemocionales"
+    },
+    {
+      "asignatura": "Estudios Sociales",
+      "dcd": "CS.3.2.14. Identificar los diversos orígenes de la producción agrícola en las regiones del Ecuador y su impacto económico y social.",
+      "indicador": "Ref. I.CS.3.10.1. Ubica el origen geográfico de la producción agrícola en las regiones naturales del Ecuador (Costa, Sierra, Amazonía) y valora la soberanía alimentaria.",
+      "competencias": "Comunicativas y Ciudadanas"
+    },
+    {
+      "asignatura": "Educación Cultural y Artística (ECA)",
+      "dcd": "ECA.3.3.5. Diseñar producciones visuales y plásticas aplicando técnicas de ilustración, maquetación y diseño de portadas.",
+      "indicador": "Ref. I.ECA.3.3.2. Emplea técnicas de dibujo publicitario, fotografía y maquetación visual en el diseño del recetario ilustrado intercultural.",
+      "competencias": "Artísticas y Digitales"
+    },
+    {
+      "asignatura": "Educación Física",
+      "dcd": "EF.3.5.4. Reconocer las relaciones entre la práctica deportiva, la hidratación adecuada y los hábitos de alimentación saludable.",
+      "indicador": "Ref. I.EF.3.5.1. Determina la importancia de la actividad física, la hidratación continua y el equilibrio calórico según el nivel de esfuerzo corporal.",
+      "competencias": "Socioemocionales y Salud"
+    },
+    {
+      "asignatura": "Inglés (EFL)",
+      "dcd": "EFL.3.2.10. Complete short, simple instructional texts about food items and cooking verbs using basic target vocabulary.",
+      "indicador": "Ref. I.EFL.3.15.1. Uses vocabulary of food items, healthy ingredients, and cooking action verbs in simple illustrated recipes.",
+      "competencias": "Comunicativas y Lingüísticas"
+    }
+  ],
+  "trimestres": [
+    {
+      "trimestre": 1,
+      "titulo": "Planificación, Costos y Recetas Regionales del Ecuador",
+      "duracion": "2 Semanas Intensivas (Semanas 4 y 5 · Fase CREA)",
+      "objetivo": "Diseñar el presupuesto de ingredientes, clasificar el valor nutricional y redactar textos instructivos para tres recetas representativas de las regiones del Ecuador.",
+      "valor": "Responsabilidad Económica, Solidaridad y Nutrición Saludable.",
+      "sabias_que": "La quinua ecuatoriana contiene los 9 aminoácidos esenciales y fue reconocida por la FAO como uno de los alimentos más completos del planeta para la nutrición humana.",
+      "recuerda": "Comer sano no requiere gastar de más. Al comprar productos locales de temporada en mercados populares apoyamos a nuestros agricultores y ahorramos hasta un 40%.",
+      "producto_parcial": "Borrador de la Receta Regional con Tabla de Costos y Clasificación Nutricional",
+      "semanas": [
+        {
+          "numero": 1,
+          "nombre": "Análisis Nutricional, Geográfico y Cálculo de Costos",
+          "actividades": [
+            {
+              "titulo": "Presupuesto y Costos con Números Decimales",
+              "asignaturas": [
+                "Matemática"
+              ],
+              "descripcion": "Calcular el costo total de los ingredientes para 4 personas de las 3 recetas regionales (Ensalada Andina: $2.40, Bolón de Verde: $1.65, Batido Amazónico: $1.50). Determinar el costo por porción individual mediante división y adición de decimales."
+            },
+            {
+              "titulo": "Clasificación en la Pirámide Nutricional y Origen Regional",
+              "asignaturas": [
+                "Ciencias Naturales",
+                "Estudios Sociales"
+              ],
+              "descripcion": "Clasificar los ingredientes en constructores (chochos, queso), energéticos (quinua, verde, camote, banano) y reguladores (tomate, naranja). Ubicar en el mapa esquemático del Ecuador la provincia de origen de cada producto."
+            }
+          ]
+        },
+        {
+          "numero": 2,
+          "nombre": "Redacción del Texto Instructivo y Rutina Activa",
+          "actividades": [
+            {
+              "titulo": "Estructura Textual de la Receta y Vocabulario Bilingüe",
+              "asignaturas": [
+                "Lengua y Literatura",
+                "Inglés"
+              ],
+              "descripcion": "Redactar la receta aplicando la silueta textual: título, porciones, lista clasificada de ingredientes y preparación paso a paso. Usar verbos en imperativo/infinitivo, conectores temporales (primero, luego, finalmente) y traducir términos clave (Ingredients, Cook, Mix, Serve)."
+            },
+            {
+              "titulo": "Gasto Energético y Pautas de Hidratación",
+              "asignaturas": [
+                "Educación Física"
+              ],
+              "descripcion": "Vincular el aporte calórico de los alimentos energéticos con la actividad física diaria escolar. Diseñar una rutina de estiramiento y normas de consumo de agua según el esfuerzo físico."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trimestre": 2,
+      "titulo": "Análisis Estadístico, Salud Digestiva y Afiche Publicitario",
+      "duracion": "2 Semanas Intensivas (Febrero 2027 · Fase Intermedia)",
+      "objetivo": "Analizar los hábitos de alimentación en el aula mediante diagramas de barras, elaborar pautas de salud digestiva y diseñar piezas gráficas publicitarias.",
+      "valor": "Autocuidado, Conciencia Crítica y Hábitos de Vida Saludables.",
+      "sabias_que": "El consumo excesivo de azúcares y alimentos ultraprocesados reduce la capacidad de concentración en la escuela y aumenta el riesgo de fatiga crónica y diabetes temprana.",
+      "recuerda": "Revisa siempre las etiquetas y semáforos nutricionales de los alimentos que compras: prefiere siempre 'Bajo en azúcar, sal y grasa'.",
+      "producto_parcial": "Infografía Nutricional y Boceto Publicitario del Recetario",
+      "semanas": [
+        {
+          "numero": 3,
+          "nombre": "Estadística Alimentaria y Salud Integral",
+          "actividades": [
+            {
+              "titulo": "Encuesta del Aula y Diagramas Estadísticos",
+              "asignaturas": [
+                "Matemática",
+                "Estudios Sociales"
+              ],
+              "descripcion": "Levantar datos en el aula sobre hábitos de desayuno y refrigerio escolar. Construir una tabla de frecuencias y un diagrama de barras comparando el consumo de frutas vs. ultraprocesados."
+            },
+            {
+              "titulo": "Salud Digestiva y Cuidado Corporal",
+              "asignaturas": [
+                "Ciencias Naturales"
+              ],
+              "descripcion": "Analizar el proceso de digestión de los nutrientes constructores y la importancia del consumo de fibra natural (chochos, quinua, frutas) para la salud del sistema digestivo."
+            }
+          ]
+        },
+        {
+          "numero": 4,
+          "nombre": "Diseño Publicitario y Reto Deportivo",
+          "actividades": [
+            {
+              "titulo": "Boceto y Fotografía Publicitaria de Alimentos",
+              "asignaturas": [
+                "Educación Cultural y Artística (ECA)"
+              ],
+              "descripcion": "Elaborar la portada y el diseño gráfico de las páginas del recetario aplicando técnicas de contraste de color, encuadre de alimentos y rotulado caligráfico de títulos."
+            },
+            {
+              "titulo": "Circuito de Coordinación y Trabajo en Equipo",
+              "asignaturas": [
+                "Educación Física"
+              ],
+              "descripcion": "Ejecutar un circuito motriz por equipos vinculando el gasto calórico de los nutrientes con dinámicas lúdicas de relevos y acuerdos grupales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trimestre": 3,
+      "titulo": "Montaje del Recetario, Feria de Aula y Exposición Oral",
+      "duracion": "2 Semanas Intensivas (Mayo 2027 · Fase Final y Casa Abierta)",
+      "objetivo": "Consolidar el Recetario Ilustrado Intercultural y Nutritivo, montar los estands de degustación pedagógica y sustentar oralmente el proyecto ante la comunidad escolar.",
+      "valor": "Identidad Cultural, Trabajo Colaborativo y Comunicación Efectiva.",
+      "sabias_que": "Exponer en público y compartir saberes tradicionales sobre nuestra cocina fortalece la autoestima y fomenta el orgullo por nuestra herencia pluricultural.",
+      "recuerda": "La presentación en la Feria requiere orden, aseo, amabilidad y respeto al turno de palabra de los compañeros evaluadores.",
+      "producto_parcial": "Recetario Ilustrado Final & Feria Interdisciplinar del Aula",
+      "semanas": [
+        {
+          "numero": 5,
+          "nombre": "Edición Final y Maquetación Bilingüe",
+          "actividades": [
+            {
+              "titulo": "Revisión Coevaluativa y Edición en Limpio",
+              "asignaturas": [
+                "Lengua y Literatura",
+                "ECA"
+              ],
+              "descripcion": "Aplicar lista de cotejo de 5 criterios ortográficos y de diagramación para pulir el texto. Encuadernar el Recetario Ilustrado con su tabla consolidada de costos y pirámide nutricional."
+            },
+            {
+              "titulo": "Traducción y Glosario Gastronómico en Inglés",
+              "asignaturas": [
+                "Inglés (EFL)"
+              ],
+              "descripcion": "Completar la sección bilingüe con la traducción oficial de las tres recetas (Ingredients, Step by Step preparation, Nutritional Facts) y vocabulario culinario."
+            }
+          ]
+        },
+        {
+          "numero": 6,
+          "nombre": "Feria Interdisciplinar del Aula y Disertación Oral",
+          "actividades": [
+            {
+              "titulo": "Montaje del Estand Pedagógico 'El Chef en 2 Minutos'",
+              "asignaturas": [
+                "Ciencias Naturales",
+                "ECA",
+                "Estudios Sociales"
+              ],
+              "descripcion": "Montar el estand del aula decorado con motivos regionales del Ecuador, papelotes con diagramas de costos, pirámides nutricionales y muestras representativas de alimentos."
+            },
+            {
+              "titulo": "Sustentación Oral y Evaluación Auténtica",
+              "asignaturas": [
+                "Lengua y Literatura"
+              ],
+              "descripcion": "Presentación oral estructurada de 2 minutos por grupo: (1) Saludo protocolario, (2) Región e ingredientes seleccionados, (3) Justificación de costos y valor nutricional, (4) Conclusiones y recomendaciones saludables."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "compromisos": [
+    "Consumir alimentos saludables, variados y nutritivos priorizando los productos locales de las regiones del Ecuador.",
+    "Colaborar activamente con mi familia en la elaboración de presupuestos económicos y compras inteligentes en mercados populares.",
+    "Practicar al menos 30 minutos de actividad física diaria y mantener una hidratación adecuada para cuidar mi salud integral."
+  ],
+  "escalera_metacognicion": [
+    {
+      "paso": 1,
+      "pregunta": "¿Qué he aprendido sobre la nutrición, los costos y la cocina ecuatoriana?"
+    },
+    {
+      "paso": 2,
+      "pregunta": "¿Cómo lo he aprendido mediante el cálculo decimal, la escritura instructiva y la investigación?"
+    },
+    {
+      "paso": 3,
+      "pregunta": "¿Para qué me ha servido a mí y a mi familia este proyecto interdisciplinar?"
+    },
+    {
+      "paso": 4,
+      "pregunta": "¿En qué otras situaciones de la vida diaria puedo aplicar la planificación de presupuestos y la alimentación sana?"
+    }
+  ],
+  "rubrica_evaluacion": [
+    {
+      "id": "PI1",
+      "asignatura": "Lengua y Literatura",
+      "indicador": "Ref. I.LL.3.6.4. Escribe textos instructivos (recetas) con lenguaje preciso y normas ortográficas.",
+      "peso": 20,
+      "avanzado": "Redacta recetas con estructura impecable, verbos de acción pertinentes, conectores temporales y correcto uso de la coma (10-9).",
+      "intermedio": "Escribe la receta con estructura comprensible y secuencia adecuada, presentando mínimas imprecisiones de puntuación (8-7).",
+      "basico": "Redacta textos instructivos breves con vacíos en la secuencia de preparación o falta de conectores lógicos (6-5).",
+      "en_desarrollo": "Dificultades severas para estructurar las instrucciones de la receta de forma coherente (4-1)."
+    },
+    {
+      "id": "PI2",
+      "asignatura": "Matemática",
+      "indicador": "Ref. I.M.3.5.1. Opera con decimales, calcula costos y elabora presupuestos de ingredientes.",
+      "peso": 20,
+      "avanzado": "Calcula con total exactitud el costo de ingredientes por porción y total, elaborando presupuestos razonados (10-9).",
+      "intermedio": "Aplica operaciones con decimales y elabora el presupuesto con mínimas fallas de redondeo o cálculo (8-7).",
+      "basico": "Resuelve sumas y multiplicaciones simples pero comete errores al determinar el presupuesto total (6-5).",
+      "en_desarrollo": "No logra operar con decimales ni calcular los costos de la receta (4-1)."
+    },
+    {
+      "id": "PI3",
+      "asignatura": "Ciencias Naturales / Ed. Física",
+      "indicador": "Ref. I.CN.3.5.1. / Ref. I.EF.3.5.1. Pirámide alimenticia, gasto calórico e hidratación.",
+      "peso": 20,
+      "avanzado": "Clasifica con precisión los alimentos (constructores, energéticos, reguladores) y fundamenta la hidratación y gasto calórico (10-9).",
+      "intermedio": "Identifica los grupos de la pirámide y reconoce la importancia de la actividad física con leves dudas (8-7).",
+      "basico": "Clasifica los alimentos de forma parcial y confunde la función nutricional con el gasto energético (6-5).",
+      "en_desarrollo": "Muestra desinterés y no identifica los grupos alimenticios ni hábitos de hidratación (4-1)."
+    },
+    {
+      "id": "PI4",
+      "asignatura": "Estudios Sociales / ECA",
+      "indicador": "Ref. I.CS.3.10.1. / Ref. I.ECA.3.3.2. Origen agrícola regional e ilustración del recetario.",
+      "peso": 20,
+      "avanzado": "Ubica acertadamente el origen geográfico regional y diseña un recetario ilustrado con alto impacto visual y creativo (10-9).",
+      "intermedio": "Ubica las regiones del Ecuador y presenta ilustraciones ordenadas y limpias en el recetario (8-7).",
+      "basico": "Presenta errores al ubicar el origen de los productos o ilustraciones poco prolijas e incompletas (6-5).",
+      "en_desarrollo": "No elabora los dibujos ni ubica las regiones geográficas de procedencia (4-1)."
+    },
+    {
+      "id": "PI5",
+      "asignatura": "Inglés (EFL)",
+      "indicador": "Ref. I.EFL.3.15.1. Traduce ingredientes y verbos culinarios con vocabulario técnico en inglés.",
+      "peso": 20,
+      "avanzado": "Traduce y aplica con exactitud el vocabulario de alimentos y verbos culinarios en inglés en la receta (10-9).",
+      "intermedio": "Escribe términos de alimentos y acciones culinarias en inglés con mínimos errores ortográficos (8-7).",
+      "basico": "Emplea un vocabulario en inglés muy limitado o confunde ingredientes y acciones (6-5).",
+      "en_desarrollo": "No traduce ni incluye vocabulario en inglés en la ficha del proyecto (4-1)."
+    }
+  ],
+  "firmas": [
+    {
+      "cargo": "DOCENTE TUTOR 7MO \"C\"",
+      "nombre": "Lic. Klever Yanez",
+      "funcion": "ELABORADO POR"
+    },
+    {
+      "cargo": "DIRECTOR DEL AÑO",
+      "nombre": "Director de Nivel EGB Media",
+      "funcion": "RECIBIDO POR"
+    },
+    {
+      "cargo": "JUNTA DE DIRECTORA DE SUBNIVEL",
+      "nombre": "MSc. Isabel Valencia",
+      "funcion": "REVISADO POR"
+    },
+    {
+      "cargo": "VICERRECTOR INSTITUCIONAL",
+      "nombre": "MSc. Mauricio Guachamín",
+      "funcion": "APROBADO POR"
+    }
+  ]
+}

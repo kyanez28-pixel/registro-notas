@@ -1,0 +1,327 @@
+{
+  "institucion": "UNIDAD EDUCATIVA FISCAL \"CALDERÓN 2\"",
+  "periodo_lectivo": "2026-2027",
+  "tipo": "PROYECTO INTERDISCIPLINAR",
+  "subnivel": "Educación General Básica Media",
+  "grado": "5.° de EGB",
+  "duracion": "Anual (3 Trimestres / 2 semanas intensivas por trimestre = 6 semanas de ejecución total)",
+  "gran_idea": "Inteligencia Artificial, Ética y Transformación Digital",
+  "nombre_proyecto": "Navego Seguro en el Mundo Virtual y la IA",
+  "objetivo_aprendizaje": "Los estudiantes de quinto año de EGB comprenderán la importancia del uso responsable de la tecnología, las redes sociales y las herramientas de Inteligencia Artificial mediante el análisis de datos, la investigación participativa y la expresión artística para fortalecer la convivencia armónica, la protección de la privacidad y la salud digital.",
+  "producto_final": {
+    "nombre": "Galería de Arte y Ciudadanía Digital",
+    "descripcion": "Exposición física construida progresivamente a lo largo del año lectivo con papelotes artísticos, fichas informativas bilingües, gráficos estadísticos y disertación oral."
+  },
+  "mapa_curricular": [
+    {
+      "asignatura": "Lengua y Literatura",
+      "dcd": "LL.3.4.13. Producir escritos de acuerdo con la situación comunicativa, mediante el empleo de diversos formatos, recursos y materiales.",
+      "indicador": "I.LL.3.6.5. Produce escritos de acuerdo con la situación comunicativa, mediante el empleo de diversos formatos, recursos y materiales.",
+      "competencias": "Comunicativas y Digitales"
+    },
+    {
+      "asignatura": "Matemática",
+      "dcd": "M.3.3.1. Construir, con o sin el uso de programas informáticos, tablas de frecuencias y diagramas estadísticos para representar y analizar datos discretos.",
+      "indicador": "I.M.3.10.1. Construye, con o sin el uso de programas informáticos, tablas de frecuencias y diagramas estadísticos para representar y analizar datos discretos.",
+      "competencias": "Matemáticas y Digitales"
+    },
+    {
+      "asignatura": "Ciencias Naturales",
+      "dcd": "CN.3.2.10. Promover medidas de prevención y cuidado corporal (actividad física, higiene postural y manejo del tiempo en pantallas) en función de la salud integral.",
+      "indicador": "I.CN.3.5.2. Promueve medidas de prevención y cuidado corporal (actividad física, higiene postural y manejo del tiempo en pantallas) en función de la salud integral.",
+      "competencias": "Socioemocionales y Digitales"
+    },
+    {
+      "asignatura": "Estudios Sociales",
+      "dcd": "CS.3.1.66. Discutir el papel del Ecuador frente a la globalización y la vigencia de la democracia y sus consecuencias en la sociedad actual.",
+      "indicador": "I.CS.3.7.3. Discute el papel del Ecuador frente a la globalización y la vigencia de la democracia y sus consecuencias en la sociedad actual.",
+      "competencias": "Comunicativas y Digitales"
+    },
+    {
+      "asignatura": "Educación Cultural y Artística (ECA)",
+      "dcd": "ECA.3.1.15. Utilizar medios audiovisuales y tecnologías de la información para realizar y difundir creaciones artísticas propias.",
+      "indicador": "I.ECA.3.1.2. Utiliza medios audiovisuales y tecnologías de la información para realizar y difundir creaciones artísticas propias.",
+      "competencias": "Comunicativas y Digitales"
+    },
+    {
+      "asignatura": "Educación Física",
+      "dcd": "EF.3.5.2. Construir con pares acuerdos de seguridad y trabajo en equipo durante actividades lúdicas.",
+      "indicador": "I.EF.3.3.2. Construye con pares acuerdos de seguridad y trabajo en equipo.",
+      "competencias": "Socioemocionales"
+    },
+    {
+      "asignatura": "Inglés (EFL)",
+      "dcd": "EFL.3.1.9. Complete short, simple sentences and dialogues about technology and online safety using basic vocabulary.",
+      "indicador": "I.EFL.3.12.1. Learners can complete short, simple sentences and dialogues about technology and online safety using basic vocabulary.",
+      "competencias": "Comunicativas y Digitales"
+    }
+  ],
+  "trimestres": [
+    {
+      "trimestre": 1,
+      "titulo": "Mis Derechos Digitales y la Huella en la Red",
+      "duracion": "2 Semanas (Semanas 1 y 2)",
+      "objetivo": "Reflexionar sobre la democracia, la huella digital y el impacto inicial de la Inteligencia Artificial en la comunicación.",
+      "valor": "Responsabilidad y Privacidad (Aprender a cuidar nuestra información y respetar la de los demás en el entorno virtual).",
+      "sabias_que": "La Inteligencia Artificial no tiene sentimientos ni opiniones propias; funciona procesando millones de datos que los seres humanos han ingresado previamente en internet.",
+      "recuerda": "Todo derecho digital conlleva una responsabilidad. No compartas tus contraseñas, dirección ni datos personales con desconocidos en la red.",
+      "producto_parcial": "Tarjeta Informativa N.º 1: 'Mi Huella Digital y mis Derechos'",
+      "semanas": [
+        {
+          "numero": 1,
+          "nombre": "Identidad Digital y Rutinas de Pensamiento",
+          "actividades": [
+            {
+              "titulo": "Derechos y Participación",
+              "asignaturas": [
+                "Lengua y Literatura",
+                "Estudios Sociales"
+              ],
+              "descripcion": "Aplica la rutina de pensamiento en tu cuaderno dibujando o escribiendo tus respuestas: Conectar (¿Qué herramientas tecnológicas o de IA como buscadores o asistentes conozco?), Ampliar (¿Qué derechos tengo al usar la red?), Desafiar (¿Cómo puedo proteger mi información personal y familiar?)."
+            },
+            {
+              "titulo": "Glosario Ilustrado",
+              "asignaturas": [
+                "Lengua y Literatura",
+                "Inglés"
+              ],
+              "descripcion": "Busca en el diccionario las palabras Internet, Virtual, Tecnológico, Privacy, Safe. Escribe una oración temática corta con cada una en tu cuaderno e ilustra su significado."
+            }
+          ]
+        },
+        {
+          "numero": 2,
+          "nombre": "Datos y Combinaciones Digitales",
+          "actividades": [
+            {
+              "titulo": "Combinaciones Simples",
+              "asignaturas": [
+                "Matemática"
+              ],
+              "descripcion": "Resuelve el cuadro de combinaciones en tu cuaderno adaptado a los equipos que usas a diario. Aplicar la fórmula: 3 programas x 2 dispositivos = 6 combinaciones totales."
+            },
+            {
+              "titulo": "Juego de la Telaraña",
+              "asignaturas": [
+                "Educación Física"
+              ],
+              "descripcion": "Realiza con tu grupo la dinámica de la lana para representar visualmente cómo viajan los datos en el internet. Escribe un párrafo en tu libreta expresando la importancia de trabajar en equipo."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trimestre": 2,
+      "titulo": "Ciberamenazas, IA y Salud Digital",
+      "duracion": "2 Semanas (Semanas 3 y 4)",
+      "objetivo": "Analizar los riesgos en internet, el tiempo frente a pantallas y diseñar pautas de higiene postural y pausas activas.",
+      "valor": "Autocuidado y Prudencia (Proteger nuestra salud física y tomar decisiones seguras en internet).",
+      "sabias_que": "Pasar muchas horas continuas frente a pantallas sin hacer pausas activas puede causar fatiga visual, dolores de cuello y problemas de postura corporal.",
+      "recuerda": "Si ves algo raro o sospechoso en la red que te haga sentir incómodo, avisa de inmediato a tus padres o a un docente de confianza.",
+      "producto_parcial": "Boceto de Afiche / Viñeta: 'Salud Corporal y Prevención en la Red'",
+      "semanas": [
+        {
+          "numero": 3,
+          "nombre": "Amenazas y Organización Estadística",
+          "actividades": [
+            {
+              "titulo": "Análisis de Datos y Estadísticas de Ciberamenazas",
+              "asignaturas": [
+                "Matemática",
+                "Estudios Sociales"
+              ],
+              "descripcion": "Revisa el gráfico de análisis estadístico de amenazas en la red (Contenido Nocivo, Grooming, Ciberacoso, Privacidad, Ciberbullying). Escribe en tu cuaderno los porcentajes ordenados de menor a mayor e interpreta cuál es el riesgo de mayor frecuencia."
+            },
+            {
+              "titulo": "Pautas de Protección y Prevención",
+              "asignaturas": [
+                "Lengua y Literatura"
+              ],
+              "descripcion": "Completa la tabla de prevención frente al Ciberacoso (molestar a otros por internet -> avisar a padres/docentes/DECE) y Grooming (engaños de desconocidos con perfiles falsos -> no aceptar desconocidos ni enviar datos personales)."
+            }
+          ]
+        },
+        {
+          "numero": 4,
+          "nombre": "Salud Integral y Trabajo Colaborativo",
+          "actividades": [
+            {
+              "titulo": "Higiene Postural y Pausas Activas",
+              "asignaturas": [
+                "Ciencias Naturales",
+                "Educación Física"
+              ],
+              "descripcion": "Practica y dibuja en tu libreta la rutina de pausas activas y ejercicios posturales para evitar la fatiga por el uso excesivo de pantallas digitales."
+            },
+            {
+              "titulo": "Reto Colaborativo: Pirámide de Vasos",
+              "asignaturas": [
+                "Educación Física"
+              ],
+              "descripcion": "En equipos de 4 estudiantes, utilicen 6 vasos plásticos y una liga elástica amarrada a 4 piolas para construir una pirámide sin tocar los vasos directamente con las manos."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trimestre": 3,
+      "titulo": "Construcción y Montaje de la Galería Final",
+      "duracion": "2 Semanas (Semanas 5 y 6)",
+      "objetivo": "Elaborar los recursos plásticos, integrar los contenidos trabajados durante el año y realizar la exposición oral de la Galería de Arte.",
+      "valor": "Empatía y Convivencia Armónica (Promover un trato amable dentro y fuera de la red).",
+      "sabias_que": "Crear contenido artístico e informativo para compartirlo con la comunidad escolar ayuda a promover una ciudadanía digital responsable en toda la institución.",
+      "recuerda": "El respeto también se aplica en internet: trátalos a todos con educación y amabilidad en las redes sociales y plataformas digitales.",
+      "producto_parcial": "Galería de Arte y Ciudadanía Digital (Producto Final Anual)",
+      "semanas": [
+        {
+          "numero": 5,
+          "nombre": "Elaboración del Arte y Análisis Final",
+          "actividades": [
+            {
+              "titulo": "Gráfico de Plataformas Escolares e IA",
+              "asignaturas": [
+                "Matemática"
+              ],
+              "descripcion": "Dibuja en tu cuaderno un gráfico de barras utilizando datos sobre plataformas: Moodle (23%), Educativa (16%), Google Classroom (15%), Microsoft Teams (14%), Herramientas de IA (12%)."
+            },
+            {
+              "titulo": "Diseño de Papelotes Artísticos Integrados",
+              "asignaturas": [
+                "ECA",
+                "Lengua y Literatura"
+              ],
+              "descripcion": "Dibuja en 4 papelotes el icono de una aplicación o herramienta digital. Mírate al espejo e integra en el dibujo la parte de tu rostro con la que más interactúas con esa aplicación (ej. ojos para videos)."
+            },
+            {
+              "titulo": "Fichas Informativas de Seguridad Bilingüe",
+              "asignaturas": [
+                "Lengua y Literatura",
+                "Inglés"
+              ],
+              "descripcion": "Redacta en 4 tarjetas las normas de seguridad, el uso responsable de la IA y palabras clave en inglés (Password, Security, Privacy). Pégalas debajo de cada papelote."
+            }
+          ]
+        },
+        {
+          "numero": 6,
+          "nombre": "Montaje, Exposición y Evaluación",
+          "actividades": [
+            {
+              "titulo": "Montaje de la Galería Física y Digital",
+              "asignaturas": [
+                "Educación Cultural y Artística (ECA)"
+              ],
+              "descripcion": "Organiza los 4 papelotes y fichas en las paredes del aula para formar la Galería Física. (Si se dispone de medios digitales, tomar fotos y montar una presentación en diapositivas)."
+            },
+            {
+              "titulo": "Exposición Oral ante la Comunidad Educativa",
+              "asignaturas": [
+                "Lengua y Literatura"
+              ],
+              "descripcion": "Presenta tu trabajo ante tus compañeros y docentes siguiendo la guía de disertación: saludo, explicación de derechos y riesgos, uso de la IA y recomendaciones de seguridad."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "compromisos": [
+    "Usar la tecnología, internet y la IA con responsabilidad y respeto hacia los demás.",
+    "Cuidar la información personal evitando compartir datos o contraseñas con desconocidos.",
+    "Realizar pausas activas de estiramiento al trabajar frente a dispositivos digitales."
+  ],
+  "escalera_metacognicion": [
+    {
+      "paso": 1,
+      "pregunta": "¿Qué he aprendido?"
+    },
+    {
+      "paso": 2,
+      "pregunta": "¿Cómo lo he aprendido?"
+    },
+    {
+      "paso": 3,
+      "pregunta": "¿Para qué me ha servido?"
+    },
+    {
+      "paso": 4,
+      "pregunta": "¿En qué otras ocasiones puedo usarlo?"
+    }
+  ],
+  "rubrica_evaluacion": [
+    {
+      "id": "PI1",
+      "asignatura": "Lengua y Literatura",
+      "indicador": "I.LL.3.6.5. Produce escritos adaptados a la situación comunicativa.",
+      "peso": 20,
+      "avanzado": "Produce escritos claros, estructurados y sin errores sintácticos (10-9).",
+      "intermedio": "Redacta textos comprensibles con leves imprecisiones de puntuación (8-7).",
+      "basico": "Redacta oraciones breves con vacíos de coherencia (6-5).",
+      "en_desarrollo": "Dificultades severas para estructurar ideas por escrito (4-1)."
+    },
+    {
+      "id": "PI2",
+      "asignatura": "Matemática",
+      "indicador": "I.M.3.10.1. Construye tablas de frecuencias y diagramas estadísticos.",
+      "peso": 20,
+      "avanzado": "Diseña y analiza con precisión tablas y diagramas de barras (10-9).",
+      "intermedio": "Construye tablas y gráficos estadísticos con imprecisiones menores (8-7).",
+      "basico": "Elabora tablas pero comete errores al graficar en barras (6-5).",
+      "en_desarrollo": "No logra organizar datos ni representar diagramas (4-1)."
+    },
+    {
+      "id": "PI3",
+      "asignatura": "Ciencias Naturales / Educación Física",
+      "indicador": "I.CN.3.5.2. / I.EF.3.3.2. Promueve la salud postural y acuerdos de trabajo.",
+      "peso": 20,
+      "avanzado": "Demuestra dominio en pausas activas y trabajo colaborativo (10-9).",
+      "intermedio": "Participa en pausas activas pero requiere supervisión en grupo (8-7).",
+      "basico": "Reconoce la salud digital pero no aplica las pausas bien (6-5).",
+      "en_desarrollo": "Muestra desinterés en el trabajo en equipo y salud corporal (4-1)."
+    },
+    {
+      "id": "PI4",
+      "asignatura": "Estudios Sociales / ECA",
+      "indicador": "I.CS.3.7.3. / I.ECA.3.1.2. Utiliza recursos expresivos y tecnológicos.",
+      "peso": 20,
+      "avanzado": "Diseña obras artísticas altamente creativas sobre ciudadanía e IA (10-9).",
+      "intermedio": "Crea materiales gráficos ordenados con mensaje básico (8-7).",
+      "basico": "Muestra materiales artísticos incompletos o poco claros (6-5).",
+      "en_desarrollo": "No elabora los productos plásticos ni participa en el montaje (4-1)."
+    },
+    {
+      "id": "PI5",
+      "asignatura": "Inglés (EFL)",
+      "indicador": "I.EFL.3.12.1. Completes short sentences using basic vocabulary.",
+      "peso": 20,
+      "avanzado": "Aplica con precisión el vocabulario técnico en inglés (10-9).",
+      "intermedio": "Utiliza vocabulario en inglés con errores ortográficos menores (8-7).",
+      "basico": "Utiliza vocabulario en inglés muy escaso (6-5).",
+      "en_desarrollo": "No incluye términos en inglés en las fichas (4-1)."
+    }
+  ],
+  "firmas": [
+    {
+      "cargo": "DOCENTE",
+      "nombre": "DOCENTE RESPONSABLE",
+      "funcion": "ELABORADO POR"
+    },
+    {
+      "cargo": "DIRECTOR DEL AÑO",
+      "nombre": "DIRECTOR DE NIVEL / AÑO",
+      "funcion": "RECIBIDO POR"
+    },
+    {
+      "cargo": "JUNTA DE DIRECTORA DE SUBNIVEL",
+      "nombre": "MSc. Isabel Valencia",
+      "funcion": "REVISADO POR"
+    },
+    {
+      "cargo": "VICERRECTOR",
+      "nombre": "MSc. Mauricio Guachamín",
+      "funcion": "APROBADO POR"
+    }
+  ]
+}

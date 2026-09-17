@@ -56,7 +56,7 @@ def create_7mo_plan():
             # SEMANA 6 (Semana 1 de la Microcurricular) - ORÍGENES DE LA ESCRITURA (Pág. 12)
             "row_idx": 9,
             "dcd": "LL.3.1.1. Participar en contextos y situaciones que evidencien la funcionalidad de la lengua escrita como herramienta cultural.",
-            "tema": "Tema: Lengua y Cultura: Orígenes de la escritura (de las pinturas rupestres a la era digital)\n\nMateriales:\nTexto de Lengua 7mo (Páginas 12 a 18)\nPizarra y marcadores de colores\nCuadernos de trabajo\nGuía Docente Maya/MinEduc pág. 12",
+            "tema": "Tema: Lengua y Cultura: Orígenes de la escritura (de las pinturas rupestres a la era digital)\n\nMateriales:\nTexto de Lengua 7mo (Páginas 12 a 17)\nPizarra y marcadores de colores\nCuadernos de trabajo\nGuía Docente Maya/MinEduc pág. 12",
             "estrategias": [
                 ("SEMANA 6 (Semana 1 de la Planificación Microcurricular · 05/10 al 09/10/2026)", True, 11),
                 ("ERCA / DUA", True, 10),
@@ -75,12 +75,12 @@ def create_7mo_plan():
                 ("DUA", True, 10),
                 ("Representación: organizador gráfico cronológico en pizarra con marcadores de colores.\nAcción/expresión: registro ordenado en el cuaderno con glosario de términos (pictograma, ideograma, cuneiforme).\nMotivación: visión histórica integral de la evolución cultural humana.", False, 10),
                 ("APLICACIÓN", True, 11),
-                ("Los estudiantes resuelven de forma autónoma el taller de aplicación de la página 18 del texto escolar:\n- Descifran el mensaje secreto utilizando el código de sustitución alfabética.\n- Escriben en su cuaderno un párrafo reflexivo respondiendo: \"¿Por qué la lengua escrita es una herramienta cultural imprescindible en mi vida escolar y familiar?\"\nCoevaluación en parejas y socialización. (Nota: Viernes 09 de Octubre: Feriado por la Independencia de Guayaquil).", False, 10),
+                ("Los estudiantes resuelven de forma autónoma el taller de aplicación de la página 17 del texto escolar:\n- Descifran el mensaje secreto utilizando el código de sustitución alfabética.\n- Escriben en su cuaderno un párrafo reflexivo respondiendo: \"¿Por qué la lengua escrita es una herramienta cultural imprescindible en mi vida escolar y familiar?\"\nCoevaluación en parejas y socialización. (Nota: Viernes 09 de Octubre: Feriado por la Independencia de Guayaquil).", False, 10),
                 ("DUA", True, 10),
-                ("Representación: actividad lúdica de criptografía y descifrado de códigos en pág. 18.\nAcción/expresión: redacción breve en el cuaderno y retroalimentación entre pares.\nMotivación: reto lúdico de resolución y afianzamiento del aprendizaje.", False, 10),
+                ("Representación: actividad lúdica de criptografía y descifrado de códigos en pág. 17.\nAcción/expresión: redacción breve en el cuaderno y retroalimentación entre pares.\nMotivación: reto lúdico de resolución y afianzamiento del aprendizaje.", False, 10),
             ],
             "indicador": "Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad en diferentes contextos y situaciones, atendiendo a la diversidad lingüística del Ecuador. I.LL.3.1.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de participación oral y taller de aplicación del texto (pág. 18).\n• Actividades: Descifrado de códigos, línea de tiempo en el cuaderno y respuestas a preguntas reflexivas."
+            "evaluacion": "• Instrumentos: Rúbrica de participación oral y taller de aplicación del texto (pág. 17).\n• Actividades: Descifrado de códigos, línea de tiempo en el cuaderno y respuestas a preguntas reflexivas."
         },
         {
             # SEMANA 7 (Semana 2 de la Microcurricular) - DISCURSOS Y JUICIOS DE VALOR (Pág. 19)
