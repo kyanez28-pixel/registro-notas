@@ -80,7 +80,7 @@ def create_7mo_plan():
                 ("Representación: actividad lúdica de criptografía y descifrado de códigos en pág. 17.\nAcción/expresión: redacción breve en el cuaderno y retroalimentación entre pares.\nMotivación: reto lúdico de resolución y afianzamiento del aprendizaje.", False, 10),
             ],
             "indicador": "Reconoce la funcionalidad de la lengua escrita como manifestación cultural y de identidad en diferentes contextos y situaciones, atendiendo a la diversidad lingüística del Ecuador. I.LL.3.1.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de participación oral y taller de aplicación del texto (pág. 17).\n• Actividades: Descifrado de códigos, línea de tiempo en el cuaderno y respuestas a preguntas reflexivas."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 15"
         },
         {
             # SEMANA 7 (Semana 2 de la Microcurricular) - DISCURSOS Y JUICIOS DE VALOR (Pág. 19)
@@ -110,7 +110,7 @@ def create_7mo_plan():
                 ("Representación: pauta paso a paso de la pág. 25 para organizar la exposición.\nAcción/expresión: presentación oral en parejas y retroalimentación positiva de la clase.\nMotivación: satisfacción de comunicar ideas propias y ser escuchados con respeto.", False, 10),
             ],
             "indicador": "Escucha discursos orales, parafrasea su contenido, formula juicios de valor sobre su forma y participa de manera respetuosa frente a las intervenciones de los demás. I.LL.3.2.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de expresión oral y lista de cotejo de juicios de valor.\n• Actividades: Presentación del taller \"Vendedor de sueños\" y análisis crítico del discurso leído."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 25"
         },
         {
             # SEMANA 8 (Semana 3 de la Microcurricular) - LECTURA CIENTÍFICA Y BIBLIOTECA (Págs. 26 a 37)
@@ -140,7 +140,7 @@ def create_7mo_plan():
                 ("Representación: cuestionario estructurado del libro y plantilla de ficha bibliográfica.\nAcción/expresión: trabajo colaborativo en parejas y comprobación de respuestas.\nMotivación: enriquecimiento del léxico y satisfacción lectora.", False, 10),
             ],
             "indicador": "Realiza inferencias fundamentales y proyectivo-valorativas, valora los contenidos y aspectos de forma a partir de criterios preestablecidos, al monitorear su comprensión mediante el uso de estrategias cognitivas. I.LL.3.3.2.",
-            "evaluacion": "• Instrumentos: Cuestionario de comprensión lectora y ficha de préstamo bibliográfico evaluada.\n• Actividades: Resolución de actividades págs. 34-37 del texto de Lengua y Literatura."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 35"
         },
         {
             # SEMANA 9 (Semana 4 de la Microcurricular) - ESCRITURA: NOTA CIENTÍFICA Y EL VERBO (Págs. 38 a 53)
@@ -170,7 +170,7 @@ def create_7mo_plan():
                 ("Representación: plantilla de producción textual estructurada en 3 párrafos.\nAcción/expresión: redacción individual, corrección entre pares y ejercicios gramaticales.\nMotivación: orgullo de publicar un artículo con rigor gramatical.", False, 10),
             ],
             "indicador": "Produce textos informativos utilizando el proceso de escritura, elementos gramaticales apropiados (verbos, modos y tiempos) y signos de puntuación (punto y coma). I.LL.3.6.1. / I.LL.3.6.3.",
-            "evaluacion": "• Instrumentos: Rúbrica de producción escrita y prueba de aplicación gramatical.\n• Actividades: Redacción de la nota científica y resolución de talleres págs. 46-53 del texto."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 45 y página 53"
         },
         {
             # SEMANA 10 (Semana 5 de la Microcurricular) - LITERATURA: DISFRUTO DE LOS MITOS (Págs. 54 a 65)
@@ -200,7 +200,7 @@ def create_7mo_plan():
                 ("Representación: preguntas de análisis del libro y guías de discusión.\nAcción/expresión: trabajo individual y socialización en asamblea de aula.\nMotivación: disfrute estético de la lectura literaria.", False, 10),
             ],
             "indicador": "Reconoce en textos de la literatura oral y escrita (mitos) los elementos característicos que les dan sentido; participa en discusiones sobre textos literarios aportando interpretaciones personales. I.LL.3.7.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de análisis literario y cuadro comparativo de mitos.\n• Actividades: Resolución de actividades págs. 62-65 del libro y participación en debates literarios."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 63"
         },
         {
             # SEMANA 11 (Semana 6 de la Microcurricular) - ESCRITURA CREATIVA Y EVALUACIÓN SUMATIVA (Págs. 66 a 71)
@@ -230,7 +230,7 @@ def create_7mo_plan():
                 ("Representación: formato de evaluación sumativa del texto págs. 70-71.\nAcción/expresión: creación artística de la historieta y resolución de la prueba escrita.\nMotivación: celebración del cierre exitoso de la Unidad 1.", False, 10),
             ],
             "indicador": "Recrea textos literarios leídos mediante adaptaciones creativas (historieta) y demuestra el dominio de destrezas comunicativas de la Unidad 1. I.LL.3.7.2. / I.LL.3.6.1.",
-            "evaluacion": "• Instrumentos: Rúbrica de la Historieta Mitológica y Evaluación sumativa de Unidad 1 (págs. 70-71).\n• Actividades: Exposición de la historieta en el mural y prueba escrita de base estructurada."
+            "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 69 y evaluación sumativa páginas 70 y 71"
         },
         {
             # SEMANA 12 (Semana de Proyecto Integrador)
