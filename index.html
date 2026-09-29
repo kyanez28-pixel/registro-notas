@@ -12549,6 +12549,17 @@ function ensureAttendanceData() {
     });
   }
 
+  // 4. Asegurar que para cada fecha oficial registrada, todos los alumnos tengan un estado (por defecto 'P')
+  Object.keys(S.asistencia).forEach(d => {
+    if (d >= '2026-09-03' && S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0) {
+      S.students.forEach((_, si) => {
+        if (S.asistencia[d][si] === undefined || S.asistencia[d][si] === null || S.asistencia[d][si] === '') {
+          S.asistencia[d][si] = 'P';
+        }
+      });
+    }
+  });
+
   if (typeof saveAttendanceVault === 'function') {
     saveAttendanceVault(S.asistencia);
   }
@@ -12874,10 +12885,11 @@ function renderAttendance() {
   const isVisible = S.attAbsVisible !== false;
 
   // Filtrar solo fechas que pertenezcan al año escolar oficial (>= 2026-09-03) Y que tengan registros guardados
-  let relevantDates = Object.keys(S.asistencia || {}).filter(d => {
+  const allOfficialDates = Object.keys(S.asistencia || {}).filter(d => {
     if (d < '2026-09-03') return false; // El año escolar inició el 03 de Septiembre
     return Object.keys(S.asistencia[d] || {}).length > 0;
   }).sort();
+  let relevantDates = [...allOfficialDates];
   let periodLabel = 'Todo el Trimestre';
 
   if (S.attAbsPeriod === 'week') {
@@ -13050,7 +13062,7 @@ function renderAttendance() {
         </span>
 
         <button type="button" class="btn btn-outline" onclick="openAttHistoryModal()" style="margin-left:auto;font-size:0.78rem;font-weight:800;padding:4px 12px;background:var(--bg-card);border-color:#3b82f6;color:#1d4ed8;border-radius:20px">
-          📂 Historial de Días (${relevantDates.length} registrados 2026-2027)
+          📂 Historial de Días (${allOfficialDates.length} registrados 2026-2027)
         </button>
       </div>
     `;
@@ -13342,18 +13354,20 @@ function exportAttendanceXLSX() {
 function getStudentAttendanceStats(si) {
   if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100 };
   const trimStartDate = S.calendar?.trimStart || '2026-09-03';
+  const minDate = (trimStartDate && trimStartDate > '2026-09-03') ? trimStartDate : '2026-09-03';
+  // Considerar todas las fechas oficiales del trimestre que tengan registros
   const dates = Object.keys(S.asistencia).filter(d => {
-    if (d < '2026-09-03') return false;
-    if (trimStartDate && d < trimStartDate) return false;
-    return S.asistencia[d] && S.asistencia[d][si] !== undefined;
+    if (d < minDate) return false;
+    return S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0;
   });
   let p = 0, f = 0, fj = 0, a = 0;
   dates.forEach(d => {
-    const status = S.asistencia[d][si];
+    const status = (S.asistencia[d] && S.asistencia[d][si]) ? S.asistencia[d][si] : 'P';
     if (status === 'P') p++;
     else if (status === 'F') f++;
     else if (status === 'FJ' || status === 'J') fj++;
     else if (status === 'A' || status === 'T') a++;
+    else p++;
   });
   const total = dates.length;
   const pct = total > 0 ? Math.round(((p + a) / total) * 100) : 100;
