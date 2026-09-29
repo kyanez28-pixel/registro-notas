@@ -8977,7 +8977,9 @@ var DEFAULT_STUDENT_PROFILES = [
     "padre_nombre": "Diego Armando Almeida Andrade",
     "padre_cedula": "1722317334",
     "padre_telefono": "0984328542",
-    "correo_institucional": "alaneman14528487@estudiantes.edu.ec"
+    "correo_institucional": "alaneman14528487@estudiantes.edu.ec",
+    "estado": "Retirada",
+    "fecha_retiro": "2026-09-15"
   },
   {
     "num": "3",
@@ -9046,7 +9048,9 @@ var DEFAULT_STUDENT_PROFILES = [
     "padre_nombre": "",
     "padre_cedula": "",
     "padre_telefono": "",
-    "correo_institucional": "ananjado11977210@estudiantes2.edu.ec"
+    "correo_institucional": "ananjado11977210@estudiantes2.edu.ec",
+    "estado": "No Asiste",
+    "observacion": "Nunca se ha presentado"
   },
   {
     "num": "6",
@@ -12551,11 +12555,18 @@ function ensureAttendanceData() {
     });
   }
 
-  // 4. Asegurar que para cada fecha oficial registrada, todos los alumnos tengan un estado (por defecto 'P')
+  // 4. Asegurar que para cada fecha oficial registrada, todos los alumnos tengan un estado adecuado
   Object.keys(S.asistencia).forEach(d => {
     if (d >= '2026-09-03' && S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0) {
-      S.students.forEach((_, si) => {
-        if (S.asistencia[d][si] === undefined || S.asistencia[d][si] === null || S.asistencia[d][si] === '') {
+      S.students.forEach((nom, si) => {
+        const up = (nom || '').toUpperCase();
+        const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+        const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+        if (isJayko) {
+          S.asistencia[d][si] = 'NP';
+        } else if (isEmily && d > '2026-09-15') {
+          S.asistencia[d][si] = 'R';
+        } else if (S.asistencia[d][si] === undefined || S.asistencia[d][si] === null || S.asistencia[d][si] === '') {
           S.asistencia[d][si] = 'P';
         }
       });
@@ -12911,9 +12922,17 @@ function renderAttendance() {
 
   const totalDays = relevantDates.length || 1;
   const absStats = {};
-  S.students.forEach((_, si) => {
+  S.students.forEach((name, si) => {
+    const up = (name || '').toUpperCase();
+    const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+    const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+    if (isJayko) {
+      absStats[si] = { F: 0, T: 0, J: 0, pct: 0 };
+      return;
+    }
     let countF = 0, countT = 0, countJ = 0;
     relevantDates.forEach(dt => {
+      if (isEmily && dt > '2026-09-15') return;
       const val = (S.asistencia[dt] || {})[si];
       if (val === 'F') countF++;
       if (val === 'T') countT++;
@@ -12992,23 +13011,44 @@ function renderAttendance() {
   let gridHTML = '<div class="att-grid">';
   S.students.forEach((name, si) => {
     if (searchVal && !name.toLowerCase().includes(searchVal)) return;
-    const currentVal = isRecorded ? (dayAtt[si] || 'P') : null;
+    const up = (name || '').toUpperCase();
+    const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+    const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+    const isEmilyRetired = isEmily && dateStr > '2026-09-15';
+
+    const currentVal = isRecorded ? (dayAtt[si] || (isJayko ? 'NP' : (isEmilyRetired ? 'R' : 'P'))) : null;
     let borderAccent = 'border-left: 4px solid var(--border-color);';
     if (currentVal === 'P') borderAccent = 'border-left: 4px solid #16a34a;';
     else if (currentVal === 'F') borderAccent = 'border-left: 4px solid #dc2626;';
     else if (currentVal === 'T') borderAccent = 'border-left: 4px solid #d97706;';
     else if (currentVal === 'J' || currentVal === 'FJ') borderAccent = 'border-left: 4px solid #2563eb;';
+    else if (currentVal === 'R' || isEmilyRetired) borderAccent = 'border-left: 4px solid #f59e0b; background: #fffdf5;';
+    else if (currentVal === 'NP' || isJayko) borderAccent = 'border-left: 4px solid #f87171; background: #fff5f5;';
 
-    gridHTML += `<div class="att-row" style="${borderAccent};${!isRecorded ? 'opacity:0.92;background:var(--bg-card)' : ''}">
-      <div class="att-student-info">
-        <div class="att-num">${si+1}</div>
-        <div class="att-name" title="${escVal(name)}">${escHTML(name)}</div>
-      </div>
-      <div class="att-btn-group">
+    let extraBadge = '';
+    let btnGroupHtml = '';
+    if (isJayko) {
+      extraBadge = `<span style="font-size:0.68rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:12px;margin-left:6px;border:1px solid #fca5a5;white-space:nowrap">🚫 NUNCA ASISTIÓ</span>`;
+      btnGroupHtml = `<span style="font-size:0.75rem;font-weight:900;color:#991b1b;padding:4px 10px;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px">No Asiste</span>`;
+    } else if (isEmilyRetired) {
+      extraBadge = `<span style="font-size:0.68rem;font-weight:900;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;margin-left:6px;border:1px solid #fde047;white-space:nowrap">🚫 RETIRADA (15/Sep)</span>`;
+      btnGroupHtml = `<span style="font-size:0.75rem;font-weight:900;color:#92400e;padding:4px 10px;background:#fef3c7;border:1px solid #fde047;border-radius:8px">Retirada</span>`;
+    } else {
+      btnGroupHtml = `
         <button class="att-btn P ${currentVal==='P'?'active':''}" onclick="setAttState(${si}, 'P')" title="Presente">P</button>
         <button class="att-btn F ${currentVal==='F'?'active':''}" onclick="setAttState(${si}, 'F')" title="Falta">F</button>
         <button class="att-btn T ${currentVal==='T'?'active':''}" onclick="setAttState(${si}, 'T')" title="Tardanza">T</button>
         <button class="att-btn J ${(currentVal==='J'||currentVal==='FJ')?'active':''}" onclick="setAttState(${si}, 'J')" title="Justificada">J</button>
+      `;
+    }
+
+    gridHTML += `<div class="att-row" style="${borderAccent};${!isRecorded ? 'opacity:0.92;background:var(--bg-card)' : ''}">
+      <div class="att-student-info">
+        <div class="att-num">${si+1}</div>
+        <div class="att-name" title="${escVal(name)}">${escHTML(name)} ${extraBadge}</div>
+      </div>
+      <div class="att-btn-group">
+        ${btnGroupHtml}
       </div>
     </div>`;
   });
@@ -13018,7 +13058,10 @@ function renderAttendance() {
 
   let pCount = 0, fCount = 0, tCount = 0, jCount = 0;
   if (isRecorded) {
-    S.students.forEach((_, si) => {
+    S.students.forEach((name, si) => {
+      const up = (name || '').toUpperCase();
+      if (up.includes('ANDRADE') && up.includes('JAYKO')) return;
+      if (up.includes('ALMEIDA') && up.includes('EMILY') && dateStr > '2026-09-15') return;
       const v = dayAtt[si] || 'P';
       if (v==='P') pCount++;
       if (v==='F') fCount++;
@@ -13115,8 +13158,17 @@ function attMarkAll(state) {
   const dateStr = (dateInp && dateInp.value) ? dateInp.value : getTodayDateStr();
   if (!S.asistencia) S.asistencia = {};
   S.asistencia[dateStr] = {};
-  S.students.forEach((_, si) => {
-    S.asistencia[dateStr][si] = state;
+  S.students.forEach((name, si) => {
+    const up = (name || '').toUpperCase();
+    const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+    const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+    if (isJayko) {
+      S.asistencia[dateStr][si] = 'NP';
+    } else if (isEmily && dateStr > '2026-09-15') {
+      S.asistencia[dateStr][si] = 'R';
+    } else {
+      S.asistencia[dateStr][si] = state;
+    }
   });
   if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
   saveData();
@@ -13377,11 +13429,21 @@ function exportAttendanceXLSX() {
 
 function getStudentAttendanceStats(si) {
   if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100 };
+  const name = S.students[si] || '';
+  const up = name.toUpperCase();
+  const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+  const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+
+  if (isJayko) {
+    return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 0, isSpecial: true, statusText: 'Nunca se ha presentado' };
+  }
+
   const trimStartDate = S.calendar?.trimStart || '2026-09-03';
   const minDate = (trimStartDate && trimStartDate > '2026-09-03') ? trimStartDate : '2026-09-03';
   // Considerar todas las fechas oficiales del trimestre que tengan registros
   const dates = Object.keys(S.asistencia).filter(d => {
     if (d < minDate) return false;
+    if (isEmily && d > '2026-09-15') return false; // Emily se retiró el 15 de septiembre
     return S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0;
   });
   let p = 0, f = 0, fj = 0, a = 0;
@@ -13391,11 +13453,15 @@ function getStudentAttendanceStats(si) {
     else if (status === 'F') f++;
     else if (status === 'FJ' || status === 'J') fj++;
     else if (status === 'A' || status === 'T') a++;
-    else p++;
+    else if (status !== 'R' && status !== 'NP') p++;
   });
   const total = dates.length;
   const pct = total > 0 ? Math.round(((p + a) / total) * 100) : 100;
-  return { total, p, f, fj, a, pct };
+  return { 
+    total, p, f, fj, a, pct,
+    isSpecial: isEmily,
+    statusText: isEmily ? 'Retirada el 15/09/2026' : ''
+  };
 }
 
 function rpShowAll() {
@@ -13649,7 +13715,17 @@ function printStudentProgressReportPDF(si) {
   let statusBadgeColor = '#166534';
   let statusBorder = '#86efac';
 
-  if (gAvg !== null) {
+  const up = (name || '').toUpperCase();
+  const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+  const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+
+  if (isEmily) {
+    statusText = '🚫 Estudiante Retirada (Fecha oficial de retiro: 15/09/2026)';
+    statusBadgeBg = '#fef3c7'; statusBadgeColor = '#92400e'; statusBorder = '#fde047';
+  } else if (isJayko) {
+    statusText = '🚫 No Asiste / Nunca se ha presentado';
+    statusBadgeBg = '#fee2e2'; statusBadgeColor = '#991b1b'; statusBorder = '#fca5a5';
+  } else if (gAvg !== null) {
     const n = parseFloat(gAvg);
     if (n < 4.01) {
       statusText = '⚠️ Promoción Excepcional (Requiere plan de mejora pedagógico)';
@@ -13970,7 +14046,14 @@ function buildStudentCard(si) {
   const perf = getStudentDetailedPerformance(si);
 
   let statusBadge = '🟢 Domina los aprendizajes (Aprobado)';
-  if (gAvg !== null) {
+  const up = (name || '').toUpperCase();
+  const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+  const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+  if (isEmily) {
+    statusBadge = '🚫 Estudiante Retirada (15 de Septiembre de 2026)';
+  } else if (isJayko) {
+    statusBadge = '🚫 No Asiste / Nunca se ha presentado';
+  } else if (gAvg !== null) {
     const n = parseFloat(gAvg);
     if (n < 4.01) statusBadge = '⚠ Promoción Excepcional (Requiere acuerdo y plan de mejora)';
     else if (n < 7.00) statusBadge = '🔴 Supletorio / Riesgo (Requiere refuerzo pedagógico inmediato)';
