@@ -1032,7 +1032,9 @@ th.th-rf { background: #15803d !important; font-size: 0.74rem; }
   background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);
   box-shadow: var(--shadow-xs); display: inline-flex; align-items: center; gap: 4px;
 }
-.att-absence-badge.warn { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+.att-absence-badge.warn { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.att-absence-badge.justified { background: #eff6ff; color: #1e40af; border-color: #93c5fd; }
+.att-absence-badge.tardy { background: #fef3c7; color: #92400e; border-color: #fde047; }
 
 /* ══ REPORTE DE ASISTENCIA (SEMANAS / MESES / TRIMESTRE) ══ */
 .att-report-wrap { overflow: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); background: var(--bg-card); }
@@ -12892,7 +12894,10 @@ function renderAttendance() {
   let relevantDates = [...allOfficialDates];
   let periodLabel = 'Todo el Trimestre';
 
-  if (S.attAbsPeriod === 'week') {
+  if (S.attAbsPeriod === 'day') {
+    relevantDates = (S.asistencia && S.asistencia[dateStr] && Object.keys(S.asistencia[dateStr]).length > 0) ? [dateStr] : [];
+    periodLabel = isToday ? 'Hoy' : formatDate(dateStr);
+  } else if (S.attAbsPeriod === 'week') {
     const r = getWeekRange(dateStr);
     relevantDates = relevantDates.filter(d => d >= r.from && d <= r.to);
     periodLabel = 'Esta Semana';
@@ -12922,8 +12927,8 @@ function renderAttendance() {
     if (!isVisible) {
       absBarEl.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-          <span style="font-size:0.8rem;font-weight:700;color:var(--text-muted)">📊 Barra de Inasistencias Oculta</span>
-          <button class="btn btn-outline" onclick="toggleAttAbsBar()" style="padding:3px 10px;font-size:0.75rem;font-weight:800">👁️ Mostrar Inasistencias</button>
+          <span style="font-size:0.8rem;font-weight:700;color:var(--text-muted)">📊 Barra de Inasistencias y Novedades Oculta</span>
+          <button class="btn btn-outline" onclick="toggleAttAbsBar()" style="padding:3px 10px;font-size:0.75rem;font-weight:800">👁️ Mostrar Novedades</button>
         </div>
       `;
     } else {
@@ -12931,28 +12936,47 @@ function renderAttendance() {
       let hasWarnings = false;
       S.students.forEach((name, si) => {
         const st = absStats[si];
-        if (st.F > 0 || st.T > 0) {
+        if (st.F > 0 || st.T > 0 || st.J > 0) {
           hasWarnings = true;
-          const isWarn = st.pct >= 25;
-          badgesHTML += `<span class="att-absence-badge ${isWarn?'warn':''}">
-            <strong>${escHTML(name)}</strong>: ${st.F} Faltas (${st.pct}%) ${st.T>0?'· '+st.T+' Tardanzas':''} ${isWarn?'⚠️ >25% inasistencia':''}
+          const isWarn = S.attAbsPeriod !== 'day' && st.pct >= 25;
+          
+          let badgeClass = 'att-absence-badge';
+          if (st.F > 0) badgeClass += ' warn';
+          else if (st.J > 0 && st.T === 0) badgeClass += ' justified';
+          else if (st.T > 0 && st.J === 0) badgeClass += ' tardy';
+          else if (st.J > 0) badgeClass += ' justified';
+
+          let details = [];
+          if (S.attAbsPeriod === 'day') {
+            if (st.F > 0) details.push(`<span style="color:#b91c1c;font-weight:800">🔴 ${st.F > 1 ? st.F + ' Faltas' : 'Falta Injustificada'}</span>`);
+            if (st.J > 0) details.push(`<span style="color:#1d4ed8;font-weight:800">🔵 ${st.J > 1 ? st.J + ' Justificadas' : 'Falta Justificada'}</span>`);
+            if (st.T > 0) details.push(`<span style="color:#b45309;font-weight:800">🟡 ${st.T > 1 ? st.T + ' Tardanzas' : 'Tardanza'}</span>`);
+          } else {
+            if (st.F > 0) details.push(`<span style="color:#b91c1c;font-weight:800">🔴 ${st.F} ${st.F === 1 ? 'Falta' : 'Faltas'} (${st.pct}%)</span>`);
+            if (st.J > 0) details.push(`<span style="color:#1d4ed8;font-weight:800">🔵 ${st.J} ${st.J === 1 ? 'Justificada' : 'Justificadas'}</span>`);
+            if (st.T > 0) details.push(`<span style="color:#b45309;font-weight:800">🟡 ${st.T} ${st.T === 1 ? 'Tardanza' : 'Tardanzas'}</span>`);
+          }
+
+          badgesHTML += `<span class="${badgeClass}">
+            <strong>${escHTML(name)}</strong>: ${details.join(' · ')} ${isWarn ? ' <span style="background:#dc2626;color:#fff;font-size:0.68rem;padding:2px 7px;border-radius:10px;font-weight:800;margin-left:4px">⚠️ >25% inasistencia</span>' : ''}
           </span>`;
         }
       });
       if (!hasWarnings) {
-        badgesHTML = `<span style="font-size:0.78rem;color:var(--text-light);font-weight:600">No hay inasistencias registradas en ${periodLabel.toLowerCase()}.</span>`;
+        badgesHTML = `<span style="font-size:0.78rem;color:var(--text-light);font-weight:600">No hay inasistencias ni novedades registradas en ${periodLabel.toLowerCase()}.</span>`;
       }
 
       absBarEl.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:gap:8px;border-bottom:1px solid var(--border-color);padding-bottom:6px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">📊 Inasistencias:</span>
+            <span style="font-weight:800;font-size:0.85rem;color:var(--text-main)">📊 Inasistencias y Novedades:</span>
             <div style="display:inline-flex;background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:2px;gap:2px">
+              <button onclick="setAttAbsPeriod('day')" class="abs-filter-btn ${S.attAbsPeriod==='day'?'active':''}">Diario</button>
               <button onclick="setAttAbsPeriod('week')" class="abs-filter-btn ${S.attAbsPeriod==='week'?'active':''}">Semana</button>
               <button onclick="setAttAbsPeriod('month')" class="abs-filter-btn ${S.attAbsPeriod==='month'?'active':''}">Mes</button>
               <button onclick="setAttAbsPeriod('trim')" class="abs-filter-btn ${S.attAbsPeriod==='trim'?'active':''}">Trimestre</button>
             </div>
-            <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:800">${relevantDates.length} días oficiales registrados (${periodLabel})</span>
+            <span style="background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;font-weight:800">${relevantDates.length} ${relevantDates.length===1?'día oficial registrado':'días oficiales registrados'} (${periodLabel})</span>
           </div>
           <button onclick="toggleAttAbsBar()" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:0.76rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px" title="Ocultar esta barra">✕ Quitar / Ocultar</button>
         </div>
