@@ -20135,6 +20135,20 @@ function updateCustomListPreview() {
       name = name.toUpperCase();
     }
 
+    const upName = (S.students[si] || '').toUpperCase();
+    const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+    const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+
+    let statusBadge = '';
+    let rowSpecialStyle = '';
+    if (isEmily) {
+      statusBadge = '<span class="badge-status-retirada" style="font-size:calc(' + fontSize + ' * 0.78);font-weight:900;background:#fef3c7;color:#92400e;border:1px solid #fde047;border-radius:6px;padding:1px 6px;margin-left:6px;white-space:nowrap;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact">🚫 RETIRADA</span>';
+      rowSpecialStyle = 'background:#fffdf5;-webkit-print-color-adjust:exact;print-color-adjust:exact;';
+    } else if (isJayko) {
+      statusBadge = '<span class="badge-status-noasiste" style="font-size:calc(' + fontSize + ' * 0.78);font-weight:900;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;padding:1px 6px;margin-left:6px;white-space:nowrap;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact">🚫 NO ASISTE</span>';
+      rowSpecialStyle = 'background:#fff5f5;-webkit-print-color-adjust:exact;print-color-adjust:exact;';
+    }
+
     const stData = list.data[si] || {};
     let tdCols = '';
 
@@ -20154,21 +20168,23 @@ function updateCustomListPreview() {
       const align = def ? (def.align || 'center') : (colType === 'check' || colType === 'firma' ? 'center' : 'left');
       const fontMono = (def && def.isMono) ? 'font-family:var(--font-mono);font-weight:700;' : '';
 
+      const cellPlaceholder = isEmily ? '🚫 Retirada' : (isJayko ? '🚫 No Asiste' : (colType === 'firma' ? '✍️ Firma / Aclaración' : 'Escribir datos...'));
+
       if (colType === 'check') {
         const isChecked = !!val;
         tdCols += '<td style="text-align:center;padding:' + cellPadding + ';background:' + theme.cellBg + ' !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
           '<button type="button" class="btn ' + (isChecked ? 'btn-success' : 'btn-outline') + ' no-print" onclick="toggleCustomCellCheck(' + si + ', ' + c + ')" style="padding:2px 8px;font-size:calc(' + fontSize + ' * 0.85);font-weight:800;border-radius:6px;width:100%;box-shadow:' + (isChecked ? '0 2px 6px rgba(22,163,74,0.3)' : 'none') + '">' +
-            (isChecked ? '☑ SÍ' : '▢ NO') +
+            (isChecked ? '☑ SÍ' : (isEmily ? '🚫 RET.' : (isJayko ? '🚫 NO ASISTE' : '▢ NO'))) +
           '</button>' +
           '<div class="only-print" style="box-sizing:border-box;padding:2px 6px;border-radius:6px;font-size:calc(' + fontSize + ' * 0.85);font-weight:800;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;' +
-            (isChecked ? 'background:#16a34a !important;color:#ffffff !important;' : 'background:#ffffff !important;color:#475569 !important;border:1.5px solid #cbd5e1 !important;') + '">' +
-            (isChecked ? '☑ SÍ' : '▢ NO') +
+            (isChecked ? 'background:#16a34a !important;color:#ffffff !important;' : (isEmily ? 'background:#fef3c7 !important;color:#92400e !important;border:1px solid #fde047 !important;' : (isJayko ? 'background:#fee2e2 !important;color:#991b1b !important;border:1px solid #fca5a5 !important;' : 'background:#ffffff !important;color:#475569 !important;border:1.5px solid #cbd5e1 !important;'))) + '">' +
+            (isChecked ? '☑ SÍ' : (isEmily ? '🚫 RETIRADA' : (isJayko ? '🚫 NO ASISTE' : '▢ NO'))) +
           '</div>' +
         '</td>';
       } else if (colType === 'firma') {
         tdCols += '<td style="padding:' + cellPadding + ';text-align:center;background:' + theme.cellBg + ' !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
-          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="✍️ Firma / Aclaración" style="text-align:center;font-size:' + fontSize + ';padding:3px 6px"/>' +
-          '<div class="only-print list-cell-print-box" style="text-align:center;font-weight:700">' + escHTML(val || '') + '</div>' +
+          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="' + cellPlaceholder + '" style="text-align:center;font-size:' + fontSize + ';padding:3px 6px"/>' +
+          '<div class="only-print list-cell-print-box" style="text-align:center;font-weight:700">' + escHTML(val || (isEmily ? 'RETIRADA' : (isJayko ? 'NO ASISTE' : ''))) + '</div>' +
         '</td>';
       } else {
         // Verificar si el estudiante tiene actualización de padres y la celda es un campo de datos del representante
@@ -20178,15 +20194,17 @@ function updateCustomListPreview() {
         const _cellBg = _isParentCell ? 'rgba(22,163,74,0.12)' : theme.cellBg;
         const _cellBorder = _isParentCell ? 'border-left:3px solid #16a34a;' : '';
         tdCols += '<td title="' + (_isParentCell ? ('✅ Dato ingresado por el representante/padre · ' + new Date(_mProf.parentUpdatedAt).toLocaleDateString('es-EC',{day:'2-digit',month:'2-digit',year:'2-digit'})) : '') + '" style="padding:' + cellPadding + ';text-align:' + align + ';' + fontMono + _cellBorder + ';background:' + _cellBg + ' !important;-webkit-print-color-adjust:exact;print-color-adjust:exact">' +
-          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="Escribir datos..." style="text-align:' + align + ';' + fontMono + ';font-size:' + fontSize + ';padding:3px 6px"/>' +
+          '<input type="text" class="list-cell-input no-print" value="' + escVal(val) + '" onchange="setCustomCellText(' + si + ', ' + c + ', this.value)" placeholder="' + cellPlaceholder + '" style="text-align:' + align + ';' + fontMono + ';font-size:' + fontSize + ';padding:3px 6px"/>' +
           '<div class="only-print list-cell-print-box" style="text-align:' + align + ';' + fontMono + ';font-weight:700">' + escHTML(val || '') + '</div>' +
         '</td>';
       }
     }
 
-    return '<tr>' +
+    const rowBorderLeft = isEmily ? 'border-left:4px solid #f59e0b;' : (isJayko ? 'border-left:4px solid #ef4444;' : '');
+
+    return '<tr style="' + rowBorderLeft + rowSpecialStyle + '">' +
       '<td style="text-align:center;font-weight:900;width:34px;color:#1e3a8a;background:#f8fafc;font-family:var(--font-mono);font-size:' + fontSize + ';padding:' + cellPadding + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">' + (rowPos+1) + '</td>' +
-      '<td class="nc-cell" style="font-weight:700 !important;padding-left:10px;font-size:' + fontSize + ' !important;text-align:left;color:#0f172a;cursor:pointer;padding:' + cellPadding + ';min-width:180px">' + escHTML(name) + '</td>' +
+      '<td class="nc-cell" style="font-weight:700 !important;padding-left:10px;font-size:' + fontSize + ' !important;text-align:left;color:#0f172a;cursor:pointer;padding:' + cellPadding + ';min-width:180px">' + escHTML(name) + statusBadge + '</td>' +
       tdCols +
     '</tr>';
   }).join('');
@@ -20517,6 +20535,12 @@ function exportCustomListXLSX() {
   sorted.forEach((si, rowIdx) => {
     let name = S.students[si] || ('Estudiante ' + (si+1));
     name = name.toUpperCase();
+    const upName = (S.students[si] || '').toUpperCase();
+    if (upName.includes('ALMEIDA') && upName.includes('EMILY')) {
+      name += ' - RETIRADA';
+    } else if (upName.includes('ANDRADE') && upName.includes('JAYKO')) {
+      name += ' - NO ASISTE';
+    }
     const stData = list.data[si] || {};
     const isEven = (rowIdx % 2 === 0);
 
@@ -20770,15 +20794,23 @@ function updateReunionPreview() {
   let presentCount = 0;
   const rowsHtml = sorted.map((si, rowPos) => {
     const name = S.students[si] || ('Estudiante ' + (si+1));
+    const upName = (name || '').toUpperCase();
+    const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+    const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+    let extraBadge = '';
+    if (isEmily) extraBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;border:1px solid #fde047;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact">🚫 RETIRADA</span>';
+    else if (isJayko) extraBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:6px;border:1px solid #fca5a5;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact">🚫 NO ASISTE</span>';
+
     const att = reu.attendance[si] || { rep: '', ci: '', present: false, obs: '' };
     const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
     const repName = (att.rep !== undefined && att.rep !== '') ? att.rep : (p ? (p.rep_nombre || '') : '');
     const repCi = (att.ci !== undefined && att.ci !== '') ? att.ci : (p ? (p.rep_cedula || '') : '');
     if (att.present) presentCount++;
+    let obsVal = (att.obs !== undefined && att.obs !== '') ? att.obs : (isEmily ? 'RETIRADA' : (isJayko ? 'NO ASISTE' : ''));
 
-    return '<tr>' +
+    return '<tr style="' + (isEmily ? 'background:#fffdf5;' : (isJayko ? 'background:#fff5f5;' : '')) + '">' +
       '<td style="text-align:center;font-weight:900;width:38px;color:#065f46;background:#f0fdf4;font-family:var(--font-mono)">' + (rowPos+1) + '</td>' +
-      '<td class="nc-cell" style="font-weight:700;padding-left:10px;font-size:0.82rem;min-width:190px;color:#0f172a">' + escHTML(name) + '</td>' +
+      '<td class="nc-cell" style="font-weight:700;padding-left:10px;font-size:0.82rem;min-width:190px;color:#0f172a">' + escHTML(name) + extraBadge + '</td>' +
       '<td style="padding:4px;min-width:180px;background:#f0fdf4">' +
         '<input type="text" class="list-cell-input no-print" value="' + escVal(repName) + '" onchange="setReunionRep(' + si + ', this.value)" placeholder="Nombre del representante" style="font-size:0.78rem"/>' +
         '<span class="only-print" style="font-size:0.8rem">' + escHTML(repName || '—') + '</span>' +
@@ -20790,15 +20822,15 @@ function updateReunionPreview() {
       '<td style="text-align:center;padding:4px;width:125px;background:#fffbeb">' +
         '<label class="no-print" style="display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:0.75rem;font-weight:800">' +
           '<input type="checkbox" ' + (att.present ? 'checked' : '') + ' onchange="toggleReunionAttendance(' + si + ', this.checked)" style="transform:scale(1.25)"/>' +
-          '<span style="color:' + (att.present ? '#15803d' : '#dc2626') + '">' + (att.present ? 'PRESENTE' : 'AUSENTE') + '</span>' +
+          '<span style="color:' + (att.present ? '#15803d' : '#dc2626') + '">' + (att.present ? 'PRESENTE' : (isEmily ? 'RETIRADA' : (isJayko ? 'NO ASISTE' : 'AUSENTE'))) + '</span>' +
         '</label>' +
         '<span class="only-print" style="font-size:0.82rem;font-weight:bold">' +
-          (att.present ? '☑ PRESENTE' : '☐') +
+          (att.present ? '☑ PRESENTE' : (isEmily ? '🚫 RETIRADA' : (isJayko ? '🚫 NO ASISTE' : '☐'))) +
         '</span>' +
       '</td>' +
       '<td style="padding:4px;min-width:115px;background:#faf5ff">' +
-        '<input type="text" class="list-cell-input no-print" value="' + escVal(att.obs || '') + '" onchange="setReunionObs(' + si + ', this.value)" placeholder="Observaciones" style="font-size:0.78rem"/>' +
-        '<span class="only-print" style="font-size:0.78rem">' + escHTML(att.obs || '') + '</span>' +
+        '<input type="text" class="list-cell-input no-print" value="' + escVal(obsVal) + '" onchange="setReunionObs(' + si + ', this.value)" placeholder="Observaciones" style="font-size:0.78rem"/>' +
+        '<span class="only-print" style="font-size:0.78rem">' + escHTML(obsVal || '—') + '</span>' +
       '</td>' +
     '</tr>';
   }).join('');
@@ -20871,21 +20903,32 @@ function printReunionActa() {
   let presentCount = 0;
   const rowsHtml = sorted.map((si, rowPos) => {
     const name = S.students[si] || ('Estudiante ' + (si+1));
+    const upName = (name || '').toUpperCase();
+    const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+    const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+    let extraBadge = '';
+    if (isEmily) extraBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047;white-space:nowrap">🚫 RETIRADA</span>';
+    else if (isJayko) extraBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5;white-space:nowrap">🚫 NO ASISTE</span>';
+
     const att = (reu.attendance && reu.attendance[si]) ? reu.attendance[si] : {};
     const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
     const repName = (att.rep !== undefined && att.rep !== '') ? att.rep : (p ? (p.rep_nombre || '') : '');
     const repCi = (att.ci !== undefined && att.ci !== '') ? att.ci : (p ? (p.rep_cedula || '') : '');
     const isPres = !!att.present;
     if (isPres) presentCount++;
-    const obs = att.obs || '';
+    let obs = att.obs || '';
+    if (!obs) {
+      if (isEmily) obs = 'RETIRADA';
+      else if (isJayko) obs = 'NO ASISTE';
+    }
 
     return `
-      <tr>
+      <tr style="${isEmily ? 'background:#fffdf5;' : (isJayko ? 'background:#fff5f5;' : '')}">
         <td style="text-align:center;font-weight:bold;font-family:monospace;padding:4px">${rowPos + 1}</td>
-        <td style="font-weight:600;padding-left:8px;text-align:left;padding:4px">${escHTML(name)}</td>
+        <td style="font-weight:600;padding-left:8px;text-align:left;padding:4px">${escHTML(name)}${extraBadge}</td>
         <td style="padding-left:8px;text-align:left;padding:4px">${escHTML(repName || '—')}</td>
         <td style="text-align:center;font-family:monospace;padding:4px">${escHTML(repCi || '—')}</td>
-        <td style="text-align:center;font-weight:bold;color:${isPres ? '#15803d' : '#475569'};padding:4px">${isPres ? '☑ PRESENTE' : '☐ ___________'}</td>
+        <td style="text-align:center;font-weight:bold;color:${isPres ? '#15803d' : '#475569'};padding:4px">${isPres ? '☑ PRESENTE' : (isEmily ? '🚫 RETIRADA' : (isJayko ? '🚫 NO ASISTE' : '☐ ___________'))}</td>
         <td style="padding-left:6px;text-align:left;padding:4px">${escHTML(obs)}</td>
       </tr>
     `;
@@ -21101,7 +21144,13 @@ function populateAtencionStudentSelect() {
   const sel = document.getElementById('atencionStudentSel');
   if (!sel || !S.students) return;
   const sorted = getSortedIndices();
-  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
+  sel.innerHTML = sorted.map(si => {
+    let sName = S.students[si] || '';
+    const up = sName.toUpperCase();
+    if (up.includes('ALMEIDA') && up.includes('EMILY')) sName += ' (RETIRADA)';
+    else if (up.includes('ANDRADE') && up.includes('JAYKO')) sName += ' (NO ASISTE)';
+    return '<option value="' + si + '">' + (si+1) + '. ' + escHTML(sName) + '</option>';
+  }).join('');
 }
 
 function onAtencionStudentChange(si) {
@@ -21278,7 +21327,14 @@ function updateAtencionPreview() {
   const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => '<p style="margin:4px 0">' + escHTML(l) + '</p>').join('');
   const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:4px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
 
-  box.innerHTML = '<div style="background:linear-gradient(135deg, #b45309 0%, #d97706 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(217,119,6,0.25)">' +
+    const upName = (stName || '').toUpperCase();
+    const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+    const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+    let stBadge = '';
+    if (isEmily) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047">🚫 RETIRADA</span>';
+    else if (isJayko) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">🚫 NO ASISTE</span>';
+
+    box.innerHTML = '<div style="background:linear-gradient(135deg, #b45309 0%, #d97706 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(217,119,6,0.25)">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
         '<div>' +
           '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
@@ -21292,7 +21348,7 @@ function updateAtencionPreview() {
       '</div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fffbeb;padding:12px 16px;border-radius:8px;border:1.5px solid #fde68a;font-size:0.82rem;margin-bottom:14px">' +
-      '<div><strong>Estudiante:</strong> <span style="font-weight:800;color:#92400e">' + escHTML(stName) + '</span></div>' +
+      '<div><strong>Estudiante:</strong> <span style="font-weight:800;color:#92400e">' + escHTML(stName) + '</span>' + stBadge + '</div>' +
       '<div><strong>Grado / Paralelo:</strong> ' + escHTML(S.grado||'Séptimo EGB C') + '</div>' +
       '<div><strong>Representante:</strong> ' + escHTML(repName) + '</div>' +
       '<div><strong>Parentesco:</strong> ' + escHTML(parentesco) + '</div>' +
@@ -21418,7 +21474,13 @@ function populateCitacionStudentSelect() {
   const sel = document.getElementById('citacionStudentSel');
   if (!sel || !S.students) return;
   const sorted = getSortedIndices();
-  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
+  sel.innerHTML = sorted.map(si => {
+    let sName = S.students[si] || '';
+    const up = sName.toUpperCase();
+    if (up.includes('ALMEIDA') && up.includes('EMILY')) sName += ' (RETIRADA)';
+    else if (up.includes('ANDRADE') && up.includes('JAYKO')) sName += ' (NO ASISTE)';
+    return '<option value="' + si + '">' + (si+1) + '. ' + escHTML(sName) + '</option>';
+  }).join('');
 }
 
 function onCitacionModoChange(val) {
@@ -21450,8 +21512,15 @@ function updateCitacionesPreview() {
   let html = '';
   studentsToRender.forEach(si => {
     const stName = S.students[si] || ('Estudiante ' + (si+1));
+    const up = (stName || '').toUpperCase();
+    const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
+    const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
+    let extraSlipTag = '';
+    if (isEmily) extraSlipTag = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047">🚫 RETIRADA</span>';
+    else if (isJayko) extraSlipTag = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">🚫 NO ASISTE</span>';
+
     const p = S.studentProfiles && S.studentProfiles[si];
-    const repInfo = p?.rep_nombre ? ('Sr./Sra. <strong>' + escHTML(p.rep_nombre) + '</strong> (Representante Legal de: <strong>' + escHTML(stName) + '</strong>)') : ('Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>');
+    const repInfo = p?.rep_nombre ? ('Sr./Sra. <strong>' + escHTML(p.rep_nombre) + '</strong> (Representante Legal de: <strong>' + escHTML(stName) + '</strong>' + extraSlipTag + ')') : ('Señor/a Representante Legal de: <strong>' + escHTML(stName) + '</strong>' + extraSlipTag);
 
     html += '<div class="cut-slip">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #1e3a8a;padding-bottom:6px;margin-bottom:8px">' +
@@ -21603,7 +21672,13 @@ function populateRubricaStudentSelect() {
   const sel = document.getElementById('rubricaStudentSel');
   if (!sel || !S.students) return;
   const sorted = getSortedIndices();
-  sel.innerHTML = sorted.map(si => '<option value="' + si + '">' + (si+1) + '. ' + escHTML(S.students[si]) + '</option>').join('');
+  sel.innerHTML = sorted.map(si => {
+    let sName = S.students[si] || '';
+    const up = sName.toUpperCase();
+    if (up.includes('ALMEIDA') && up.includes('EMILY')) sName += ' (RETIRADA)';
+    else if (up.includes('ANDRADE') && up.includes('JAYKO')) sName += ' (NO ASISTE)';
+    return '<option value="' + si + '">' + (si+1) + '. ' + escHTML(sName) + '</option>';
+  }).join('');
 }
 
 function onRubricaStudentChange(si) {
@@ -21743,6 +21818,13 @@ function updateRubricaPreview() {
       '</tr>';
   }).join('');
 
+  const upName = (stName || '').toUpperCase();
+  const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+  const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+  let stBadge = '';
+  if (isEmily) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047">🚫 RETIRADA</span>';
+  else if (isJayko) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">🚫 NO ASISTE</span>';
+
   box.innerHTML = '<div style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(2,132,199,0.25)">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
         '<div>' +
@@ -21753,7 +21835,7 @@ function updateRubricaPreview() {
         '<div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
           '<div>Docente: <strong>' + escHTML(S.docente||'Lcdo. Kevin Yánez') + '</strong></div>' +
           '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo de Básica C') + '</strong></div>' +
-          '<div>Estudiante: <strong>' + escHTML(stName) + '</strong></div>' +
+          '<div>Estudiante: <strong>' + escHTML(stName) + '</strong>' + stBadge + '</div>' +
         '</div>' +
       '</div>' +
     '</div>' +

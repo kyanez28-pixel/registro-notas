@@ -1417,7 +1417,7 @@
               "rep": "",
               "present": false,
               "ci": "",
-              "obs": ""
+              "obs": "RETIRADA"
             },
             "2": {
               "present": false,
@@ -1432,7 +1432,7 @@
               "ci": ""
             },
             "4": {
-              "obs": "",
+              "obs": "NO ASISTE",
               "ci": "",
               "present": false,
               "rep": ""
