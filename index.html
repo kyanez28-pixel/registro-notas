@@ -14636,6 +14636,7 @@ function xe(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 function makeXLSX(sheets) {
   const STYLES = {
+    normal: { font:'normal', size:11, bg:null, fg:'000000', align:'left', border:false },
     // Existing base styles
     title: { font:'bold', size:12, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
     hdr:   { font:'bold', size:10, bg:'1E3A8A', fg:'FFFFFF', align:'center' },
@@ -14677,6 +14678,8 @@ function makeXLSX(sheets) {
     val_left_odd:   { font:'normal', size:9, bg:'F8FAFC', fg:'0F172A', align:'left' },
     val_center_even:{ font:'normal', size:9, bg:'FFFFFF', fg:'0F172A', align:'center' },
     val_center_odd: { font:'normal', size:9, bg:'F8FAFC', fg:'0F172A', align:'center' },
+    val_num_even:   { font:'normal', size:9, bg:'FFFFFF', fg:'0F172A', align:'right', numFmtId: 2 },
+    val_num_odd:    { font:'normal', size:9, bg:'F8FAFC', fg:'0F172A', align:'right', numFmtId: 2 },
     
     // Signatures
     sign_bold:  { font:'bold', size:9, bg:'FFFFFF', fg:'0F172A', align:'center' },
@@ -14706,15 +14709,29 @@ function makeXLSX(sheets) {
     total_cell_blank:{ font:'normal', size:9, bg:'F8FAFC', fg:'94A3B8', align:'center' }
   };
   const styleKeys = Object.keys(STYLES);
-  const fonts = styleKeys.map(k => `<font><sz val="${STYLES[k].size}"/><color rgb="FF${STYLES[k].fg}"/><name val="Calibri"/>${STYLES[k].font==='bold'?'<b/>':''}</font>`).join('');
-  const fills = styleKeys.map(k => `<fill><patternFill patternType="solid"><fgColor rgb="FF${STYLES[k].bg}"/></patternFill></fill>`).join('');
-  const xfs   = styleKeys.map((k, i) => {
+  const fonts = styleKeys.map(k => {
+    const sz = STYLES[k].size || 11;
+    const color = STYLES[k].fg ? `<color rgb="FF${STYLES[k].fg}"/>` : '<color theme="1"/>';
+    const bold = STYLES[k].font === 'bold' ? '<b/>' : '';
+    return `<font><sz val="${sz}"/>${color}<name val="Calibri"/>${bold}</font>`;
+  }).join('');
+  const fills = styleKeys.map(k => {
+    if (!STYLES[k].bg) return '<fill><patternFill patternType="none"/></fill>';
+    return `<fill><patternFill patternType="solid"><fgColor rgb="FF${STYLES[k].bg}"/></patternFill></fill>`;
+  }).join('');
+  const xfs = styleKeys.map((k, i) => {
+    if (i === 0) {
+      return '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>';
+    }
     const numFmt = STYLES[k].numFmtId || 0;
     const applyNumFmt = numFmt ? ' applyNumberFormat="1"' : '';
-    return `<xf numFmtId="${numFmt}" fontId="${i}" fillId="${i+2}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${applyNumFmt}><alignment wrapText="1" vertical="center" horizontal="${STYLES[k].align || 'center'}"/></xf>`;
+    const borderId = STYLES[k].border === false ? '0' : '1';
+    const fillId = STYLES[k].bg ? (i + 2) : 0;
+    const align = STYLES[k].align || 'center';
+    return `<xf numFmtId="${numFmt}" fontId="${i}" fillId="${fillId}" borderId="${borderId}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${applyNumFmt}><alignment wrapText="1" vertical="center" horizontal="${align}"/></xf>`;
   }).join('');
 
-  const styleXml = `<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="${styleKeys.length}">${fonts}</fonts><fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${styleKeys.length}">${xfs}</cellXfs></styleSheet>`;
+  const styleXml = `<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="2" formatCode="0.00"/></numFmts><fonts count="${styleKeys.length}">${fonts}</fonts><fills count="${styleKeys.length+2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${fills}</fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFCBD5E1"/></left><right style="thin"><color rgb="FFCBD5E1"/></right><top style="thin"><color rgb="FFCBD5E1"/></top><bottom style="thin"><color rgb="FFCBD5E1"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${styleKeys.length}">${xfs}</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
 
   const strMap = {}, strArr = [];
   function getStrIdx(v) {
@@ -14724,7 +14741,7 @@ function makeXLSX(sheets) {
   }
 
   const sheetXmls = sheets.map(sheet => {
-    let xml = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">`;
+    let xml = `<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView tabSelected="1" workbookViewId="0"/></sheetViews>`;
     
     if (sheet.cols && sheet.cols.length) {
       xml += `<cols>`;
@@ -14738,14 +14755,30 @@ function makeXLSX(sheets) {
     xml += `<sheetData>`;
     sheet.rows.forEach((row, ri) => {
       if (!row || !row.length) { xml += `<row r="${ri+1}"/>`; return; }
-      const ht = row._ht || (row[0] && row[0]._ht) || 22;
+      const ht = row._ht || (row[0] && row[0]._ht) || 20;
       xml += `<row r="${ri+1}" ht="${ht}" customHeight="1">`;
       row.forEach((cell, ci) => {
         if (!cell) return;
         const addr = `${colName(ci+1)}${ri+1}`;
-        const sIdx = Math.max(0, styleKeys.indexOf(cell.s || 'empty'));
-        if (cell.t === 'n') xml += `<c r="${addr}" s="${sIdx}" t="n"><v>${cell.v !== undefined && cell.v !== null ? cell.v : ''}</v></c>`;
-        else xml += `<c r="${addr}" s="${sIdx}" t="s"><v>${getStrIdx(cell.v !== undefined && cell.v !== null ? cell.v : '')}</v></c>`;
+        const sIdx = Math.max(0, styleKeys.indexOf(cell.s || 'normal'));
+        
+        if (cell.f) {
+          if (cell.v !== undefined && cell.v !== null && cell.v !== '') {
+            xml += `<c r="${addr}" s="${sIdx}"><f>${xe(cell.f)}</f><v>${cell.v}</v></c>`;
+          } else {
+            xml += `<c r="${addr}" s="${sIdx}"><f>${xe(cell.f)}</f></c>`;
+          }
+        } else if (cell.t === 'n' || typeof cell.v === 'number') {
+          if (cell.v !== undefined && cell.v !== null && cell.v !== '') {
+            xml += `<c r="${addr}" s="${sIdx}" t="n"><v>${cell.v}</v></c>`;
+          } else {
+            xml += `<c r="${addr}" s="${sIdx}"/>`;
+          }
+        } else if (cell.v !== undefined && cell.v !== null && cell.v !== '') {
+          xml += `<c r="${addr}" s="${sIdx}" t="s"><v>${getStrIdx(cell.v)}</v></c>`;
+        } else {
+          xml += `<c r="${addr}" s="${sIdx}"/>`;
+        }
       });
       xml += `</row>`;
     });
@@ -14764,7 +14797,7 @@ function makeXLSX(sheets) {
   });
 
   const ssXml = strArr.map(s => `<si><t xml:space="preserve">${xe(s)}</t></si>`).join('');
-  const wbXml = `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`;
+  const wbXml = `<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><workbookPr/><sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets><calcPr calcId="124519" fullCalcOnLoad="1"/></workbook>`;
   const wbRels = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/><Relationship Id="rId${sheets.length+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
   const contentTypes = `<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`;
   const relsRoot = `<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`;
@@ -20479,8 +20512,13 @@ function exportCustomListXLSX() {
   const row2 = [{ v: title.toUpperCase(), t: 's', s: 'inst_sub', _ht: 22 }];
   for (let c = 1; c < totalCols; c++) row2.push({ v: '', t: 's', s: 'inst_sub' });
 
-  // Row 3: Subtítulo / Grado / Año Lectivo
-  const subText = subtitle ? (subtitle + ' · ' + (S.grado||'Séptimo C') + ' · Año Lectivo ' + (S.anio||'2026-2027')) : ((S.grado||'Séptimo C') + ' · Año Lectivo ' + (S.anio||'2026-2027'));
+  // Row 3: Subtítulo / Grado / Año Lectivo (sin duplicar)
+  let subText = (S.grado || 'Séptimo C') + ' · Año Lectivo ' + (S.anio || '2026-2027');
+  if (subtitle && !subtitle.includes(S.grado || 'Séptimo') && !subtitle.includes('Año Lectivo')) {
+    subText = subtitle + ' · ' + subText;
+  } else if (subtitle) {
+    subText = subtitle;
+  }
   const row3 = [{ v: subText, t: 's', s: 'inst_sub2', _ht: 18 }];
   for (let c = 1; c < totalCols; c++) row3.push({ v: '', t: 's', s: 'inst_sub2' });
 
@@ -20517,13 +20555,14 @@ function exportCustomListXLSX() {
 
   // Row 6: Cabeceras de tabla
   const headerRow = [
-    { v: '#', t: 's', s: 'hdr_num', _ht: 24 },
+    { v: '#', t: 's', s: 'hdr_num', _ht: 28 },
     { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }
   ];
+  const paletteHdrStyles = ['hdr_teal', 'hdr_blue', 'hdr_amber', 'hdr_purple'];
   for (let i = 0; i < count; i++) {
-    const colNameStr = (list.cols[i] || ('Columna ' + (i+1))).toUpperCase();
+    const colNameStr = (list.cols[i] || ('Columna ' + (i+1))).trim().toUpperCase();
     const colType = list.colTypes[i] || 'texto';
-    let hdrStyle = 'hdr_blue';
+    let hdrStyle = paletteHdrStyles[i % paletteHdrStyles.length];
     if (colType === 'check') hdrStyle = 'hdr_check';
     else if (colType === 'firma') hdrStyle = 'hdr_purple';
     headerRow.push({ v: colNameStr, t: 's', s: hdrStyle });
@@ -20570,12 +20609,56 @@ function exportCustomListXLSX() {
         const style = isEven ? 'val_center_odd' : 'val_center_even';
         row.push({ v: val || '', t: 's', s: style });
       } else {
-        const style = isEven ? 'val_left_odd' : 'val_left_even';
-        row.push({ v: val || '', t: 's', s: style });
+        const sVal = String(val !== undefined && val !== null ? val : '').trim();
+        const numVal = parseFloat(sVal.replace(',', '.'));
+        const isNumeric = sVal !== '' && !isNaN(numVal) && isFinite(numVal) && !colType.startsWith('mat_cedula') && !colType.startsWith('mat_tel');
+
+        if (isNumeric) {
+          const numStyle = isEven ? 'val_num_odd' : 'val_num_even';
+          row.push({ v: numVal, t: 'n', s: numStyle });
+        } else if (sVal === '') {
+          const emptyStyle = isEven ? 'val_left_odd' : 'val_left_even';
+          row.push({ v: '', t: 'n', s: emptyStyle });
+        } else {
+          const style = isEven ? 'val_left_odd' : 'val_left_even';
+          row.push({ v: sVal, t: 's', s: style });
+        }
       }
     }
     rows.push(row);
   });
+
+  // Fila de Promedio automático si hay columnas numéricas (notas / calificaciones)
+  const hasNumericCols = [];
+  for (let c = 0; c < count; c++) {
+    let colHasNum = false;
+    for (let si = 0; si < sorted.length; si++) {
+      const v = list.data[sorted[si]] ? list.data[sorted[si]][c] : null;
+      if (v !== undefined && v !== null && v !== '') {
+        const nv = parseFloat(String(v).replace(',', '.'));
+        if (!isNaN(nv) && isFinite(nv)) { colHasNum = true; break; }
+      }
+    }
+    hasNumericCols.push(colHasNum);
+  }
+
+  if (hasNumericCols.some(Boolean)) {
+    const firstRow = 7;
+    const lastRow = 6 + sorted.length;
+    const promRow = [
+      { v: '', t: 's', s: 'hdr_prom' },
+      { v: 'PROMEDIO GENERAL', t: 's', s: 'hdr_prom', _ht: 22 }
+    ];
+    for (let c = 0; c < count; c++) {
+      const cLetter = colName(c + 3);
+      if (hasNumericCols[c]) {
+        promRow.push({ f: `AVERAGE(${cLetter}${firstRow}:${cLetter}${lastRow})`, t: 'n', s: 'hdr_prom' });
+      } else {
+        promRow.push({ v: '', t: 's', s: 'hdr_prom' });
+      }
+    }
+    rows.push(promRow);
+  }
 
   // Firmas al final
   const emptyRow1 = []; emptyRow1._ht = 14;
