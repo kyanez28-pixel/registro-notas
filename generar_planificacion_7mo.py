@@ -28,13 +28,16 @@ def create_7mo_plan():
     r3.cells[17].text = "05/10/2026"
     r3.cells[21].text = "30/11/2026 (Microcurricular: 05/10 al 13/11 · Proyecto: 16/11 al 23/11 · Exámenes: 24/11 al 30/11)"
 
-    # 3. Aprendizaje Disciplinar (Row 5: Objetivos de Séptimo)
+    # 3. Aprendizaje Disciplinar (Row 5: Objetivos Oficiales de Séptimo EGB según Desagregación y PCA)
     r5_cell = table.rows[5].cells[3]
     r5_cell.text = (
-        "O.LL.3.1. Interactuar con diversas expresiones culturales para acceder, participar y apropiarse de la cultura escrita.\n"
         "O.LL.3.3. Comprender discursos orales en diversos contextos de la actividad social y cultural y analizarlos con sentido crítico.\n"
+        "O.LL.3.4. Expresarse mediante el uso de estructuras básicas de la lengua oral en los diversos contextos de la actividad social y cultural, para exponer sus puntos de vista y respetar los ajenos.\n"
+        "O.LL.3.5. Participar en diversos contextos sociales y culturales y utilizar de manera adecuada las convenciones de la lengua oral para satisfacer necesidades de comunicación.\n"
         "O.LL.3.6. Leer de manera autónoma textos no literarios, con fines de recreación, información y aprendizaje, y utilizar estrategias cognitivas de comprensión de acuerdo al tipo de texto.\n"
+        "O.LL.3.7. Usar los recursos que ofrecen las bibliotecas y las TIC para enriquecer las actividades de lectura y escritura literaria y no literaria, en interacción y colaboración con los demás.\n"
         "O.LL.3.8. Escribir relatos y textos expositivos, descriptivos e instructivos, adecuados a una situación comunicativa determinada para aprender, comunicarse y desarrollar el pensamiento.\n"
+        "O.LL.3.9. Utilizar los recursos de las TIC como medios de comunicación, aprendizaje y desarrollo del pensamiento.\n"
         "O.LL.3.10. Aplicar los conocimientos semánticos, léxicos, sintácticos, ortográficos y las propiedades textuales en los procesos de composición y revisión de textos escritos.\n"
         "O.LL.3.11. Seleccionar y disfrutar textos literarios para realizar interpretaciones personales y construir significados compartidos con otros lectores.\n"
         "O.LL.3.12. Aplicar los recursos del lenguaje, a partir de los textos literarios, para fortalecer y profundizar la escritura creativa."
