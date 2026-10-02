@@ -33,9 +33,11 @@ def create_7mo_plan():
     r5_cell.text = (
         "O.LL.3.1. Interactuar con diversas expresiones culturales para acceder, participar y apropiarse de la cultura escrita.\n"
         "O.LL.3.3. Comprender discursos orales en diversos contextos de la actividad social y cultural y analizarlos con sentido crítico.\n"
-        "O.LL.3.6. Leer de manera autónoma textos no literarios, con fines de recreación, información y aprendizaje, y aplicar estrategias cognitivas de comprensión.\n"
-        "O.LL.3.8. Escribir relatos y textos expositivos, descriptivos e instructivos, adecuados a una situación comunicativa determinada para aprender y comunicarse.\n"
-        "O.LL.3.11. Seleccionar y disfrutar textos literarios para realizar interpretaciones personales y construir significados compartidos con otros lectores."
+        "O.LL.3.6. Leer de manera autónoma textos no literarios, con fines de recreación, información y aprendizaje, y utilizar estrategias cognitivas de comprensión de acuerdo al tipo de texto.\n"
+        "O.LL.3.8. Escribir relatos y textos expositivos, descriptivos e instructivos, adecuados a una situación comunicativa determinada para aprender, comunicarse y desarrollar el pensamiento.\n"
+        "O.LL.3.10. Aplicar los conocimientos semánticos, léxicos, sintácticos, ortográficos y las propiedades textuales en los procesos de composición y revisión de textos escritos.\n"
+        "O.LL.3.11. Seleccionar y disfrutar textos literarios para realizar interpretaciones personales y construir significados compartidos con otros lectores.\n"
+        "O.LL.3.12. Aplicar los recursos del lenguaje, a partir de los textos literarios, para fortalecer y profundizar la escritura creativa."
     )
 
     # 4. Semanas de planificación: 6 microcurriculares + 1 proyecto integrador + 1 exámenes = 8 semanas
@@ -205,7 +207,7 @@ def create_7mo_plan():
         {
             # SEMANA 11 (Semana 6 de la Microcurricular) - ESCRITURA CREATIVA Y EVALUACIÓN SUMATIVA (Págs. 66 a 71)
             "row_idx": 14,
-            "dcd": "LL.3.5.1. Recrear textos literarios leídos o escuchados mediante el uso de diversos formatos.\n\nLL.3.4.13. Producir textos de acuerdo con la situación comunicativa en formatos variados (historieta mitológica).",
+            "dcd": "LL.3.5.6. Recrear textos literarios leídos o escuchados mediante el uso de diversos medios y recursos (incluidas las TIC).\n\nLL.3.4.13. Producir textos de acuerdo con la situación comunicativa en formatos variados (historieta mitológica).",
             "tema": "Tema: Escritura creativa: Historieta mitológica y Evaluación sumativa de la Unidad 1\n\nMateriales:\nTexto de Lengua 7mo (Páginas 66 a 71)\nCartulinas, reglas y lápices de colores\nPizarra y marcadores\nCuestionario sumativo de Unidad 1",
             "estrategias": [
                 ("SEMANA 11 (Semana 6 de la Planificación Microcurricular · 09/11 al 13/11/2026)", True, 11),
@@ -229,7 +231,7 @@ def create_7mo_plan():
                 ("DUA", True, 10),
                 ("Representación: formato de evaluación sumativa del texto págs. 70-71.\nAcción/expresión: creación artística de la historieta y resolución de la prueba escrita.\nMotivación: celebración del cierre exitoso de la Unidad 1.", False, 10),
             ],
-            "indicador": "Recrea textos literarios leídos mediante adaptaciones creativas (historieta) y demuestra el dominio de destrezas comunicativas de la Unidad 1. I.LL.3.7.2. / I.LL.3.6.1.",
+            "indicador": "I.LL.3.8.1. Reinventa textos literarios incorporando recursos del lenguaje figurado y TIC para recrearlos. (J.2., I.2.) / I.LL.3.6.4.",
             "evaluacion": "Técnica: prueba\nInstrumento: evaluación formativa página 69 y evaluación sumativa páginas 70 y 71"
         },
         {

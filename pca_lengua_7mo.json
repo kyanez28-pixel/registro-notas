@@ -164,7 +164,7 @@
     "bloque": "Literatura y Evaluación U1",
     "tema": "Escritura: Escribo una nota científica (planificación y redacción) y Gramática: El verbo (accidentes, modos) y Uso del punto y coma (;). Pág. 38 a 53.",
     "paginas": "Texto Págs. 54 - 71",
-    "dcd": "LL.3.4.1. Relatar textos con secuencia lógica, manejo de conectores. / LL.3.4.6. Autorregular la producción escrita. / LL.3.4.10. El verbo y punto y coma.",
+    "dcd": "LL.3.4.1. Relatar textos con secuencia lógica. / LL.3.4.6. Autorregular la producción escrita. / LL.3.4.10. El verbo y punto y coma.",
     "gramatica": "Estructura del mito: personajes sobrenaturales, tiempo remoto, función explicativa del origen cósmico.",
     "ortografia": "Guiones en diálogos de historieta y signos de exclamación/interrogación.",
     "metodologia": "ABP / Gamificación: taller de creación de viñetas de historietas mitológicas y aplicación de prueba sumativa de unidad.",
@@ -172,7 +172,7 @@
     "evaluacion": "Técnica: Análisis de producciones escritas. Instrumento: Rúbrica de la nota científica y ejercicios de aplicación gramatical (págs. 46-53).",
     "tipo": "evaluacion_unidad",
     "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)",
-    "indicador": "I.LL.3.6.1. Produce textos informativos utilizando el proceso de escritura. / I.LL.3.6.3. Aplica elementos gramaticales (verbos) y signos de puntuación."
+    "indicador": "I.LL.3.6.4. Escribe diferentes tipos de texto con estructuras expositivas según su estructura, con secuencia lógica y manejo coherente. (I.3., I.4.)"
   },
   {
     "sem": 10,
@@ -204,7 +204,7 @@
     "bloque": "Comunicación Oral",
     "tema": "Escritura creativa: Historieta mitológica (págs. 66-69) y Evaluación sumativa de la Unidad 1 (págs. 70-71). Cierre de la Planificación Microcurricular (13 Noviembre).",
     "paginas": "Texto Págs. 80 - 87",
-    "dcd": "LL.3.5.1. Recrear textos literarios mediante el uso de diversos formatos. / LL.3.4.13. Producir historietas con recursos diversos.",
+    "dcd": "LL.3.5.6. Recrear textos literarios mediante el uso de diversos medios y recursos. / LL.3.4.13. Producir historietas con recursos diversos.",
     "gramatica": "Fórmulas de cortesía, turnos de conversación y argumentos de sustento.",
     "ortografia": "Modulación, claridad articulatoria y volumen adecuado en la interacción grupal.",
     "metodologia": "Ciclo ERCA y Cine-foro: proyección de fragmento audiovisual histórico, ronda de debate guiado y consensos.",
@@ -212,7 +212,7 @@
     "evaluacion": "Técnica: Producción plástica/literaria y prueba sumativa. Instrumento: Rúbrica de la Historieta Mitológica y Evaluación sumativa de Unidad 1.",
     "tipo": "clase",
     "bloquePlanif": "Planificación Microcurricular (05 Oct · 6 sem)",
-    "indicador": "I.LL.3.7.2. Recrea textos literarios leídos mediante adaptaciones creativas (historieta) y demuestra dominio de destrezas comunicativas."
+    "indicador": "I.LL.3.8.1. Reinventa textos literarios incorporando recursos del lenguaje figurado y TIC. (J.2., I.2.) / I.LL.3.6.4."
   },
   {
     "sem": 12,

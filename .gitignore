@@ -15,4 +15,5 @@ media_extracted/
 assets_plan/
 __pycache__/
 *.py
+.savyre/
 
