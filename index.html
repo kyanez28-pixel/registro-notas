@@ -10032,8 +10032,10 @@ function saveAttendanceVault(att) {
   } catch(e) {}
 }
 
-function saveData(manual) {
+var _lastLocalChangeTime = 0;
+function saveData(manual, isAuto) {
   if (_isRemoteSyncing) return;
+  if (!isAuto) _lastLocalChangeTime = Date.now();
   if (S && S.asistencia) {
     saveAttendanceVault(S.asistencia);
   }
@@ -10082,7 +10084,7 @@ function toast(msg, color) {
   t._t = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-setInterval(() => saveData(false), 30000);
+setInterval(() => saveData(false, true), 30000);
 
 // ══════════════════════════════════════════════════════
 //  HELPERS & CÁLCULOS MINISTERIALES (70/30)
@@ -10108,6 +10110,11 @@ function closeModal() {
     m.classList.remove('open');
     m.style.display = 'none';
   }
+  // Aplicar sincronización remota que llegó mientras el modal estaba abierto
+  // (en el siguiente tick, para que el guardado local del modal ocurra primero)
+  setTimeout(() => {
+    if (typeof flushPendingRemoteState === 'function') flushPendingRemoteState();
+  }, 0);
 }
 function closeCf() {
   const m = document.getElementById('mCf');
@@ -11520,8 +11527,15 @@ function openAddWeek() {
       const dest = document.getElementById('mWeekDest')?.value.trim().toUpperCase() || '';
       if (!nv) return;
 
+      // Releer la materia actual: una sincronización en vivo pudo reemplazar S mientras el modal estaba abierto
+      const mat = gm();
+      if (!mat) return;
       const newWeekObj = { name: nv, destreza: dest };
       if (!mat.weeks) mat.weeks = [];
+      if (mat.weeks.some(w => getWeekName(w) === nv)) {
+        toast(`⚠️ Ya existe una semana llamada "${nv}"`, '#d97706');
+        return;
+      }
       if (!mat.cols) mat.cols = {};
 
       // Ubicar ANTES de la Evaluación Sumativa si existe, para no desordenar el trimestre
@@ -11562,14 +11576,68 @@ function editWeekName(wi) {
     () => {
       const nv = document.getElementById('mWeekEdit').value.trim().toUpperCase();
       const dest = document.getElementById('mWeekDestEdit')?.value.trim().toUpperCase() || '';
-      if (!nv) return;
+      if (!nv) { toast('⚠️ El tema no puede quedar vacío', '#d97706'); return; }
 
-      const newWeekObj = { name: nv, destreza: dest };
-      mat.weeks[wi] = newWeekObj;
+      // Releer la materia actual: una sincronización en vivo pudo reemplazar S mientras el modal estaba abierto
+      const mat = gm();
+      if (!mat || !mat.weeks) return;
+      if (!mat.cols) mat.cols = {};
+      let idx = mat.weeks.findIndex(w => getWeekName(w) === oldName);
+      if (idx < 0) idx = wi;
+      if (!mat.weeks[idx]) return;
+
+      if (oldName !== nv && mat.weeks.some((w, i) => i !== idx && getWeekName(w) === nv)) {
+        toast(`⚠️ Ya existe otra semana llamada "${nv}"`, '#d97706');
+        return;
+      }
+
+      mat.weeks[idx] = { name: nv, destreza: dest };
 
       if (oldName !== nv) {
+        const mName = curMatName();
         mat.cols[nv] = mat.cols[oldName] || [];
         delete mat.cols[oldName];
+
+        // Migrar notas de los estudiantes (clave "SEMANA||COL")
+        const oldPref = oldName + '||';
+        Object.keys(mat.grades || {}).forEach(si => {
+          const g = mat.grades[si];
+          if (!g) return;
+          Object.keys(g).forEach(k => {
+            if (k.startsWith(oldPref)) {
+              g[nv + '||' + k.slice(oldPref.length)] = g[k];
+              delete g[k];
+            }
+          });
+        });
+
+        // Migrar mejoras, columnas ocultas y color de la semana
+        const migrateKeys = (obj, from, to) => {
+          if (!obj) return;
+          Object.keys(obj).forEach(k => {
+            if (k.startsWith(from)) {
+              obj[to + k.slice(from.length)] = obj[k];
+              delete obj[k];
+            }
+          });
+        };
+        Object.keys(S.recovered || {}).forEach(k => {
+          const parts = k.split('||');
+          if (parts.length >= 4 && parts[0] === mName && parts[2] === oldName) {
+            parts[2] = nv;
+            S.recovered[parts.join('||')] = S.recovered[k];
+            delete S.recovered[k];
+          }
+        });
+        migrateKeys(S.hiddenCols, `${mName}||${oldName}||`, `${mName}||${nv}||`);
+        if (S.weekColors && S.weekColors[`${mName}||${oldName}`]) {
+          S.weekColors[`${mName}||${nv}`] = S.weekColors[`${mName}||${oldName}`];
+          delete S.weekColors[`${mName}||${oldName}`];
+        }
+        if (mat.collapsedWeeks && mat.collapsedWeeks[oldName] !== undefined) {
+          mat.collapsedWeeks[nv] = mat.collapsedWeeks[oldName];
+          delete mat.collapsedWeeks[oldName];
+        }
       }
 
       closeModal(); render(); saveData();
@@ -15595,8 +15663,26 @@ function getActiveSyncDocRef() {
   return db.collection('aulas_sincronizadas').doc(cleanRoom);
 }
 
+let _pendingRemoteState = null;
+function flushPendingRemoteState() {
+  const p = _pendingRemoteState;
+  if (!p) return;
+  const m = document.getElementById('modal');
+  if (m && m.classList.contains('open')) return; // sigue abierto otro modal
+  _pendingRemoteState = null;
+  // Si el usuario guardó algo localmente después de recibir el estado remoto, gana el cambio local
+  if (_lastLocalChangeTime >= p.receivedAt) return;
+  applyRemoteState(p.state, p.updatedAt, p.source);
+}
+
 function applyRemoteState(newState, updatedAt, source) {
   if (!newState || typeof newState !== 'object') return;
+  // No reemplazar S mientras el usuario edita en el modal (se perderían sus cambios)
+  const _openModal = document.getElementById('modal');
+  if (_openModal && _openModal.classList.contains('open')) {
+    _pendingRemoteState = { state: newState, updatedAt, source, receivedAt: Date.now() };
+    return;
+  }
   _isRemoteSyncing = true;
   
   // 1. Resguardar y fusionar listas locales del Vault para NUNCA perder listados por sincronización
