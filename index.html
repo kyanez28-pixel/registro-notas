@@ -3314,6 +3314,12 @@ body.in-focus-mode {
         <span class="sidebar-btn-badge" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">40 Sem.</span>
       </button>
 
+      <button id="viewBitacora" class="sidebar-btn" onclick="switchView('bitacora')" title="Bitácora diaria: novedades, notas, incidentes, logros y pendientes del día">
+        <span class="sidebar-btn-icon">📔</span>
+        <span class="sidebar-btn-text">Bitácora Diaria</span>
+        <span class="sidebar-btn-badge" id="bitSidebarBadge" style="background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff">Hoy</span>
+      </button>
+
       <button id="viewHerramientas" class="sidebar-btn" onclick="switchView('herramientas')" title="Herramientas de aula, formatos personalizables, reuniones, bitácora de atención y citaciones">
         <span class="sidebar-btn-icon">🛠️</span>
         <span class="sidebar-btn-text">Herramientas de Aula</span>
@@ -6190,6 +6196,9 @@ body.in-focus-mode {
   </div>
 
 </div>
+
+<!-- ── VISTA: BITÁCORA DIARIA (se construye dinámicamente en renderBitacora) ── -->
+<div id="bitacoraPanel" style="display:none" class="content"></div>
 
 
   <!-- ══════════════════════════════════════════════════════
@@ -10008,7 +10017,9 @@ function ensureMats() {
   if (typeof ensureDiagnostico === 'function') ensureDiagnostico();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
   if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
+  if (typeof bitEnsure === 'function') bitEnsure();
 }
+if (typeof exportJSON === 'undefined') { var exportJSON = function() { if (typeof exportBackup === 'function') exportBackup(); }; }
 
 // ══════════════════════════════════════════════════════
 //  PERSISTENCIA & SINCRONIZACIÓN EN TIEMPO REAL
@@ -12417,7 +12428,8 @@ function switchView(v) {
     'config':       'configPanel',
     'cronograma':   'cronogramaPanel',
     'herramientas': 'herramientasPanel',
-    'pca':          'pcaPanel'
+    'pca':          'pcaPanel',
+    'bitacora':     'bitacoraPanel'
   };
 
   const navBtns = {
@@ -12432,7 +12444,8 @@ function switchView(v) {
     'cronograma':   'viewCronograma',
     'minutosCivicos': 'viewMinutosCivicos',
     'pca':          'viewPca',
-    'herramientas': 'viewHerramientas'
+    'herramientas': 'viewHerramientas',
+    'bitacora':     'viewBitacora'
   };
 
   Object.keys(panels).forEach(key => {
@@ -12456,7 +12469,8 @@ function switchView(v) {
     'cronograma':   { title: '🏛️ Cronograma Oficial', sub: 'Agenda y Seguimiento 2026' },
     'herramientas': { title: '🛠️ Herramientas Aula', sub: 'Listados, Reuniones y Rúbricas' },
     'export':       { title: '📤 Exportar Sistema', sub: 'Planillas y Sistemas MINEDEC' },
-    'config':       { title: '⚙️ Configuración', sub: 'Periodos, Materias y Respaldos' }
+    'config':       { title: '⚙️ Configuración', sub: 'Periodos, Materias y Respaldos' },
+    'bitacora':     { title: '📔 Bitácora Diaria', sub: 'Novedades y Notas del Día' }
   };
   const meta = viewMeta[v] || { title: '📚 Registro de Notas', sub: S.grado || 'Séptimo C' };
   const mobTitle = document.getElementById('mobTopTitle');
@@ -12506,6 +12520,7 @@ function switchView(v) {
   if (v === 'cronograma') renderCronogramaModule();
   if (v === 'herramientas') renderHerramientas();
   if (v === 'pca') renderPcaLengua();
+  if (v === 'bitacora' && typeof renderBitacora === 'function') renderBitacora();
 }
 
 function toggleSidebarCollapse() {
@@ -29320,5 +29335,825 @@ function printMicrocurriculo() {
 
 </script>
 
+<!-- ══════════════════════════════════════════════════════
+     MÓDULO: BITÁCORA DIARIA DEL DOCENTE
+     Novedades, notas, incidentes, logros, pendientes y clima del aula
+     Datos persistidos en S.bitacora (localStorage + Firestore)
+     ══════════════════════════════════════════════════════ -->
+<style>
+#bitacoraPanel { animation: bitIn .35s ease both; }
+@keyframes bitIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes bitPulse { 0%,100% { box-shadow:0 0 0 0 rgba(220,38,38,.35); } 50% { box-shadow:0 0 0 6px rgba(220,38,38,0); } }
+@keyframes bitFloat { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-6px) rotate(-4deg); } }
+
+/* ── Hero ── */
+.bit-hero { position:relative; overflow:hidden; border-radius:20px; padding:24px 28px 20px; color:#fff; margin-bottom:18px;
+  background: linear-gradient(120deg,#3b0764 0%,#6d28d9 30%,#c026d3 62%,#f97316 100%);
+  box-shadow:0 18px 40px -18px rgba(109,40,217,.75); }
+.bit-hero::before, .bit-hero::after { content:''; position:absolute; border-radius:50%; pointer-events:none; }
+.bit-hero::before { width:320px; height:320px; right:-90px; top:-150px; background:radial-gradient(circle,rgba(255,255,255,.28),transparent 70%); }
+.bit-hero::after  { width:240px; height:240px; left:35%; bottom:-170px; background:radial-gradient(circle,rgba(253,224,71,.35),transparent 70%); }
+.bit-hero-top { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+.bit-hero-brand { display:flex; align-items:center; gap:16px; min-width:260px; flex:1; }
+.bit-hero-icon { width:60px; height:60px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:2rem; flex-shrink:0;
+  background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(6px); box-shadow:0 8px 20px rgba(0,0,0,.18); animation:bitFloat 5s ease-in-out infinite; }
+.bit-hero h2 { margin:0; font-family:var(--font-crono); font-size:1.55rem; font-weight:900; letter-spacing:.2px; line-height:1.15; }
+.bit-hero-sub { font-size:.84rem; opacity:.92; margin-top:4px; font-weight:600; }
+.bit-hero-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.bit-glass-btn { background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.38); border-radius:12px; padding:8px 14px; font-weight:800;
+  font-size:.8rem; cursor:pointer; backdrop-filter:blur(6px); transition:all .2s; font-family:inherit; }
+.bit-glass-btn:hover { background:rgba(255,255,255,.3); transform:translateY(-2px); }
+.bit-hero-nav { position:relative; z-index:1; margin-top:18px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.bit-nav-arrow { width:36px; height:36px; border-radius:11px; border:1px solid rgba(255,255,255,.4); background:rgba(255,255,255,.14); color:#fff; font-size:1.2rem;
+  font-weight:900; cursor:pointer; transition:all .2s; }
+.bit-nav-arrow:hover { background:rgba(255,255,255,.3); }
+.bit-hero-date { font-family:var(--font-crono); font-size:1.08rem; font-weight:800; padding:6px 16px; border-radius:12px; background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.25); text-transform:capitalize; }
+.bit-hero-date small { display:inline-block; margin-left:8px; font-size:.68rem; background:#fde047; color:#713f12; padding:2px 8px; border-radius:99px; font-weight:900; vertical-align:middle; text-transform:uppercase; }
+.bit-date-pick { border:1px solid rgba(255,255,255,.4); background:rgba(255,255,255,.14); color:#fff; border-radius:11px; padding:7px 10px; font-family:inherit; font-weight:700; color-scheme:dark; }
+.bit-today-btn { background:#fff; color:#6d28d9; border:none; border-radius:11px; padding:8px 16px; font-weight:900; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(0,0,0,.15); transition:transform .2s; }
+.bit-today-btn:hover { transform:translateY(-2px); }
+
+/* ── Stats ── */
+.bit-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:12px; margin-bottom:16px; }
+.bit-stat { position:relative; overflow:hidden; background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px; box-shadow:var(--shadow-xs); transition:transform .2s, box-shadow .2s; }
+.bit-stat:hover { transform:translateY(-3px); box-shadow:0 12px 24px -12px var(--c); }
+.bit-stat::after { content:''; position:absolute; inset:auto 0 0 0; height:3px; background:linear-gradient(90deg,var(--c),var(--c2)); }
+.bit-stat-ico { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.35rem; flex-shrink:0;
+  background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 6px 14px -6px var(--c); }
+.bit-stat-val { font-family:var(--font-crono); font-size:1.55rem; font-weight:900; color:var(--text-main); line-height:1; }
+.bit-stat-lbl { font-size:.72rem; font-weight:700; color:var(--text-light); margin-top:4px; text-transform:uppercase; letter-spacing:.4px; }
+
+/* ── Cards ── */
+.bit-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:18px; padding:18px; box-shadow:var(--shadow-xs); margin-bottom:16px; }
+.bit-card-title { font-family:var(--font-crono); font-weight:900; font-size:1rem; color:var(--text-main); display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.bit-card-title small { font-family:var(--font-main); font-size:.72rem; font-weight:700; color:var(--text-light); }
+
+/* ── Week strip ── */
+.bit-week-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; }
+.bit-week-head .bit-card-title { margin:0; }
+.bit-mini-arrow { border:1px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); border-radius:9px; padding:4px 11px; cursor:pointer; font-weight:900; }
+.bit-mini-arrow:hover { border-color:#8b5cf6; color:#7c3aed; }
+.bit-week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
+.bit-day { position:relative; border:1.5px solid var(--border-subtle); background:var(--bg-card-subtle); border-radius:14px; padding:9px 4px 8px; cursor:pointer;
+  text-align:center; transition:all .2s; font-family:inherit; color:var(--text-main); min-height:84px; }
+.bit-day:hover { border-color:#a78bfa; transform:translateY(-2px); }
+.bit-day-dow { font-size:.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:var(--text-light); }
+.bit-day-num { font-family:var(--font-crono); font-size:1.35rem; font-weight:900; line-height:1.2; }
+.bit-day-dots { display:flex; justify-content:center; gap:3px; margin-top:4px; min-height:7px; flex-wrap:wrap; }
+.bit-day-dots i { width:7px; height:7px; border-radius:50%; display:block; }
+.bit-day-mood { position:absolute; top:4px; right:5px; font-size:.8rem; }
+.bit-day.today { border-color:#f97316; }
+.bit-day.today .bit-day-dow { color:#ea580c; }
+.bit-day.weekend { opacity:.7; }
+.bit-day.active { background:linear-gradient(145deg,#7c3aed,#c026d3); border-color:transparent; color:#fff; box-shadow:0 10px 20px -10px #7c3aed; opacity:1; }
+.bit-day.active .bit-day-dow { color:rgba(255,255,255,.9); }
+.bit-day.active .bit-day-dots i { box-shadow:0 0 0 1.5px rgba(255,255,255,.85); }
+
+/* ── Layout ── */
+.bit-layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:16px; align-items:start; }
+@media (max-width:1150px) { .bit-layout { grid-template-columns:1fr; } }
+
+/* ── Composer ── */
+.bit-composer { position:relative; overflow:hidden; padding-top:22px; }
+.bit-composer::before { content:''; position:absolute; top:0; left:0; right:0; height:5px; background:linear-gradient(90deg,#2563eb,#7c3aed,#db2777,#f97316,#16a34a); }
+.bit-composer.editing { border-color:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+.bit-pill { font-size:.72rem; font-weight:800; padding:3px 10px; border-radius:99px; background:#f3e8ff; color:#6b21a8; border:1px solid #e9d5ff; text-transform:capitalize; }
+body.dark .bit-pill { background:rgba(139,92,246,.18); color:#d8b4fe; border-color:rgba(139,92,246,.35); }
+.bit-section-lbl { font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.6px; color:var(--text-light); margin:4px 0 7px; }
+.bit-cat-chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+.bit-chip-cat { --c:#64748b; border:1.5px solid color-mix(in srgb,var(--c) 35%,transparent); background:color-mix(in srgb,var(--c) 9%,transparent); color:var(--c);
+  border-radius:99px; padding:6px 13px; font-size:.78rem; font-weight:800; cursor:pointer; transition:all .18s; font-family:inherit; display:inline-flex; align-items:center; gap:5px; }
+body.dark .bit-chip-cat { color:color-mix(in srgb,var(--c) 70%,#fff); }
+.bit-chip-cat:hover { transform:translateY(-1px); background:color-mix(in srgb,var(--c) 16%,transparent); }
+.bit-chip-cat.sel { background:var(--c); color:#fff; border-color:var(--c); box-shadow:0 6px 14px -6px var(--c); }
+.bit-chip-cat .n { background:rgba(0,0,0,.12); border-radius:99px; padding:0 6px; font-size:.68rem; }
+.bit-tpl-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.bit-tpl { border:1px dashed var(--border-color); background:var(--bg-card-subtle); color:var(--text-muted); border-radius:10px; padding:5px 10px; font-size:.74rem; font-weight:700;
+  cursor:pointer; font-family:inherit; transition:all .18s; }
+.bit-tpl:hover { border-style:solid; border-color:#8b5cf6; color:#7c3aed; background:color-mix(in srgb,#8b5cf6 8%,transparent); }
+.bit-input, .bit-textarea { width:100%; box-sizing:border-box; border:1.5px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); border-radius:12px;
+  padding:10px 13px; font-family:inherit; font-size:.9rem; transition:border-color .2s, box-shadow .2s, background .2s; }
+.bit-input:focus, .bit-textarea:focus { outline:none; border-color:#8b5cf6; box-shadow:0 0 0 4px rgba(139,92,246,.15); background:var(--bg-card); }
+.bit-title-input { font-weight:800; font-size:1rem; margin-bottom:10px; }
+.bit-textarea { resize:vertical; min-height:96px; line-height:1.55; }
+.bit-form-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+.bit-field { display:flex; flex-direction:column; gap:6px; }
+.bit-field.grow { flex:1; min-width:220px; }
+.bit-field > span { font-size:.72rem; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:.4px; }
+.bit-prio { display:flex; background:var(--bg-card-subtle); border:1.5px solid var(--border-color); border-radius:12px; padding:3px; gap:3px; }
+.bit-prio button { border:none; background:transparent; color:var(--text-muted); padding:7px 12px; border-radius:9px; font-weight:800; font-size:.78rem; cursor:pointer; font-family:inherit; transition:all .18s; }
+.bit-prio button.sel { background:var(--c); color:#fff; box-shadow:0 4px 10px -4px var(--c); }
+.bit-stud-box { display:flex; flex-wrap:wrap; gap:6px; align-items:center; border:1.5px solid var(--border-color); background:var(--bg-card-subtle); border-radius:12px; padding:6px 8px; min-height:42px; box-sizing:border-box; }
+.bit-stud-box:focus-within { border-color:#8b5cf6; box-shadow:0 0 0 4px rgba(139,92,246,.15); }
+.bit-stud-box input { flex:1; min-width:150px; border:none; background:transparent; color:var(--text-main); font-family:inherit; font-size:.86rem; outline:none; padding:4px; }
+.bit-stud-chip { display:inline-flex; align-items:center; gap:5px; background:linear-gradient(135deg,#dbeafe,#e0e7ff); color:#1e3a8a; border-radius:99px; padding:3px 6px 3px 10px; font-size:.74rem; font-weight:800; }
+body.dark .bit-stud-chip { background:rgba(59,130,246,.2); color:#bfdbfe; }
+.bit-stud-chip button { border:none; background:rgba(0,0,0,.1); color:inherit; width:18px; height:18px; border-radius:50%; cursor:pointer; font-size:.7rem; line-height:1; padding:0; }
+.bit-form-actions { display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-top:16px; flex-wrap:wrap; }
+.bit-hint { font-size:.72rem; color:var(--text-light); margin-right:auto; font-weight:600; }
+.bit-hint kbd { background:var(--bg-card-subtle); border:1px solid var(--border-color); border-bottom-width:2px; border-radius:5px; padding:1px 5px; font-family:var(--font-mono); font-size:.68rem; }
+.bit-btn { border-radius:12px; padding:10px 18px; font-weight:900; font-size:.85rem; cursor:pointer; font-family:inherit; transition:all .2s; border:1.5px solid transparent; }
+.bit-btn.primary { background:linear-gradient(135deg,#7c3aed,#c026d3 60%,#f97316); color:#fff; box-shadow:0 10px 22px -10px #7c3aed; }
+.bit-btn.primary:hover { transform:translateY(-2px); box-shadow:0 14px 26px -10px #c026d3; }
+.bit-btn.ghost { background:transparent; color:var(--text-muted); border-color:var(--border-color); }
+.bit-btn.ghost:hover { border-color:#94a3b8; }
+
+/* ── Filtros ── */
+.bit-filters { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:4px 0 10px; }
+.bit-seg { display:flex; background:var(--bg-card); border:1px solid var(--border-color); border-radius:13px; padding:3px; gap:2px; box-shadow:var(--shadow-xs); }
+.bit-seg button { border:none; background:transparent; color:var(--text-muted); padding:7px 14px; border-radius:10px; font-weight:800; font-size:.8rem; cursor:pointer; font-family:inherit; }
+.bit-seg button.sel { background:linear-gradient(135deg,#1e3a8a,#6d28d9); color:#fff; }
+.bit-search { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:13px; padding:0 12px; box-shadow:var(--shadow-xs); }
+.bit-search input { flex:1; border:none; background:transparent; color:var(--text-main); padding:10px 0; font-family:inherit; font-size:.86rem; outline:none; }
+.bit-filter-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.bit-filter-chips .bit-chip-cat { padding:4px 11px; font-size:.74rem; }
+
+/* ── Timeline ── */
+.bit-group { margin-bottom:18px; }
+.bit-group-head { display:flex; align-items:center; gap:10px; margin:0 0 10px; }
+.bit-group-date { font-family:var(--font-crono); font-weight:900; font-size:.95rem; color:var(--text-main); text-transform:capitalize; }
+.bit-group-line { flex:1; height:2px; background:linear-gradient(90deg,var(--border-color),transparent); border-radius:2px; }
+.bit-group-count { font-size:.7rem; font-weight:800; color:var(--text-light); background:var(--bg-card); border:1px solid var(--border-color); padding:2px 9px; border-radius:99px; }
+.bit-group-sum { background:var(--bg-card-subtle); border-left:3px solid #a78bfa; border-radius:0 10px 10px 0; padding:8px 12px; font-size:.8rem; color:var(--text-muted); margin:-2px 0 10px; font-style:italic; white-space:pre-wrap; }
+.bit-entry { --c:#64748b; position:relative; display:flex; gap:14px; background:var(--bg-card); border:1px solid var(--border-color); border-left:5px solid var(--c); border-radius:16px;
+  padding:14px 14px 14px 16px; margin-bottom:10px; box-shadow:var(--shadow-xs); transition:transform .2s, box-shadow .2s; animation:bitIn .3s ease both; }
+.bit-entry:hover { transform:translateX(3px); box-shadow:0 12px 26px -16px var(--c); }
+.bit-entry.urgente { animation:bitIn .3s ease both, bitPulse 2.2s ease-in-out infinite; }
+.bit-entry.pinned { background:linear-gradient(135deg,color-mix(in srgb,#fde047 12%,var(--bg-card)),var(--bg-card) 60%); }
+.bit-entry.done .bit-entry-title, .bit-entry.done .bit-entry-text { text-decoration:line-through; opacity:.55; }
+.bit-entry-ico { width:42px; height:42px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  background:color-mix(in srgb,var(--c) 14%,transparent); border:1px solid color-mix(in srgb,var(--c) 30%,transparent); }
+.bit-entry-body { flex:1; min-width:0; }
+.bit-entry-top { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:5px; }
+.bit-tag { font-size:.66rem; font-weight:900; padding:2px 9px; border-radius:99px; text-transform:uppercase; letter-spacing:.4px; }
+.bit-tag.cat { background:color-mix(in srgb,var(--c) 14%,transparent); color:var(--c); }
+body.dark .bit-tag.cat { color:color-mix(in srgb,var(--c) 65%,#fff); }
+.bit-tag.importante { background:#fef3c7; color:#92400e; }
+.bit-tag.urgente { background:#fee2e2; color:#991b1b; }
+.bit-tag.pin { background:#fef9c3; color:#854d0e; }
+.bit-tag.ok { background:#dcfce7; color:#166534; }
+.bit-entry-time { margin-left:auto; font-size:.72rem; font-weight:800; color:var(--text-light); font-family:var(--font-mono); }
+.bit-entry-title { margin:2px 0 4px; font-size:.98rem; font-weight:900; color:var(--text-main); line-height:1.3; }
+.bit-entry-text { font-size:.87rem; color:var(--text-muted); line-height:1.55; white-space:pre-wrap; word-wrap:break-word; }
+.bit-entry-meta { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+.bit-meta-st { font-size:.72rem; font-weight:800; padding:2px 9px; border-radius:99px; background:color-mix(in srgb,#3b82f6 12%,transparent); color:#1d4ed8; }
+body.dark .bit-meta-st { color:#93c5fd; }
+.bit-meta-tag { font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:7px; background:var(--bg-card-subtle); color:var(--text-light); border:1px solid var(--border-subtle); }
+.bit-entry-actions { display:flex; flex-direction:column; gap:4px; opacity:0; transition:opacity .2s; }
+.bit-entry:hover .bit-entry-actions, .bit-entry:focus-within .bit-entry-actions { opacity:1; }
+@media (hover:none), (max-width:700px) { .bit-entry-actions { opacity:1; flex-direction:row; position:absolute; right:10px; bottom:8px; } .bit-entry { padding-bottom:44px; } }
+.bit-act { width:30px; height:30px; border-radius:9px; border:1px solid var(--border-color); background:var(--bg-card-subtle); cursor:pointer; font-size:.85rem; transition:all .15s; }
+.bit-act:hover { transform:scale(1.1); border-color:#8b5cf6; }
+.bit-act.del:hover { border-color:#ef4444; background:#fee2e2; }
+.bit-empty { text-align:center; padding:40px 20px; border:2px dashed var(--border-color); border-radius:18px; background:var(--bg-card); color:var(--text-light); }
+.bit-empty-ico { font-size:3rem; margin-bottom:8px; animation:bitFloat 4s ease-in-out infinite; display:inline-block; }
+.bit-empty b { display:block; color:var(--text-main); font-size:1rem; margin-bottom:4px; font-family:var(--font-crono); }
+
+/* ── Lateral ── */
+.bit-moods { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:12px; }
+.bit-mood { border:1.5px solid var(--border-subtle); background:var(--bg-card-subtle); border-radius:12px; padding:8px 2px 6px; cursor:pointer; font-family:inherit; transition:all .18s; color:var(--text-light); }
+.bit-mood span { display:block; font-size:1.5rem; line-height:1.1; filter:grayscale(.6); transition:filter .2s, transform .2s; }
+.bit-mood small { font-size:.58rem; font-weight:800; text-transform:uppercase; }
+.bit-mood:hover span { filter:none; transform:scale(1.15); }
+.bit-mood.sel { border-color:#f59e0b; background:linear-gradient(145deg,#fef3c7,#ffedd5); color:#92400e; box-shadow:0 6px 14px -8px #f59e0b; }
+body.dark .bit-mood.sel { background:rgba(245,158,11,.18); color:#fcd34d; }
+.bit-mood.sel span { filter:none; transform:scale(1.12); }
+.bit-pend { display:flex; align-items:flex-start; gap:9px; padding:8px 0; border-bottom:1px dashed var(--border-subtle); }
+.bit-pend:last-child { border-bottom:none; }
+.bit-pend input { width:17px; height:17px; accent-color:#16a34a; margin-top:2px; cursor:pointer; flex-shrink:0; }
+.bit-pend-t { font-size:.83rem; font-weight:700; color:var(--text-main); line-height:1.35; cursor:pointer; }
+.bit-pend-d { font-size:.68rem; color:var(--text-light); font-weight:700; margin-top:2px; }
+.bit-pend-d.late { color:#dc2626; }
+.bit-bar { margin-bottom:9px; }
+.bit-bar-top { display:flex; justify-content:space-between; font-size:.76rem; font-weight:800; color:var(--text-muted); margin-bottom:4px; }
+.bit-bar-track { height:8px; background:var(--bg-card-subtle); border-radius:99px; overflow:hidden; border:1px solid var(--border-subtle); }
+.bit-bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 55%,#fff)); transition:width .5s ease; }
+.bit-muted { font-size:.8rem; color:var(--text-light); text-align:center; padding:8px 0; }
+@media (max-width:640px) {
+  .bit-hero { padding:18px; border-radius:16px; }
+  .bit-hero h2 { font-size:1.2rem; }
+  .bit-week-grid { gap:4px; }
+  .bit-day { min-height:70px; padding:6px 2px; }
+  .bit-day-num { font-size:1.1rem; }
+}
+</style>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  BITÁCORA DIARIA — Lógica
+// ══════════════════════════════════════════════════════
+const BIT_CATS = {
+  novedad:    { l:'Novedad',            i:'📢', c:'#2563eb' },
+  nota:       { l:'Nota',               i:'📝', c:'#7c3aed' },
+  pendiente:  { l:'Pendiente',          i:'⏰', c:'#ea580c' },
+  logro:      { l:'Logro',              i:'🏆', c:'#16a34a' },
+  incidente:  { l:'Incidente',          i:'⚠️', c:'#dc2626' },
+  reunion:    { l:'Reunión / Comunicado', i:'🤝', c:'#0891b2' },
+  pedagogica: { l:'Pedagógica',         i:'📚', c:'#db2777' },
+  bienestar:  { l:'Salud / Bienestar',  i:'🩺', c:'#0d9488' }
+};
+const BIT_PRIO = {
+  normal:     { l:'Normal',     c:'#64748b' },
+  importante: { l:'Importante', c:'#d97706' },
+  urgente:    { l:'Urgente',    c:'#dc2626' }
+};
+const BIT_MOODS = [ ['🤩','Excelente'], ['😊','Bueno'], ['😐','Regular'], ['😟','Difícil'], ['😫','Crítico'] ];
+const BIT_TEMPLATES = [
+  { i:'✅', l:'Sin novedades',      cat:'novedad',    t:'Jornada normal sin novedades', x:'La jornada se desarrolló con normalidad. Los estudiantes cumplieron con las actividades planificadas.' },
+  { i:'⚠️', l:'Llamado de atención', cat:'incidente', p:'importante', t:'Llamado de atención', x:'Se realizó llamado de atención verbal por: ' },
+  { i:'🏆', l:'Felicitación',        cat:'logro',      t:'Reconocimiento a estudiante', x:'Se felicita al/la estudiante por ' },
+  { i:'📞', l:'Representante',       cat:'reunion',    t:'Comunicación con representante', x:'Se mantuvo comunicación con el/la representante para tratar: ' },
+  { i:'📚', l:'Clase del día',       cat:'pedagogica', t:'Desarrollo de clase', x:'Tema: \nDestreza: \nObservaciones: ' },
+  { i:'🩺', l:'Salud',               cat:'bienestar',  p:'importante', t:'Novedad de salud', x:'El/la estudiante presentó ' },
+  { i:'⏰', l:'Recordatorio',        cat:'pendiente',  t:'Pendiente: ', x:'' }
+];
+const BIT_DOW = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const BIT_DOW_FULL = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const BIT_MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function bitFmt(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function bitToday() { return bitFmt(new Date()); }
+function bitParse(s) { const p = String(s).split('-').map(Number); return new Date(p[0], (p[1]||1)-1, p[2]||1); }
+function bitAddDays(s, n) { const d = bitParse(s); d.setDate(d.getDate()+n); return bitFmt(d); }
+function bitWeekStart(s) { const d = bitParse(s); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return bitFmt(d); }
+function bitLongDate(s) { const d = bitParse(s); return `${BIT_DOW_FULL[d.getDay()]}, ${d.getDate()} de ${BIT_MONTHS[d.getMonth()]} de ${d.getFullYear()}`; }
+function bitShortDate(s) { const d = bitParse(s); return `${BIT_DOW[d.getDay()]} ${d.getDate()} ${BIT_MONTHS[d.getMonth()].slice(0,3)}`; }
+function bitNowTime() { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function bitNorm(s) { return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+function bitEsc(s) { return (typeof escHTML === 'function') ? escHTML(s) : String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+var _bit = { date: bitToday(), range:'day', cat:'all', q:'', editId:null, fCat:'novedad', fPrio:'normal', fStudents:[] };
+var _bitSumTimer = null;
+
+function bitEnsure() {
+  if (typeof S === 'undefined' || !S) return { entries:[], dias:{} };
+  if (!S.bitacora || typeof S.bitacora !== 'object') S.bitacora = { entries:[], dias:{} };
+  if (!Array.isArray(S.bitacora.entries)) S.bitacora.entries = [];
+  if (!S.bitacora.dias || typeof S.bitacora.dias !== 'object') S.bitacora.dias = {};
+  return S.bitacora;
+}
+function bitSave() { if (typeof saveData === 'function') saveData(); bitUpdateSidebarBadge(); }
+function bitByDate(d) { return bitEnsure().entries.filter(e => e.fecha === d); }
+
+function bitUpdateSidebarBadge() {
+  const b = document.getElementById('bitSidebarBadge');
+  if (!b || typeof S === 'undefined' || !S) return;
+  const n = bitByDate(bitToday()).length;
+  b.textContent = n ? `${n} hoy` : 'Hoy';
+}
+
+// ── Render principal ──
+function renderBitacora() {
+  const panel = document.getElementById('bitacoraPanel');
+  if (!panel) return;
+  bitEnsure();
+  const grado = bitEsc((typeof S !== 'undefined' && S.grado) || 'Séptimo C');
+  const anio  = bitEsc((typeof S !== 'undefined' && S.anio) || '2026-2027');
+
+  panel.innerHTML = `
+  <section class="bit-hero" aria-labelledby="bitHeroTitle">
+    <div class="bit-hero-top">
+      <div class="bit-hero-brand">
+        <div class="bit-hero-icon">📔</div>
+        <div>
+          <h2 id="bitHeroTitle">Bitácora Diaria del Docente</h2>
+          <div class="bit-hero-sub">Registro profesional de novedades, observaciones y seguimiento del aula · ${grado} · ${anio}</div>
+        </div>
+      </div>
+      <div class="bit-hero-actions">
+        <button class="bit-glass-btn" id="bitBtnExcel" onclick="bitExportXLSX()" title="Exportar las entradas visibles a Excel">📊 Exportar Excel</button>
+        <button class="bit-glass-btn" id="bitBtnPrint" onclick="bitPrint()" title="Imprimir el informe de las entradas visibles">🖨️ Imprimir informe</button>
+      </div>
+    </div>
+    <div class="bit-hero-nav">
+      <button class="bit-nav-arrow" id="bitPrevDay" onclick="bitShiftDay(-1)" title="Día anterior">‹</button>
+      <div class="bit-hero-date" id="bitHeroDate"></div>
+      <button class="bit-nav-arrow" id="bitNextDay" onclick="bitShiftDay(1)" title="Día siguiente">›</button>
+      <input type="date" class="bit-date-pick" id="bitDatePick" onchange="if(this.value) bitGoDate(this.value)" title="Ir a una fecha">
+      <button class="bit-today-btn" id="bitTodayBtn" onclick="bitGoDate(bitToday())">📍 Hoy</button>
+    </div>
+  </section>
+
+  <div class="bit-stats" id="bitStats"></div>
+
+  <div class="bit-card" id="bitWeek"></div>
+
+  <div class="bit-layout">
+    <div class="bit-main">
+      <div class="bit-card bit-composer" id="bitComposer">
+        <div class="bit-card-title">
+          <span id="bitFormTitle">✍️ Nueva entrada</span>
+          <span class="bit-pill" id="bitFormDate"></span>
+        </div>
+        <div class="bit-section-lbl">Categoría</div>
+        <div class="bit-cat-chips" id="bitCatChips"></div>
+        <div class="bit-section-lbl">⚡ Plantillas rápidas</div>
+        <div class="bit-tpl-row">
+          ${BIT_TEMPLATES.map((t,i) => `<button class="bit-tpl" onclick="bitApplyTemplate(${i})">${t.i} ${t.l}</button>`).join('')}
+        </div>
+        <input id="bitTitle" class="bit-input bit-title-input" maxlength="140" placeholder="Título breve (ej.: Reunión con representante, salida pedagógica…)" onkeydown="bitKey(event)">
+        <textarea id="bitText" class="bit-textarea" rows="4" placeholder="Describe la novedad, observación o nota del día…" onkeydown="bitKey(event)"></textarea>
+        <div class="bit-form-row">
+          <label class="bit-field"><span>🕒 Hora</span><input type="time" id="bitTime" class="bit-input" style="width:130px"></label>
+          <div class="bit-field"><span>🚦 Prioridad</span><div class="bit-prio" id="bitPrio"></div></div>
+        </div>
+        <div class="bit-form-row">
+          <div class="bit-field grow"><span>👥 Estudiantes involucrados</span>
+            <div class="bit-stud-box" onclick="document.getElementById('bitStudInput').focus()">
+              <span id="bitStudChips" style="display:contents"></span>
+              <input id="bitStudInput" list="bitStudList" placeholder="Escribe un nombre y presiona Enter" oninput="bitStudInputCheck(this)" onkeydown="bitStudKey(event)">
+            </div>
+            <datalist id="bitStudList"></datalist>
+          </div>
+          <label class="bit-field grow"><span>🏷️ Etiquetas</span><input id="bitTags" class="bit-input" placeholder="Separadas por coma: lectura, disciplina" onkeydown="bitKey(event)"></label>
+        </div>
+        <div class="bit-form-actions">
+          <span class="bit-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> para guardar</span>
+          <button class="bit-btn ghost" id="bitCancelBtn" style="display:none" onclick="bitResetForm()">Cancelar</button>
+          <button class="bit-btn primary" id="bitSaveBtn" onclick="bitSaveEntry()">💾 Guardar en bitácora</button>
+        </div>
+      </div>
+
+      <div class="bit-filters">
+        <div class="bit-seg" id="bitRangeSeg"></div>
+        <div class="bit-search"><span>🔎</span><input id="bitSearch" placeholder="Buscar por texto, estudiante o etiqueta…" oninput="_bit.q=this.value; bitRenderTimeline()"></div>
+      </div>
+      <div class="bit-filter-chips" id="bitFilterChips"></div>
+      <div id="bitTimeline"></div>
+    </div>
+
+    <aside class="bit-side">
+      <div class="bit-card" id="bitDayCard"></div>
+      <div class="bit-card" id="bitPendCard"></div>
+      <div class="bit-card" id="bitCatCard"></div>
+    </aside>
+  </div>`;
+
+  const dl = document.getElementById('bitStudList');
+  if (dl && Array.isArray(S.students)) dl.innerHTML = S.students.map(n => `<option value="${bitEsc(n)}"></option>`).join('');
+  document.getElementById('bitSearch').value = _bit.q;
+  bitResetForm(true);
+  bitRefresh();
+}
+
+function bitRefresh() {
+  const isToday = _bit.date === bitToday();
+  const hd = document.getElementById('bitHeroDate');
+  if (hd) hd.innerHTML = `📅 ${bitLongDate(_bit.date)}${isToday ? '<small>Hoy</small>' : ''}`;
+  const dp = document.getElementById('bitDatePick'); if (dp) dp.value = _bit.date;
+  const fd = document.getElementById('bitFormDate'); if (fd) fd.textContent = '📌 ' + bitShortDate(_bit.date);
+  bitRenderStats();
+  bitRenderWeek();
+  bitRenderRange();
+  bitRenderTimeline();
+  bitRenderDayCard();
+  bitRenderPend();
+  bitUpdateSidebarBadge();
+}
+
+function bitGoDate(d) { _bit.date = d; bitRefresh(); }
+function bitShiftDay(n) { bitGoDate(bitAddDays(_bit.date, n)); }
+
+// ── Estadísticas ──
+function bitStreak() {
+  const set = new Set(bitEnsure().entries.map(e => e.fecha));
+  let d = bitToday(), n = 0;
+  if (!set.has(d)) d = bitAddDays(d, -1);
+  for (let i = 0; i < 400; i++) {
+    const dow = bitParse(d).getDay();
+    if (set.has(d)) n++;
+    else if (dow !== 0 && dow !== 6) break;
+    d = bitAddDays(d, -1);
+  }
+  return n;
+}
+function bitRenderStats() {
+  const el = document.getElementById('bitStats'); if (!el) return;
+  const E = bitEnsure().entries;
+  const ws = bitWeekStart(_bit.date), we = bitAddDays(ws, 6);
+  const day = E.filter(e => e.fecha === _bit.date).length;
+  const week = E.filter(e => e.fecha >= ws && e.fecha <= we).length;
+  const pend = E.filter(e => e.cat === 'pendiente' && !e.done).length;
+  const alerts = E.filter(e => e.fecha >= ws && e.fecha <= we && (e.prio === 'urgente' || e.cat === 'incidente')).length;
+  const cards = [
+    ['📝', day,      'Entradas del día',     '#7c3aed', '#c026d3'],
+    ['🗓️', week,     'Esta semana',          '#2563eb', '#06b6d4'],
+    ['⏰', pend,     'Pendientes abiertos',  '#ea580c', '#f59e0b'],
+    ['🚨', alerts,   'Alertas de la semana', '#dc2626', '#f43f5e'],
+    ['🔥', bitStreak(), 'Racha (días hábiles)', '#16a34a', '#84cc16']
+  ];
+  el.innerHTML = cards.map(c => `
+    <div class="bit-stat" style="--c:${c[3]};--c2:${c[4]}">
+      <div class="bit-stat-ico">${c[0]}</div>
+      <div><div class="bit-stat-val">${c[1]}</div><div class="bit-stat-lbl">${c[2]}</div></div>
+    </div>`).join('');
+}
+
+// ── Semana ──
+function bitRenderWeek() {
+  const el = document.getElementById('bitWeek'); if (!el) return;
+  const B = bitEnsure();
+  const ws = bitWeekStart(_bit.date), we = bitAddDays(ws, 6);
+  const a = bitParse(ws), b = bitParse(we);
+  const label = a.getMonth() === b.getMonth()
+    ? `${a.getDate()} al ${b.getDate()} de ${BIT_MONTHS[b.getMonth()]}`
+    : `${a.getDate()} de ${BIT_MONTHS[a.getMonth()]} al ${b.getDate()} de ${BIT_MONTHS[b.getMonth()]}`;
+  const today = bitToday();
+  let days = '';
+  for (let i = 0; i < 7; i++) {
+    const d = bitAddDays(ws, i), dt = bitParse(d);
+    const list = B.entries.filter(e => e.fecha === d);
+    const dots = list.slice(0, 6).map(e => `<i style="background:${(BIT_CATS[e.cat]||BIT_CATS.nota).c}"></i>`).join('');
+    const mood = (B.dias[d] && B.dias[d].clima) || '';
+    const cls = ['bit-day', d === _bit.date ? 'active' : '', d === today ? 'today' : '', (dt.getDay() === 0 || dt.getDay() === 6) ? 'weekend' : ''].join(' ');
+    days += `<button class="${cls}" onclick="bitGoDate('${d}')" title="${bitLongDate(d)} · ${list.length} entrada(s)">
+      ${mood ? `<span class="bit-day-mood">${mood}</span>` : ''}
+      <div class="bit-day-dow">${BIT_DOW[dt.getDay()]}</div>
+      <div class="bit-day-num">${dt.getDate()}</div>
+      <div class="bit-day-dots">${dots}</div>
+    </button>`;
+  }
+  el.innerHTML = `
+    <div class="bit-week-head">
+      <button class="bit-mini-arrow" onclick="bitGoDate(bitAddDays(_bit.date,-7))" title="Semana anterior">‹ Ant.</button>
+      <div class="bit-card-title">🗓️ Semana del ${label}</div>
+      <button class="bit-mini-arrow" onclick="bitGoDate(bitAddDays(_bit.date,7))" title="Semana siguiente">Sig. ›</button>
+    </div>
+    <div class="bit-week-grid">${days}</div>`;
+}
+
+// ── Formulario ──
+function bitRenderFormChips() {
+  const cc = document.getElementById('bitCatChips');
+  if (cc) cc.innerHTML = Object.keys(BIT_CATS).map(k => {
+    const c = BIT_CATS[k];
+    return `<button class="bit-chip-cat ${_bit.fCat === k ? 'sel' : ''}" style="--c:${c.c}" onclick="_bit.fCat='${k}'; bitRenderFormChips()">${c.i} ${c.l}</button>`;
+  }).join('');
+  const pp = document.getElementById('bitPrio');
+  if (pp) pp.innerHTML = Object.keys(BIT_PRIO).map(k =>
+    `<button class="${_bit.fPrio === k ? 'sel' : ''}" style="--c:${BIT_PRIO[k].c}" onclick="_bit.fPrio='${k}'; bitRenderFormChips()">${BIT_PRIO[k].l}</button>`).join('');
+  const sc = document.getElementById('bitStudChips');
+  if (sc) sc.innerHTML = _bit.fStudents.map((s, i) =>
+    `<span class="bit-stud-chip">${bitEsc(s)}<button onclick="event.stopPropagation(); bitRemoveStudent(${i})" title="Quitar">✕</button></span>`).join('');
+}
+function bitResetForm(silent) {
+  _bit.editId = null; _bit.fCat = 'novedad'; _bit.fPrio = 'normal'; _bit.fStudents = [];
+  ['bitTitle','bitText','bitTags','bitStudInput'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  const t = document.getElementById('bitTime'); if (t) t.value = bitNowTime();
+  const comp = document.getElementById('bitComposer'); if (comp) comp.classList.remove('editing');
+  const ft = document.getElementById('bitFormTitle'); if (ft) ft.textContent = '✍️ Nueva entrada';
+  const sb = document.getElementById('bitSaveBtn'); if (sb) sb.textContent = '💾 Guardar en bitácora';
+  const cb = document.getElementById('bitCancelBtn'); if (cb) cb.style.display = 'none';
+  bitRenderFormChips();
+}
+function bitApplyTemplate(i) {
+  const t = BIT_TEMPLATES[i]; if (!t) return;
+  _bit.fCat = t.cat; _bit.fPrio = t.p || 'normal';
+  document.getElementById('bitTitle').value = t.t;
+  const ta = document.getElementById('bitText'); ta.value = t.x;
+  bitRenderFormChips();
+  (t.x ? ta : document.getElementById('bitTitle')).focus();
+}
+function bitKey(e) { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); bitSaveEntry(); } }
+function bitAddStudent(name) {
+  name = String(name || '').trim();
+  if (!name || _bit.fStudents.some(s => bitNorm(s) === bitNorm(name))) return;
+  _bit.fStudents.push(name); bitRenderFormChips();
+}
+function bitRemoveStudent(i) { _bit.fStudents.splice(i, 1); bitRenderFormChips(); }
+function bitStudInputCheck(inp) {
+  const list = (typeof S !== 'undefined' && Array.isArray(S.students)) ? S.students : [];
+  if (list.includes(inp.value)) { bitAddStudent(inp.value); inp.value = ''; }
+}
+function bitStudKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); bitAddStudent(e.target.value); e.target.value = ''; }
+  else if (e.key === 'Backspace' && !e.target.value && _bit.fStudents.length) bitRemoveStudent(_bit.fStudents.length - 1);
+  else bitKey(e);
+}
+
+function bitSaveEntry() {
+  const title = document.getElementById('bitTitle').value.trim();
+  const text  = document.getElementById('bitText').value.trim();
+  if (!title && !text) {
+    if (typeof toast === 'function') toast('✍️ Escribe al menos un título o una descripción', '#f59e0b');
+    document.getElementById('bitTitle').focus();
+    return;
+  }
+  const pending = document.getElementById('bitStudInput').value.trim();
+  if (pending) bitAddStudent(pending);
+  const B = bitEnsure(), now = Date.now();
+  const data = {
+    fecha: _bit.date,
+    hora: document.getElementById('bitTime').value || bitNowTime(),
+    cat: _bit.fCat, prio: _bit.fPrio,
+    titulo: title, texto: text,
+    estudiantes: _bit.fStudents.slice(),
+    tags: document.getElementById('bitTags').value.split(',').map(s => s.trim()).filter(Boolean)
+  };
+  if (_bit.editId) {
+    const e = B.entries.find(x => x.id === _bit.editId);
+    if (e) Object.assign(e, data, { updatedAt: now });
+    if (typeof toast === 'function') toast('✏️ Entrada actualizada', '#f59e0b');
+  } else {
+    B.entries.push(Object.assign({ id: 'b' + now.toString(36) + Math.random().toString(36).slice(2, 6), pinned:false, done:false, createdAt: now, updatedAt: now }, data));
+    if (typeof toast === 'function') toast('📔 Entrada guardada en la bitácora', '#7c3aed');
+  }
+  bitSave();
+  bitResetForm();
+  bitRefresh();
+}
+
+function bitEdit(id) {
+  const e = bitEnsure().entries.find(x => x.id === id); if (!e) return;
+  _bit.date = e.fecha;
+  _bit.editId = id; _bit.fCat = e.cat; _bit.fPrio = e.prio || 'normal'; _bit.fStudents = (e.estudiantes || []).slice();
+  document.getElementById('bitTitle').value = e.titulo || '';
+  document.getElementById('bitText').value = e.texto || '';
+  document.getElementById('bitTime').value = e.hora || '';
+  document.getElementById('bitTags').value = (e.tags || []).join(', ');
+  document.getElementById('bitComposer').classList.add('editing');
+  document.getElementById('bitFormTitle').textContent = '✏️ Editando entrada';
+  document.getElementById('bitSaveBtn').textContent = '✔ Actualizar entrada';
+  document.getElementById('bitCancelBtn').style.display = '';
+  bitRenderFormChips();
+  bitRefresh();
+  document.getElementById('bitComposer').scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(() => document.getElementById('bitTitle').focus(), 350);
+}
+function bitDelete(id) {
+  const B = bitEnsure(), e = B.entries.find(x => x.id === id); if (!e) return;
+  if (!confirm(`¿Eliminar esta entrada de la bitácora?\n\n"${e.titulo || (e.texto || '').slice(0, 60)}"`)) return;
+  B.entries = B.entries.filter(x => x.id !== id);
+  if (_bit.editId === id) bitResetForm();
+  bitSave(); bitRefresh();
+  if (typeof toast === 'function') toast('🗑️ Entrada eliminada', '#ef4444');
+}
+function bitTogglePin(id) { const e = bitEnsure().entries.find(x => x.id === id); if (!e) return; e.pinned = !e.pinned; bitSave(); bitRenderTimeline(); }
+function bitToggleDone(id) {
+  const e = bitEnsure().entries.find(x => x.id === id); if (!e) return;
+  e.done = !e.done; e.updatedAt = Date.now(); bitSave(); bitRefresh();
+  if (e.done && typeof toast === 'function') toast('✅ Pendiente completado', '#16a34a');
+}
+function bitDuplicateToday(id) {
+  const e = bitEnsure().entries.find(x => x.id === id); if (!e) return;
+  const now = Date.now();
+  bitEnsure().entries.push(Object.assign({}, e, { id: 'b' + now.toString(36) + Math.random().toString(36).slice(2, 6), fecha: bitToday(), hora: bitNowTime(), done:false, pinned:false, createdAt: now, updatedAt: now,
+    estudiantes: (e.estudiantes || []).slice(), tags: (e.tags || []).slice() }));
+  bitSave(); bitGoDate(bitToday());
+  if (typeof toast === 'function') toast('📋 Entrada copiada al día de hoy', '#2563eb');
+}
+
+// ── Filtros & Timeline ──
+function bitRenderRange() {
+  const seg = document.getElementById('bitRangeSeg');
+  if (seg) seg.innerHTML = [['day','Día'],['week','Semana'],['month','Mes'],['all','Todo']].map(r =>
+    `<button class="${_bit.range === r[0] ? 'sel' : ''}" onclick="_bit.range='${r[0]}'; bitRenderRange(); bitRenderTimeline()">${r[1]}</button>`).join('');
+}
+function bitInRange(e) {
+  if (_bit.range === 'day') return e.fecha === _bit.date;
+  if (_bit.range === 'week') { const ws = bitWeekStart(_bit.date); return e.fecha >= ws && e.fecha <= bitAddDays(ws, 6); }
+  if (_bit.range === 'month') return String(e.fecha).slice(0, 7) === _bit.date.slice(0, 7);
+  return true;
+}
+function bitFiltered() {
+  const q = bitNorm(_bit.q).trim();
+  return bitEnsure().entries.filter(e => {
+    if (!bitInRange(e)) return false;
+    if (_bit.cat !== 'all' && e.cat !== _bit.cat) return false;
+    if (q) {
+      const hay = bitNorm([e.titulo, e.texto, (e.estudiantes || []).join(' '), (e.tags || []).join(' '), (BIT_CATS[e.cat] || {}).l].join(' '));
+      if (!q.split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    return true;
+  });
+}
+function bitRangeLabel() {
+  if (_bit.range === 'day') return bitLongDate(_bit.date);
+  if (_bit.range === 'week') { const ws = bitWeekStart(_bit.date); return `Semana del ${bitShortDate(ws)} al ${bitShortDate(bitAddDays(ws, 6))}`; }
+  if (_bit.range === 'month') { const d = bitParse(_bit.date); return `${BIT_MONTHS[d.getMonth()]} de ${d.getFullYear()}`; }
+  return 'Historial completo';
+}
+function bitRenderTimeline() {
+  const el = document.getElementById('bitTimeline'); if (!el) return;
+  const B = bitEnsure();
+  const inRange = B.entries.filter(bitInRange);
+
+  // Chips de filtro por categoría con conteo
+  const fc = document.getElementById('bitFilterChips');
+  if (fc) {
+    let html = `<button class="bit-chip-cat ${_bit.cat === 'all' ? 'sel' : ''}" style="--c:#475569" onclick="_bit.cat='all'; bitRenderTimeline()">✨ Todas <span class="n">${inRange.length}</span></button>`;
+    Object.keys(BIT_CATS).forEach(k => {
+      const n = inRange.filter(e => e.cat === k).length;
+      if (!n && _bit.cat !== k) return;
+      html += `<button class="bit-chip-cat ${_bit.cat === k ? 'sel' : ''}" style="--c:${BIT_CATS[k].c}" onclick="_bit.cat='${k}'; bitRenderTimeline()">${BIT_CATS[k].i} ${BIT_CATS[k].l} <span class="n">${n}</span></button>`;
+    });
+    fc.innerHTML = html;
+  }
+
+  const list = bitFiltered();
+  bitRenderCatCard(inRange);
+
+  if (!list.length) {
+    const isDay = _bit.range === 'day';
+    el.innerHTML = `<div class="bit-empty">
+      <div class="bit-empty-ico">${_bit.q || _bit.cat !== 'all' ? '🔍' : '🌱'}</div>
+      <b>${_bit.q || _bit.cat !== 'all' ? 'No hay coincidencias' : (isDay ? 'Aún no hay registros para este día' : 'Sin registros en este periodo')}</b>
+      <div style="font-size:.84rem">${_bit.q || _bit.cat !== 'all' ? 'Prueba con otra búsqueda o categoría.' : 'Usa el formulario o una plantilla rápida para registrar la primera novedad.'}</div>
+    </div>`;
+    return;
+  }
+
+  const groups = {};
+  list.forEach(e => { (groups[e.fecha] = groups[e.fecha] || []).push(e); });
+  const dates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+  el.innerHTML = dates.map(d => {
+    const items = groups[d].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || String(a.hora).localeCompare(String(b.hora)));
+    const dia = B.dias[d] || {};
+    return `<div class="bit-group">
+      <div class="bit-group-head">
+        <span class="bit-group-date">${dia.clima ? dia.clima + ' ' : ''}${bitLongDate(d)}</span>
+        <span class="bit-group-line"></span>
+        <span class="bit-group-count">${items.length} ${items.length === 1 ? 'entrada' : 'entradas'}</span>
+      </div>
+      ${_bit.range !== 'day' && dia.resumen ? `<div class="bit-group-sum">💭 ${bitEsc(dia.resumen)}</div>` : ''}
+      ${items.map(bitEntryHTML).join('')}
+    </div>`;
+  }).join('');
+}
+function bitEntryHTML(e) {
+  const c = BIT_CATS[e.cat] || BIT_CATS.nota;
+  const prio = e.prio || 'normal';
+  const isPend = e.cat === 'pendiente';
+  return `<article class="bit-entry ${prio} ${e.done ? 'done' : ''} ${e.pinned ? 'pinned' : ''}" style="--c:${c.c}">
+    <div class="bit-entry-ico">${isPend && e.done ? '✅' : c.i}</div>
+    <div class="bit-entry-body">
+      <div class="bit-entry-top">
+        <span class="bit-tag cat">${c.l}</span>
+        ${prio !== 'normal' ? `<span class="bit-tag ${prio}">${prio === 'urgente' ? '🔴' : '🟠'} ${BIT_PRIO[prio].l}</span>` : ''}
+        ${e.pinned ? '<span class="bit-tag pin">📌 Fijada</span>' : ''}
+        ${isPend && e.done ? '<span class="bit-tag ok">Completado</span>' : ''}
+        <span class="bit-entry-time">🕒 ${bitEsc(e.hora || '--:--')}</span>
+      </div>
+      ${e.titulo ? `<h4 class="bit-entry-title">${bitEsc(e.titulo)}</h4>` : ''}
+      ${e.texto ? `<div class="bit-entry-text">${bitEsc(e.texto)}</div>` : ''}
+      ${(e.estudiantes && e.estudiantes.length) || (e.tags && e.tags.length) ? `<div class="bit-entry-meta">
+        ${(e.estudiantes || []).map(s => `<span class="bit-meta-st">👤 ${bitEsc(s)}</span>`).join('')}
+        ${(e.tags || []).map(t => `<span class="bit-meta-tag">#${bitEsc(t)}</span>`).join('')}
+      </div>` : ''}
+    </div>
+    <div class="bit-entry-actions">
+      ${isPend ? `<button class="bit-act" onclick="bitToggleDone('${e.id}')" title="${e.done ? 'Marcar como pendiente' : 'Marcar como completado'}">${e.done ? '↩️' : '✅'}</button>` : ''}
+      <button class="bit-act" onclick="bitTogglePin('${e.id}')" title="${e.pinned ? 'Desfijar' : 'Fijar arriba'}">📌</button>
+      <button class="bit-act" onclick="bitEdit('${e.id}')" title="Editar">✏️</button>
+      ${e.fecha !== bitToday() ? `<button class="bit-act" onclick="bitDuplicateToday('${e.id}')" title="Copiar a hoy">📋</button>` : ''}
+      <button class="bit-act del" onclick="bitDelete('${e.id}')" title="Eliminar">🗑️</button>
+    </div>
+  </article>`;
+}
+
+// ── Panel lateral ──
+function bitRenderDayCard() {
+  const el = document.getElementById('bitDayCard'); if (!el) return;
+  const dia = bitEnsure().dias[_bit.date] || {};
+  el.innerHTML = `
+    <div class="bit-card-title">🌤️ Clima del aula <small>${bitShortDate(_bit.date)}</small></div>
+    <div class="bit-moods">
+      ${BIT_MOODS.map((m, i) => `<button class="bit-mood ${dia.clima === m[0] ? 'sel' : ''}" onclick="bitSetMood(${i})" title="${m[1]}"><span>${m[0]}</span><small>${m[1]}</small></button>`).join('')}
+    </div>
+    <div class="bit-section-lbl">💭 Resumen / reflexión del día</div>
+    <textarea class="bit-textarea" id="bitDaySummary" rows="4" style="min-height:90px;font-size:.84rem" placeholder="¿Cómo fue la jornada? Logros, dificultades y ajustes para mañana…" oninput="bitSetSummary(this.value)">${bitEsc(dia.resumen || '')}</textarea>`;
+}
+function bitDia() { const B = bitEnsure(); if (!B.dias[_bit.date]) B.dias[_bit.date] = {}; return B.dias[_bit.date]; }
+function bitSetMood(i) {
+  const d = bitDia(), m = BIT_MOODS[i][0];
+  d.clima = d.clima === m ? '' : m;
+  bitSave(); bitRenderDayCard(); bitRenderWeek(); bitRenderTimeline();
+}
+function bitSetSummary(v) {
+  bitDia().resumen = v;
+  clearTimeout(_bitSumTimer);
+  _bitSumTimer = setTimeout(() => { if (typeof saveData === 'function') saveData(); }, 700);
+}
+function bitRenderPend() {
+  const el = document.getElementById('bitPendCard'); if (!el) return;
+  const today = bitToday();
+  const list = bitEnsure().entries.filter(e => e.cat === 'pendiente' && !e.done)
+    .sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora));
+  el.innerHTML = `<div class="bit-card-title">⏰ Pendientes abiertos <small>${list.length}</small></div>` +
+    (list.length ? list.slice(0, 10).map(e => `
+      <div class="bit-pend">
+        <input type="checkbox" onchange="bitToggleDone('${e.id}')" title="Marcar como completado">
+        <div>
+          <div class="bit-pend-t" onclick="bitEdit('${e.id}')">${bitEsc(e.titulo || (e.texto || '').slice(0, 70))}</div>
+          <div class="bit-pend-d ${e.fecha < today ? 'late' : ''}">${e.fecha < today ? '⚠️ Desde ' : '📅 '}${bitShortDate(e.fecha)}${e.prio && e.prio !== 'normal' ? ' · ' + BIT_PRIO[e.prio].l : ''}</div>
+        </div>
+      </div>`).join('') + (list.length > 10 ? `<div class="bit-muted">+${list.length - 10} más…</div>` : '')
+    : `<div class="bit-muted">🎉 ¡Todo al día! No tienes pendientes.</div>`);
+}
+function bitRenderCatCard(inRange) {
+  const el = document.getElementById('bitCatCard'); if (!el) return;
+  const total = inRange.length;
+  const rows = Object.keys(BIT_CATS).map(k => [k, inRange.filter(e => e.cat === k).length]).filter(r => r[1]).sort((a, b) => b[1] - a[1]);
+  el.innerHTML = `<div class="bit-card-title">📊 Distribución <small style="text-transform:capitalize">${bitEsc(bitRangeLabel())}</small></div>` +
+    (rows.length ? rows.map(r => {
+      const c = BIT_CATS[r[0]], pct = Math.round(r[1] * 100 / total);
+      return `<div class="bit-bar" style="--c:${c.c}">
+        <div class="bit-bar-top"><span>${c.i} ${c.l}</span><span>${r[1]} · ${pct}%</span></div>
+        <div class="bit-bar-track"><div class="bit-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('') : `<div class="bit-muted">Sin datos en este periodo.</div>`);
+}
+
+// ── Exportar & Imprimir ──
+function bitSortedForExport() {
+  return bitFiltered().slice().sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora));
+}
+function bitExportXLSX() {
+  const list = bitSortedForExport();
+  if (!list.length) { if (typeof toast === 'function') toast('No hay entradas visibles para exportar', '#f59e0b'); return; }
+  const B = bitEnsure();
+  const rows = list.map(e => ({
+    'Fecha': e.fecha,
+    'Día': BIT_DOW_FULL[bitParse(e.fecha).getDay()],
+    'Hora': e.hora || '',
+    'Categoría': (BIT_CATS[e.cat] || {}).l || e.cat,
+    'Prioridad': (BIT_PRIO[e.prio] || BIT_PRIO.normal).l,
+    'Título': e.titulo || '',
+    'Descripción': e.texto || '',
+    'Estudiantes': (e.estudiantes || []).join(', '),
+    'Etiquetas': (e.tags || []).join(', '),
+    'Estado': e.cat === 'pendiente' ? (e.done ? 'Completado' : 'Pendiente') : '',
+    'Clima del aula': (B.dias[e.fecha] || {}).clima || ''
+  }));
+  const fname = `Bitacora_${(S.grado || 'Curso').replace(/\s+/g, '_')}_${_bit.range === 'all' ? 'completa' : _bit.date}.xlsx`;
+  if (typeof XLSX !== 'undefined') {
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{wch:11},{wch:10},{wch:7},{wch:20},{wch:11},{wch:34},{wch:60},{wch:30},{wch:20},{wch:12},{wch:8}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bitácora');
+    XLSX.writeFile(wb, fname);
+  } else {
+    const head = Object.keys(rows[0]);
+    const csv = [head.join(';')].concat(rows.map(r => head.map(h => '"' + String(r[h]).replace(/"/g, '""') + '"').join(';'))).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type:'text/csv;charset=utf-8' }));
+    a.download = fname.replace('.xlsx', '.csv'); a.click();
+  }
+  if (typeof toast === 'function') toast('📊 Bitácora exportada', '#16a34a');
+}
+function bitPrint() {
+  const list = bitSortedForExport();
+  if (!list.length) { if (typeof toast === 'function') toast('No hay entradas visibles para imprimir', '#f59e0b'); return; }
+  const B = bitEnsure();
+  const groups = {};
+  list.forEach(e => { (groups[e.fecha] = groups[e.fecha] || []).push(e); });
+  const body = Object.keys(groups).sort().map(d => {
+    const dia = B.dias[d] || {};
+    return `<h3>${dia.clima ? dia.clima + ' ' : ''}${bitLongDate(d)}</h3>
+      ${dia.resumen ? `<p class="sum"><b>Resumen del día:</b> ${bitEsc(dia.resumen)}</p>` : ''}
+      <table><thead><tr><th style="width:48px">Hora</th><th style="width:110px">Categoría</th><th>Detalle</th><th style="width:150px">Estudiantes</th></tr></thead><tbody>
+      ${groups[d].map(e => { const c = BIT_CATS[e.cat] || BIT_CATS.nota; return `<tr>
+        <td>${bitEsc(e.hora || '')}</td>
+        <td><span class="cat" style="background:${c.c}">${c.i} ${c.l}</span>${e.prio && e.prio !== 'normal' ? `<div class="pr">${BIT_PRIO[e.prio].l}</div>` : ''}${e.cat === 'pendiente' ? `<div class="pr">${e.done ? '✔ Completado' : '○ Pendiente'}</div>` : ''}</td>
+        <td>${e.titulo ? `<b>${bitEsc(e.titulo)}</b><br>` : ''}${bitEsc(e.texto || '').replace(/\n/g, '<br>')}${e.tags && e.tags.length ? `<div class="tg">${e.tags.map(t => '#' + bitEsc(t)).join(' ')}</div>` : ''}</td>
+        <td>${(e.estudiantes || []).map(bitEsc).join('<br>')}</td></tr>`; }).join('')}
+      </tbody></table>`;
+  }).join('');
+  const w = window.open('', '_blank');
+  if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir', '#f59e0b'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Bitácora Diaria — ${bitEsc(bitRangeLabel())}</title>
+  <style>
+    body { font-family:'Segoe UI',Arial,sans-serif; color:#0f172a; margin:24px; font-size:10.5pt; }
+    .hd { border-bottom:3px solid #6d28d9; padding-bottom:10px; margin-bottom:14px; }
+    .hd h1 { margin:0; font-size:15pt; color:#4c1d95; } .hd h2 { margin:2px 0 6px; font-size:11pt; color:#334155; font-weight:600; }
+    .hd .m { display:flex; flex-wrap:wrap; gap:18px; font-size:9pt; color:#475569; }
+    h3 { font-size:11pt; color:#6d28d9; margin:16px 0 6px; text-transform:capitalize; border-left:4px solid #c026d3; padding-left:8px; }
+    table { width:100%; border-collapse:collapse; margin-bottom:6px; } th, td { border:1px solid #cbd5e1; padding:5px 7px; vertical-align:top; font-size:9pt; }
+    th { background:#f3e8ff; color:#4c1d95; text-align:left; } tr { page-break-inside:avoid; }
+    .cat { color:#fff; border-radius:10px; padding:1px 7px; font-size:8pt; font-weight:700; white-space:nowrap; }
+    .pr { font-size:7.5pt; color:#64748b; margin-top:3px; font-weight:700; } .tg { color:#6d28d9; font-size:8pt; margin-top:3px; }
+    .sum { background:#faf5ff; border-left:3px solid #a78bfa; padding:6px 10px; margin:4px 0 8px; font-size:9pt; }
+    .sig { margin-top:50px; display:flex; justify-content:space-around; } .sig div { border-top:1px solid #0f172a; width:220px; text-align:center; padding-top:4px; font-size:9pt; }
+    @media print { body { margin:10mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+  </style></head><body>
+  <div class="hd">
+    <h1>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h1>
+    <h2>📔 Bitácora Diaria del Docente — ${bitEsc(bitRangeLabel())}</h2>
+    <div class="m"><span><b>Docente:</b> ${bitEsc(S.docente || '')}</span><span><b>Curso:</b> ${bitEsc(S.grado || '')}</span><span><b>Año lectivo:</b> ${bitEsc(S.anio || '')}</span><span><b>Entradas:</b> ${list.length}</span></div>
+  </div>
+  ${body}
+  <div class="sig"><div>Docente<br>${bitEsc(S.docente || '')}</div><div>Vo. Bo. Coordinación / DECE</div></div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 400);
+}
+
+// Badge del menú lateral al cargar
+window.addEventListener('load', () => { setTimeout(bitUpdateSidebarBadge, 2500); });
+</script>
+
 </body>
 </html>
+
