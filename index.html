@@ -29434,10 +29434,30 @@ body.dark .bit-chip-cat { color:color-mix(in srgb,var(--c) 70%,#fff); }
   cursor:pointer; font-family:inherit; transition:all .18s; }
 .bit-tpl:hover { border-style:solid; border-color:#8b5cf6; color:#7c3aed; background:color-mix(in srgb,#8b5cf6 8%,transparent); }
 .bit-input, .bit-textarea { width:100%; box-sizing:border-box; border:1.5px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); border-radius:12px;
-  padding:10px 13px; font-family:inherit; font-size:.9rem; transition:border-color .2s, box-shadow .2s, background .2s; }
+  padding:12px 14px; font-family:inherit; font-size:.95rem; transition:border-color .2s, box-shadow .2s, background .2s; }
 .bit-input:focus, .bit-textarea:focus { outline:none; border-color:#8b5cf6; box-shadow:0 0 0 4px rgba(139,92,246,.15); background:var(--bg-card); }
-.bit-title-input { font-weight:800; font-size:1rem; margin-bottom:10px; }
-.bit-textarea { resize:vertical; min-height:96px; line-height:1.55; }
+.bit-title-input { font-weight:800; font-size:1.15rem; margin-bottom:10px; padding:12px 16px; border-radius:14px; }
+
+/* Barra de herramientas del editor (tamaño de texto y pantalla completa) */
+.bit-editor-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:10px 0 6px; }
+.bit-editor-tools { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.bit-tool-btn { border:1.5px solid var(--border-color); background:var(--bg-card-subtle); color:var(--text-main); border-radius:9px; padding:5px 11px; font-size:.8rem; font-weight:800; cursor:pointer; font-family:inherit; transition:all .18s; display:inline-flex; align-items:center; gap:5px; }
+.bit-tool-btn:hover { border-color:#8b5cf6; color:#7c3aed; background:color-mix(in srgb,#8b5cf6 10%,transparent); }
+.bit-tool-btn.active { background:linear-gradient(135deg,#7c3aed,#c026d3); color:#fff; border-color:transparent; }
+.bit-counter { font-size:.76rem; font-weight:700; color:var(--text-light); }
+
+.bit-textarea { resize:vertical; min-height:220px; line-height:1.7; font-size:1.06rem; padding:14px 16px; border-radius:14px; overflow-y:hidden; transition:height .1s ease, font-size .15s ease; box-sizing:border-box; }
+
+/* ── Modo Pantalla Completa / Ver en Grande (Zen Writing) ── */
+.bit-composer.fullscreen {
+  position:fixed !important; top:12px !important; bottom:12px !important; left:12px !important; right:12px !important;
+  z-index:99999 !important; margin:0 !important; border-radius:22px !important;
+  box-shadow:0 25px 70px -15px rgba(0,0,0,.75), 0 0 0 9999px rgba(15,23,42,.7) !important;
+  display:flex !important; flex-direction:column !important; overflow-y:auto !important;
+  max-height:none !important; background:var(--bg-card) !important; padding:26px 30px !important;
+}
+.bit-composer.fullscreen .bit-title-input { font-size:1.3rem; padding:14px 18px; }
+.bit-composer.fullscreen .bit-textarea { min-height:48vh !important; font-size:1.2rem !important; line-height:1.8 !important; }
 .bit-form-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
 .bit-field { display:flex; flex-direction:column; gap:6px; }
 .bit-field.grow { flex:1; min-width:220px; }
@@ -29495,8 +29515,8 @@ body.dark .bit-tag.cat { color:color-mix(in srgb,var(--c) 65%,#fff); }
 .bit-tag.pin { background:#fef9c3; color:#854d0e; }
 .bit-tag.ok { background:#dcfce7; color:#166534; }
 .bit-entry-time { margin-left:auto; font-size:.72rem; font-weight:800; color:var(--text-light); font-family:var(--font-mono); }
-.bit-entry-title { margin:2px 0 4px; font-size:.98rem; font-weight:900; color:var(--text-main); line-height:1.3; }
-.bit-entry-text { font-size:.87rem; color:var(--text-muted); line-height:1.55; white-space:pre-wrap; word-wrap:break-word; }
+.bit-entry-title { margin:2px 0 4px; font-size:1.05rem; font-weight:900; color:var(--text-main); line-height:1.35; }
+.bit-entry-text { font-size:.96rem; color:var(--text-muted); line-height:1.68; white-space:pre-wrap; word-wrap:break-word; }
 .bit-entry-meta { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
 .bit-meta-st { font-size:.72rem; font-weight:800; padding:2px 9px; border-radius:99px; background:color-mix(in srgb,#3b82f6 12%,transparent); color:#1d4ed8; }
 body.dark .bit-meta-st { color:#93c5fd; }
@@ -29654,7 +29674,18 @@ function renderBitacora() {
           ${BIT_TEMPLATES.map((t,i) => `<button class="bit-tpl" onclick="bitApplyTemplate(${i})">${t.i} ${t.l}</button>`).join('')}
         </div>
         <input id="bitTitle" class="bit-input bit-title-input" maxlength="140" placeholder="Título breve (ej.: Reunión con representante, salida pedagógica…)" onkeydown="bitKey(event)">
-        <textarea id="bitText" class="bit-textarea" rows="4" placeholder="Describe la novedad, observación o nota del día…" onkeydown="bitKey(event)"></textarea>
+        <div class="bit-editor-bar">
+          <div class="bit-section-lbl" style="margin:0">📝 Detalle de la novedad, observación o clase</div>
+          <div class="bit-editor-tools">
+            <span class="bit-counter" id="bitCountLbl">0 líneas · 0 palabras</span>
+            <span style="opacity:.3">|</span>
+            <button type="button" class="bit-tool-btn" onclick="bitChangeFontSize(-1)" title="Reducir tamaño de letra">A−</button>
+            <span id="bitFsLbl" style="font-size:.78rem;font-weight:800;font-family:var(--font-mono);min-width:32px;text-align:center" title="Tamaño actual de letra">17px</span>
+            <button type="button" class="bit-tool-btn" onclick="bitChangeFontSize(1)" title="Aumentar tamaño de letra">A+</button>
+            <button type="button" class="bit-tool-btn" id="bitFsBtn" onclick="bitToggleFullscreen()" title="Alternar modo pantalla completa / escribir en grande">⛶ Ver en grande</button>
+          </div>
+        </div>
+        <textarea id="bitText" class="bit-textarea" rows="8" placeholder="Describe la novedad, observación o nota del día (escribe con comodidad, el espacio crece automáticamente para ver todo sin recortar)…" oninput="bitAutoGrow(this)" onkeydown="bitKey(event)"></textarea>
         <div class="bit-form-row">
           <label class="bit-field"><span>🕒 Hora</span><input type="time" id="bitTime" class="bit-input" style="width:130px"></label>
           <div class="bit-field"><span>🚦 Prioridad</span><div class="bit-prio" id="bitPrio"></div></div>
@@ -29798,15 +29829,84 @@ function bitRenderFormChips() {
   if (sc) sc.innerHTML = _bit.fStudents.map((s, i) =>
     `<span class="bit-stud-chip">${bitEsc(s)}<button onclick="event.stopPropagation(); bitRemoveStudent(${i})" title="Quitar">✕</button></span>`).join('');
 }
+
+// ── Auto-crecimiento dinámico, zoom y pantalla completa del editor ──
+function bitAutoGrow(el) {
+  if (!el) el = document.getElementById('bitText');
+  if (!el) return;
+  el.style.height = 'auto';
+  const isFs = document.getElementById('bitComposer')?.classList.contains('fullscreen');
+  const minH = isFs ? 340 : 220;
+  el.style.height = Math.max(el.scrollHeight + 4, minH) + 'px';
+  bitUpdateCounts();
+}
+
+function bitUpdateCounts() {
+  const lbl = document.getElementById('bitCountLbl');
+  const ta  = document.getElementById('bitText');
+  if (!lbl || !ta) return;
+  const val = ta.value || '';
+  const lines = val ? val.split(/\r\n|\r|\n/).length : 0;
+  const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+  lbl.textContent = `${lines} ${lines === 1 ? 'línea' : 'líneas'} · ${words} ${words === 1 ? 'palabra' : 'palabras'}`;
+}
+
+function bitApplyStoredFontSize() {
+  const ta = document.getElementById('bitText');
+  const lbl = document.getElementById('bitFsLbl');
+  if (!ta) return;
+  const sz = parseInt(localStorage.getItem('bit_custom_fontsize')) || 17;
+  ta.style.fontSize = sz + 'px';
+  if (lbl) lbl.textContent = sz + 'px';
+}
+
+function bitChangeFontSize(delta) {
+  const ta = document.getElementById('bitText');
+  const lbl = document.getElementById('bitFsLbl');
+  if (!ta) return;
+  let cur = parseInt(window.getComputedStyle(ta).fontSize) || 17;
+  cur = Math.max(13, Math.min(28, cur + delta));
+  ta.style.fontSize = cur + 'px';
+  localStorage.setItem('bit_custom_fontsize', cur);
+  if (lbl) lbl.textContent = cur + 'px';
+  bitAutoGrow(ta);
+}
+
+function bitToggleFullscreen() {
+  const comp = document.getElementById('bitComposer');
+  if (!comp) return;
+  const isFs = comp.classList.toggle('fullscreen');
+  const btn = document.getElementById('bitFsBtn');
+  if (btn) btn.innerHTML = isFs ? '🗗 Reducir' : '⛶ Ver en grande';
+  const ta = document.getElementById('bitText');
+  if (ta) {
+    setTimeout(() => { bitAutoGrow(ta); ta.focus(); }, 60);
+  }
+}
+
+// Salir del modo pantalla completa con tecla Escape
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const comp = document.getElementById('bitComposer');
+    if (comp && comp.classList.contains('fullscreen')) {
+      bitToggleFullscreen();
+    }
+  }
+});
+
 function bitResetForm(silent) {
   _bit.editId = null; _bit.fCat = 'novedad'; _bit.fPrio = 'normal'; _bit.fStudents = [];
   ['bitTitle','bitText','bitTags','bitStudInput'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
   const t = document.getElementById('bitTime'); if (t) t.value = bitNowTime();
-  const comp = document.getElementById('bitComposer'); if (comp) comp.classList.remove('editing');
+  const comp = document.getElementById('bitComposer'); if (comp) { comp.classList.remove('editing'); comp.classList.remove('fullscreen'); }
+  const fsBtn = document.getElementById('bitFsBtn'); if (fsBtn) fsBtn.innerHTML = '⛶ Ver en grande';
   const ft = document.getElementById('bitFormTitle'); if (ft) ft.textContent = '✍️ Nueva entrada';
   const sb = document.getElementById('bitSaveBtn'); if (sb) sb.textContent = '💾 Guardar en bitácora';
   const cb = document.getElementById('bitCancelBtn'); if (cb) cb.style.display = 'none';
   bitRenderFormChips();
+  bitApplyStoredFontSize();
+  const ta = document.getElementById('bitText');
+  if (ta) bitAutoGrow(ta);
 }
 function bitApplyTemplate(i) {
   const t = BIT_TEMPLATES[i]; if (!t) return;
@@ -29814,6 +29914,7 @@ function bitApplyTemplate(i) {
   document.getElementById('bitTitle').value = t.t;
   const ta = document.getElementById('bitText'); ta.value = t.x;
   bitRenderFormChips();
+  bitAutoGrow(ta);
   (t.x ? ta : document.getElementById('bitTitle')).focus();
 }
 function bitKey(e) { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); bitSaveEntry(); } }
@@ -29879,6 +29980,8 @@ function bitEdit(id) {
   document.getElementById('bitCancelBtn').style.display = '';
   bitRenderFormChips();
   bitRefresh();
+  const ta = document.getElementById('bitText');
+  if (ta) bitAutoGrow(ta);
   document.getElementById('bitComposer').scrollIntoView({ behavior:'smooth', block:'start' });
   setTimeout(() => document.getElementById('bitTitle').focus(), 350);
 }
