@@ -14664,11 +14664,73 @@ function openCopyColumnModal() {
 }
 
 // ── PEGAR COLUMNA DESDE EXCEL DIRECTO O POR MODAL ──
+function parsePasteLines(text) {
+  if (!text) return [];
+  // Remover únicamente el último salto de línea que Excel incluye al copiar celdas
+  const clean = text.replace(/\r\n$/, '').replace(/\n$/, '');
+  return clean.split(/\r?\n/);
+}
+
+function extractGradeVal(line) {
+  if (line === undefined || line === null) return '';
+  const parts = line.split('\t');
+  if (parts.length > 1) {
+    // Si viene copiado con varias columnas (ej: # \t Nombre \t Nota):
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i].trim();
+      if (p !== '') {
+        const numTest = parseFloat(p.replace(',', '.'));
+        if (!isNaN(numTest) || specialCls(p)) return p;
+      }
+    }
+    return '';
+  }
+  return parts[0].trim();
+}
+
+function processAndSetGrade(mat, curSi, gKey, rawVal, isQual) {
+  if (!mat.grades[curSi]) mat.grades[curSi] = {};
+
+  // Si está vacío, guion o espacio en blanco en Excel -> Dejar vacío en la tabla
+  if (rawVal === '' || rawVal === '-' || rawVal === '—' || rawVal === '–') {
+    mat.grades[curSi][gKey] = '';
+    return { assigned: true, hasVal: false };
+  }
+
+  if (isQual) {
+    let qVal = rawVal.toUpperCase();
+    const num = parseFloat(rawVal.replace(',', '.'));
+    if (!isNaN(num)) qVal = numToQual(num);
+    else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
+    mat.grades[curSi][gKey] = qVal;
+    return { assigned: true, hasVal: true };
+  } else {
+    const cleanNum = rawVal.replace(',', '.');
+    const spec = specialCls(cleanNum);
+    if (spec) {
+      mat.grades[curSi][gKey] = cleanNum.toUpperCase();
+      return { assigned: true, hasVal: true };
+    } else {
+      let num = parseFloat(cleanNum);
+      if (!isNaN(num)) {
+        if (num > 10) num = 10.00;
+        if (num < 1) num = 1.00;
+        mat.grades[curSi][gKey] = trunc2(num);
+        return { assigned: true, hasVal: true };
+      } else {
+        // Texto no numérico o inválido
+        mat.grades[curSi][gKey] = '';
+        return { assigned: true, hasVal: false };
+      }
+    }
+  }
+}
+
 function handleMainTablePaste(event, startSi, weekName, colName) {
   const clip = (event.clipboardData || window.clipboardData)?.getData('text');
   if (!clip) return;
-  const lines = clip.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-  if (lines.length <= 1) return; // Si es un solo valor, permitir pegado nativo del navegador
+  const rawLines = parsePasteLines(clip);
+  if (rawLines.length <= 1 && (!rawLines[0] || !rawLines[0].includes('\t'))) return; // Permitir pegado nativo si es una sola celda simple
 
   event.preventDefault();
   const mName = curMatName();
@@ -14676,50 +14738,50 @@ function handleMainTablePaste(event, startSi, weekName, colName) {
   const mat = gm();
   if (!mat) return;
 
-  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
-  const startPos = sorted.indexOf(startSi);
+  const activeSorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const allSorted = getSortedIndices();
+  const startPos = activeSorted.indexOf(startSi);
   if (startPos === -1) return;
 
-  let filled = 0;
-  lines.forEach((line, i) => {
-    const pos = startPos + i;
-    if (pos >= sorted.length) return;
-    const si = sorted[pos];
-    const parts = line.split('\t');
-    let rawVal = parts[0].trim();
-    if (rawVal === '') return;
+  const gKey = weekName + '||' + colName;
 
-    if (!mat.grades[si]) mat.grades[si] = {};
-    const gKey = weekName + '||' + colName;
+  // Detectar si el usuario copió la nómina completa de 40 estudiantes de Excel (o 41 con fila de encabezado)
+  const isFull40Nomina = (startPos === 0 && (rawLines.length === allSorted.length || (rawLines.length === allSorted.length + 1 && isNaN(parseFloat(extractGradeVal(rawLines[0]))))));
+  let lineOffset = 0;
+  if (isFull40Nomina && rawLines.length === allSorted.length + 1) {
+    lineOffset = 1; // Saltar encabezado
+  }
 
-    if (isQual) {
-      let qVal = rawVal.toUpperCase();
-      const num = parseFloat(rawVal.replace(',', '.'));
-      if (!isNaN(num)) qVal = numToQual(num);
-      else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
-      mat.grades[si][gKey] = qVal;
-      filled++;
-    } else {
-      const cleanNum = rawVal.replace(',', '.');
-      const spec = specialCls(cleanNum);
-      if (spec) {
-        mat.grades[si][gKey] = cleanNum.toUpperCase();
-        filled++;
-      } else {
-        let num = parseFloat(cleanNum);
-        if (!isNaN(num)) {
-          if (num > 10) num = 10.00;
-          if (num < 1) num = 1.00;
-          mat.grades[si][gKey] = trunc2(num);
-          filled++;
-        }
-      }
-    }
-  });
+  let filledCount = 0;
+  let emptyCount = 0;
+
+  if (isFull40Nomina) {
+    // Si viene de la nómina completa de 40 estudiantes de Excel:
+    // Se mapea cada fila de Excel a su estudiante correspondiente (0..39),
+    // ignorando a los retirados (Emily #2 y Jayko #5) para que no desfasen las notas.
+    allSorted.forEach((si, fullIdx) => {
+      if (isStudentExcludedFromGrades(si)) return;
+      const lineIdx = fullIdx + lineOffset;
+      if (lineIdx >= rawLines.length) return;
+      const raw = extractGradeVal(rawLines[lineIdx]);
+      const res = processAndSetGrade(mat, si, gKey, raw, isQual);
+      if (res.hasVal) filledCount++; else emptyCount++;
+    });
+  } else {
+    // Pegado secuencial en la lista de estudiantes activos a partir de la celda donde hizo clic (respetando espacios)
+    rawLines.forEach((line, i) => {
+      const pos = startPos + i;
+      if (pos >= activeSorted.length) return;
+      const si = activeSorted[pos];
+      const raw = extractGradeVal(line);
+      const res = processAndSetGrade(mat, si, gKey, raw, isQual);
+      if (res.hasVal) filledCount++; else emptyCount++;
+    });
+  }
 
   saveData();
   render();
-  toast(`📥 ¡${filled} calificaciones pegadas con éxito desde Excel en "${colName}"!`, '#16a34a');
+  toast(`📥 ¡Calificaciones pegadas! (${filledCount} notas cargadas y ${emptyCount} espacios vacíos respetados) en "${colName}"`, '#16a34a');
 }
 
 function openPasteColumnModal(preselectedWeek, preselectedCol) {
@@ -14747,7 +14809,7 @@ function openPasteColumnModal(preselectedWeek, preselectedCol) {
     '📥 Pegar Columna desde Excel (' + escHTML(mName) + ')',
     `
     <div style="font-size:0.83rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">
-      Copia tu columna de calificaciones en Excel (<strong>Ctrl + C</strong>) y pégala aquí para transferirla al instante a la nómina de estudiantes activa (<strong>${activeStudents.length} estudiantes</strong>).
+      Copia la columna en Excel (<strong>Ctrl + C</strong>) y pégala aquí abajo. Los <strong>espacios vacíos</strong> se respetan exactamente como en tu Excel para que cada nota quede en su estudiante correspondiente sin desfasarse.
     </div>
 
     <label style="font-weight:700;font-size:0.82rem;display:block;margin-bottom:4px">1. Actividad / Columna de destino:</label>
@@ -14756,10 +14818,10 @@ function openPasteColumnModal(preselectedWeek, preselectedCol) {
     </select>
 
     <label style="font-weight:700;font-size:0.82rem;display:block;margin-bottom:4px">2. Pega aquí la columna copiada de Excel (Ctrl + V):</label>
-    <textarea id="pasteColTextarea" rows="8" placeholder="Copia la columna en Excel y pega aquí con Ctrl + V...&#10;&#10;Ejemplo:&#10;9.50&#10;8.25&#10;10.00&#10;..." style="width:100%;font-family:var(--font-mono);font-size:0.88rem;padding:10px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);box-sizing:border-box" oninput="updatePasteColPreview()"></textarea>
+    <textarea id="pasteColTextarea" rows="8" placeholder="Copia la columna en Excel y pega aquí con Ctrl + V...&#10;&#10;Ejemplo:&#10;&#10;7&#10;&#10;&#10;2&#10;&#10;8&#10;..." style="width:100%;font-family:var(--font-mono);font-size:0.88rem;padding:10px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);box-sizing:border-box" oninput="updatePasteColPreview()"></textarea>
 
     <div id="pasteColPreview" style="margin-top:10px;padding:9px 12px;background:var(--bg-card-subtle);border-radius:6px;border:1px solid var(--border-color);font-size:0.8rem;color:var(--text-muted)">
-      💡 <em>Tip de velocidad:</em> También puedes copiar en Excel, hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.
+      💡 <em>Tip de velocidad:</em> También puedes hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.
     </div>
     `,
     '📥 Asignar Calificaciones a la Columna',
@@ -14773,49 +14835,43 @@ function openPasteColumnModal(preselectedWeek, preselectedCol) {
       const parts = selVal.split('||');
       const wName = parts[0];
       const colName = parts[1];
-      const lines = textVal.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-      const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+      const rawLines = parsePasteLines(textVal);
+      const activeSorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+      const allSorted = getSortedIndices();
+      const gKey = wName + '||' + colName;
 
-      let count = 0;
-      lines.forEach((line, idx) => {
-        if (idx >= sorted.length) return;
-        const si = sorted[idx];
-        const rowParts = line.split('\t');
-        let rawVal = rowParts[0].trim();
-        if (rawVal === '') return;
+      const isFull40Nomina = (rawLines.length === allSorted.length || (rawLines.length === allSorted.length + 1 && isNaN(parseFloat(extractGradeVal(rawLines[0])))));
+      let lineOffset = 0;
+      if (isFull40Nomina && rawLines.length === allSorted.length + 1) {
+        lineOffset = 1;
+      }
 
-        if (!mat.grades[si]) mat.grades[si] = {};
-        const gKey = wName + '||' + colName;
+      let filledCount = 0;
+      let emptyCount = 0;
 
-        if (isQual) {
-          let qVal = rawVal.toUpperCase();
-          const num = parseFloat(rawVal.replace(',', '.'));
-          if (!isNaN(num)) qVal = numToQual(num);
-          else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
-          mat.grades[si][gKey] = qVal;
-          count++;
-        } else {
-          const cleanNum = rawVal.replace(',', '.');
-          const spec = specialCls(cleanNum);
-          if (spec) {
-            mat.grades[si][gKey] = cleanNum.toUpperCase();
-            count++;
-          } else {
-            let num = parseFloat(cleanNum);
-            if (!isNaN(num)) {
-              if (num > 10) num = 10.00;
-              if (num < 1) num = 1.00;
-              mat.grades[si][gKey] = trunc2(num);
-              count++;
-            }
-          }
-        }
-      });
+      if (isFull40Nomina) {
+        allSorted.forEach((si, fullIdx) => {
+          if (isStudentExcludedFromGrades(si)) return;
+          const lineIdx = fullIdx + lineOffset;
+          if (lineIdx >= rawLines.length) return;
+          const raw = extractGradeVal(rawLines[lineIdx]);
+          const res = processAndSetGrade(mat, si, gKey, raw, isQual);
+          if (res.hasVal) filledCount++; else emptyCount++;
+        });
+      } else {
+        rawLines.forEach((line, idx) => {
+          if (idx >= activeSorted.length) return;
+          const si = activeSorted[idx];
+          const raw = extractGradeVal(line);
+          const res = processAndSetGrade(mat, si, gKey, raw, isQual);
+          if (res.hasVal) filledCount++; else emptyCount++;
+        });
+      }
 
       saveData();
       render();
       closeModal();
-      toast(`🎉 ¡${count} calificaciones asignadas con éxito en "${colName}"!`, '#16a34a');
+      toast(`🎉 ¡Columna actualizada con éxito! (${filledCount} notas cargadas y ${emptyCount} espacios vacíos respetados) en "${colName}"`, '#16a34a');
     },
     'btn-success'
   );
@@ -14825,14 +14881,19 @@ function updatePasteColPreview() {
   const ta = document.getElementById('pasteColTextarea');
   const prev = document.getElementById('pasteColPreview');
   if (!ta || !prev) return;
-  const lines = ta.value.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-  const activeCount = S.students.filter((_, si) => !isStudentExcludedFromGrades(si)).length;
-  if (!lines.length) {
-    prev.innerHTML = `💡 <em>Tip de velocidad:</em> También puedes copiar en Excel, hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.`;
+  const rawLines = parsePasteLines(ta.value);
+  if (!rawLines.length || (rawLines.length === 1 && rawLines[0] === '')) {
+    prev.innerHTML = `💡 <em>Tip de velocidad:</em> También puedes hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.`;
     return;
   }
-  const toFill = Math.min(lines.length, activeCount);
-  prev.innerHTML = `✅ <strong>${lines.length}</strong> calificaciones detectadas. Se asignarán a <strong>${toFill} de ${activeCount}</strong> estudiantes activos (del #1 al #${toFill}).`;
+  let notasCount = 0;
+  let espaciosCount = 0;
+  rawLines.forEach(l => {
+    const val = extractGradeVal(l);
+    if (val !== '' && val !== '-' && val !== '—') notasCount++;
+    else espaciosCount++;
+  });
+  prev.innerHTML = `✅ <strong>${rawLines.length} filas detectadas</strong>: <strong>${notasCount}</strong> calificaciones y <strong>${espaciosCount}</strong> espacios vacíos. Los espacios se respetarán fila a fila en la nómina.`;
 }
 
 // ── BACKUP & EXCEL NATIVO (.XLSX) ──
