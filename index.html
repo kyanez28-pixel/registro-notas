@@ -10317,8 +10317,32 @@ function getStudentTrimestreCalc(si, mName) {
   };
 }
 
+// Verificar si un estudiante está excluido de la nómina de calificaciones (Retirado o Nunca asistió)
+function isStudentExcludedFromGrades(nameOrSi) {
+  let name = '';
+  if (typeof nameOrSi === 'number') {
+    name = (S.students && S.students[nameOrSi]) ? S.students[nameOrSi] : '';
+  } else if (typeof nameOrSi === 'string') {
+    name = nameOrSi;
+  }
+  if (!name) return false;
+  const n = name.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // 1. Emily Anahí Almeida Anzatuña: Retirada oficialmente el 15/09/2026
+  if (n.includes('ALMEIDA') && n.includes('EMILY')) return true;
+  // 2. Jayko Dominick Andrade Angulo: Nunca asistió / sin registro presencial
+  if (n.includes('ANDRADE') && n.includes('JAYKO')) return true;
+
+  // Verificación adicional por perfil institucional si tiene estado Retirada o No Asiste
+  if (S.studentProfiles && typeof nameOrSi === 'number' && S.studentProfiles[nameOrSi]) {
+    const est = (S.studentProfiles[nameOrSi].estado || '').toLowerCase();
+    if (est.includes('retirad') || est.includes('no asiste')) return true;
+  }
+  return false;
+}
+
 // Promedio general de promoción (Solo asignaturas cuantitativas)
 function studentGeneralAvg(si) {
+  if (isStudentExcludedFromGrades(si)) return null;
   let tot = 0, cnt = 0;
   getMats().forEach(m => {
     if (isQualitativeMat(m)) return; // Excluye cualitativas del promedio de promoción
@@ -10330,6 +10354,7 @@ function studentGeneralAvg(si) {
   });
   return cnt ? trunc2(tot / cnt) : null;
 }
+
 
 // ══════════════════════════════════════════════════════
 //  RENDERIZADO
@@ -10574,7 +10599,7 @@ function renderTable() {
   document.getElementById('th').innerHTML = r1 + r2;
 
   // Filas del Cuerpo
-  const sorted = getSortedIndices();
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   document.getElementById('tb').innerHTML = sorted.map((si, rowPos) => {
     const name = S.students[si] || `Estudiante ${si+1}`;
     const g = mat.grades[si] || {};
@@ -10779,8 +10804,9 @@ function renderStats() {
   const mat = gm();
 
   let tot = 0, cnt = 0, low = 0, hi = 0, max = -Infinity, min = Infinity;
+  const activeStudents = S.students.map((nom, si) => si).filter(si => !isStudentExcludedFromGrades(si));
 
-  S.students.forEach((_, si) => {
+  activeStudents.forEach(si => {
     const calc = getStudentTrimestreCalc(si, mName);
     if (!isQual && calc.trimAvg !== '—') {
       const n = parseFloat(calc.trimAvg);
@@ -10801,9 +10827,9 @@ function renderStats() {
 
   document.getElementById('stats').innerHTML = `
     <div class="stat-card" style="--card-accent:#2563eb">
-      <div class="stat-label"><span>Estudiantes</span> 👥</div>
-      <div class="stat-val">${S.students.length}</div>
-      <div class="stat-sub">Nómina Séptimo de Básica</div>
+      <div class="stat-label"><span>Estudiantes Activos</span> 👥</div>
+      <div class="stat-val">${activeStudents.length}</div>
+      <div class="stat-sub">Nómina Activa (Calificaciones)</div>
     </div>
     <div class="stat-card" style="--card-accent:${avgColor}">
       <div class="stat-label"><span>Promedio Trimestre</span> 📊</div>
@@ -10829,7 +10855,7 @@ function renderStats() {
 
   const summaryEl = document.getElementById('statsCollapsedText');
   if (summaryEl) {
-    summaryEl.innerHTML = `📊 <strong>${S.students.length} Estudiantes</strong> · Promedio: <strong style="color:${avgColor}">${avg}</strong> · Refuerzo (&lt;7.00): <strong style="color:#dc2626">${low}</strong> · Destacadas (≥9): <strong style="color:#16a34a">${hi}</strong> · Rango: <strong>${maxD} / ${minD}</strong>`;
+    summaryEl.innerHTML = `📊 <strong>${activeStudents.length} Estudiantes Activos</strong> · Promedio: <strong style="color:${avgColor}">${avg}</strong> · Refuerzo (&lt;7.00): <strong style="color:#dc2626">${low}</strong> · Destacadas (≥9): <strong style="color:#16a34a">${hi}</strong> · Rango: <strong>${maxD} / ${minD}</strong>`;
   }
 }
 
@@ -10843,8 +10869,9 @@ function filterStudents(q) {
     r.classList.toggle('hidden-row', !show);
     if (show) vis++;
   });
+  const activeCount = S.students.filter((_, si) => !isStudentExcludedFromGrades(si)).length;
   const lbl = document.getElementById('searchCount');
-  if (lbl) lbl.textContent = term ? `${vis} de ${S.students.length}` : '';
+  if (lbl) lbl.textContent = term ? `${vis} de ${activeCount}` : '';
 }
 
 // ══════════════════════════════════════════════════════
@@ -11488,10 +11515,13 @@ function sortStudentsAZ() {
 }
 
 function openManageNomina() {
+  const activeStudents = S.students.map((name, i) => ({ name, i })).filter(item => !isStudentExcludedFromGrades(item.i));
   let listHTML = `<div style="max-height:50vh;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:6px;margin-bottom:12px">`;
-  S.students.forEach((name, i) => {
+  activeStudents.forEach((st, pos) => {
+    const i = st.i;
+    const name = st.name;
     listHTML += `<div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-bottom:1px solid var(--border-color)">
-      <span style="font-size:0.75rem;font-weight:700;width:24px;color:var(--text-muted)">${i+1}</span>
+      <span style="font-size:0.75rem;font-weight:700;width:24px;color:var(--text-muted)">${pos+1}</span>
       <span style="flex:1;font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(name)}</span>
       <button class="bt bte" onclick="moveStudent(${i},-1);openManageNomina()" ${i===0?'disabled':''} title="Subir">▲</button>
       <button class="bt bte" onclick="moveStudent(${i},1);openManageNomina()" ${i===S.students.length-1?'disabled':''} title="Bajar">▼</button>
@@ -11502,9 +11532,12 @@ function openManageNomina() {
   listHTML += `</div>`;
 
   showModal(
-    '⚙ Gestión de Nómina (' + S.students.length + ' estudiantes)',
+    '⚙ Gestión de Nómina en Calificaciones (' + activeStudents.length + ' estudiantes activos)',
     `
     ${listHTML}
+    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;padding:6px 10px;background:var(--bg-card-subtle);border-radius:6px;border:1px solid var(--border-color)">
+      ℹ️ Emily Almeida Anzatuña (Retirada) y Jayko Andrade Angulo (Nunca asistió) están excluidos de calificaciones y preservados en la Matriz Institucional.
+    </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn btn-success" onclick="openAddSt()">➕ Agregar Estudiante</button>
       <button class="btn btn-teal"    onclick="sortStudentsAZ();closeModal()">🔤 Ordenar A → Z</button>
@@ -13540,15 +13573,18 @@ function getStudentAttendanceStats(si) {
 }
 
 function rpShowAll() {
-  document.getElementById('rpCount').textContent = `${S.students.length} estudiantes`;
+  const activeStudents = S.students.map((name, si) => ({ name, si })).filter(item => !isStudentExcludedFromGrades(item.si));
+  document.getElementById('rpCount').textContent = `${activeStudents.length} estudiantes activos`;
   let html = `<div class="rp-all">`;
-  S.students.forEach((name, si) => {
+  activeStudents.forEach((st, pos) => {
+    const si = st.si;
+    const name = st.name;
     const gAvg = studentGeneralAvg(si);
     const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
     const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
     const repTel = profile.rep_telefono || '';
     html += `<div class="rp-row" onclick="rpShowOne(${si})">
-      <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800">${si+1}</span>
+      <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800">${pos+1}</span>
       <div style="flex:1;min-width:0">
         <div class="rp-row-name">${escHTML(name)}</div>
         <div style="font-size:0.72rem;color:var(--text-muted)">Rep: ${escHTML(profile.rep_nombre || 'No registrado')} ${repTel ? '· 📱 '+escHTML(repTel) : ''}</div>
@@ -13562,9 +13598,10 @@ function rpShowAll() {
 
 function rpShowHonorRoll() {
   const ranked = S.students.map((name, si) => {
+    if (isStudentExcludedFromGrades(si)) return null;
     const avg = studentGeneralAvg(si);
     return { name, si, avg: avg !== null && avg !== '—' ? parseFloat(avg) : 0, avgStr: avg || '—' };
-  }).filter(s => s.avg > 0).sort((a, b) => b.avg - a.avg);
+  }).filter(s => s && s.avg > 0).sort((a, b) => b.avg - a.avg);
 
   let html = `
     <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:18px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
@@ -13603,6 +13640,7 @@ function rpShowHonorRoll() {
 function rpShowAtRisk() {
   const atRisk = [];
   S.students.forEach((name, si) => {
+    if (isStudentExcludedFromGrades(si)) return;
     const gAvg = studentGeneralAvg(si);
     const lowMats = [];
     getMats().forEach(m => {
@@ -14420,7 +14458,7 @@ function expRefresh() {
   const mi = parseInt(document.getElementById('expMat').value || 0);
   const mName = getMats()[mi];
 
-  const rows = getSortedIndices().map((si, pos) => {
+  const rows = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si)).map((si, pos) => {
     const name = S.students[si];
     const calc = getStudentTrimestreCalc(si, mName);
     let val = '';
@@ -14461,7 +14499,7 @@ function expGenerateBookmarklet() {
 // ── COPIAR COLUMNAS COMPLETAS PARA EXCEL / WORD ──
 function copyMainColumn(colType, weekName, colName) {
   const mName = curMatName();
-  const sorted = getSortedIndices();
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   const values = [];
 
   sorted.forEach(si => {
@@ -14500,7 +14538,7 @@ function copyMainColumn(colType, weekName, colName) {
 
 function copyPiColumn(mName, indId) {
   ensurePi();
-  const sorted = getSortedIndices();
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   const values = [];
 
   sorted.forEach(si => {
@@ -14660,7 +14698,7 @@ function exportCSV() {
       rows[2].push({ v:'EVAL. CUALITATIVA', t:'s', s:'hdr_prom' });
     }
 
-    getSortedIndices().forEach((si, pos) => {
+    getSortedIndices().filter(si => !isStudentExcludedFromGrades(si)).forEach((si, pos) => {
       const name = S.students[si];
       const g = mat.grades[si] || {};
       const row = [{ v:pos+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
@@ -15306,6 +15344,7 @@ function refreshVisPanel() {
   </div>`;
 
   (S.students || []).forEach((name, idx) => {
+    if (isStudentExcludedFromGrades(idx)) return;
     if (q && !name.toLowerCase().includes(q)) return;
     const vis = !isRowHidden(name);
     html += `
@@ -16868,7 +16907,7 @@ function renderPi() {
   document.getElementById('piTh').innerHTML = r1 + r2;
 
   // Body rows
-  const sorted = getSortedIndices();
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   let bodyHtml = sorted.map((si, rowPos) => {
     const name = S.students[si] || `Estudiante ${si+1}`;
     let cells = '';
@@ -17346,7 +17385,7 @@ function exportPiXLSX() {
   header1.push('NOTA PI FINAL'); header2.push('');
 
   const rows = [header1, header2];
-  const sorted = getSortedIndices();
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   sorted.forEach((si, rowPos) => {
     const row = [rowPos + 1, S.students[si]];
     const matNotas = [];
