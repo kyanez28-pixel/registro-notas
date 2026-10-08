@@ -3671,6 +3671,9 @@ body.in-focus-mode {
         <button class="btn btn-purple" onclick="openCopyColumnModal()" data-tip="Copiar cualquier columna entera de notas para pegar directamente en Excel o Word">
           📋 Copiar Columna
         </button>
+        <button class="btn btn-teal" onclick="openPasteColumnModal()" data-tip="Pegar rápidamente una columna copiada de Excel hacia cualquier actividad evaluativa">
+          📥 Pegar desde Excel
+        </button>
         <button class="btn btn-warning" onclick="exportCSV()" data-tip="Descargar planillas completas en Excel (.xlsx) con ponderaciones 70/30">
           📊 Excel Notas
         </button>
@@ -10656,6 +10659,7 @@ function renderTable() {
             <div style="display:flex;align-items:center;gap:4px">
               <input class="gi" type="text" inputmode="decimal" placeholder="—"
                 value="${escVal(dispNum)}"
+                onpaste="handleMainTablePaste(event, ${si}, '${esc(wName)}', '${esc(col.name)}')"
                 onchange="updQual(${si},'${esc(wName)}','${esc(col.name)}',this.value)"
                 oninput="previewQual(this)"
                 onfocus="this.select()"
@@ -10675,6 +10679,7 @@ function renderTable() {
         return `<td class="${tdCls}" data-orig-bg="${escVal(cellBg)}" style="${isColHidden?'display:none;':''}background:${tdBg}">
           <input class="gi ${specCls ? '' : cls}" type="text" inputmode="decimal"
             value="${escVal(v)}"
+            onpaste="handleMainTablePaste(event, ${si}, '${esc(wName)}', '${esc(col.name)}')"
             onchange="upd(${si},'${esc(wName)}','${esc(col.name)}',this.value)"
             oninput="clr(this)"
             onfocus="this.select()"
@@ -12222,6 +12227,9 @@ function openColContextMenu(e, wi, ci, weekName, colName) {
     </div>
     <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('activity','${esc(weekName)}','${esc(colName)}')">
       📋 Copiar Columna (Excel/Word)
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();openPasteColumnModal('${esc(weekName)}','${esc(colName)}')">
+      📥 Pegar Columna desde Excel
     </div>
     <div class="ctx-item" onclick="closeCtxMenu();toggleCol('','${esc(curMatName())}','${esc(weekName)}','${esc(col.name)}','${esc(col.desc||'')}')">
       👁️ Ocultar / Mostrar Columna
@@ -14653,6 +14661,178 @@ function openCopyColumnModal() {
       closeModal();
     }
   );
+}
+
+// ── PEGAR COLUMNA DESDE EXCEL DIRECTO O POR MODAL ──
+function handleMainTablePaste(event, startSi, weekName, colName) {
+  const clip = (event.clipboardData || window.clipboardData)?.getData('text');
+  if (!clip) return;
+  const lines = clip.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+  if (lines.length <= 1) return; // Si es un solo valor, permitir pegado nativo del navegador
+
+  event.preventDefault();
+  const mName = curMatName();
+  const isQual = isQualitativeMat(mName);
+  const mat = gm();
+  if (!mat) return;
+
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const startPos = sorted.indexOf(startSi);
+  if (startPos === -1) return;
+
+  let filled = 0;
+  lines.forEach((line, i) => {
+    const pos = startPos + i;
+    if (pos >= sorted.length) return;
+    const si = sorted[pos];
+    const parts = line.split('\t');
+    let rawVal = parts[0].trim();
+    if (rawVal === '') return;
+
+    if (!mat.grades[si]) mat.grades[si] = {};
+    const gKey = weekName + '||' + colName;
+
+    if (isQual) {
+      let qVal = rawVal.toUpperCase();
+      const num = parseFloat(rawVal.replace(',', '.'));
+      if (!isNaN(num)) qVal = numToQual(num);
+      else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
+      mat.grades[si][gKey] = qVal;
+      filled++;
+    } else {
+      const cleanNum = rawVal.replace(',', '.');
+      const spec = specialCls(cleanNum);
+      if (spec) {
+        mat.grades[si][gKey] = cleanNum.toUpperCase();
+        filled++;
+      } else {
+        let num = parseFloat(cleanNum);
+        if (!isNaN(num)) {
+          if (num > 10) num = 10.00;
+          if (num < 1) num = 1.00;
+          mat.grades[si][gKey] = trunc2(num);
+          filled++;
+        }
+      }
+    }
+  });
+
+  saveData();
+  render();
+  toast(`📥 ¡${filled} calificaciones pegadas con éxito desde Excel en "${colName}"!`, '#16a34a');
+}
+
+function openPasteColumnModal(preselectedWeek, preselectedCol) {
+  const mName = curMatName();
+  const mat = S.mats[mName];
+  if (!mat) return;
+  const isQual = isQualitativeMat(mName);
+  const activeStudents = S.students.map((name, i) => ({ name, i })).filter(item => !isStudentExcludedFromGrades(item.i));
+
+  let optsHtml = '';
+  Object.keys(mat.cols).forEach(w => {
+    (mat.cols[w] || []).forEach(c => {
+      const isSel = (preselectedWeek === w && preselectedCol === c.name) ? 'selected' : '';
+      const disp = c.desc ? `${c.name} (${c.desc})` : c.name;
+      optsHtml += `<option value="${escVal(w)}||${escVal(c.name)}" ${isSel}>[${escHTML(w)}] ${escHTML(disp)}</option>`;
+    });
+  });
+
+  if (!optsHtml) {
+    toast('⚠️ No hay actividades creadas en esta materia aún. Crea una actividad primero.', '#d97706');
+    return;
+  }
+
+  showModal(
+    '📥 Pegar Columna desde Excel (' + escHTML(mName) + ')',
+    `
+    <div style="font-size:0.83rem;color:var(--text-muted);margin-bottom:12px;line-height:1.4">
+      Copia tu columna de calificaciones en Excel (<strong>Ctrl + C</strong>) y pégala aquí para transferirla al instante a la nómina de estudiantes activa (<strong>${activeStudents.length} estudiantes</strong>).
+    </div>
+
+    <label style="font-weight:700;font-size:0.82rem;display:block;margin-bottom:4px">1. Actividad / Columna de destino:</label>
+    <select id="pasteDestColSel" style="font-weight:700;font-size:0.85rem;margin-bottom:14px;width:100%;padding:8px 10px;border-radius:6px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main)">
+      ${optsHtml}
+    </select>
+
+    <label style="font-weight:700;font-size:0.82rem;display:block;margin-bottom:4px">2. Pega aquí la columna copiada de Excel (Ctrl + V):</label>
+    <textarea id="pasteColTextarea" rows="8" placeholder="Copia la columna en Excel y pega aquí con Ctrl + V...&#10;&#10;Ejemplo:&#10;9.50&#10;8.25&#10;10.00&#10;..." style="width:100%;font-family:var(--font-mono);font-size:0.88rem;padding:10px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);box-sizing:border-box" oninput="updatePasteColPreview()"></textarea>
+
+    <div id="pasteColPreview" style="margin-top:10px;padding:9px 12px;background:var(--bg-card-subtle);border-radius:6px;border:1px solid var(--border-color);font-size:0.8rem;color:var(--text-muted)">
+      💡 <em>Tip de velocidad:</em> También puedes copiar en Excel, hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.
+    </div>
+    `,
+    '📥 Asignar Calificaciones a la Columna',
+    () => {
+      const selVal = document.getElementById('pasteDestColSel')?.value;
+      const textVal = document.getElementById('pasteColTextarea')?.value || '';
+      if (!selVal || !textVal.trim()) {
+        toast('⚠️ Pega las notas desde tu Excel en el cuadro antes de continuar', '#d97706');
+        return;
+      }
+      const parts = selVal.split('||');
+      const wName = parts[0];
+      const colName = parts[1];
+      const lines = textVal.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+      const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+
+      let count = 0;
+      lines.forEach((line, idx) => {
+        if (idx >= sorted.length) return;
+        const si = sorted[idx];
+        const rowParts = line.split('\t');
+        let rawVal = rowParts[0].trim();
+        if (rawVal === '') return;
+
+        if (!mat.grades[si]) mat.grades[si] = {};
+        const gKey = wName + '||' + colName;
+
+        if (isQual) {
+          let qVal = rawVal.toUpperCase();
+          const num = parseFloat(rawVal.replace(',', '.'));
+          if (!isNaN(num)) qVal = numToQual(num);
+          else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
+          mat.grades[si][gKey] = qVal;
+          count++;
+        } else {
+          const cleanNum = rawVal.replace(',', '.');
+          const spec = specialCls(cleanNum);
+          if (spec) {
+            mat.grades[si][gKey] = cleanNum.toUpperCase();
+            count++;
+          } else {
+            let num = parseFloat(cleanNum);
+            if (!isNaN(num)) {
+              if (num > 10) num = 10.00;
+              if (num < 1) num = 1.00;
+              mat.grades[si][gKey] = trunc2(num);
+              count++;
+            }
+          }
+        }
+      });
+
+      saveData();
+      render();
+      closeModal();
+      toast(`🎉 ¡${count} calificaciones asignadas con éxito en "${colName}"!`, '#16a34a');
+    },
+    'btn-success'
+  );
+}
+
+function updatePasteColPreview() {
+  const ta = document.getElementById('pasteColTextarea');
+  const prev = document.getElementById('pasteColPreview');
+  if (!ta || !prev) return;
+  const lines = ta.value.trim().split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+  const activeCount = S.students.filter((_, si) => !isStudentExcludedFromGrades(si)).length;
+  if (!lines.length) {
+    prev.innerHTML = `💡 <em>Tip de velocidad:</em> También puedes copiar en Excel, hacer clic en la primera celda de notas de la tabla y presionar <strong>Ctrl + V</strong> directamente sin abrir este modal.`;
+    return;
+  }
+  const toFill = Math.min(lines.length, activeCount);
+  prev.innerHTML = `✅ <strong>${lines.length}</strong> calificaciones detectadas. Se asignarán a <strong>${toFill} de ${activeCount}</strong> estudiantes activos (del #1 al #${toFill}).`;
 }
 
 // ── BACKUP & EXCEL NATIVO (.XLSX) ──
@@ -28511,6 +28691,9 @@ updateGlobalInstitutionalReminder();
           </button>
           <button class="btn btn-purple" onclick="openCopyColumnModal();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
             📋 Copiar Col.
+          </button>
+          <button class="btn btn-teal" onclick="openPasteColumnModal();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
+            📥 Pegar Col.
           </button>
           <button class="btn btn-dark" onclick="openVisPanel();closeMobileTools()" style="justify-content:center;padding:9px 4px;border-radius:8px;font-size:0.75rem">
             👁 Columnas
