@@ -3769,6 +3769,9 @@ body.in-focus-mode {
         <button type="button" class="btn btn-outline" onclick="openAttHistoryModal()" title="Abrir Historial de Asistencias tomadas en el año lectivo" style="padding:6px 12px;font-size:0.78rem;font-weight:800;border-radius:6px;color:#1e40af;border-color:#93c5fd;background:#eff6ff">
           📂 Ver Historial
         </button>
+        <button type="button" class="btn btn-outline" onclick="syncOfficialAttendanceReport(true)" title="Sincronizar con datos oficiales de Reporte_Asistencia_7mo_C_1er_Trimestre.xls" style="padding:6px 12px;font-size:0.78rem;font-weight:800;border-radius:6px;color:#065f46;border-color:#6ee7b7;background:#ecfdf5">
+          📥 Sincronizar Reporte 1er Trimestre
+        </button>
         <button type="button" class="btn btn-outline" onclick="deleteCurrentAttDate()" title="Eliminar registro de asistencia de esta fecha" style="padding:6px 10px;color:#b91c1c;border-color:#fca5a5;background:#fee2e2;font-size:0.76rem;font-weight:800;border-radius:6px">
           🗑️ Borrar Día
         </button>
@@ -12631,6 +12634,44 @@ function formatFullDate(dateStr) {
   return `${dayName}, ${parseInt(day, 10)} de ${monthName} de ${y}`;
 }
 
+// ══════════════════════════════════════════════════════════════════════════════════
+// ASISTENCIA OFICIAL VERIFICADA DEL 1ER TRIMESTRE (33 DÍAS ESCOLARES OFICIALES)
+// Extraída de: Reporte_Asistencia_7mo_C_1er_Trimestre.xls (Leccionario Digital 7mo C)
+// Totales oficiales: 41 Faltas Injustificadas, 15 Justificadas, 6 Atrasos (56 inasistencias)
+// ══════════════════════════════════════════════════════════════════════════════════
+const OFFICIAL_LECCIONARIO_ATTENDANCE_7C = {"2026-09-03":{"0":"F","1":"P","2":"P","3":"P","4":"NP","5":"F","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"F","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"F"},"2026-09-04":{"0":"F","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"F","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"F"},"2026-09-07":{"0":"P","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-08":{"0":"P","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-09":{"0":"P","1":"P","2":"P","3":"F","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"F","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"J","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-10":{"0":"P","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-11":{"0":"P","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"F","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"F","21":"P","22":"J","23":"P","24":"P","25":"F","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-14":{"0":"P","1":"P","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"J","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"F","37":"P","38":"P","39":"P"},"2026-09-15":{"0":"P","1":"F","2":"P","3":"T","4":"NP","5":"P","6":"F","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"J","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-16":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"T","6":"P","7":"P","8":"P","9":"P","10":"T","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-17":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"F","6":"F","7":"P","8":"J","9":"P","10":"T","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-18":{"0":"F","1":"R","2":"P","3":"P","4":"NP","5":"F","6":"P","7":"P","8":"J","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"F","16":"P","17":"P","18":"P","19":"P","20":"J","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-21":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"F","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"F","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-22":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"J","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-23":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-24":{"0":"F","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-25":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-28":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"F","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"J","25":"P","26":"J","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-09-29":{"0":"F","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"F","31":"P","32":"P","33":"P","34":"P","35":"P","36":"F","37":"P","38":"P","39":"P"},"2026-09-30":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"F","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-01":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-02":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"F","22":"P","23":"P","24":"P","25":"F","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-05":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-06":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"F","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"F","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-07":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"J","10":"P","11":"J","12":"P","13":"P","14":"J","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-08":{"0":"F","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-09":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-12":{"0":"F","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"F","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-13":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-14":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"F","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"J","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-15":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"P","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"F","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-16":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"F","6":"P","7":"P","8":"P","9":"P","10":"P","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"J","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"P","30":"P","31":"P","32":"F","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"},"2026-10-19":{"0":"P","1":"R","2":"P","3":"P","4":"NP","5":"F","6":"P","7":"P","8":"P","9":"P","10":"F","11":"P","12":"P","13":"P","14":"P","15":"P","16":"P","17":"P","18":"P","19":"P","20":"P","21":"P","22":"P","23":"P","24":"P","25":"P","26":"P","27":"P","28":"P","29":"T","30":"T","31":"P","32":"P","33":"P","34":"P","35":"P","36":"P","37":"P","38":"P","39":"P"}};
+
+function syncOfficialAttendanceReport(manual) {
+  if (typeof OFFICIAL_LECCIONARIO_ATTENDANCE_7C !== 'object' || !OFFICIAL_LECCIONARIO_ATTENDANCE_7C) return;
+  if (!S.asistencia) S.asistencia = {};
+
+  // Limpiar fechas de prueba previas al inicio de clases (03 de Septiembre)
+  Object.keys(S.asistencia).forEach(d => {
+    if (d < '2026-09-03') delete S.asistencia[d];
+  });
+
+  // Sincronizar todas las 33 fechas oficiales del 1er Trimestre
+  Object.keys(OFFICIAL_LECCIONARIO_ATTENDANCE_7C).forEach(d => {
+    S.asistencia[d] = JSON.parse(JSON.stringify(OFFICIAL_LECCIONARIO_ATTENDANCE_7C[d]));
+  });
+
+  if (typeof saveAttendanceVault === 'function') {
+    saveAttendanceVault(S.asistencia);
+  }
+  if (typeof saveData === 'function') {
+    saveData(false, true);
+  }
+  if (typeof renderAttendance === 'function' && document.getElementById('attendancePanel')?.style.display !== 'none') {
+    renderAttendance();
+  }
+  if (typeof rpShowAll === 'function' && document.getElementById('reportPanel')?.style.display !== 'none') {
+    rpShowAll();
+  }
+  if (manual && typeof toast === 'function') {
+    toast('✔ Asistencia y Libretas sincronizadas al 100% con Reporte_Asistencia_7mo_C_1er_Trimestre (56 inasistencias, 6 atrasos)', '#16a34a');
+  }
+}
+
 function ensureAttendanceData() {
   if (!S.asistencia) S.asistencia = {};
 
@@ -12647,28 +12688,21 @@ function ensureAttendanceData() {
   }
 
   // 2. Limpiar registros previos al 03 de Septiembre (inicio del año lectivo) para no adulterar estadísticas
-  if (S.asistencia['2026-09-01']) delete S.asistencia['2026-09-01'];
-  if (S.asistencia['2026-09-02']) delete S.asistencia['2026-09-02'];
+  Object.keys(S.asistencia).forEach(d => {
+    if (d < '2026-09-03') delete S.asistencia[d];
+  });
 
-  // 3. Garantizar que el 3 de Septiembre de 2026 (primer día oficial) tenga registradas sus 4 faltas
-  if (!S.asistencia['2026-09-03']) {
-    S.asistencia['2026-09-03'] = {};
-    S.students.forEach((_, si) => {
-      S.asistencia['2026-09-03'][si] = 'P';
-    });
-  }
-
-  const sep3 = S.asistencia['2026-09-03'];
-  const hasFaltas3 = Object.values(sep3).some(v => v === 'F');
-  if (!hasFaltas3) {
-    S.students.forEach((name, si) => {
-      const up = (name || '').toUpperCase();
-      if (up.includes('ALCIVAR') && up.includes('AMY')) sep3[si] = 'F';
-      else if (up.includes('ANTE') && up.includes('MELISA')) sep3[si] = 'F';
-      else if ((up.includes('INIGUEZ') || up.includes('IÑIGUEZ')) && up.includes('DEMY')) sep3[si] = 'F';
-      else if (up.includes('VELASCO') && up.includes('ESTEBAN')) sep3[si] = 'F';
-      else if (!sep3[si]) sep3[si] = 'P';
-    });
+  // 3. Sincronizar con el reporte oficial verificado si faltan fechas o si es inicio
+  if (typeof OFFICIAL_LECCIONARIO_ATTENDANCE_7C === 'object' && OFFICIAL_LECCIONARIO_ATTENDANCE_7C) {
+    const offDates = Object.keys(OFFICIAL_LECCIONARIO_ATTENDANCE_7C);
+    const hasAll = offDates.every(d => S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0);
+    if (!hasAll || !S.asistencia['2026-10-19']) {
+      offDates.forEach(d => {
+        if (!S.asistencia[d] || Object.keys(S.asistencia[d]).length === 0) {
+          S.asistencia[d] = JSON.parse(JSON.stringify(OFFICIAL_LECCIONARIO_ATTENDANCE_7C[d]));
+        }
+      });
+    }
   }
 
   // 4. Asegurar que para cada fecha oficial registrada, todos los alumnos tengan un estado adecuado
@@ -13544,14 +13578,14 @@ function exportAttendanceXLSX() {
 }
 
 function getStudentAttendanceStats(si) {
-  if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100 };
+  if (!S.asistencia) return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 100, details: [] };
   const name = S.students[si] || '';
   const up = name.toUpperCase();
   const isJayko = up.includes('ANDRADE') && up.includes('JAYKO');
   const isEmily = up.includes('ALMEIDA') && up.includes('EMILY');
 
   if (isJayko) {
-    return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 0, isSpecial: true, statusText: 'Nunca se ha presentado' };
+    return { total: 0, p: 0, f: 0, fj: 0, a: 0, pct: 0, details: [], isSpecial: true, statusText: 'Nunca se ha presentado' };
   }
 
   const trimStartDate = S.calendar?.trimStart || '2026-09-03';
@@ -13561,20 +13595,30 @@ function getStudentAttendanceStats(si) {
     if (d < minDate) return false;
     if (isEmily && d > '2026-09-15') return false; // Emily se retiró el 15 de septiembre
     return S.asistencia[d] && Object.keys(S.asistencia[d]).length > 0;
-  });
+  }).sort();
   let p = 0, f = 0, fj = 0, a = 0;
+  const details = [];
   dates.forEach(d => {
     const status = (S.asistencia[d] && S.asistencia[d][si]) ? S.asistencia[d][si] : 'P';
-    if (status === 'P') p++;
-    else if (status === 'F') f++;
-    else if (status === 'FJ' || status === 'J') fj++;
-    else if (status === 'A' || status === 'T') a++;
-    else if (status !== 'R' && status !== 'NP') p++;
+    if (status === 'P') {
+      p++;
+    } else if (status === 'F') {
+      f++;
+      details.push({ date: d, status: 'F', label: 'Falta Injustificada', badge: '🔴 Falta Injustificada' });
+    } else if (status === 'FJ' || status === 'J') {
+      fj++;
+      details.push({ date: d, status: 'J', label: 'Falta Justificada', badge: '🔵 Falta Justificada' });
+    } else if (status === 'A' || status === 'T') {
+      a++;
+      details.push({ date: d, status: 'T', label: 'Atraso / Tardanza', badge: '🟡 Atraso' });
+    } else if (status !== 'R' && status !== 'NP') {
+      p++;
+    }
   });
   const total = dates.length;
   const pct = total > 0 ? Math.round(((p + a) / total) * 100) : 100;
   return { 
-    total, p, f, fj, a, pct,
+    total, p, f, fj, a, pct, details,
     isSpecial: isEmily,
     statusText: isEmily ? 'Retirada el 15/09/2026' : ''
   };
@@ -14085,14 +14129,21 @@ function printStudentProgressReportPDF(si) {
             <div style="font-size:0.74rem;font-weight:800;color:${statusBadgeColor}">${statusText}</div>
           </div>
           <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:8px;padding:10px 14px">
-            <div style="font-size:0.72rem;font-weight:900;color:#475569;text-transform:uppercase">📅 Resumen de Asistencia a la Fecha</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:0.72rem;font-weight:900;color:#475569;text-transform:uppercase">📅 Resumen Oficial de Asistencia</span>
+              <span style="font-size:0.75rem;font-weight:800;color:#1e40af">${attStats.pct}% Asistencia (${attStats.total} días)</span>
+            </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:0.78rem">
               <span>🟢 Asistencias: <strong>${attStats.p}</strong></span>
-              <span>🔴 Faltas: <strong>${attStats.f}</strong></span>
+              <span>🔴 Faltas Injust.: <strong>${attStats.f}</strong></span>
               <span>🔵 Justificadas: <strong>${attStats.fj}</strong></span>
               <span>🟡 Atrasos: <strong>${attStats.a}</strong></span>
             </div>
-            <div style="font-size:0.72rem;color:#64748b;margin-top:4px">Porcentaje de Asistencia: <strong>${attStats.pct}%</strong></div>
+            ${attStats.details && attStats.details.length > 0 ? `
+              <div style="margin-top:6px;padding-top:4px;border-top:1px dashed #cbd5e1;font-size:0.72rem;color:#334155">
+                <strong>Detalle de novedades:</strong> ${attStats.details.map(d => `<span style="display:inline-block;margin:2px 4px 0 0;padding:1px 5px;background:#fff;border:1px solid #cbd5e1;border-radius:4px;font-size:0.68rem"><strong>${formatDate(d.date)}</strong>: ${d.badge}</span>`).join('')}
+              </div>
+            ` : '<div style="font-size:0.72rem;color:#16a34a;margin-top:4px">✨ Sin inasistencias registradas.</div>'}
           </div>
         </div>
 
@@ -14222,13 +14273,22 @@ function buildStudentCard(si) {
         </div>
 
         <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px 16px">
-          <div style="font-size:0.75rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">📅 Resumen de Asistencia</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <span style="font-size:0.75rem;font-weight:900;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">📅 Resumen Oficial de Asistencia</span>
+            <span style="font-size:0.75rem;font-weight:800;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:12px">${attStats.pct}% Asistencia (${attStats.total} días)</span>
+          </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px">
             <span style="font-size:0.82rem;font-weight:700">🟢 Asistencias: <strong style="color:#16a34a">${attStats.p}</strong></span>
-            <span style="font-size:0.82rem;font-weight:700">🔴 Faltas: <strong style="color:#dc2626">${attStats.f}</strong></span>
-            <span style="font-size:0.82rem;font-weight:700">🔵 Justificadas: <strong style="color:#2563eb">${attStats.fj}</strong></span>
+            <span style="font-size:0.82rem;font-weight:700">🔴 Faltas Injust.: <strong style="color:#dc2626">${attStats.f}</strong></span>
+            <span style="font-size:0.82rem;font-weight:700">🔵 Faltas Justif.: <strong style="color:#2563eb">${attStats.fj}</strong></span>
             <span style="font-size:0.82rem;font-weight:700">🟡 Atrasos: <strong style="color:#d97706">${attStats.a}</strong></span>
           </div>
+          ${attStats.details && attStats.details.length > 0 ? `
+            <div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--border-color);display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+              <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted)">Fechas con novedad:</span>
+              ${attStats.details.map(d => `<span style="font-size:0.7rem;font-weight:800;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;padding:2px 6px">${formatDate(d.date)}: ${d.badge}</span>`).join('')}
+            </div>
+          ` : `<div style="margin-top:4px;font-size:0.72rem;color:#16a34a;font-weight:700">✨ Sin inasistencias ni atrasos registrados en el 1er Trimestre.</div>`}
         </div>
       </div>
 
@@ -14431,7 +14491,10 @@ function shareWhatsApp(si) {
   if (attStats.total > 0) {
     lines.push(``);
     lines.push(`───────────────────────────────`);
-    lines.push(`📅 *ASISTENCIA:* ${attStats.p} Asistencias · ${attStats.f} Faltas · ${attStats.a} Atrasos`);
+    lines.push(`📅 *ASISTENCIA OFICIAL:* ${attStats.p} Asistencias · ${attStats.f} Faltas Injust.${attStats.fj > 0 ? ` · ${attStats.fj} Justificadas` : ''} · ${attStats.a} Atrasos (${attStats.pct}% Asistencia)`);
+    if (attStats.details && attStats.details.length > 0) {
+      lines.push(`📌 *Fechas con Novedad:* ${attStats.details.map(d => `${d.date}: ${d.label}`).join('; ')}`);
+    }
   }
 
   lines.push(``);
