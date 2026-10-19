@@ -12713,18 +12713,11 @@ function ensureAttendanceData() {
         localStorage.setItem('notas_cache_v7', JSON.stringify(S));
       } catch(e) {}
     } else {
-      // Reconciliar novedades oficiales sobre cualquier fecha existente
+      // Si la versión ya fue sincronizada, solo añadir fechas que falten por completo
+      // NUNCA sobreescribir las ediciones manuales del docente (ej. justificar una falta)
       Object.keys(OFFICIAL_LECCIONARIO_ATTENDANCE_7C).forEach(d => {
         if (!S.asistencia[d] || Object.keys(S.asistencia[d]).length === 0) {
           S.asistencia[d] = JSON.parse(JSON.stringify(OFFICIAL_LECCIONARIO_ATTENDANCE_7C[d]));
-        } else {
-          const offDay = OFFICIAL_LECCIONARIO_ATTENDANCE_7C[d];
-          Object.keys(offDay).forEach(si => {
-            // Asegurar que faltas justificadas, injustificadas o atrasos oficiales prevalezcan
-            if (offDay[si] !== 'P') {
-              S.asistencia[d][si] = offDay[si];
-            }
-          });
         }
       });
     }
@@ -13326,6 +13319,13 @@ function setAttState(si, state) {
   if (typeof saveAttendanceVault === 'function') saveAttendanceVault(S.asistencia);
   saveData();
   renderAttendance();
+
+  const labels = { 'P': 'Presente', 'F': 'Falta Injustificada', 'T': 'Atraso / Tardanza', 'J': 'Falta Justificada' };
+  const colors = { 'P': '#16a34a', 'F': '#dc2626', 'T': '#d97706', 'J': '#2563eb' };
+  const sName = S.students[si] || 'Estudiante';
+  if (typeof toast === 'function') {
+    toast(`✔ ${sName.split(' ')[0]}: ${labels[state] || state} (${formatDate(dateStr)})`, colors[state] || '#2563eb');
+  }
 }
 
 function attMarkAll(state) {
