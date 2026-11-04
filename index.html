@@ -13799,6 +13799,14 @@ function rpShowOne(si) {
   }
 }
 
+function formatWeekLabel(w, wi) {
+  const raw = (typeof w === 'object' && w !== null ? (w.name || '') : String(w || '')).trim();
+  const up = raw.toUpperCase();
+  if (up.startsWith('SEMANA') || up.startsWith('SEM.')) return raw;
+  if (/SUMATIV|PROYECTO|EXAMEN|EVALUACI[OÓ]N/i.test(up)) return raw;
+  return `Semana ${(wi !== undefined ? wi + 1 : 1)}: ${raw}`;
+}
+
 function getStudentDetailedPerformance(si) {
   const result = {
     subjects: [],
@@ -13818,6 +13826,7 @@ function getStudentDetailedPerformance(si) {
       isQual,
       calc,
       activities: [],
+      weeks: [],
       lowActivities: [],
       improvedActivities: [],
       topActivities: []
@@ -13825,10 +13834,24 @@ function getStudentDetailedPerformance(si) {
 
     if (!isQual && mat.weeks && mat.cols) {
       const g = (mat.grades && mat.grades[si]) || {};
-      mat.weeks.forEach(w => {
+      mat.weeks.forEach((w, wi) => {
         const wName = getWeekName(w);
         const wTitle = getWeekTitle(w);
+        const wDest = (typeof getWeekDestreza === 'function') ? getWeekDestreza(w) : (typeof w === 'object' && w ? w.destreza || '' : '');
         const cols = mat.cols[wName] || [];
+
+        const weekGroup = {
+          weekIndex: wi,
+          weekName: wName,
+          weekTitle: wTitle,
+          destreza: wDest,
+          activities: [],
+          avg: null
+        };
+
+        let weekSum = 0;
+        let weekCount = 0;
+
         cols.forEach(col => {
           const key = wName + '||' + col.name;
           const rk = mName + '||' + si + '||' + wName + '||' + col.name;
@@ -13839,7 +13862,9 @@ function getStudentDetailedPerformance(si) {
             const num = parseFloat(rawVal);
             const actInfo = {
               week: wName,
+              weekIndex: wi,
               weekTitle: wTitle,
+              destreza: wDest,
               colName: col.name,
               score: rawVal,
               num: isNaN(num) ? null : num,
@@ -13847,8 +13872,11 @@ function getStudentDetailedPerformance(si) {
               type: col.type || 'ACT'
             };
             sData.activities.push(actInfo);
+            weekGroup.activities.push(actInfo);
 
             if (!isNaN(num)) {
+              weekSum += num;
+              weekCount++;
               if (isRec) {
                 sData.improvedActivities.push(actInfo);
                 result.improvements.push({ mat: mName, act: col.name, week: wName, score: rawVal });
@@ -13864,6 +13892,11 @@ function getStudentDetailedPerformance(si) {
             result.pendingActivities.push({ mat: mName, act: col.name, week: wName });
           }
         });
+
+        if (weekCount > 0) {
+          weekGroup.avg = (weekSum / weekCount).toFixed(2);
+        }
+        sData.weeks.push(weekGroup);
       });
     }
 
@@ -13955,22 +13988,38 @@ function printStudentProgressReportPDF(si) {
       const statusColor = isLow ? '#991b1b' : '#166534';
 
       let actsHtml = '';
-      if (sData.activities.length > 0) {
+      const evaluatedWeeks = (sData.weeks || []).filter(wGrp => wGrp.activities.length > 0);
+      if (evaluatedWeeks.length > 0) {
         actsHtml = `
-          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
-            ${sData.activities.map(act => {
-              const num = act.num;
-              const isActLow = num !== null && num < 7.00;
-              const isActTop = num !== null && num >= 9.00;
-              const badgeBg = act.isImproved ? '#f0fdf4' : (isActLow ? '#fff1f2' : '#f8fafc');
-              const badgeBorder = act.isImproved ? '#86efac' : (isActLow ? '#fecdd3' : '#e2e8f0');
-              const scoreColor = act.isImproved ? '#15803d' : (isActLow ? '#dc2626' : (isActTop ? '#15803d' : '#0f172a'));
+          <div style="margin-top:5px;display:flex;flex-direction:column;gap:5px">
+            ${evaluatedWeeks.map((wGrp) => {
+              const wi = wGrp.weekIndex;
+              const wc = (typeof weekColor === 'function') ? weekColor(mName, wGrp.weekName, wi) : { h: '#1e40af', s: '#3b82f6', c: 'rgba(59,130,246,0.06)' };
+              const weekLabel = formatWeekLabel(wGrp.weekName, wi);
               return `
-                <span style="background:${badgeBg};border:1px solid ${badgeBorder};border-radius:4px;padding:1px 5px;font-size:0.66rem;display:inline-flex;align-items:center;gap:3px;max-width:100%" title="${escHTML(act.week)}: ${escHTML(act.colName)}">
-                  <span style="color:#475569;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">${escHTML(act.colName)}:</span>
-                  <strong style="color:${scoreColor};font-family:monospace;font-size:0.75rem">${act.score}</strong>
-                  ${act.isImproved ? '<span style="font-size:0.58rem;background:#15803d;color:#fff;padding:0 3px;border-radius:2px;font-weight:700">Mejora</span>' : ''}
-                </span>
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:3px solid ${wc.h};border-radius:4px;padding:3px 6px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:2px">
+                    <span style="font-size:0.67rem;font-weight:800;color:${wc.h}">📅 ${escHTML(weekLabel)}</span>
+                    ${wGrp.avg !== null ? `<span style="font-size:0.63rem;color:#64748b;font-weight:700">Prom: <strong style="font-family:monospace;color:${parseFloat(wGrp.avg) < 7 ? '#dc2626' : '#15803d'}">${wGrp.avg}</strong></span>` : ''}
+                  </div>
+                  <div style="display:flex;gap:4px;flex-wrap:wrap">
+                    ${wGrp.activities.map(act => {
+                      const num = act.num;
+                      const isActLow = num !== null && num < 7.00;
+                      const isActTop = num !== null && num >= 9.00;
+                      const badgeBg = act.isImproved ? '#f0fdf4' : (isActLow ? '#fff1f2' : '#ffffff');
+                      const badgeBorder = act.isImproved ? '#86efac' : (isActLow ? '#fecdd3' : '#cbd5e1');
+                      const scoreColor = act.isImproved ? '#15803d' : (isActLow ? '#dc2626' : (isActTop ? '#15803d' : '#0f172a'));
+                      return `
+                        <span style="background:${badgeBg};border:1px solid ${badgeBorder};border-radius:3px;padding:1px 5px;font-size:0.65rem;display:inline-flex;align-items:center;gap:3px">
+                          <span style="color:#334155;font-weight:600">${escHTML(act.colName)}:</span>
+                          <strong style="color:${scoreColor};font-family:monospace;font-size:0.74rem">${act.score}</strong>
+                          ${act.isImproved ? '<span style="font-size:0.56rem;background:#15803d;color:#fff;padding:0 3px;border-radius:2px;font-weight:700">Mejora</span>' : ''}
+                        </span>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
               `;
             }).join('')}
           </div>
@@ -14492,30 +14541,59 @@ function buildStudentCard(si) {
       const mBg = isLow ? '#fff5f5' : 'var(--bg-card)';
 
       let actsHTML = '';
-      if (sData.activities.length > 0) {
+      const evaluatedWeeks = (sData.weeks || []).filter(wGrp => wGrp.activities.length > 0);
+
+      if (evaluatedWeeks.length > 0) {
         actsHTML = `
-          <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-color)">
-            <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase">
-              📝 Actividades Evaluadas:
+          <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border-color);display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px">
+              📝 Actividades Evaluadas por Semana:
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              ${sData.activities.map(act => {
-                const num = act.num;
-                const isActLow = num !== null && num < 7.00;
-                const isActTop = num !== null && num >= 9.00;
-                const badgeBg = act.isImproved ? '#dcfce7' : (isActLow ? '#fee2e2' : (isActTop ? '#f0fdf4' : '#f8fafc'));
-                const badgeColor = act.isImproved ? '#15803d' : (isActLow ? '#b91c1c' : (isActTop ? '#15803d' : '#334155'));
-                const badgeBorder = act.isImproved ? '#86efac' : (isActLow ? '#fca5a5' : '#e2e8f0');
-                return `
-                  <div style="background:${badgeBg};border:1px solid ${badgeBorder};border-radius:8px;padding:5px 10px;font-size:0.78rem;display:inline-flex;align-items:center;gap:6px">
-                    <span style="font-size:0.72rem;color:var(--text-muted);font-weight:700">${escHTML(act.week)}:</span>
-                    <span style="font-weight:700;color:var(--text-main)">${escHTML(act.colName)}</span>
-                    <strong style="color:${badgeColor};font-family:var(--font-mono);font-size:0.86rem">${act.score}</strong>
-                    ${act.isImproved ? '<span style="font-size:0.7rem;background:#15803d;color:#fff;padding:1px 5px;border-radius:4px">Mejora 🎉</span>' : ''}
+            ${evaluatedWeeks.map((wGrp) => {
+              const wi = wGrp.weekIndex;
+              const wc = (typeof weekColor === 'function') ? weekColor(mName, wGrp.weekName, wi) : { h: '#1e40af', s: '#3b82f6', c: 'rgba(59,130,246,0.06)' };
+              const weekLabel = formatWeekLabel(wGrp.weekName, wi);
+              const isSumativa = /SUMATIV|PROYECTO|EXAMEN/i.test(wGrp.weekName);
+              const weekIcon = isSumativa ? '🎯' : '📅';
+
+              return `
+                <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:4px solid ${wc.h};border-radius:8px;padding:9px 13px;box-shadow:0 1px 2px rgba(0,0,0,0.02)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border-color)">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                      <span style="font-size:0.83rem;font-weight:900;color:${wc.h}">
+                        ${weekIcon} ${escHTML(weekLabel)}
+                      </span>
+                      ${wGrp.destreza ? `<span style="font-size:0.68rem;background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:4px;font-weight:700;color:var(--text-muted);border:1px solid var(--border-color)">${escHTML(wGrp.destreza)}</span>` : ''}
+                      <span style="font-size:0.7rem;color:var(--text-muted);background:var(--bg-card-subtle);padding:1px 6px;border-radius:4px;border:1px solid var(--border-color)">
+                        ${wGrp.activities.length} ${wGrp.activities.length === 1 ? 'actividad' : 'actividades'}
+                      </span>
+                    </div>
+                    ${wGrp.avg !== null ? `
+                      <span style="font-size:0.73rem;color:var(--text-muted);font-weight:700">
+                        Promedio semana: <strong style="font-family:var(--font-mono);font-size:0.84rem;color:${parseFloat(wGrp.avg) < 7 ? '#dc2626' : '#15803d'}">${wGrp.avg} / 10</strong>
+                      </span>
+                    ` : ''}
                   </div>
-                `;
-              }).join('')}
-            </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    ${wGrp.activities.map(act => {
+                      const num = act.num;
+                      const isActLow = num !== null && num < 7.00;
+                      const isActTop = num !== null && num >= 9.00;
+                      const badgeBg = act.isImproved ? '#dcfce7' : (isActLow ? '#fee2e2' : (isActTop ? '#f0fdf4' : '#f8fafc'));
+                      const badgeColor = act.isImproved ? '#15803d' : (isActLow ? '#b91c1c' : (isActTop ? '#15803d' : '#334155'));
+                      const badgeBorder = act.isImproved ? '#86efac' : (isActLow ? '#fca5a5' : '#e2e8f0');
+                      return `
+                        <div style="background:${badgeBg};border:1px solid ${badgeBorder};border-radius:8px;padding:5px 10px;font-size:0.78rem;display:inline-flex;align-items:center;gap:6px">
+                          <span style="font-weight:700;color:var(--text-main)">${escHTML(act.colName)}:</span>
+                          <strong style="color:${badgeColor};font-family:var(--font-mono);font-size:0.86rem">${act.score}</strong>
+                          ${act.isImproved ? '<span style="font-size:0.7rem;background:#15803d;color:#fff;padding:1px 5px;border-radius:4px">Mejora 🎉</span>' : ''}
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         `;
       } else {
