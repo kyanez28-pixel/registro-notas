@@ -6767,6 +6767,48 @@ body.in-focus-mode {
           </div>
         </div>
 
+        <!-- Banner de Modo Edición Activo -->
+        <div id="atencionEditNoticeBanner" style="display:none;background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-bottom:14px;color:#92400e">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:1.3rem">✏️</span>
+              <div>
+                <strong style="font-size:0.86rem;color:#b45309">MODO EDICIÓN ACTIVO:</strong>
+                <div style="font-size:0.78rem">Modificando atención de: <strong id="atencionEditStudentName"></strong> (<span id="atencionEditDate"></span>)</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button type="button" class="btn btn-outline" style="font-size:0.74rem;background:#ffffff;font-weight:700" onclick="resetAtencionForm()">
+                ✖ Salir / Nueva Ficha
+              </button>
+              <button type="button" class="btn btn-danger" style="font-size:0.74rem;font-weight:800;background:#dc2626;color:#fff" onclick="deleteCurrentEditingAtencion()">
+                🗑️ Eliminar este Registro
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector Rápido de Atenciones Existentes del Estudiante -->
+        <div id="atencionExistingRecordsBox" style="background:#f8fafc;padding:10px 14px;border-radius:8px;border:1.5px dashed #cbd5e1;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:260px">
+            <span style="font-size:1.1rem">📁</span>
+            <div style="flex:1">
+              <div style="font-size:0.75rem;font-weight:800;color:#334155">Atenciones y Citaciones Registradas de este Estudiante:</div>
+              <select id="atencionExistingRecordsSel" onchange="onSelectExistingAtencion(this.value)" style="width:100%;font-size:0.8rem;padding:4px 8px;border-radius:6px;border:1px solid #94a3b8;font-weight:700">
+                <option value="">-- Nueva Atención (Crear nuevo registro) --</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button type="button" id="btnAtencionLoadSelected" class="btn btn-warning" onclick="loadSelectedExistingAtencion()" style="font-size:0.74rem;font-weight:800;display:none">
+              ✏️ Cargar para Editar
+            </button>
+            <button type="button" id="btnAtencionDeleteSelected" class="btn btn-danger" onclick="deleteSelectedExistingAtencion()" style="font-size:0.74rem;font-weight:800;display:none;background:#dc2626;color:#fff">
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+
         <!-- Banner de Alerta Temprana Dinámico -->
         <div id="atencionAlertaBanner" style="display:none;background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:10px 14px;margin-bottom:14px;color:#991b1b">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -6876,7 +6918,7 @@ body.in-focus-mode {
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-warning" onclick="saveAtencionToHistory()" style="font-weight:900;padding:8px 16px;box-shadow:0 3px 10px rgba(217,119,6,0.3)">
+          <button id="btnAtencionSave" class="btn btn-warning" onclick="saveAtencionToHistory()" style="font-weight:900;padding:8px 16px;box-shadow:0 3px 10px rgba(217,119,6,0.3)">
             💾 Guardar en Bitácora & Historial
           </button>
           <button class="btn btn-primary" onclick="printAtencionFicha()" style="font-weight:800">
@@ -6884,6 +6926,12 @@ body.in-focus-mode {
           </button>
           <button class="btn btn-outline" onclick="openCitacionSlipFromForm()" style="font-weight:800" title="Imprimir boleta de citación recortable">
             ✉️ Generar Boleta de Citación
+          </button>
+          <button id="btnAtencionCancelEdit" class="btn btn-outline" onclick="resetAtencionForm()" style="display:none;font-weight:700">
+            ✖ Cancelar Edición
+          </button>
+          <button id="btnAtencionDeleteCurrent" class="btn btn-danger" onclick="deleteCurrentEditingAtencion()" style="display:none;font-weight:800;background:#dc2626;color:#fff;border:none">
+            🗑️ Eliminar este Registro
           </button>
           <button id="btnAtencionAlertDece" class="btn btn-danger" onclick="openDeceReportForCurrent()" style="font-weight:900;display:none;background:#dc2626;color:#fff;border:none;margin-left:auto;box-shadow:0 3px 10px rgba(220,38,38,0.35)">
             🚨 Crear Informe al DECE por Incumplimiento
@@ -22134,6 +22182,7 @@ function exportReunionXLSX() {
 
 let _activeAtencionSubTab = 'registro';
 let _atencionSummaryVisible = true;
+let _editingAtnId = null;
 
 function switchAtencionSubTab(subTab) {
   _activeAtencionSubTab = subTab;
@@ -22163,6 +22212,8 @@ function switchAtencionSubTab(subTab) {
 
   if (subTab === 'registro') {
     populateAtencionStudentSelect();
+    const sel = document.getElementById('atencionStudentSel');
+    if (sel) populateAtencionExistingRecordsDropdown(sel.value);
     updateAtencionPreview();
   } else if (subTab === 'historial') {
     renderAtencionHistoryTable();
@@ -22237,6 +22288,27 @@ function populateAtencionStudentSelect() {
 function onAtencionStudentChange(siVal) {
   ensureStudentProfiles();
   const si = parseInt(siVal || '0', 10);
+
+  // Si cambia manualmente de estudiante mientras editaba otro alumno, limpiar modo edición
+  if (_editingAtnId) {
+    const rec = (S.herramientas.atenciones || []).find(r => r.id === _editingAtnId);
+    if (rec && parseInt(rec.studentIdx, 10) !== si) {
+      _editingAtnId = null;
+      const editBanner = document.getElementById('atencionEditNoticeBanner');
+      const btnSave = document.getElementById('btnAtencionSave');
+      const btnCancel = document.getElementById('btnAtencionCancelEdit');
+      const btnDelCur = document.getElementById('btnAtencionDeleteCurrent');
+      if (editBanner) editBanner.style.display = 'none';
+      if (btnSave) {
+        btnSave.innerHTML = '💾 Guardar en Bitácora & Historial';
+        btnSave.className = 'btn btn-warning';
+      }
+      if (btnCancel) btnCancel.style.display = 'none';
+      if (btnDelCur) btnDelCur.style.display = 'none';
+    }
+  }
+
+  populateAtencionExistingRecordsDropdown(si);
   const p = S.studentProfiles && S.studentProfiles[si];
   const repEl = document.getElementById('atencionRepName');
   const parEl = document.getElementById('atencionParentesco');
@@ -22325,7 +22397,101 @@ function onAtencionAsistenciaChange(val) {
   updateAtencionPreview();
 }
 
+function populateAtencionExistingRecordsDropdown(si) {
+  const sel = document.getElementById('atencionExistingRecordsSel');
+  const btnLoad = document.getElementById('btnAtencionLoadSelected');
+  const btnDel = document.getElementById('btnAtencionDeleteSelected');
+  if (!sel) return;
+
+  ensureHerramientas();
+  const records = S.herramientas.atenciones || [];
+  const studentName = S.students && S.students[si];
+  const list = records.filter(r => {
+    return parseInt(r.studentIdx, 10) === parseInt(si, 10) || 
+           (studentName && r.stName && r.stName.trim().toUpperCase() === studentName.trim().toUpperCase());
+  });
+
+  if (list.length === 0) {
+    sel.innerHTML = '<option value="">-- No registra atenciones previas (Crear nueva) --</option>';
+    if (btnLoad) btnLoad.style.display = 'none';
+    if (btnDel) btnDel.style.display = 'none';
+    return;
+  }
+
+  sel.innerHTML = '<option value="">-- Seleccionar registro previo (' + list.length + ') para Editar o Eliminar --</option>' + 
+    list.map((r, idx) => {
+      const asistIcon = (r.estadoAsistencia === 'asistio' ? '🟢 Vino' : (r.estadoAsistencia === 'no_asistio' ? '🔴 NO VINO' : (r.estadoAsistencia === 'justifico' ? '🟡 Justificó' : '⚪ Pendiente')));
+      const firmaIcon = (r.firmoAcuerdo === 'si' ? '✍️ Firmó' : '❌ No firmó');
+      const fStr = (r.fechaHora || r.fechaCitacion || 'Sin fecha').split('·')[0].trim();
+      return `<option value="${r.id}">${idx + 1}. [${fStr}] ${escHTML(r.tipoLlamado || 'Atención')} · ${asistIcon} · ${firmaIcon}</option>`;
+    }).join('');
+
+  if (_editingAtnId && list.some(r => r.id === _editingAtnId)) {
+    sel.value = _editingAtnId;
+    if (btnLoad) btnLoad.style.display = 'inline-flex';
+    if (btnDel) btnDel.style.display = 'inline-flex';
+  } else {
+    sel.value = '';
+    if (btnLoad) btnLoad.style.display = 'none';
+    if (btnDel) btnDel.style.display = 'none';
+  }
+}
+
+function onSelectExistingAtencion(val) {
+  const btnLoad = document.getElementById('btnAtencionLoadSelected');
+  const btnDel = document.getElementById('btnAtencionDeleteSelected');
+  if (val) {
+    if (btnLoad) btnLoad.style.display = 'inline-flex';
+    if (btnDel) btnDel.style.display = 'inline-flex';
+    loadAtencionToForm(val);
+  } else {
+    if (btnLoad) btnLoad.style.display = 'none';
+    if (btnDel) btnDel.style.display = 'none';
+    resetAtencionForm();
+  }
+}
+
+function loadSelectedExistingAtencion() {
+  const sel = document.getElementById('atencionExistingRecordsSel');
+  const val = sel?.value;
+  if (!val) {
+    toast('⚠️ Seleccione una atención previa para editar', '#dc2626');
+    return;
+  }
+  loadAtencionToForm(val);
+}
+
+function deleteSelectedExistingAtencion() {
+  const sel = document.getElementById('atencionExistingRecordsSel');
+  const val = sel?.value;
+  if (!val) {
+    toast('⚠️ Seleccione una atención previa para eliminar', '#dc2626');
+    return;
+  }
+  deleteAtencionEntry(val);
+}
+
+function deleteCurrentEditingAtencion() {
+  if (!_editingAtnId) return;
+  deleteAtencionEntry(_editingAtnId);
+}
+
 function resetAtencionForm() {
+  _editingAtnId = null;
+
+  const editBanner = document.getElementById('atencionEditNoticeBanner');
+  const btnSave = document.getElementById('btnAtencionSave');
+  const btnCancel = document.getElementById('btnAtencionCancelEdit');
+  const btnDelCur = document.getElementById('btnAtencionDeleteCurrent');
+
+  if (editBanner) editBanner.style.display = 'none';
+  if (btnSave) {
+    btnSave.innerHTML = '💾 Guardar en Bitácora & Historial';
+    btnSave.className = 'btn btn-warning';
+  }
+  if (btnCancel) btnCancel.style.display = 'none';
+  if (btnDelCur) btnDelCur.style.display = 'none';
+
   const repEl = document.getElementById('atencionRepName');
   const conEl = document.getElementById('atencionContacto');
   const hecEl = document.getElementById('atencionHechos');
@@ -22354,10 +22520,13 @@ function resetAtencionForm() {
   if (btnDece) btnDece.style.display = 'none';
 
   const sel = document.getElementById('atencionStudentSel');
-  if (sel) onAtencionStudentChange(sel.value);
+  if (sel) {
+    onAtencionStudentChange(sel.value);
+    populateAtencionExistingRecordsDropdown(sel.value);
+  }
 
   updateAtencionPreview();
-  toast('✨ Formulario de atención listo', '#2563eb');
+  toast('✨ Formulario de nueva atención listo', '#2563eb');
 }
 
 function saveAtencionToHistory() {
@@ -22382,6 +22551,43 @@ function saveAtencionToHistory() {
     return;
   }
 
+  // Si estamos en modo edición, actualizar el registro existente
+  if (_editingAtnId) {
+    const existing = (S.herramientas.atenciones || []).find(r => r.id === _editingAtnId);
+    if (existing) {
+      existing.studentIdx = si;
+      existing.stName = stName;
+      existing.repName = repName;
+      existing.parentesco = parentesco;
+      existing.tipoLlamado = tipoLlamado;
+      existing.fechaCitacion = fechaCitacion;
+      existing.fechaHora = fechaHora;
+      existing.motivo = motivo;
+      existing.estadoAsistencia = estadoAsistencia;
+      existing.firmoAcuerdo = firmoAcuerdo;
+      existing.contacto = contacto;
+      existing.hechos = hechos;
+      existing.compromisos = compromisos;
+      existing.updatedAt = new Date().toISOString();
+
+      saveData();
+      renderAtencionHistoryTable();
+      populateAtencionStudentSelect();
+      populateAtencionExistingRecordsDropdown(si);
+      updateAtencionPreview();
+
+      // Actualizar subtítulo en banner de edición
+      const editName = document.getElementById('atencionEditStudentName');
+      const editDate = document.getElementById('atencionEditDate');
+      if (editName) editName.textContent = stName;
+      if (editDate) editDate.textContent = fechaHora || fechaCitacion;
+
+      toast(`✔ Cambios guardados con éxito en la atención de ${stName}`, '#16a34a');
+      return;
+    }
+  }
+
+  // Si no está editando, crear registro nuevo
   const record = {
     id: 'atn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
     studentIdx: si,
@@ -22404,6 +22610,7 @@ function saveAtencionToHistory() {
   saveData();
   renderAtencionHistoryTable();
   populateAtencionStudentSelect();
+  populateAtencionExistingRecordsDropdown(si);
 
   const msg = estadoAsistencia === 'asistio' 
     ? `✔ Ficha de atención para ${stName} guardada (Vino y firmó)` 
@@ -22557,14 +22764,14 @@ function renderAtencionHistoryTable() {
           ${firmaBadge}
         </td>
         <td style="padding:6px 8px;text-align:center;white-space:nowrap">
-          <button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="loadAtencionToForm('${r.id}')" title="Cargar y editar">✎</button>
-          <button class="btn btn-primary" style="padding:2px 6px;font-size:0.72rem" onclick="printAtencionEntry('${r.id}')" title="Imprimir ficha">🖨️</button>
+          <button class="btn btn-warning" style="padding:3px 8px;font-size:0.72rem;font-weight:800;background:#fef3c7;color:#92400e;border:1px solid #f59e0b" onclick="loadAtencionToForm('${r.id}')" title="Cargar y editar esta atención">✏️ Editar</button>
+          <button class="btn btn-primary" style="padding:3px 8px;font-size:0.72rem;font-weight:700" onclick="printAtencionEntry('${r.id}')" title="Imprimir ficha">🖨️ Ficha</button>
           ${estAsist === 'no_asistio' || estFirma === 'no' ? `
-            <button class="btn btn-danger" style="padding:2px 7px;font-size:0.72rem;font-weight:800;background:#dc2626;color:#fff" onclick="openDeceReportForAtn('${r.id}')" title="Generar Informe Oficial para el DECE por incumplimiento">
+            <button class="btn btn-danger" style="padding:3px 7px;font-size:0.72rem;font-weight:800;background:#dc2626;color:#fff" onclick="openDeceReportForAtn('${r.id}')" title="Generar Informe Oficial para el DECE por incumplimiento">
               🚨 DECE
             </button>
           ` : ''}
-          <button class="btn btn-danger" style="padding:2px 6px;font-size:0.72rem" onclick="deleteAtencionEntry('${r.id}')" title="Eliminar registro">🗑️</button>
+          <button class="btn btn-danger" style="padding:3px 8px;font-size:0.72rem;font-weight:800;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5" onclick="deleteAtencionEntry('${r.id}')" title="Eliminar este registro de la bitácora">🗑️ Eliminar</button>
         </td>
       </tr>
     `;
@@ -22644,6 +22851,11 @@ function renderAtencionSummaryTable() {
           <button class="btn btn-outline" style="padding:2px 6px;font-size:0.7rem;font-weight:800" onclick="openAtencionForStudent(${si})" title="Citar o registrar nueva atención">
             + Citar
           </button>
+          ${stats.total > 0 ? `
+            <button class="btn btn-warning" style="padding:2px 6px;font-size:0.7rem;font-weight:800;background:#fef3c7;color:#92400e;border:1px solid #f59e0b" onclick="openAtencionForStudent(${si})" title="Ver o editar atenciones registradas">
+              ✏️ Editar (${stats.total})
+            </button>
+          ` : ''}
           ${stats.inasistencias > 0 ? `
             <button class="btn btn-danger" style="padding:2px 6px;font-size:0.7rem;font-weight:800;background:#dc2626;color:#fff" onclick="openDeceReportForStudent(${si})" title="Generar Informe para el DECE por incomparecencia">
               🚨 Informe DECE
@@ -22715,6 +22927,7 @@ function loadAtencionToForm(atnId) {
   const record = (S.herramientas.atenciones || []).find(r => r.id === atnId);
   if (!record) return;
 
+  _editingAtnId = atnId;
   switchAtencionSubTab('registro');
 
   const sel = document.getElementById('atencionStudentSel');
@@ -22743,21 +22956,59 @@ function loadAtencionToForm(atnId) {
   if (hecEl) hecEl.value = record.hechos || '';
   if (comEl) comEl.value = record.compromisos || '';
 
+  // Actualizar banner y controles de modo edición
+  const editBanner = document.getElementById('atencionEditNoticeBanner');
+  const editName = document.getElementById('atencionEditStudentName');
+  const editDate = document.getElementById('atencionEditDate');
+  const btnSave = document.getElementById('btnAtencionSave');
+  const btnCancel = document.getElementById('btnAtencionCancelEdit');
+  const btnDelCur = document.getElementById('btnAtencionDeleteCurrent');
+
+  if (editBanner) editBanner.style.display = 'block';
+  if (editName) editName.textContent = record.stName;
+  if (editDate) editDate.textContent = record.fechaHora || record.fechaCitacion || 'Sin fecha';
+  if (btnSave) {
+    btnSave.innerHTML = '💾 Guardar Cambios (Actualizar Registro)';
+    btnSave.className = 'btn btn-success';
+  }
+  if (btnCancel) btnCancel.style.display = 'inline-flex';
+  if (btnDelCur) btnDelCur.style.display = 'inline-flex';
+
+  // Sincronizar selector de atenciones existentes
+  populateAtencionExistingRecordsDropdown(record.studentIdx);
+  const exSel = document.getElementById('atencionExistingRecordsSel');
+  if (exSel) exSel.value = atnId;
+
   const btnDece = document.getElementById('btnAtencionAlertDece');
   if (btnDece) btnDece.style.display = (record.estadoAsistencia === 'no_asistio' || record.firmoAcuerdo === 'no') ? 'inline-flex' : 'none';
 
   updateAtencionPreview();
-  toast('✔ Ficha cargada en formulario', '#2563eb');
+  toast(`✏️ Modo Edición: Atención de ${record.stName}`, '#2563eb');
 }
 
 function deleteAtencionEntry(atnId) {
   ensureHerramientas();
-  if (!confirm('¿Desea eliminar este registro de atención de la bitácora?')) return;
+  const record = (S.herramientas.atenciones || []).find(r => r.id === atnId);
+  const stName = record ? (record.stName || 'este estudiante') : 'este registro';
+  const fecha = record ? (record.fechaHora || record.fechaCitacion || '') : '';
+
+  if (!confirm(`¿Está seguro de ELIMINAR permanentemente esta atención de la bitácora?\n\nEstudiante: ${stName}\nFecha: ${fecha}`)) {
+    return;
+  }
+
   S.herramientas.atenciones = S.herramientas.atenciones.filter(r => r.id !== atnId);
   saveData();
   renderAtencionHistoryTable();
   populateAtencionStudentSelect();
-  toast('🗑️ Registro de atención eliminado', '#b45309');
+
+  const sel = document.getElementById('atencionStudentSel');
+  if (sel) populateAtencionExistingRecordsDropdown(sel.value);
+
+  if (_editingAtnId === atnId) {
+    resetAtencionForm();
+  }
+
+  toast('🗑️ Registro de atención eliminado de la bitácora', '#b45309');
 }
 
 function printAtencionEntry(atnId) {
