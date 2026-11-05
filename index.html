@@ -14152,6 +14152,56 @@ function printStudentProgressReportPDF(si) {
   const cedula = profile.cedula || '—';
   const repCedula = profile.rep_cedula || '—';
   const fechaHoy = new Date().toLocaleDateString('es-EC', { day: '2-digit', month: 'long', year: 'numeric' });
+  const vStats = (typeof getStudentVisitsCount === 'function') 
+    ? getStudentVisitsCount(si) 
+    : { total: 0, asistencias: 0, inasistencias: 0, justificados: 0, firmados: 0, records: [] };
+
+  let atencionHistoryHtml = '';
+  if (vStats.records && vStats.records.length > 0) {
+    atencionHistoryHtml = `
+      <table style="width:100%;border-collapse:collapse;font-size:0.70rem;margin-top:3px">
+        <thead>
+          <tr style="background:#f1f5f9;border:1px solid #cbd5e1;color:#1e293b">
+            <th style="padding:4px 6px;text-align:left;width:75px">Fecha</th>
+            <th style="padding:4px 6px;text-align:left;width:125px">Convocatoria / Motivo</th>
+            <th style="padding:4px 6px;text-align:center;width:95px">¿Vino? (Asistencia)</th>
+            <th style="padding:4px 6px;text-align:center;width:80px">Acuerdo</th>
+            <th style="padding:4px 6px;text-align:left">Acuerdos & Compromisos Adquiridos</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${vStats.records.map(r => {
+            const asist = (r.estadoAsistencia === 'asistio' || !r.estadoAsistencia)
+              ? '<span style="color:#166534;font-weight:800">🟢 Asistió</span>' 
+              : (r.estadoAsistencia === 'no_asistio' 
+                  ? '<span style="color:#b91c1c;font-weight:900">🔴 NO VINO</span>' 
+                  : '<span style="color:#854d0e;font-weight:800">🟡 Justificó</span>');
+            const firma = (r.firmoAcuerdo === 'si' || (!r.firmoAcuerdo && (r.estadoAsistencia === 'asistio' || !r.estadoAsistencia)))
+              ? '<span style="color:#15803d;font-weight:800">✍️ Firmado</span>' 
+              : '<span style="color:#b91c1c;font-weight:800">❌ No Firmó</span>';
+            const comp = r.compromisos 
+              ? escHTML(r.compromisos.replace(/\n/g, ' · ')) 
+              : (r.hechos ? escHTML(r.hechos.replace(/\n/g, ' · ')) : 'Atención pedagógica registrada en bitácora.');
+            return `
+              <tr style="border:1px solid #cbd5e1;background:${r.estadoAsistencia === 'no_asistio' ? '#fff5f5' : '#ffffff'}">
+                <td style="padding:4px 6px;font-weight:700">${escHTML((r.fechaHora || '').split('·')[0] || r.fechaHora || '—')}</td>
+                <td style="padding:4px 6px;font-weight:700;color:#1e3a8a">${escHTML(r.tipoLlamado || r.motivo || 'Atención')}</td>
+                <td style="padding:4px 6px;text-align:center">${asist}</td>
+                <td style="padding:4px 6px;text-align:center">${firma}</td>
+                <td style="padding:4px 6px;color:#334155">${comp}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  } else {
+    atencionHistoryHtml = `
+      <div style="font-size:0.71rem;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;padding:5px 10px;font-style:italic">
+        💬 Sin registros de citaciones o atenciones presenciales en este trimestre escolar (Total: 0 visitas · 0 compromisos firmados).
+      </div>
+    `;
+  }
 
   // 1. Render subject cards in compact 2-column grid
   let subjectsGridHtml = '';
@@ -14458,13 +14508,14 @@ function printStudentProgressReportPDF(si) {
         </div>
 
         <!-- Ficha de Datos -->
-        <div class="grid-meta">
+        <div class="grid-meta" style="grid-template-columns:repeat(4, 1fr)">
           <div><strong>Estudiante:</strong><br>${escHTML(name)}</div>
           <div><strong>Cédula:</strong><br>${escHTML(cedula)}</div>
           <div><strong>Docente Tutor:</strong><br>${escHTML(S.docente || 'Lcdo. Kléver Yánez')}</div>
-          <div><strong>Representante Legal:</strong><br>${escHTML(repName)} ${escHTML(repRel)}</div>
-          <div><strong>Teléfono:</strong><br>${escHTML(repTel)}</div>
-          <div><strong>Fecha de Emisión:</strong><br>${escHTML(fechaHoy)}</div>
+          <div><strong>Fecha Emisión:</strong><br>${escHTML(fechaHoy)}</div>
+          <div><strong>Representante:</strong><br>${escHTML(repName)} ${escHTML(repRel)}</div>
+          <div><strong>Teléfono/WhatsApp:</strong><br>${escHTML(repTel)}</div>
+          <div style="grid-column:span 2"><strong>Atención a Padres:</strong><br><span style="font-weight:800;color:${vStats.asistencias>0?'#15803d':'#475569'}">🟢 ${vStats.asistencias} visitas · ✍️ ${vStats.firmados} acuerdos ${vStats.inasistencias > 0 ? `· <span style="color:#dc2626">🔴 ${vStats.inasistencias} inasistencias</span>` : ''}</span></div>
         </div>
 
         <!-- Fila de Resumen: Promedio y Asistencia -->
@@ -14548,6 +14599,17 @@ function printStudentProgressReportPDF(si) {
             ${subjectsTableRows}
           </tbody>
         </table>
+
+        <!-- ══ SECCIÓN OFICIAL: HISTORIAL DE ATENCIÓN A PADRES & ACUERDOS DE COMPROMISO ══ -->
+        <div class="atencion-history-box" style="margin-top:10px;margin-bottom:8px;page-break-inside:avoid;break-inside:avoid">
+          <div style="font-size:0.78rem;font-weight:900;color:#0f172a;margin-bottom:4px;border-bottom:1px solid #cbd5e1;padding-bottom:2px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+            <span>💬 Historial de Atención a Padres & Registro de Acuerdos de Compromiso:</span>
+            <span style="font-size:0.70rem;font-weight:800;color:#1e40af;background:#eff6ff;padding:1px 6px;border-radius:4px;border:1px solid #bfdbfe">
+              🟢 ${vStats.asistencias} visitas presenciales · ✍️ ${vStats.firmados} acuerdos firmados ${vStats.inasistencias > 0 ? `· <span style="color:#dc2626">🔴 ${vStats.inasistencias} inasistencias</span>` : ''}
+            </span>
+          </div>
+          ${atencionHistoryHtml}
+        </div>
 
         <!-- Compromiso Familiar -->
         <div class="compromiso-box" style="background:#fffbeb;border:1.2px solid #fde68a;border-radius:6px;padding:6px 10px;margin-top:8px;font-size:0.70rem;color:#92400e;page-break-inside:avoid;break-inside:avoid">
@@ -22132,7 +22194,11 @@ function getStudentLowSubjects(si) {
 function getStudentVisitsCount(si) {
   ensureHerramientas();
   const records = S.herramientas.atenciones || [];
-  const studentRecords = records.filter(r => r.studentIdx === si);
+  const studentName = S.students && S.students[si];
+  const studentRecords = records.filter(r => {
+    return parseInt(r.studentIdx, 10) === parseInt(si, 10) || 
+           (studentName && r.stName && r.stName.trim().toUpperCase() === studentName.trim().toUpperCase());
+  });
   const asistencias = studentRecords.filter(r => r.estadoAsistencia === 'asistio' || !r.estadoAsistencia).length;
   const inasistencias = studentRecords.filter(r => r.estadoAsistencia === 'no_asistio').length;
   const justificados = studentRecords.filter(r => r.estadoAsistencia === 'justifico').length;
