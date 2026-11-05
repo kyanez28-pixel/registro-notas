@@ -537,14 +537,18 @@ header#mainAppHeader.is-collapsed h1 {
 
 /* Semanas colapsadas en la tabla */
 th.wh.is-week-collapsed {
-  min-width: 68px !important;
-  max-width: 78px !important;
-  padding: 6px 4px !important;
-  opacity: 0.95;
+  min-width: 76px !important;
+  max-width: 92px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  padding: 5px 3px !important;
+  opacity: 0.96;
 }
 th.sh.is-week-collapsed {
-  min-width: 68px !important;
-  max-width: 78px !important;
+  min-width: 76px !important;
+  max-width: 92px !important;
+  overflow: hidden !important;
   padding: 4px 4px !important;
 }
 
@@ -10317,6 +10321,37 @@ function getWeekTitle(w) {
   return dest ? `${name} ${dest}` : name;
 }
 
+function getWeekDisplayParts(w, wi) {
+  const rawName = getWeekName(w);
+  const dest = getWeekDestreza(w);
+  const isProj = (/NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(rawName));
+  if (isProj) {
+    return {
+      numLabel: 'Semana 0',
+      shortNum: 'S.0',
+      topic: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+      shortTopic: 'Nutri-Vida',
+      dest: dest || 'EGB Media'
+    };
+  }
+  const semMatch = rawName.match(/^SEM(?:ANA)?\.?\s*(\d+)[:\s-]*(.*)$/i);
+  let num = wi !== undefined ? wi : 1;
+  let topic = rawName;
+  if (semMatch) {
+    num = semMatch[1];
+    topic = semMatch[2] ? semMatch[2].trim() : rawName;
+  }
+  if (!topic) topic = rawName;
+  const shortTopic = topic.length > 14 ? topic.substring(0, 12) + '…' : topic;
+  return {
+    numLabel: 'Semana ' + num,
+    shortNum: 'S.' + num,
+    topic: topic,
+    shortTopic: shortTopic,
+    dest: dest || ''
+  };
+}
+
 function getMats() {
   if (!S.matsList || !S.matsList.length) {
     S.matsList = DEFAULT_MATS.map(m => m.name);
@@ -10401,6 +10436,19 @@ function ensureMats() {
       });
     }
   });
+
+  // Asegurar que Proyecto Nutri-Vida esté en la primera posición (Semana 0) en cada materia
+  Object.keys(S.mats || {}).forEach(mName => {
+    const mat = S.mats[mName];
+    if (mat && Array.isArray(mat.weeks)) {
+      const pIdx = mat.weeks.findIndex(w => /NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(getWeekName(w)));
+      if (pIdx > 0) {
+        const pWeek = mat.weeks.splice(pIdx, 1)[0];
+        mat.weeks.unshift(pWeek);
+      }
+    }
+  });
+
   if (S.am >= S.matsList.length) S.am = 0;
   if (typeof ensureDiagnostico === 'function') ensureDiagnostico();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
@@ -10884,10 +10932,8 @@ function renderTable() {
 
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
-    let wTitle = getWeekTitle(w);
-    if ((/NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(wName)) && !wTitle.toUpperCase().startsWith('SEMANA')) {
-      wTitle = `Semana 0: ${wTitle}`;
-    }
+    const wp = getWeekDisplayParts(w, wi);
+    const wTitle = wp.dest ? `${wp.topic} ${wp.dest}` : wp.topic;
     const c = mat.cols[wName] || [];
     const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
     const wc = weekColor(mName, wName, wi);
@@ -10902,22 +10948,34 @@ function renderTable() {
     if (isWeekCol) {
       r1 += `<th class="wh is-week-collapsed" colspan="1"
         onclick="toggleWeekCollapse('${esc(wName)}')"
-        title="Semana colapsada: ${escHTML(wTitle)}. Clic para expandir"
-        style="${weekStyle}background:${wc.h};border-color:${wc.h};font-size:0.82rem;font-weight:900;letter-spacing:0.2px;padding:6px 4px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
-        <div style="display:flex;align-items:center;justify-content:center;gap:3px">
-          <span style="font-size:0.75rem">➕</span> <span>${escHTML(wName)}</span>
+        title="${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}${wp.dest ? ' (' + escHTML(wp.dest) + ')' : ''}. Clic para expandir actividades"
+        style="${weekStyle}background:${wc.h};border-color:${wc.h};cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none;min-width:76px;max-width:92px;overflow:hidden;padding:5px 3px;text-shadow:0 1px 2px rgba(0,0,0,0.35)">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;width:100%">
+          <div style="display:inline-flex;align-items:center;gap:3px;background:rgba(0,0,0,0.32);padding:1px 6px;border-radius:10px;font-size:0.72rem;font-weight:900;letter-spacing:0.3px;white-space:nowrap">
+            <span>➕</span> <span>${escHTML(wp.shortNum)}</span>
+          </div>
+          <div style="font-size:0.63rem;font-weight:700;line-height:1.15;max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:0.95" title="${escHTML(wp.topic)}">
+            ${escHTML(wp.topic)}
+          </div>
         </div>
       </th>`;
     } else {
+      const minW = Math.max(140, span * 115);
       r1 += `<th class="wh" colspan="${span}"
         onclick="handleWeekHeaderClick(${wi})"
         ondblclick="editWeekName(${wi})"
         oncontextmenu="openWeekContextMenu(event, ${wi})"
-        title="${escHTML(wTitle)} · Doble clic para editar tema · Clic en ➖ para colapsar"
-        style="${weekStyle}background:${wc.h};border-color:${wc.h};font-size:0.95rem;font-weight:900;letter-spacing:0.4px;padding:8px 10px;text-shadow:0 1px 2px rgba(0,0,0,0.3);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none">
-        <div style="display:flex;align-items:center;justify-content:center;position:relative">
-          <span style="font-size:0.75rem;opacity:0.85;margin-right:6px;cursor:pointer;background:rgba(0,0,0,0.25);padding:1px 5px;border-radius:4px" onclick="event.stopPropagation(); toggleWeekCollapse('${esc(wName)}')" title="Colapsar esta semana (mostrar solo promedio)">➖</span>
-          <span>${escHTML(wTitle)}</span>
+        title="${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}${wp.dest ? ' · Destreza: ' + escHTML(wp.dest) : ''} · Doble clic para editar tema · Clic en ➖ para colapsar"
+        style="${weekStyle}background:${wc.h};border-color:${wc.h};padding:6px 8px;text-shadow:0 1px 2px rgba(0,0,0,0.35);cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none;min-width:${minW}px;white-space:normal">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;max-width:100%">
+          <div style="display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap">
+            <span style="font-size:0.72rem;opacity:0.9;cursor:pointer;background:rgba(0,0,0,0.28);padding:1px 6px;border-radius:4px" onclick="event.stopPropagation(); toggleWeekCollapse('${esc(wName)}')" title="Colapsar esta semana (mostrar solo promedio)">➖</span>
+            <span style="display:inline-block;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,0.35);font-size:0.72rem;font-weight:900;letter-spacing:0.4px;text-transform:uppercase">${escHTML(wp.numLabel)}</span>
+            ${wp.dest ? `<span style="font-size:0.65rem;font-weight:700;opacity:0.9;background:rgba(255,255,255,0.22);padding:1px 5px;border-radius:4px;letter-spacing:0.2px">${escHTML(wp.dest)}</span>` : ''}
+          </div>
+          <div style="font-size:0.86rem;font-weight:900;line-height:1.22;letter-spacing:0.2px;word-break:break-word;white-space:normal;text-transform:uppercase;margin-top:2px;max-width:${minW - 12}px">
+            ${escHTML(wp.topic)}
+          </div>
         </div>
       </th>`;
     }
@@ -10986,7 +11044,7 @@ function renderTable() {
         </th>`;
       });
     }
-    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')" title="Clic para copiar los promedios de ${escHTML(wName)} para Excel o Word" style="${isPromHidden?'display:none;':''}background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.85rem;cursor:pointer;vertical-align:middle">PROM 📋</th>`;
+    r2 += `<th class="sh" onclick="copyMainColumn('weekProm','${esc(wName)}','PROM ${esc(wName)}')" title="Clic para copiar los promedios de ${escHTML(wName)} para Excel o Word" style="${isPromHidden?'display:none;':''}background:${wc.h};border-color:${wc.h};font-weight:800;font-size:0.85rem;cursor:pointer;vertical-align:middle;min-width:72px">PROM 📋</th>`;
   });
   r2 += '</tr>';
 
@@ -11947,10 +12005,10 @@ function openManageNomina() {
 function openAddWeek() {
   const mat = gm();
   if (!mat) return;
-  // Sugerir el número de semana correcto excluyendo sumativas
+  // Sugerir el número de semana correcto excluyendo sumativas y proyecto
   const teachingWeeksCount = (mat.weeks || []).filter(w => {
     const n = getWeekName(w).toUpperCase();
-    return !n.includes('SUMATIV') && !n.includes('EXAMEN') && !n.includes('PROYECTO');
+    return !n.includes('SUMATIV') && !n.includes('EXAMEN') && !n.includes('PROYECTO') && !n.includes('NUTRI-VIDA');
   }).length;
 
   showModal(
@@ -11978,13 +12036,14 @@ function openAddWeek() {
       }
       if (!mat.cols) mat.cols = {};
 
-      // Ubicar ANTES de la Evaluación Sumativa si existe, para no desordenar el trimestre
-      const sumIdx = mat.weeks.findIndex(w => {
+      // Ubicar al final de las semanas formativas (o antes de una Evaluación Sumativa / Examen final si existe)
+      const sumIdx = mat.weeks.findIndex((w, idx) => {
+        if (idx === 0) return false;
         const n = getWeekName(w).toUpperCase();
-        return n.includes('SUMATIV') || n.includes('EXAMEN') || n.includes('PROYECTO');
+        return (n.includes('SUMATIV') || n.includes('EXAMEN TRIMESTRAL')) && !n.includes('PROYECTO') && !n.includes('NUTRI-VIDA');
       });
 
-      if (sumIdx >= 0) {
+      if (sumIdx > 0) {
         mat.weeks.splice(sumIdx, 0, newWeekObj);
       } else {
         mat.weeks.push(newWeekObj);
@@ -11992,7 +12051,7 @@ function openAddWeek() {
 
       if (!mat.cols[nv]) mat.cols[nv] = [];
       closeModal(); render(); saveData();
-      toast(`✔ Semana "${nv}" agregada correctamente`, '#16a34a');
+      toast(`✔ Semana "${nv}" agregada correctamente al final`, '#16a34a');
     }
   );
 }
@@ -12092,7 +12151,10 @@ function openDelWeek() {
     toast('⚠️ No hay semanas para eliminar en esta materia', '#d97706');
     return;
   }
-  const opts = mat.weeks.map((w, wi) => `<option value="${wi}">${escHTML(getWeekTitle(w))}</option>`).join('');
+  const opts = mat.weeks.map((w, wi) => {
+    const wp = getWeekDisplayParts(w, wi);
+    return `<option value="${wi}">${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}</option>`;
+  }).join('');
   showModal('🗑 Eliminar Semana', `<label>Semana a Eliminar:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar Semana', () => {
     const wi = parseInt(document.getElementById('mDelWeekSel').value);
     const targetW = mat.weeks[wi];
@@ -12524,7 +12586,8 @@ function openManageColumns() {
 
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
-    const wTitle = getWeekTitle(w);
+    const wp = getWeekDisplayParts(w, wi);
+    const wTitle = `${wp.numLabel}: ${wp.topic}${wp.dest ? ' (' + wp.dest + ')' : ''}`;
     const cols = mat.cols[wName] || [];
     const wc = weekColor(mName, wName, wi);
 
@@ -12719,7 +12782,11 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
   try {
     const mat = gm();
     if (!mat) return;
-    const weekOpts = mat.weeks.map(w => { const wn = getWeekName(w); return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(getWeekTitle(w))}</option>`; }).join('');
+    const weekOpts = mat.weeks.map((w, wi) => {
+      const wn = getWeekName(w);
+      const wp = getWeekDisplayParts(w, wi);
+      return `<option value="${escVal(wn)}" ${wn===selWeek?'selected':''}>${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}${wp.dest ? ' (' + escHTML(wp.dest) + ')' : ''}</option>`;
+    }).join('');
     const typeOpts = ACT_TYPES.map(t => {
       const catLabel = t.cat === 'sum' ? ' [Sumativo 30%]' : (t.cat === 'form' ? ' [Formativo 70%]' : ' [Mejora]');
       return `<option value="${t.id}" ${col && col.type===t.id?'selected':''}>${t.label}${catLabel}</option>`;
@@ -14187,17 +14254,8 @@ function rpShowOne(si) {
 }
 
 function formatWeekLabel(w, wi) {
-  const raw = (typeof w === 'object' && w !== null ? (w.name || '') : String(w || '')).trim();
-  const up = raw.toUpperCase();
-  if (up.includes('NUTRI-VIDA') || up.includes('PROYECTO INTERDISCIPLINARIO')) {
-    if (up.startsWith('SEMANA 0')) return raw;
-    return `Semana 0: ${raw.replace(/^Semana\s*\d*:\s*/i, '')}`;
-  }
-  if (up.startsWith('SEMANA') || up.startsWith('SEM.')) return raw;
-  if (/SUMATIV|EXAMEN|EVALUACI[OÓ]N/i.test(up)) return raw;
-
-  const weekNum = (wi !== undefined && wi > 0) ? wi : (wi !== undefined ? wi + 1 : 1);
-  return `Semana ${weekNum}: ${raw}`;
+  const wp = getWeekDisplayParts(w, wi);
+  return `${wp.numLabel}: ${wp.topic}`;
 }
 
 function getStudentDetailedPerformance(si) {
