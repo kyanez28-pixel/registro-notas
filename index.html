@@ -9070,7 +9070,7 @@ const DEFAULT_MATS = [
   { name:'Comportamiento',                   qual:true }
 ];
 
-const DEFAULT_WEEKS = ['SEMANA 1', 'SEMANA 2', 'EVALUACIÓN SUMATIVA'];
+const DEFAULT_WEEKS = ['PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', 'SEMANA 1', 'SEMANA 2', 'EVALUACIÓN SUMATIVA'];
 
 // Tipos de actividades con clasificación ministerial (Formativa 70% vs Sumativa 30%)
 const ACT_TYPES = [
@@ -9095,7 +9095,10 @@ function actType(id) {
 //  PROYECTO INTERDISCIPLINAR: NUTRI-VIDA (7.° C)
 //  Sincronización como 1ra nota formativa en todas las materias
 // ══════════════════════════════════════════════════════
-const NUTRIVIDA_SYNC_VERSION = 'v115_nutrivida_interdisciplinar_7c';
+const NUTRIVIDA_SYNC_VERSION = 'v116_nutrivida_first_block_7c';
+const PI_WEEK_NAME = 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA';
+const PI_COL_NAME = 'PROYECTO NUTRI-VIDA';
+
 const NUTRIVIDA_PI_7C_PROMEDIOS = [
   '9.71', // 0. ALCIVAR MENDOZA AMY SOFIA
   '',     // 1. ALMEIDA ANZATUÑA EMILY ANAHI [RETIRADA]
@@ -9151,15 +9154,13 @@ function ensureNutriVidaProjectGrades(force) {
       const mat = S.mats[m];
       if (!mat || !mat.weeks || !mat.weeks.length) return;
       const w0 = getWeekName(mat.weeks[0]);
-      const cols = mat.cols[w0] || [];
-      const isFirst = cols.length > 0 && (cols[0].name || '').toUpperCase().includes('NUTRI-VIDA');
-      if (!isFirst) missingAny = true;
+      if (w0 !== PI_WEEK_NAME) missingAny = true;
     });
     if (!missingAny) return;
   }
 
   const colDef = {
-    name: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+    name: PI_COL_NAME,
     desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
     type: 'PI',
     cat: 'form',
@@ -9178,22 +9179,42 @@ function ensureNutriVidaProjectGrades(force) {
     if (!mat.cols) mat.cols = JSON.parse(JSON.stringify(DEFAULT_COLS));
     if (!mat.grades) mat.grades = {};
 
-    const w0 = getWeekName(mat.weeks[0]);
-    if (!mat.cols[w0]) mat.cols[w0] = [];
-
-    // 1. Quitar versión previa si existía en cualquier semana de la asignatura
-    Object.keys(mat.cols).forEach(w => {
-      mat.cols[w] = (mat.cols[w] || []).filter(c => {
-        const cName = (c.name || c.desc || '').toUpperCase();
-        return !cName.includes('NUTRI-VIDA');
-      });
+    // 1. Limpiar semanas y columnas previas de Nutri-Vida para que quede exactamente una y primerita
+    const cleanWeeks = [];
+    (mat.weeks || []).forEach(w => {
+      const wn = getWeekName(w);
+      if (!wn.toUpperCase().includes('NUTRI-VIDA')) {
+        cleanWeeks.push(w);
+      }
+      if (mat.cols[wn]) {
+        mat.cols[wn] = mat.cols[wn].filter(c => {
+          const cName = (c.name || c.desc || '').toUpperCase();
+          return !cName.includes('NUTRI-VIDA');
+        });
+      }
     });
 
-    // 2. Insertar como PRIMERA columna (índice 0) de la primera semana
-    mat.cols[w0].unshift(JSON.parse(JSON.stringify(colDef)));
+    // 2. Colocar PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA como la PRIMERITA semana (antes del primer tema)
+    mat.weeks = [{ name: PI_WEEK_NAME, destreza: 'EGB Media' }, ...cleanWeeks];
 
-    // 3. Asignar notas de promedio oficial a cada estudiante
-    const key = w0 + '||' + colDef.name;
+    // 3. Crear columna en esta semana inicial
+    mat.cols[PI_WEEK_NAME] = [JSON.parse(JSON.stringify(colDef))];
+
+    // 4. Asegurar que esta semana NO esté colapsada y esté visible
+    if (mat.collapsedWeeks && mat.collapsedWeeks[PI_WEEK_NAME]) {
+      delete mat.collapsedWeeks[PI_WEEK_NAME];
+    }
+    if (S.hiddenCols) {
+      delete S.hiddenCols[`${m}||${PI_WEEK_NAME}||${PI_COL_NAME}`];
+      delete S.hiddenCols[`${m}||${PI_WEEK_NAME}||PROM`];
+    }
+
+    // 5. Asignar color temático cálido ámbar
+    if (!S.weekColors) S.weekColors = {};
+    S.weekColors[m + '||' + PI_WEEK_NAME] = { h: '#d97706', s: '#f59e0b', c: 'rgba(217,119,6,0.08)' };
+
+    // 6. Asignar las notas de promedio oficial del 7mo C
+    const key = PI_WEEK_NAME + '||' + PI_COL_NAME;
     NUTRIVIDA_PI_7C_PROMEDIOS.forEach((nota, si) => {
       if (!mat.grades[si]) mat.grades[si] = {};
       mat.grades[si][key] = nota;
@@ -9212,7 +9233,7 @@ function ensureNutriVidaProjectGrades(force) {
   } catch(e) {}
 
   saveData(false, true);
-  console.log('[Nutri-Vida Sync] Nota de Proyecto Interdisciplinario insertada como 1ra nota formativa en todas las materias.');
+  console.log('[Nutri-Vida Sync] Bloque de Proyecto Interdisciplinario insertado de primerito antes del 1er tema en todas las materias.');
 }
 
 // Escala Cualitativa Ministerial (Cívica, Animación a la Lectura, Comportamiento)
@@ -9233,6 +9254,9 @@ function numToQual(n) {
 }
 
 const DEFAULT_COLS = {
+  'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA': [
+    { name:'PROYECTO NUTRI-VIDA', type:'PI', cat:'form', date:'2026-10-02', color:'#d97706', desc:'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA' }
+  ],
   'SEMANA 1': [
     { name:'A1', type:'AC', date:'', color:null },
     { name:'T1', type:'T',  date:'', color:null },
