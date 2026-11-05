@@ -6734,96 +6734,279 @@ body.in-focus-mode {
     <div id="reunionPreviewBox" class="printable-sheet"></div>
   </div>
 
-  <!-- ════ SUB-PANEL 3: ATENCIÓN A REPRESENTANTES (BITÁCORA DIGITAL) ════ -->
+  <!-- ════ SUB-PANEL 3: ATENCIÓN A REPRESENTANTES, ALERTAS TEMPRANAS & DECE ════ -->
   <div id="herramientasViewAtencion" class="herramientas-view" style="display:none">
-    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #d97706">
-      <div class="config-card-header">
-        <div class="config-card-icon" style="background:#fef3c7;color:#92400e">💬</div>
-        <div>
-          <div class="config-card-title">Ficha Individual de Atención a Padres (Bitácora DECE/Tutoría)</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Registra entrevistas, motivos, acuerdos y firmas con autollenado de datos del representante</div>
+    
+    <!-- Pestañas internas de Atención -->
+    <div class="atencion-subtabs no-print" style="display:flex;gap:8px;margin-bottom:16px;border-bottom:2px solid var(--border-color);padding-bottom:10px;flex-wrap:wrap">
+      <button class="btn btn-warning active" id="btnAtencionSubTabRegistro" onclick="switchAtencionSubTab('registro')" style="font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px">
+        <span>✍️</span> 1. Registro de Atención & Citaciones
+      </button>
+      <button class="btn btn-outline" id="btnAtencionSubTabHistorial" onclick="switchAtencionSubTab('historial')" style="font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px">
+        <span>📜</span> 2. Historial de Visitas & Frecuencia
+        <span class="badge" id="atencionTotalBadge" style="background:#b45309;color:#fff;padding:2px 7px;border-radius:10px;font-size:0.72rem">0</span>
+      </button>
+      <button class="btn btn-outline" id="btnAtencionSubTabDece" onclick="switchAtencionSubTab('dece')" style="font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px;color:#dc2626;border-color:#fca5a5">
+        <span>🏛️</span> 3. Informe Oficial para el DECE (Incumplimiento)
+        <span class="badge" id="atencionDeceAlertBadge" style="background:#dc2626;color:#fff;padding:2px 7px;border-radius:10px;font-size:0.72rem;display:none">0</span>
+      </button>
+    </div>
+
+    <!-- ══ VISTA 1: REGISTRO Y FICHA DE ATENCIÓN / CITACIÓN ══ -->
+    <div id="atencionSubViewRegistro">
+      <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #d97706">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#fef3c7;color:#92400e">💬</div>
+          <div>
+            <div class="config-card-title">Ficha Individual de Atención a Padres & Control de Citaciones</div>
+            <div style="font-size:0.72rem;color:var(--text-muted)">Registra convocatorias, alertas de bajo rendimiento, asistencia (vino/no vino) y firmas de acuerdos</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-outline" style="font-size:0.75rem" onclick="resetAtencionForm()">✨ Nueva Ficha</button>
+            <button class="btn btn-outline" style="font-size:0.75rem" onclick="switchAtencionSubTab('historial')">📜 Ver Historial</button>
+          </div>
         </div>
-        <div style="margin-left:auto;display:flex;gap:6px">
-          <button class="btn btn-outline" style="font-size:0.75rem" onclick="resetAtencionForm()">✨ Nueva Ficha</button>
+
+        <!-- Banner de Alerta Temprana Dinámico -->
+        <div id="atencionAlertaBanner" style="display:none;background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;padding:10px 14px;margin-bottom:14px;color:#991b1b">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:1.15rem">🚨</span>
+              <div>
+                <strong style="font-size:0.84rem">ALERTA TEMPRANA DE BAJO RENDIMIENTO DETECTADA:</strong>
+                <div id="atencionAlertaText" style="font-size:0.78rem;margin-top:2px"></div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-danger" style="font-size:0.72rem;padding:3px 8px;font-weight:800" onclick="insertLowSubjectsIntoHechos()">
+              ⚡ Copiar materias a Descripción de Hechos
+            </button>
+          </div>
+        </div>
+
+        <!-- Fila 1: Estudiante y Representante -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
+          <div>
+            <label style="font-weight:800">Estudiante Convocado/a <span style="color:#dc2626">*</span></label>
+            <select id="atencionStudentSel" onchange="onAtencionStudentChange(this.value)" style="width:100%;font-weight:700"></select>
+          </div>
+          <div>
+            <label style="font-weight:800">Nombre del Representante que Asiste / Citado <span style="color:#dc2626">*</span></label>
+            <input type="text" id="atencionRepName" placeholder="Nombres completos del representante" oninput="updateAtencionPreview()" style="width:100%"/>
+          </div>
+          <div>
+            <label>Parentesco / Relación</label>
+            <select id="atencionParentesco" onchange="updateAtencionPreview()" style="width:100%">
+              <option value="Madre de Familia">Madre de Familia</option>
+              <option value="Padre de Familia">Padre de Familia</option>
+              <option value="Representante Legal / Tutor">Representante Legal / Tutor</option>
+              <option value="Abuelo/a">Abuelo/a</option>
+              <option value="Tío/a">Tío/a</option>
+              <option value="Familiar Autorizado">Familiar Autorizado</option>
+            </select>
+          </div>
+          <div>
+            <label>Cédula y Contacto (Teléfono/WhatsApp)</label>
+            <input type="text" id="atencionContacto" placeholder="C.I. / Teléfono" oninput="updateAtencionPreview()" style="width:100%"/>
+          </div>
+        </div>
+
+        <!-- Fila 2: Datos de la Convocatoria y Fechas -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:14px;background:var(--bg-card-subtle);padding:12px;border-radius:8px;border:1px solid var(--border-color)">
+          <div>
+            <label style="font-weight:800">Nivel de Convocatoria / Llamado</label>
+            <select id="atencionTipoLlamado" onchange="updateAtencionPreview()" style="width:100%;font-weight:700">
+              <option value="1er Llamado (Alerta Temprana)">1er Llamado (Alerta Temprana)</option>
+              <option value="2do Llamado (Reiteración)">2do Llamado (Reiteración)</option>
+              <option value="3er Llamado (Última Advertencia previa a DECE)">3er Llamado (Última Advertencia previa a DECE)</option>
+              <option value="Atención Regular / Solicitada por Representante">Atención Regular / Solicitada por Representante</option>
+              <option value="Citación Conjunta DECE / Tutoría">Citación Conjunta DECE / Tutoría</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight:800">Fecha de Envío de Citación (Notificación)</label>
+            <input type="date" id="atencionFechaCitacion" oninput="updateAtencionPreview()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-weight:800">Fecha y Hora de la Entrevista / Cita</label>
+            <input type="text" id="atencionFechaHora" value="" oninput="updateAtencionPreview()" style="width:100%" placeholder="Ej: Lunes 10 de Octubre · 14:00"/>
+          </div>
+          <div>
+            <label style="font-weight:800">Motivo de la Convocatoria / Atención</label>
+            <select id="atencionMotivo" onchange="updateAtencionPreview()" style="width:100%;font-weight:700">
+              <option value="Bajo Rendimiento Académico / Alerta Temprana">Bajo Rendimiento Académico / Alerta Temprana</option>
+              <option value="Dificultades de Comportamiento / Convivencia">Dificultades de Comportamiento / Convivencia</option>
+              <option value="Inasistencias Reiteradas o Justificación de Faltas">Inasistencias Reiteradas o Justificación de Faltas</option>
+              <option value="Acompañamiento Socioemocional / Caso DECE">Acompañamiento Socioemocional / Caso DECE</option>
+              <option value="Solicitud de Información por parte del Representante">Solicitud de Información por parte del Representante</option>
+              <option value="Entrega de Libreta / Informe de Notas">Entrega de Libreta / Informe de Notas</option>
+              <option value="Felicitación por Desempeño Sobresaliente">Felicitación por Desempeño Sobresaliente</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Fila 3: Control de Cumplimiento (¿Vino o no vino? / ¿Firmó o no firmó?) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:14px;background:#f0fdf4;border:1.5px solid #86efac;padding:12px;border-radius:8px">
+          <div>
+            <label style="font-weight:900;color:#166534">¿Asistió el Representante? (¿Vino o No Vino?)</label>
+            <select id="atencionAsistencia" onchange="onAtencionAsistenciaChange(this.value)" style="width:100%;font-weight:900;font-size:0.86rem;padding:6px 10px;border-radius:6px;border:1.5px solid #22c55e">
+              <option value="asistio">🟢 VINO / ASISTIÓ a la atención</option>
+              <option value="no_asistio">🔴 NO VINO / Inasistencia a citación</option>
+              <option value="justifico">🟡 JUSTIFICÓ inasistencia previamente</option>
+              <option value="pendiente">⚪ PENDIENTE de fecha pactada</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight:900;color:#166534">¿Firmó Acuerdo / Acta de Compromiso?</label>
+            <select id="atencionFirma" onchange="updateAtencionPreview()" style="width:100%;font-weight:900;font-size:0.86rem;padding:6px 10px;border-radius:6px;border:1.5px solid #22c55e">
+              <option value="si">✍️ SÍ FIRMÓ acuerdo y compromisos</option>
+              <option value="no">❌ NO FIRMÓ (Se negó o no asistió)</option>
+              <option value="pendiente">⚪ PENDIENTE / En proceso de firma</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label style="font-weight:800">1. Descripción de la Situación Tratada (Hechos / Antecedentes)</label>
+          <textarea id="atencionHechos" rows="3" oninput="updateAtencionPreview()" placeholder="Detallar la situación presentada en clase, tareas, calificaciones bajas o convivencia..." style="width:100%;font-size:0.82rem"></textarea>
+        </div>
+
+        <div style="margin-bottom:14px">
+          <label style="font-weight:800">2. Acuerdos y Compromisos Establecidos (o Justificación de Inasistencia)</label>
+          <textarea id="atencionCompromisos" rows="3" oninput="updateAtencionPreview()" placeholder="1. El representante se compromete a revisar los cuadernos diariamente...&#10;2. El docente brindará refuerzo pedagógico...&#10;3. Seguimiento conjunto en 15 días." style="width:100%;font-size:0.82rem"></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-warning" onclick="saveAtencionToHistory()" style="font-weight:900;padding:8px 16px;box-shadow:0 3px 10px rgba(217,119,6,0.3)">
+            💾 Guardar en Bitácora & Historial
+          </button>
+          <button class="btn btn-primary" onclick="printAtencionFicha()" style="font-weight:800">
+            🖨️ Imprimir Ficha de Atención
+          </button>
+          <button class="btn btn-outline" onclick="openCitacionSlipFromForm()" style="font-weight:800" title="Imprimir boleta de citación recortable">
+            ✉️ Generar Boleta de Citación
+          </button>
+          <button id="btnAtencionAlertDece" class="btn btn-danger" onclick="openDeceReportForCurrent()" style="font-weight:900;display:none;background:#dc2626;color:#fff;border:none;margin-left:auto;box-shadow:0 3px 10px rgba(220,38,38,0.35)">
+            🚨 Crear Informe al DECE por Incumplimiento
+          </button>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
-        <div>
-          <label>Estudiante Convocado/a</label>
-          <select id="atencionStudentSel" onchange="onAtencionStudentChange(this.value)" style="width:100%;font-weight:700"></select>
+      <!-- Vista Previa Imprimible de Ficha de Atención -->
+      <div id="atencionPreviewBox" class="printable-sheet"></div>
+    </div>
+
+    <!-- ══ VISTA 2: HISTORIAL GENERAL Y VECES QUE VINIERON ══ -->
+    <div id="atencionSubViewHistorial" style="display:none">
+      
+      <!-- Panel de Métricas / KPIs -->
+      <div id="atencionKpiContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px"></div>
+
+      <!-- Resumen por Estudiante: Frecuencia de Visitas -->
+      <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #2563eb">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#dbeafe;color:#1e40af">👨‍👩‍👧</div>
+          <div>
+            <div class="config-card-title">Resumen de Visitas por Familia / Estudiante</div>
+            <div style="font-size:0.72rem;color:var(--text-muted)">Conteo de veces que ha venido cada representante a la institución y cumplimiento de acuerdos</div>
+          </div>
+          <div style="margin-left:auto">
+            <button class="btn btn-outline" style="font-size:0.75rem" onclick="toggleAtencionSummaryTable()">
+              <span id="atencionSummaryToggleIcon">👁️</span> <span id="atencionSummaryToggleText">Ocultar Resumen</span>
+            </button>
+          </div>
         </div>
-        <div>
-          <label>Nombre del Representante que Asiste</label>
-          <input type="text" id="atencionRepName" placeholder="Nombres completos del representante" oninput="updateAtencionPreview()" style="width:100%"/>
-        </div>
-        <div>
-          <label>Parentesco / Relación</label>
-          <select id="atencionParentesco" onchange="updateAtencionPreview()" style="width:100%">
-            <option value="Madre de Familia">Madre de Familia</option>
-            <option value="Padre de Familia">Padre de Familia</option>
-            <option value="Representante Legal / Tutor">Representante Legal / Tutor</option>
-            <option value="Abuelo/a">Abuelo/a</option>
-            <option value="Familiar Autorizado">Familiar Autorizado</option>
-          </select>
-        </div>
-        <div>
-          <label>Fecha y Hora</label>
-          <input type="text" id="atencionFechaHora" value="" oninput="updateAtencionPreview()" style="width:100%"/>
-        </div>
+        <div id="atencionSummaryContainer" style="overflow-x:auto"></div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px">
-        <div>
-          <label>Motivo de la Atención</label>
-          <select id="atencionMotivo" onchange="updateAtencionPreview()" style="width:100%;font-weight:700">
-            <option value="Bajo Rendimiento Académico / Alerta de Refuerzo">Bajo Rendimiento Académico / Alerta de Refuerzo</option>
-            <option value="Dificultades de Comportamiento / Convivencia">Dificultades de Comportamiento / Convivencia</option>
-            <option value="Inasistencias Reiteradas o Justificación de Faltas">Inasistencias Reiteradas o Justificación de Faltas</option>
-            <option value="Acompañamiento Socioemocional / Caso DECE">Acompañamiento Socioemocional / Caso DECE</option>
-            <option value="Solicitud de Información por parte del Representante">Solicitud de Información por parte del Representante</option>
-            <option value="Felicitación por Desempeño Sobresaliente">Felicitación por Desempeño Sobresaliente</option>
-          </select>
+      <!-- Tabla Completa de Historial Cronológico -->
+      <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #b45309">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#fef3c7;color:#92400e">📜</div>
+          <div>
+            <div class="config-card-title">Historial Cronológico de Atenciones & Citaciones</div>
+            <div style="font-size:0.72rem;color:var(--text-muted)">Bitácora detallada con estados de asistencia, firma de actas y derivaciones</div>
+          </div>
         </div>
-        <div>
-          <label>Cédula y Contacto del Representante</label>
-          <input type="text" id="atencionContacto" placeholder="C.I. / Teléfono" oninput="updateAtencionPreview()" style="width:100%"/>
+
+        <!-- Filtros Rápidos -->
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;background:var(--bg-card-subtle);padding:10px;border-radius:8px;border:1px solid var(--border-color)">
+          <div style="flex:1;min-width:200px">
+            <input type="text" id="atencionFilterInput" oninput="renderAtencionHistoryTable()" placeholder="🔍 Buscar por estudiante, representante o motivo..." style="width:100%;font-size:0.8rem;padding:6px 10px;border-radius:6px;border:1px solid var(--border-color)"/>
+          </div>
+          <div>
+            <select id="atencionFilterAsistencia" onchange="renderAtencionHistoryTable()" style="font-size:0.8rem;padding:6px 10px;border-radius:6px;font-weight:700">
+              <option value="all">🚦 Asistencia: Todos</option>
+              <option value="asistio">🟢 Solo los que Vinieron (Asistieron)</option>
+              <option value="no_asistio">🔴 Solo Inasistencias (No Vinieron)</option>
+              <option value="justifico">🟡 Justificados</option>
+              <option value="pendiente">⚪ Pendientes</option>
+            </select>
+          </div>
+          <div>
+            <select id="atencionFilterFirma" onchange="renderAtencionHistoryTable()" style="font-size:0.8rem;padding:6px 10px;border-radius:6px;font-weight:700">
+              <option value="all">✍️ Firma: Todos</option>
+              <option value="si">✅ Con Acuerdo Firmado</option>
+              <option value="no">❌ Sin Firma / No Firmó</option>
+              <option value="pendiente">⚪ Pendientes</option>
+            </select>
+          </div>
+          <button class="btn btn-warning" onclick="switchAtencionSubTab('registro')" style="font-size:0.75rem;font-weight:800">
+            ➕ Nueva Atención
+          </button>
         </div>
-      </div>
 
-      <div style="margin-bottom:12px">
-        <label>Descripción de la Situación Tratada (Hechos / Antecedentes)</label>
-        <textarea id="atencionHechos" rows="3" oninput="updateAtencionPreview()" placeholder="Detallar la situación presentada en clase, tareas o convivencia..." style="width:100%;font-size:0.82rem"></textarea>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label>Acuerdos y Compromisos Establecidos</label>
-        <textarea id="atencionCompromisos" rows="3" oninput="updateAtencionPreview()" placeholder="1. El representante se compromete a revisar los cuadernos diariamente...&#10;2. El docente brindará refuerzo pedagógico...&#10;3. Seguimiento conjunto en 15 días." style="width:100%;font-size:0.82rem"></textarea>
-      </div>
-
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-warning" onclick="saveAtencionToHistory()" style="font-weight:800">💾 Guardar en Bitácora Institucional</button>
-        <button class="btn btn-primary" onclick="printAtencionFicha()">🖨️ Imprimir Ficha de Atención</button>
+        <div id="atencionHistoryTableContainer" style="overflow-x:auto"></div>
       </div>
     </div>
 
-    <!-- Historial de Bitácora -->
-    <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #b45309">
-      <div class="config-card-header">
-        <div class="config-card-icon" style="background:#fef3c7;color:#92400e">📜</div>
-        <div>
-          <div class="config-card-title">Historial de Atenciones Registradas</div>
-          <div style="font-size:0.72rem;color:var(--text-muted)">Registro cronológico de compromisos y acuerdos para seguimiento pedagógico</div>
+    <!-- ══ VISTA 3: INFORME OFICIAL PARA EL DECE (INCUMPLIMIENTO) ══ -->
+    <div id="atencionSubViewDece" style="display:none">
+      <div class="config-card no-print" style="margin-bottom:16px;border-top:4px solid #dc2626">
+        <div class="config-card-header">
+          <div class="config-card-icon" style="background:#fee2e2;color:#991b1b">🏛️</div>
+          <div>
+            <div class="config-card-title">Generador de Informe Técnico al DECE por Incumplimiento de Convocatorias</div>
+            <div style="font-size:0.72rem;color:var(--text-muted)">Emite el informe oficial con base en la LOEI cuando un representante no comparece a las citaciones docentes</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="btn btn-outline" style="font-size:0.75rem" onclick="switchAtencionSubTab('historial')">← Volver al Historial</button>
+          </div>
         </div>
-        <div style="margin-left:auto">
-          <input type="text" id="atencionFilterInput" oninput="renderAtencionHistoryTable()" placeholder="🔍 Filtrar por estudiante..." style="font-size:0.78rem;padding:4px 8px"/>
+
+        <!-- Selector de Estudiante para Informe DECE -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px;background:var(--bg-card-subtle);padding:12px;border-radius:8px;border:1px solid var(--border-color)">
+          <div>
+            <label style="font-weight:900">Estudiante a Remitir al DECE <span style="color:#dc2626">*</span></label>
+            <select id="deceReportStudentSel" onchange="onDeceStudentChange(this.value)" style="width:100%;font-weight:800;font-size:0.86rem"></select>
+          </div>
+          <div>
+            <label style="font-weight:800">Código / Número de Memorando</label>
+            <input type="text" id="deceReportNumero" value="UEF-C2-TUT-2026-001" oninput="updateDeceReportPreview()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-weight:800">Fecha del Informe</label>
+            <input type="text" id="deceReportFecha" value="" oninput="updateDeceReportPreview()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-weight:800">Destinatario / Coordinación DECE</label>
+            <input type="text" id="deceReportDestinatario" value="Coordinación del Departamento de Consejería Estudiantil (DECE)" oninput="updateDeceReportPreview()" style="width:100%"/>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-danger" onclick="printInformeDece()" style="font-weight:900;padding:8px 18px;background:#dc2626;color:#fff;border:none;box-shadow:0 3px 10px rgba(220,38,38,0.35);display:inline-flex;align-items:center;gap:6px">
+            <span style="font-size:1.1rem">🖨️</span> Imprimir Informe Oficial para el DECE (Hoja A4)
+          </button>
+          <button class="btn btn-success" onclick="shareDeceWarningWhatsApp()" style="font-weight:800;display:inline-flex;align-items:center;gap:6px">
+            <span>📲</span> Notificar Remisión DECE por WhatsApp al Representante
+          </button>
         </div>
       </div>
-      <div id="atencionHistoryTableContainer" style="overflow-x:auto"></div>
+
+      <!-- Vista Previa Imprimible del Informe DECE -->
+      <div id="deceReportPreviewBox" class="printable-sheet"></div>
     </div>
 
-    <!-- Vista Previa Imprimible de Ficha de Atención -->
-    <div id="atencionPreviewBox" class="printable-sheet"></div>
   </div>
 
   <!-- ════ SUB-PANEL 4: CONVOCATORIAS Y CITACIONES RECORTABLES ════ -->
@@ -14442,6 +14625,9 @@ function buildStudentCard(si) {
           <button class="btn btn-success" onclick="shareWhatsApp(${si})" style="font-weight:800;padding:8px 16px;border-radius:8px;box-shadow:0 3px 10px rgba(22,163,74,0.3);display:inline-flex;align-items:center;gap:6px">
             <span style="font-size:1.1rem">📲</span> WhatsApp
           </button>
+          <button class="btn" onclick="openAtencionForStudent(${si})" style="background:#d97706;color:#ffffff;font-weight:800;padding:8px 14px;border-radius:8px;box-shadow:0 3px 10px rgba(217,119,6,0.3);display:inline-flex;align-items:center;gap:6px" title="Registrar atención, citación o ver historial de visitas">
+            <span style="font-size:1.1rem">💬</span> Citar / Atención Padres
+          </button>
         </div>
       </div>
 
@@ -14453,6 +14639,17 @@ function buildStudentCard(si) {
           <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px">
             Teléfono/WhatsApp: <strong style="color:var(--primary);font-size:0.88rem">${escHTML(repTel || 'No registrado')}</strong>
           </div>
+          ${(() => {
+            const vStats = (typeof getStudentVisitsCount === 'function') ? getStudentVisitsCount(si) : { asistencias: 0, inasistencias: 0, firmados: 0 };
+            return `
+              <div style="margin-top:6px;padding-top:5px;border-top:1px dashed var(--border-color);font-size:0.75rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-weight:800;color:#92400e">💬 Atención a Padres:</span>
+                <span style="color:#166534;font-weight:700">🟢 ${vStats.asistencias} visitas</span>
+                ${vStats.inasistencias > 0 ? `<span style="color:#dc2626;font-weight:900">🔴 ${vStats.inasistencias} inasistencias</span>` : ''}
+                <span style="color:#a16207;font-weight:700">✍️ ${vStats.firmados} acuerdos</span>
+              </div>
+            `;
+          })()}
         </div>
 
         <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:10px;padding:12px 16px">
@@ -21871,33 +22068,193 @@ function exportReunionXLSX() {
   toast('✔ Archivo Excel estructurado de reunión generado con éxito', '#16a34a');
 }
 
+// ════ GESTIÓN DE ATENCIÓN A REPRESENTANTES, HISTORIAL DE VISITAS & DECE ════
+
+let _activeAtencionSubTab = 'registro';
+let _atencionSummaryVisible = true;
+
+function switchAtencionSubTab(subTab) {
+  _activeAtencionSubTab = subTab;
+  const views = {
+    'registro': 'atencionSubViewRegistro',
+    'historial': 'atencionSubViewHistorial',
+    'dece': 'atencionSubViewDece'
+  };
+  const btns = {
+    'registro': 'btnAtencionSubTabRegistro',
+    'historial': 'btnAtencionSubTabHistorial',
+    'dece': 'btnAtencionSubTabDece'
+  };
+
+  Object.keys(views).forEach(k => {
+    const el = document.getElementById(views[k]);
+    if (el) el.style.display = (k === subTab) ? 'block' : 'none';
+    const b = document.getElementById(btns[k]);
+    if (b) {
+      if (k === subTab) {
+        b.className = (k === 'dece') ? 'btn btn-danger active' : 'btn btn-warning active';
+      } else {
+        b.className = 'btn btn-outline';
+      }
+    }
+  });
+
+  if (subTab === 'registro') {
+    populateAtencionStudentSelect();
+    updateAtencionPreview();
+  } else if (subTab === 'historial') {
+    renderAtencionHistoryTable();
+  } else if (subTab === 'dece') {
+    populateDeceStudentSelect();
+    updateDeceReportPreview();
+  }
+}
+
+function getStudentLowSubjects(si) {
+  const lowList = [];
+  if (typeof getMats !== 'function') return lowList;
+  getMats().forEach(mName => {
+    if (typeof isQualitativeMat === 'function' && isQualitativeMat(mName)) {
+      const calc = getStudentTrimestreCalc(si, mName);
+      if (calc && (calc.qualVal === 'PA' || calc.qualVal === 'NA')) {
+        lowList.push({ mat: mName, avg: calc.qualVal, isQual: true });
+      }
+    } else {
+      const calc = getStudentTrimestreCalc(si, mName);
+      if (calc && calc.trimAvg !== '—' && !isNaN(parseFloat(calc.trimAvg)) && parseFloat(calc.trimAvg) < 7.00) {
+        lowList.push({ mat: mName, avg: calc.trimAvg, isQual: false });
+      }
+    }
+  });
+  return lowList;
+}
+
+function getStudentVisitsCount(si) {
+  ensureHerramientas();
+  const records = S.herramientas.atenciones || [];
+  const studentRecords = records.filter(r => r.studentIdx === si);
+  const asistencias = studentRecords.filter(r => r.estadoAsistencia === 'asistio' || !r.estadoAsistencia).length;
+  const inasistencias = studentRecords.filter(r => r.estadoAsistencia === 'no_asistio').length;
+  const justificados = studentRecords.filter(r => r.estadoAsistencia === 'justifico').length;
+  const firmados = studentRecords.filter(r => r.firmoAcuerdo === 'si' || (!r.firmoAcuerdo && (r.estadoAsistencia === 'asistio' || !r.estadoAsistencia))).length;
+  return { total: studentRecords.length, asistencias, inasistencias, justificados, firmados, records: studentRecords };
+}
+
 function populateAtencionStudentSelect() {
   const sel = document.getElementById('atencionStudentSel');
   if (!sel || !S.students) return;
+  const curVal = sel.value;
   const sorted = getSortedIndices();
+
   sel.innerHTML = sorted.map(si => {
     let sName = S.students[si] || '';
     const up = sName.toUpperCase();
-    if (up.includes('ALMEIDA') && up.includes('EMILY')) sName += ' (RETIRADA)';
-    else if (up.includes('ANDRADE') && up.includes('JAYKO')) sName += ' (NO ASISTE)';
-    return '<option value="' + si + '">' + (si+1) + '. ' + escHTML(sName) + '</option>';
+    let tag = '';
+    if (up.includes('ALMEIDA') && up.includes('EMILY')) tag = ' [RETIRADA]';
+    else if (up.includes('ANDRADE') && up.includes('JAYKO')) tag = ' [NO ASISTE]';
+    
+    const low = getStudentLowSubjects(si);
+    const vStats = getStudentVisitsCount(si);
+    let badges = '';
+    if (low.length > 0) badges += ` ⚠️ (${low.length} mat. bajas)`;
+    if (vStats.asistencias > 0) badges += ` · 🟢 ${vStats.asistencias} visitas`;
+    if (vStats.inasistencias > 0) badges += ` · 🔴 ${vStats.inasistencias} inasistencias`;
+
+    return `<option value="${si}">${si + 1}. ${escHTML(sName)}${tag}${badges}</option>`;
   }).join('');
+
+  if (curVal !== '' && sorted.includes(parseInt(curVal, 10))) {
+    sel.value = curVal;
+  }
 }
 
-function onAtencionStudentChange(si) {
+function onAtencionStudentChange(siVal) {
   ensureStudentProfiles();
+  const si = parseInt(siVal || '0', 10);
   const p = S.studentProfiles && S.studentProfiles[si];
   const repEl = document.getElementById('atencionRepName');
+  const parEl = document.getElementById('atencionParentesco');
   const conEl = document.getElementById('atencionContacto');
+  const banEl = document.getElementById('atencionAlertaBanner');
+  const txtEl = document.getElementById('atencionAlertaText');
+  const motEl = document.getElementById('atencionMotivo');
 
   if (p) {
-    if (repEl && p.rep_nombre) repEl.value = p.rep_nombre;
+    if (repEl) repEl.value = p.rep_nombre || p.madre_nombre || p.padre_nombre || '';
+    if (parEl && p.rep_parentesco) parEl.value = p.rep_parentesco;
     if (conEl) {
       const parts = [];
       if (p.rep_cedula) parts.push('C.I. ' + p.rep_cedula);
       if (p.rep_telefono) parts.push('Tel: ' + p.rep_telefono);
       conEl.value = parts.join(' · ');
     }
+  }
+
+  // Comprobar bajo rendimiento para alerta temprana
+  const low = getStudentLowSubjects(si);
+  if (low.length > 0) {
+    if (banEl) banEl.style.display = 'block';
+    if (txtEl) {
+      txtEl.innerHTML = low.map(l => `<strong>${escHTML(l.mat)}:</strong> ${l.avg} pts`).join(' · ');
+    }
+    if (motEl && !motEl.value.includes('Bajo Rendimiento')) {
+      motEl.value = 'Bajo Rendimiento Académico / Alerta Temprana';
+    }
+  } else {
+    if (banEl) banEl.style.display = 'none';
+  }
+
+  updateAtencionPreview();
+}
+
+function insertLowSubjectsIntoHechos() {
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  const stName = S.students[si] || 'El estudiante';
+  const low = getStudentLowSubjects(si);
+  const hecEl = document.getElementById('atencionHechos');
+  const motEl = document.getElementById('atencionMotivo');
+  if (!hecEl) return;
+
+  let txt = `Se convoca al representante legal de ${stName} para notificar ALERTA TEMPRANA de bajo rendimiento académico en el 1er Trimestre. `;
+  if (low.length > 0) {
+    txt += `Asignaturas que presentan promedio inferior a 7.00 puntos: ` + low.map(l => `${l.mat} (${l.avg}/10)`).join(', ') + `. `;
+    txt += `Se requiere coordinar el refuerzo pedagógico en casa, revisión de tareas y el plan de recuperación académica.`;
+  } else {
+    txt += `Se realiza seguimiento preventivo para consolidar sus aprendizajes y entrega oportuna de tareas.`;
+  }
+
+  hecEl.value = txt;
+  if (motEl) motEl.value = 'Bajo Rendimiento Académico / Alerta Temprana';
+  updateAtencionPreview();
+  toast('✔ Alerta y asignaturas insertadas en la descripción', '#16a34a');
+}
+
+function onAtencionAsistenciaChange(val) {
+  const firEl = document.getElementById('atencionFirma');
+  const btnDece = document.getElementById('btnAtencionAlertDece');
+  const comEl = document.getElementById('atencionCompromisos');
+
+  if (val === 'no_asistio') {
+    if (firEl) firEl.value = 'no';
+    if (btnDece) btnDece.style.display = 'inline-flex';
+    if (comEl && !comEl.value.includes('INASISTENCIA')) {
+      comEl.value = 'CONSTANCIA DE INASISTENCIA: El/la representante legal NO compareció a la citación programada en la fecha y hora señaladas, sin presentar justificación oportuna ante el docente tutor. Se deja constancia para los fines legales pertinentes y remisión al DECE institucional.';
+    }
+    toast('🔴 Registrado como Inasistencia (No vino). Opción de informe al DECE habilitada.', '#dc2626');
+  } else if (val === 'asistio') {
+    if (firEl) firEl.value = 'si';
+    if (btnDece) btnDece.style.display = 'none';
+    if (comEl && comEl.value.includes('CONSTANCIA DE INASISTENCIA')) {
+      comEl.value = '1. El representante legal se compromete a realizar el seguimiento diario de las tareas escolares y revisar los cuadernos.\n2. El docente tutor brindará acompañamiento pedagógico y refuerzo.\n3. Se fija una reunión de seguimiento en 15 días hábiles.';
+    }
+  } else if (val === 'justifico') {
+    if (firEl) firEl.value = 'no';
+    if (btnDece) btnDece.style.display = 'none';
+    if (comEl) comEl.value = 'El representante legal comunicó oportunamente la justificación de su inasistencia por motivos de fuerza mayor. Se reprogramará la cita de atención.';
+  } else {
+    if (firEl) firEl.value = 'pendiente';
+    if (btnDece) btnDece.style.display = 'none';
   }
   updateAtencionPreview();
 }
@@ -21908,11 +22265,31 @@ function resetAtencionForm() {
   const hecEl = document.getElementById('atencionHechos');
   const comEl = document.getElementById('atencionCompromisos');
   const fecEl = document.getElementById('atencionFechaHora');
+  const citEl = document.getElementById('atencionFechaCitacion');
+  const tipEl = document.getElementById('atencionTipoLlamado');
+  const asiEl = document.getElementById('atencionAsistencia');
+  const firEl = document.getElementById('atencionFirma');
+
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const dateFormatted = now.toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · 14:00';
+
   if (repEl) repEl.value = '';
   if (conEl) conEl.value = '';
   if (hecEl) hecEl.value = '';
-  if (comEl) comEl.value = '';
-  if (fecEl) fecEl.value = new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · 14:00';
+  if (comEl) comEl.value = '1. El representante legal se compromete a realizar el seguimiento diario de las tareas escolares y firmar la agenda escolar.\n2. El docente tutor brindará acompañamiento pedagógico.\n3. Se fija una reunión de seguimiento y evaluación de compromisos en 15 días hábiles.';
+  if (fecEl) fecEl.value = dateFormatted;
+  if (citEl) citEl.value = todayStr;
+  if (tipEl) tipEl.value = '1er Llamado (Alerta Temprana)';
+  if (asiEl) asiEl.value = 'asistio';
+  if (firEl) firEl.value = 'si';
+
+  const btnDece = document.getElementById('btnAtencionAlertDece');
+  if (btnDece) btnDece.style.display = 'none';
+
+  const sel = document.getElementById('atencionStudentSel');
+  if (sel) onAtencionStudentChange(sel.value);
+
   updateAtencionPreview();
   toast('✨ Formulario de atención listo', '#2563eb');
 }
@@ -21924,25 +22301,33 @@ function saveAtencionToHistory() {
   const stName = S.students[si] || ('Estudiante ' + (si+1));
   const repName = document.getElementById('atencionRepName')?.value.trim();
   const parentesco = document.getElementById('atencionParentesco')?.value || 'Madre de Familia';
+  const tipoLlamado = document.getElementById('atencionTipoLlamado')?.value || '1er Llamado (Alerta Temprana)';
+  const fechaCitacion = document.getElementById('atencionFechaCitacion')?.value || new Date().toISOString().split('T')[0];
   const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleDateString('es-EC');
-  const motivo = document.getElementById('atencionMotivo')?.value || 'Atención General';
+  const motivo = document.getElementById('atencionMotivo')?.value || 'Bajo Rendimiento Académico / Alerta Temprana';
+  const estadoAsistencia = document.getElementById('atencionAsistencia')?.value || 'asistio';
+  const firmoAcuerdo = document.getElementById('atencionFirma')?.value || 'si';
   const contacto = document.getElementById('atencionContacto')?.value.trim() || '';
   const hechos = document.getElementById('atencionHechos')?.value.trim() || '';
   const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '';
 
   if (!repName) {
-    toast('⚠️ Ingrese el nombre del representante que asiste', '#dc2626');
+    toast('⚠️ Ingrese el nombre del representante', '#dc2626');
     return;
   }
 
   const record = {
-    id: 'atn_' + Date.now(),
+    id: 'atn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
     studentIdx: si,
     stName,
     repName,
     parentesco,
+    tipoLlamado,
+    fechaCitacion,
     fechaHora,
     motivo,
+    estadoAsistencia,
+    firmoAcuerdo,
     contacto,
     hechos,
     compromisos,
@@ -21952,73 +22337,348 @@ function saveAtencionToHistory() {
   S.herramientas.atenciones.unshift(record);
   saveData();
   renderAtencionHistoryTable();
-  toast('✔ Ficha de atención para ' + stName + ' guardada en bitácora', '#16a34a');
+  populateAtencionStudentSelect();
+
+  const msg = estadoAsistencia === 'asistio' 
+    ? `✔ Ficha de atención para ${stName} guardada (Vino y firmó)` 
+    : `✔ Convocatoria guardada para ${stName} (${estadoAsistencia === 'no_asistio' ? 'Registrado como No Asistió' : 'Pendiente'})`;
+  toast(msg, '#16a34a');
+
+  // Si no asistió, ofrecer ir al subtab DECE
+  if (estadoAsistencia === 'no_asistio') {
+    const btnDece = document.getElementById('btnAtencionAlertDece');
+    if (btnDece) btnDece.style.display = 'inline-flex';
+  }
 }
 
 function renderAtencionHistoryTable() {
   ensureHerramientas();
   const container = document.getElementById('atencionHistoryTableContainer');
+  const kpiBox = document.getElementById('atencionKpiContainer');
+  const badgeTotal = document.getElementById('atencionTotalBadge');
+  const badgeDece = document.getElementById('atencionDeceAlertBadge');
+  const allRecords = S.herramientas.atenciones || [];
+
+  // 1. Métricas / KPIs
+  const total = allRecords.length;
+  const vinieron = allRecords.filter(r => r.estadoAsistencia === 'asistio' || !r.estadoAsistencia).length;
+  const noVinieron = allRecords.filter(r => r.estadoAsistencia === 'no_asistio').length;
+  const justificados = allRecords.filter(r => r.estadoAsistencia === 'justifico').length;
+  const firmaron = allRecords.filter(r => r.firmoAcuerdo === 'si' || (!r.firmoAcuerdo && (r.estadoAsistencia === 'asistio' || !r.estadoAsistencia))).length;
+  const noFirmaron = allRecords.filter(r => r.firmoAcuerdo === 'no').length;
+
+  if (badgeTotal) badgeTotal.textContent = total;
+  if (badgeDece) {
+    badgeDece.textContent = noVinieron;
+    badgeDece.style.display = (noVinieron > 0) ? 'inline-block' : 'none';
+  }
+
+  if (kpiBox) {
+    kpiBox.innerHTML = `
+      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #3b82f6;border-radius:8px;padding:10px 14px">
+        <div style="font-size:0.72rem;font-weight:800;color:#64748b;text-transform:uppercase">Total Atenciones / Llamados</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#1e40af;font-family:var(--font-mono)">${total}</div>
+        <div style="font-size:0.7rem;color:#475569">Registros en bitácora</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-left:4px solid #16a34a;border-radius:8px;padding:10px 14px">
+        <div style="font-size:0.72rem;font-weight:800;color:#166534;text-transform:uppercase">Asistieron (Vinieron)</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#15803d;font-family:var(--font-mono)">${vinieron}</div>
+        <div style="font-size:0.7rem;color:#166534">Padres que comparecieron</div>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fca5a5;border-left:4px solid #dc2626;border-radius:8px;padding:10px 14px">
+        <div style="font-size:0.72rem;font-weight:800;color:#991b1b;text-transform:uppercase">No Vinieron (Inasistencias)</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#dc2626;font-family:var(--font-mono)">${noVinieron}</div>
+        <div style="font-size:0.7rem;color:#991b1b">${noVinieron > 0 ? '⚠️ Casos para informe DECE' : 'Sin llamados desatendidos'}</div>
+      </div>
+      <div style="background:#fefce8;border:1px solid #fde047;border-left:4px solid #ca8a04;border-radius:8px;padding:10px 14px">
+        <div style="font-size:0.72rem;font-weight:800;color:#854d0e;text-transform:uppercase">Acuerdos Firmados</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#a16207;font-family:var(--font-mono)">${firmaron}</div>
+        <div style="font-size:0.7rem;color:#854d0e">${noFirmaron > 0 ? `${noFirmaron} sin firma` : 'Compromisos al día'}</div>
+      </div>
+    `;
+  }
+
+  // 2. Resumen por Familia / Estudiante
+  renderAtencionSummaryTable();
+
+  // 3. Tabla Cronológica Filtrada
   if (!container) return;
 
-  const filter = (document.getElementById('atencionFilterInput')?.value || '').toLowerCase();
-  const records = S.herramientas.atenciones.filter(r => 
-    !filter || r.stName.toLowerCase().includes(filter) || r.repName.toLowerCase().includes(filter) || r.motivo.toLowerCase().includes(filter)
-  );
+  const filterText = (document.getElementById('atencionFilterInput')?.value || '').toLowerCase();
+  const filterAsistencia = document.getElementById('atencionFilterAsistencia')?.value || 'all';
+  const filterFirma = document.getElementById('atencionFilterFirma')?.value || 'all';
+
+  const records = allRecords.filter(r => {
+    // Filtro texto
+    const mText = !filterText || 
+      (r.stName || '').toLowerCase().includes(filterText) || 
+      (r.repName || '').toLowerCase().includes(filterText) || 
+      (r.motivo || '').toLowerCase().includes(filterText) ||
+      (r.tipoLlamado || '').toLowerCase().includes(filterText);
+    if (!mText) return false;
+
+    // Filtro Asistencia
+    const estAsist = r.estadoAsistencia || 'asistio';
+    if (filterAsistencia !== 'all' && estAsist !== filterAsistencia) return false;
+
+    // Filtro Firma
+    const estFirma = r.firmoAcuerdo || (estAsist === 'asistio' ? 'si' : 'no');
+    if (filterFirma !== 'all' && estFirma !== filterFirma) return false;
+
+    return true;
+  });
 
   if (records.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text-muted);font-size:0.8rem">No hay registros de atención guardados en la bitácora.</div>';
+    container.innerHTML = '<div style="text-align:center;padding:22px;color:var(--text-muted);font-size:0.84rem">No se encontraron registros de atención con los filtros seleccionados.</div>';
     return;
   }
 
-  const rows = records.map(r => '<tr>' +
-      '<td style="font-size:0.75rem;white-space:nowrap;font-weight:700">' + escHTML(r.fechaHora.split('·')[0] || r.fechaHora) + '</td>' +
-      '<td style="font-weight:800;font-size:0.8rem">' + escHTML(r.stName) + '</td>' +
-      '<td style="font-size:0.78rem">' + escHTML(r.repName) + ' <span style="font-size:0.7rem;color:var(--text-muted)">(' + escHTML(r.parentesco) + ')</span></td>' +
-      '<td><span class="normative-pill" style="font-size:0.7rem">' + escHTML(r.motivo) + '</span></td>' +
-      '<td style="text-align:center;white-space:nowrap">' +
-        '<button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="loadAtencionToForm(\'' + r.id + '\')" title="Cargar datos en el formulario">✎ Cargar</button> ' +
-        '<button class="btn btn-primary" style="padding:2px 6px;font-size:0.72rem" onclick="printAtencionEntry(\'' + r.id + '\')" title="Imprimir esta ficha de atención">🖨️ Imprimir</button> ' +
-        '<button class="btn btn-danger" style="padding:2px 6px;font-size:0.72rem" onclick="deleteAtencionEntry(\'' + r.id + '\')" title="Eliminar registro">🗑️</button>' +
-      '</td>' +
-    '</tr>'
-  ).join('');
+  const rows = records.map(r => {
+    const estAsist = r.estadoAsistencia || 'asistio';
+    const estFirma = r.firmoAcuerdo || (estAsist === 'asistio' ? 'si' : 'no');
+    const tipo = r.tipoLlamado || '1er Llamado';
 
-  container.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">' +
-      '<thead>' +
-        '<tr style="background:var(--bg-card-subtle)">' +
-          '<th style="padding:6px 8px;text-align:left">Fecha</th>' +
-          '<th style="padding:6px 8px;text-align:left">Estudiante</th>' +
-          '<th style="padding:6px 8px;text-align:left">Representante</th>' +
-          '<th style="padding:6px 8px;text-align:left">Motivo</th>' +
-          '<th style="padding:6px 8px;text-align:center">Acciones</th>' +
-        '</tr>' +
-      '</thead>' +
-      '<tbody>' + rows + '</tbody>' +
-    '</table>';
+    // Badge Asistencia interactivo
+    let asistBadge = '';
+    if (estAsist === 'asistio') {
+      asistBadge = `<button class="btn" onclick="toggleAtencionAsistencia('${r.id}')" title="Clic para cambiar estado" style="padding:2px 8px;font-size:0.72rem;font-weight:800;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:6px">🟢 Vino / Asistió</button>`;
+    } else if (estAsist === 'no_asistio') {
+      asistBadge = `<button class="btn" onclick="toggleAtencionAsistencia('${r.id}')" title="Clic para cambiar estado" style="padding:2px 8px;font-size:0.72rem;font-weight:900;background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;border-radius:6px">🔴 NO VINO</button>`;
+    } else if (estAsist === 'justifico') {
+      asistBadge = `<button class="btn" onclick="toggleAtencionAsistencia('${r.id}')" title="Clic para cambiar estado" style="padding:2px 8px;font-size:0.72rem;font-weight:800;background:#fef9c3;color:#854d0e;border:1px solid #fde047;border-radius:6px">🟡 Justificó</button>`;
+    } else {
+      asistBadge = `<button class="btn" onclick="toggleAtencionAsistencia('${r.id}')" title="Clic para cambiar estado" style="padding:2px 8px;font-size:0.72rem;font-weight:800;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:6px">⚪ Pendiente</button>`;
+    }
+
+    // Badge Firma interactivo
+    let firmaBadge = '';
+    if (estFirma === 'si') {
+      firmaBadge = `<button class="btn" onclick="toggleAtencionFirma('${r.id}')" title="Clic para alternar firma" style="padding:2px 8px;font-size:0.72rem;font-weight:800;background:#f0fdf4;color:#15803d;border:1px solid #86efac;border-radius:6px">✍️ Firmó Acuerdo</button>`;
+    } else if (estFirma === 'no') {
+      firmaBadge = `<button class="btn" onclick="toggleAtencionFirma('${r.id}')" title="Clic para alternar firma" style="padding:2px 8px;font-size:0.72rem;font-weight:900;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:6px">❌ No Firmó</button>`;
+    } else {
+      firmaBadge = `<button class="btn" onclick="toggleAtencionFirma('${r.id}')" title="Clic para alternar firma" style="padding:2px 8px;font-size:0.72rem;font-weight:700;background:#f8fafc;color:#64748b;border:1px solid #cbd5e1;border-radius:6px">⚪ Pendiente</button>`;
+    }
+
+    // Badge Llamado
+    const isUrg = tipo.includes('3er') || tipo.includes('DECE');
+    const llamadoBadge = `<span style="font-size:0.7rem;font-weight:800;padding:2px 6px;border-radius:4px;background:${isUrg ? '#fee2e2' : '#eff6ff'};color:${isUrg ? '#991b1b' : '#1e40af'};border:1px solid ${isUrg ? '#fca5a5' : '#bfdbfe'}">${escHTML(tipo)}</span>`;
+
+    const fechaEnvio = r.fechaCitacion ? `<span style="font-size:0.68rem;color:var(--text-muted);display:block">Citado: ${r.fechaCitacion}</span>` : '';
+
+    return `
+      <tr style="border-bottom:1px solid var(--border-color);background:${estAsist === 'no_asistio' ? '#fff8f8' : '#ffffff'}">
+        <td style="padding:6px 8px;white-space:nowrap">
+          <strong style="font-size:0.76rem;color:var(--text-main)">${escHTML((r.fechaHora || '').split('·')[0] || r.fechaHora || '—')}</strong>
+          ${fechaEnvio}
+        </td>
+        <td style="padding:6px 8px">
+          <strong style="font-size:0.82rem;color:var(--text-main);display:block">${escHTML(r.stName)}</strong>
+          <span style="font-size:0.72rem;color:var(--text-muted)">Rep: ${escHTML(r.repName)} (${escHTML(r.parentesco || 'Familiar')})</span>
+        </td>
+        <td style="padding:6px 8px;text-align:center">
+          ${llamadoBadge}
+        </td>
+        <td style="padding:6px 8px">
+          <span style="font-size:0.72rem;font-weight:700;background:var(--bg-card-subtle);padding:2px 6px;border-radius:4px;border:1px solid var(--border-color);display:inline-block">
+            ${escHTML(r.motivo || 'Atención')}
+          </span>
+        </td>
+        <td style="padding:6px 8px;text-align:center">
+          ${asistBadge}
+        </td>
+        <td style="padding:6px 8px;text-align:center">
+          ${firmaBadge}
+        </td>
+        <td style="padding:6px 8px;text-align:center;white-space:nowrap">
+          <button class="btn btn-outline" style="padding:2px 6px;font-size:0.72rem" onclick="loadAtencionToForm('${r.id}')" title="Cargar y editar">✎</button>
+          <button class="btn btn-primary" style="padding:2px 6px;font-size:0.72rem" onclick="printAtencionEntry('${r.id}')" title="Imprimir ficha">🖨️</button>
+          ${estAsist === 'no_asistio' || estFirma === 'no' ? `
+            <button class="btn btn-danger" style="padding:2px 7px;font-size:0.72rem;font-weight:800;background:#dc2626;color:#fff" onclick="openDeceReportForAtn('${r.id}')" title="Generar Informe Oficial para el DECE por incumplimiento">
+              🚨 DECE
+            </button>
+          ` : ''}
+          <button class="btn btn-danger" style="padding:2px 6px;font-size:0.72rem" onclick="deleteAtencionEntry('${r.id}')" title="Eliminar registro">🗑️</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:0.78rem">
+      <thead>
+        <tr style="background:var(--bg-card-subtle);border-bottom:2px solid var(--border-color)">
+          <th style="padding:6px 8px;text-align:left">Fecha Cita</th>
+          <th style="padding:6px 8px;text-align:left">Estudiante & Representante</th>
+          <th style="padding:6px 8px;text-align:center">Convocatoria</th>
+          <th style="padding:6px 8px;text-align:left">Motivo</th>
+          <th style="padding:6px 8px;text-align:center">¿Vino? (Asistencia)</th>
+          <th style="padding:6px 8px;text-align:center">¿Firmó Acuerdo?</th>
+          <th style="padding:6px 8px;text-align:center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderAtencionSummaryTable() {
+  const container = document.getElementById('atencionSummaryContainer');
+  if (!container || !S.students) return;
+  const sorted = getSortedIndices();
+
+  let rows = '';
+  sorted.forEach(si => {
+    const sName = S.students[si] || '';
+    const p = (S.studentProfiles && S.studentProfiles[si]) || {};
+    const repName = p.rep_nombre || p.madre_nombre || p.padre_nombre || 'No registrado';
+    const repTel = p.rep_telefono || p.madre_telefono || p.padre_telefono || '—';
+    const low = getStudentLowSubjects(si);
+    const stats = getStudentVisitsCount(si);
+
+    let statusPill = '';
+    if (stats.inasistencias >= 2) {
+      statusPill = `<span style="font-size:0.68rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:4px;border:1px solid #fca5a5">🚨 Crítico (${stats.inasistencias} inasistencias)</span>`;
+    } else if (stats.inasistencias === 1) {
+      statusPill = `<span style="font-size:0.68rem;font-weight:800;background:#fef9c3;color:#854d0e;padding:2px 6px;border-radius:4px;border:1px solid #fde047">⚠️ 1 Falta a llamado</span>`;
+    } else if (stats.asistencias > 0) {
+      statusPill = `<span style="font-size:0.68rem;font-weight:800;background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;border:1px solid #86efac">🟢 Al día (${stats.asistencias} visitas)</span>`;
+    } else {
+      statusPill = `<span style="font-size:0.68rem;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">⚪ Sin visitas</span>`;
+    }
+
+    const lowBadge = low.length > 0 
+      ? `<span style="font-size:0.68rem;font-weight:800;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:4px;border:1px solid #fca5a5">⚠️ ${low.length} bajo rend.</span>` 
+      : `<span style="font-size:0.68rem;color:#15803d">✅ Aprobado</span>`;
+
+    rows += `
+      <tr style="border-bottom:1px solid var(--border-color);background:${stats.inasistencias > 0 ? '#fff8f8' : '#ffffff'}">
+        <td style="padding:5px 8px;font-weight:800;color:var(--text-main);font-size:0.78rem">
+          ${si + 1}. ${escHTML(sName)}
+        </td>
+        <td style="padding:5px 8px;font-size:0.75rem;color:var(--text-muted)">
+          ${escHTML(repName)} <span style="font-size:0.7rem">(${escHTML(repTel)})</span>
+        </td>
+        <td style="padding:5px 8px;text-align:center">
+          ${lowBadge}
+        </td>
+        <td style="padding:5px 8px;text-align:center;font-weight:900;color:#15803d;font-family:var(--font-mono)">
+          ${stats.asistencias}
+        </td>
+        <td style="padding:5px 8px;text-align:center;font-weight:900;color:${stats.inasistencias > 0 ? '#dc2626' : '#64748b'};font-family:var(--font-mono)">
+          ${stats.inasistencias}
+        </td>
+        <td style="padding:5px 8px;text-align:center;font-weight:900;color:#a16207;font-family:var(--font-mono)">
+          ${stats.firmados}
+        </td>
+        <td style="padding:5px 8px;text-align:center">
+          ${statusPill}
+        </td>
+        <td style="padding:5px 8px;text-align:center;white-space:nowrap">
+          <button class="btn btn-outline" style="padding:2px 6px;font-size:0.7rem;font-weight:800" onclick="openAtencionForStudent(${si})" title="Citar o registrar nueva atención">
+            + Citar
+          </button>
+          ${stats.inasistencias > 0 ? `
+            <button class="btn btn-danger" style="padding:2px 6px;font-size:0.7rem;font-weight:800;background:#dc2626;color:#fff" onclick="openDeceReportForStudent(${si})" title="Generar Informe para el DECE por incomparecencia">
+              🚨 Informe DECE
+            </button>
+          ` : ''}
+        </td>
+      </tr>
+    `;
+  });
+
+  container.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:0.76rem">
+      <thead>
+        <tr style="background:var(--bg-card-subtle);border-bottom:2px solid var(--border-color)">
+          <th style="padding:6px 8px;text-align:left">Estudiante</th>
+          <th style="padding:6px 8px;text-align:left">Representante & Contacto</th>
+          <th style="padding:6px 8px;text-align:center">Rendimiento</th>
+          <th style="padding:6px 8px;text-align:center" title="Veces que el padre/madre vino">🟢 Vinieron</th>
+          <th style="padding:6px 8px;text-align:center" title="Veces que no vino a citación">🔴 No Vinieron</th>
+          <th style="padding:6px 8px;text-align:center" title="Acuerdos firmados">✍️ Firmados</th>
+          <th style="padding:6px 8px;text-align:center">Estado Acompañamiento</th>
+          <th style="padding:6px 8px;text-align:center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function toggleAtencionSummaryTable() {
+  const c = document.getElementById('atencionSummaryContainer');
+  const icon = document.getElementById('atencionSummaryToggleIcon');
+  const txt = document.getElementById('atencionSummaryToggleText');
+  if (!c) return;
+  _atencionSummaryVisible = !_atencionSummaryVisible;
+  c.style.display = _atencionSummaryVisible ? 'block' : 'none';
+  if (icon) icon.textContent = _atencionSummaryVisible ? '👁️' : '🙈';
+  if (txt) txt.textContent = _atencionSummaryVisible ? 'Ocultar Resumen' : 'Mostrar Resumen';
+}
+
+function toggleAtencionAsistencia(atnId) {
+  ensureHerramientas();
+  const r = (S.herramientas.atenciones || []).find(x => x.id === atnId);
+  if (!r) return;
+  const cycle = ['asistio', 'no_asistio', 'justifico'];
+  const cur = r.estadoAsistencia || 'asistio';
+  const nextIdx = (cycle.indexOf(cur) + 1) % cycle.length;
+  r.estadoAsistencia = cycle[nextIdx];
+  if (r.estadoAsistencia === 'no_asistio') r.firmoAcuerdo = 'no';
+  else if (r.estadoAsistencia === 'asistio') r.firmoAcuerdo = 'si';
+  saveData();
+  renderAtencionHistoryTable();
+  toast(`Estado cambiado a: ${r.estadoAsistencia.toUpperCase()}`, '#2563eb');
+}
+
+function toggleAtencionFirma(atnId) {
+  ensureHerramientas();
+  const r = (S.herramientas.atenciones || []).find(x => x.id === atnId);
+  if (!r) return;
+  const cur = r.firmoAcuerdo || 'si';
+  r.firmoAcuerdo = (cur === 'si') ? 'no' : 'si';
+  saveData();
+  renderAtencionHistoryTable();
+  toast(`Firma cambiada a: ${r.firmoAcuerdo === 'si' ? 'SÍ FIRMÓ' : 'NO FIRMÓ'}`, '#2563eb');
 }
 
 function loadAtencionToForm(atnId) {
   ensureHerramientas();
-  const record = S.herramientas.atenciones.find(r => r.id === atnId);
+  const record = (S.herramientas.atenciones || []).find(r => r.id === atnId);
   if (!record) return;
+
+  switchAtencionSubTab('registro');
 
   const sel = document.getElementById('atencionStudentSel');
   const repEl = document.getElementById('atencionRepName');
   const parEl = document.getElementById('atencionParentesco');
+  const tipEl = document.getElementById('atencionTipoLlamado');
+  const citEl = document.getElementById('atencionFechaCitacion');
   const fecEl = document.getElementById('atencionFechaHora');
   const motEl = document.getElementById('atencionMotivo');
+  const asiEl = document.getElementById('atencionAsistencia');
+  const firEl = document.getElementById('atencionFirma');
   const conEl = document.getElementById('atencionContacto');
   const hecEl = document.getElementById('atencionHechos');
   const comEl = document.getElementById('atencionCompromisos');
 
   if (sel) sel.value = record.studentIdx;
-  if (repEl) repEl.value = record.repName;
-  if (parEl) parEl.value = record.parentesco;
-  if (fecEl) fecEl.value = record.fechaHora;
-  if (motEl) motEl.value = record.motivo;
-  if (conEl) conEl.value = record.contacto;
-  if (hecEl) hecEl.value = record.hechos;
-  if (comEl) comEl.value = record.compromisos;
+  if (repEl) repEl.value = record.repName || '';
+  if (parEl) parEl.value = record.parentesco || 'Madre de Familia';
+  if (tipEl) tipEl.value = record.tipoLlamado || '1er Llamado (Alerta Temprana)';
+  if (citEl) citEl.value = record.fechaCitacion || '';
+  if (fecEl) fecEl.value = record.fechaHora || '';
+  if (motEl) motEl.value = record.motivo || 'Bajo Rendimiento Académico / Alerta Temprana';
+  if (asiEl) asiEl.value = record.estadoAsistencia || 'asistio';
+  if (firEl) firEl.value = record.firmoAcuerdo || 'si';
+  if (conEl) conEl.value = record.contacto || '';
+  if (hecEl) hecEl.value = record.hechos || '';
+  if (comEl) comEl.value = record.compromisos || '';
+
+  const btnDece = document.getElementById('btnAtencionAlertDece');
+  if (btnDece) btnDece.style.display = (record.estadoAsistencia === 'no_asistio' || record.firmoAcuerdo === 'no') ? 'inline-flex' : 'none';
 
   updateAtencionPreview();
   toast('✔ Ficha cargada en formulario', '#2563eb');
@@ -22030,12 +22690,46 @@ function deleteAtencionEntry(atnId) {
   S.herramientas.atenciones = S.herramientas.atenciones.filter(r => r.id !== atnId);
   saveData();
   renderAtencionHistoryTable();
+  populateAtencionStudentSelect();
   toast('🗑️ Registro de atención eliminado', '#b45309');
 }
 
 function printAtencionEntry(atnId) {
   loadAtencionToForm(atnId);
-  window.print();
+  printAtencionFicha();
+}
+
+function openAtencionForStudent(si) {
+  if (typeof switchView === 'function') switchView('herramientas');
+  if (typeof switchHerramientasTab === 'function') switchHerramientasTab('atencion');
+  switchAtencionSubTab('registro');
+  const sel = document.getElementById('atencionStudentSel');
+  if (sel) {
+    sel.value = si;
+    onAtencionStudentChange(si);
+  }
+}
+
+function openCitacionSlipFromForm() {
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  const fechaHora = document.getElementById('atencionFechaHora')?.value || 'Próxima cita escolar';
+  const motivo = document.getElementById('atencionMotivo')?.value || 'Tratar asuntos pedagógicos de su representado/a.';
+
+  switchHerramientasTab('citaciones');
+  const cModo = document.getElementById('citacionModo');
+  if (cModo) {
+    cModo.value = 'individual';
+    if (typeof onCitacionModoChange === 'function') onCitacionModoChange('individual');
+  }
+  const cSel = document.getElementById('citacionStudentSel');
+  if (cSel) cSel.value = si;
+  const cFecha = document.getElementById('citacionFechaHora');
+  if (cFecha) cFecha.value = fechaHora;
+  const cMot = document.getElementById('citacionMotivo');
+  if (cMot) cMot.value = motivo;
+  if (typeof updateCitacionesPreview === 'function') updateCitacionesPreview();
+  toast('✉️ Boleta de citación preparada en el generador', '#7c3aed');
 }
 
 function updateAtencionPreview() {
@@ -22047,8 +22741,12 @@ function updateAtencionPreview() {
 
   const repName = document.getElementById('atencionRepName')?.value.trim() || (p?.rep_nombre) || '_______________________________________';
   const parentesco = document.getElementById('atencionParentesco')?.value || 'Madre de Familia';
+  const tipoLlamado = document.getElementById('atencionTipoLlamado')?.value || '1er Llamado (Alerta Temprana)';
+  const fechaCitacion = document.getElementById('atencionFechaCitacion')?.value || '';
   const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleDateString('es-EC', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  const motivo = document.getElementById('atencionMotivo')?.value || 'Bajo Rendimiento Académico';
+  const motivo = document.getElementById('atencionMotivo')?.value || 'Bajo Rendimiento Académico / Alerta Temprana';
+  const estadoAsist = document.getElementById('atencionAsistencia')?.value || 'asistio';
+  const firmoAcuerdo = document.getElementById('atencionFirma')?.value || 'si';
   const contacto = document.getElementById('atencionContacto')?.value.trim() || (p?.rep_telefono ? ('Tel: ' + p.rep_telefono) : '') || '___________________';
   const hechos = document.getElementById('atencionHechos')?.value.trim() || 'Se convoca al representante legal para informar y coordinar acciones de apoyo pedagógico y comportamental con respecto al proceso educativo del estudiante.';
   const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '1. El representante legal se compromete a realizar el seguimiento diario de las tareas escolares y revisar los cuadernos.\n2. El docente tutor brindará acompañamiento pedagógico diferenciado.\n3. Se fija una reunión de seguimiento y evaluación de compromisos en 15 días hábiles.';
@@ -22058,77 +22756,110 @@ function updateAtencionPreview() {
   const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => '<p style="margin:4px 0">' + escHTML(l) + '</p>').join('');
   const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:4px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
 
-    const upName = (stName || '').toUpperCase();
-    const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
-    const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
-    let stBadge = '';
-    if (isEmily) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047">🚫 RETIRADA</span>';
-    else if (isJayko) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">🚫 NO ASISTE</span>';
+  const upName = (stName || '').toUpperCase();
+  const isJayko = upName.includes('ANDRADE') && upName.includes('JAYKO');
+  const isEmily = upName.includes('ALMEIDA') && upName.includes('EMILY');
+  let stBadge = '';
+  if (isEmily) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;border:1px solid #fde047">🚫 RETIRADA</span>';
+  else if (isJayko) stBadge = ' <span style="font-size:0.75rem;font-weight:900;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">🚫 NO ASISTE</span>';
 
-    box.innerHTML = '<div style="background:linear-gradient(135deg, #b45309 0%, #d97706 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(217,119,6,0.25)">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
-        '<div>' +
-          '<div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>' +
-          '<div style="font-weight:800;font-size:0.92rem;color:#fde68a;margin-top:2px">BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</div>' +
-          '<div style="font-size:0.75rem;color:#fef3c7;margin-top:1px">Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ' + escHTML(S.anio||'2026-2027') + '</div>' +
-        '</div>' +
-        '<div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">' +
-          '<div>Docente Tutor: <strong>' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong></div>' +
-          '<div>Grado: <strong>' + escHTML(S.grado||'Séptimo EGB C') + '</strong></div>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fffbeb;padding:12px 16px;border-radius:8px;border:1.5px solid #fde68a;font-size:0.82rem;margin-bottom:14px">' +
-      '<div><strong>Estudiante:</strong> <span style="font-weight:800;color:#92400e">' + escHTML(stName) + '</span>' + stBadge + '</div>' +
-      '<div><strong>Grado / Paralelo:</strong> ' + escHTML(S.grado||'Séptimo EGB C') + '</div>' +
-      '<div><strong>Representante:</strong> ' + escHTML(repName) + '</div>' +
-      '<div><strong>Parentesco:</strong> ' + escHTML(parentesco) + '</div>' +
-      '<div><strong>Fecha y Hora:</strong> ' + escHTML(fechaHora) + '</div>' +
-      '<div><strong>C.I. / Contacto:</strong> ' + escHTML(contacto) + '</div>' +
-      '<div style="grid-column:1/-1"><strong>Motivo Principal:</strong> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:800">' + escHTML(motivo) + '</span></div>' +
-    '</div>' +
-    '<div style="border:1.5px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.8rem">' +
-      '<strong style="color:#0f172a;display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>' +
-      '<div style="color:#334155;line-height:1.6">' + hechosHtml + '</div>' +
-    '</div>' +
-    '<div style="border:1.5px solid #059669;background:#f0fdf4;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem">' +
-      '<strong style="color:#065f46;display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>' +
-      '<ol style="margin:0 0 0 16px;padding:0;color:#065f46;line-height:1.6">' + compListHtml + '</ol>' +
-    '</div>' +
-    '<div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;line-height:1.4">' +
-      '<em>Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:</em>' +
-    '</div>' +
-    '<div style="display:flex;justify-content:space-around;page-break-inside:avoid">' +
-      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
-        '<strong style="font-size:0.8rem">' + escHTML(repName) + '</strong><br>' +
-        '<span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>' +
-        '<span style="font-size:0.68rem;color:#64748b">C.I.: ' + escHTML(contacto) + '</span>' +
-      '</div>' +
-      '<div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">' +
-        '<strong style="font-size:0.8rem">' + escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez') + '</strong><br>' +
-        '<span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>' +
-        '<span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>' +
-      '</div>' +
-    '</div>';
+  // Badges de estado en vista previa
+  let asistBadgeHtml = (estadoAsist === 'asistio') 
+    ? '<span style="background:#dcfce7;color:#166534;border:1px solid #86efac;padding:2px 8px;border-radius:6px;font-weight:800;font-size:0.78rem">🟢 ASISTIÓ / COMPARECIÓ</span>'
+    : (estadoAsist === 'no_asistio' 
+        ? '<span style="background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;padding:2px 8px;border-radius:6px;font-weight:900;font-size:0.78rem">🔴 NO VINO / INASISTENCIA A CITACIÓN</span>'
+        : '<span style="background:#fef9c3;color:#854d0e;border:1px solid #fde047;padding:2px 8px;border-radius:6px;font-weight:800;font-size:0.78rem">🟡 JUSTIFICÓ</span>');
+
+  let firmaBadgeHtml = (firmoAcuerdo === 'si')
+    ? '<span style="background:#f0fdf4;color:#15803d;border:1px solid #86efac;padding:2px 8px;border-radius:6px;font-weight:800;font-size:0.78rem">✍️ SÍ FIRMÓ ACUERDO</span>'
+    : '<span style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:2px 8px;border-radius:6px;font-weight:900;font-size:0.78rem">❌ NO FIRMÓ</span>';
+
+  box.innerHTML = `
+    <div style="background:linear-gradient(135deg, #b45309 0%, #d97706 100%);color:#ffffff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 4px 15px rgba(217,119,6,0.25)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-weight:900;font-size:1.05rem">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+          <div style="font-weight:800;font-size:0.92rem;color:#fde68a;margin-top:2px">BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</div>
+          <div style="font-size:0.75rem;color:#fef3c7;margin-top:1px">Acompañamiento Pedagógico, Alertas Tempranas y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio||'2026-2027')}</div>
+        </div>
+        <div style="text-align:right;font-size:0.74rem;line-height:1.4;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.25)">
+          <div>Docente Tutor: <strong>${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong></div>
+          <div>Grado: <strong>${escHTML(S.grado||'Séptimo EGB C')}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fffbeb;padding:12px 16px;border-radius:8px;border:1.5px solid #fde68a;font-size:0.82rem;margin-bottom:14px">
+      <div><strong>Estudiante:</strong> <span style="font-weight:800;color:#92400e">${escHTML(stName)}</span>${stBadge}</div>
+      <div><strong>Grado / Paralelo:</strong> ${escHTML(S.grado||'Séptimo EGB C')}</div>
+      <div><strong>Representante:</strong> ${escHTML(repName)}</div>
+      <div><strong>Parentesco:</strong> ${escHTML(parentesco)}</div>
+      <div><strong>Nivel de Convocatoria:</strong> <span style="font-weight:800;color:#1e40af">${escHTML(tipoLlamado)}</span></div>
+      <div><strong>Fecha de Citación:</strong> ${escHTML(fechaCitacion || 'Registro directo')}</div>
+      <div><strong>Fecha y Hora de Cita:</strong> ${escHTML(fechaHora)}</div>
+      <div><strong>C.I. / Contacto:</strong> ${escHTML(contacto)}</div>
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed #fde68a">
+        <div><strong>Motivo:</strong> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:800">${escHTML(motivo)}</span></div>
+        <div><strong>Asistencia:</strong> ${asistBadgeHtml}</div>
+        <div><strong>Acuerdos:</strong> ${firmaBadgeHtml}</div>
+      </div>
+    </div>
+
+    <div style="border:1.5px solid #cbd5e1;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.8rem">
+      <strong style="color:#0f172a;display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>
+      <div style="color:#334155;line-height:1.6">${hechosHtml}</div>
+    </div>
+
+    <div style="border:1.5px solid #059669;background:#f0fdf4;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:0.8rem">
+      <strong style="color:#065f46;display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>
+      <ol style="margin:0 0 0 16px;padding:0;color:#065f46;line-height:1.6">${compListHtml}</ol>
+    </div>
+
+    <div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;line-height:1.4">
+      <em>Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:</em>
+    </div>
+
+    <div style="display:flex;justify-content:space-around;page-break-inside:avoid">
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(repName)}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>
+        <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span><br>
+        <span style="font-size:0.65rem;color:${firmoAcuerdo==='si'?'#16a34a':'#dc2626'};font-weight:700">(${firmoAcuerdo==='si'?'Firma Registrada':'Constancia de No Firma'})</span>
+      </div>
+      <div style="text-align:center;width:240px;border-top:1.5px solid #000;padding-top:4px">
+        <strong style="font-size:0.8rem">${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">DOCENTE TUTOR / AULA</span><br>
+        <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
+      </div>
+    </div>
+  `;
 }
 
 function printAtencionFicha() {
   ensureHerramientas();
   ensureStudentProfiles();
-  const si = parseInt(document.getElementById('atencionStudentSel')?.value || '0', 10);
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
   const stName = (S.students && S.students[si]) ? S.students[si] : ('Estudiante ' + (si+1));
   const p = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : null;
 
-  const repName = document.getElementById('atencionRepNombre')?.value.trim() || p?.rep_nombre || 'Representante Legal';
+  const repName = document.getElementById('atencionRepName')?.value.trim() || p?.rep_nombre || 'Representante Legal';
   const parentesco = document.getElementById('atencionParentesco')?.value.trim() || 'Madre / Padre';
+  const tipoLlamado = document.getElementById('atencionTipoLlamado')?.value || '1er Llamado (Alerta Temprana)';
+  const fechaCitacion = document.getElementById('atencionFechaCitacion')?.value || '';
   const fechaHora = document.getElementById('atencionFechaHora')?.value.trim() || new Date().toLocaleString('es-EC');
   const contacto = document.getElementById('atencionContacto')?.value.trim() || p?.rep_cedula || p?.rep_telefono || '—';
   const motivo = document.getElementById('atencionMotivo')?.value.trim() || 'Acompañamiento Pedagógico';
+  const estadoAsist = document.getElementById('atencionAsistencia')?.value || 'asistio';
+  const firmoAcuerdo = document.getElementById('atencionFirma')?.value || 'si';
   const hechos = document.getElementById('atencionHechos')?.value.trim() || 'Se convoca al representante para dialogar sobre el rendimiento académico.';
   const compromisos = document.getElementById('atencionCompromisos')?.value.trim() || '1. Apoyar en las tareas diarias.\n2. Asistir a las convocatorias de la institución.';
 
   const hechosHtml = hechos.split('\n').filter(l => l.trim() !== '').map(l => '<p style="margin:4px 0">' + escHTML(l) + '</p>').join('');
   const compListHtml = compromisos.split('\n').filter(l => l.trim() !== '').map(l => '<li style="margin-bottom:3px">' + escHTML(l.replace(/^\d+\.\s*/, '')) + '</li>').join('');
+
+  const asistBadgeText = (estadoAsist === 'asistio') ? 'SÍ COMPARECIÓ' : (estadoAsist === 'no_asistio' ? 'NO ASISTIÓ' : 'JUSTIFICÓ');
+  const firmaBadgeText = (firmoAcuerdo === 'si') ? 'FIRMADO' : 'NO FIRMÓ';
 
   const w = window.open('', '_blank');
   w.document.write(`
@@ -22138,24 +22869,24 @@ function printAtencionFicha() {
       <meta charset="UTF-8">
       <title>Ficha de Atención a Padres — ${escHTML(stName)}</title>
       <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #0f172a; line-height: 1.5; font-size: 0.88rem; }
-        .hdr { text-align: center; border-bottom: 2.5px solid #d97706; padding-bottom: 10px; margin-bottom: 14px; }
-        .hdr h2 { margin: 0 0 4px 0; color: #b45309; font-size: 1.25rem; }
-        .hdr h3 { margin: 2px 0; color: #92400e; font-size: 1.02rem; }
-        .hdr p { margin: 2px 0; font-size: 0.82rem; color: #475569; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.84rem; }
-        .box { border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #0f172a; line-height: 1.45; font-size: 0.86rem; }
+        .hdr { text-align: center; border-bottom: 2.5px solid #d97706; padding-bottom: 8px; margin-bottom: 12px; }
+        .hdr h2 { margin: 0 0 3px 0; color: #b45309; font-size: 1.22rem; }
+        .hdr h3 { margin: 2px 0; color: #92400e; font-size: 0.98rem; }
+        .hdr p { margin: 2px 0; font-size: 0.78rem; color: #475569; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.82rem; }
+        .box { border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.82rem; }
         .box-green { border: 1.5px solid #059669; background: #f0fdf4; }
-        .signatures { display: flex; justify-content: space-around; margin-top: 50px; page-break-inside: avoid; }
+        .signatures { display: flex; justify-content: space-around; margin-top: 45px; page-break-inside: avoid; }
         .sig-col { text-align: center; width: 230px; border-top: 1.5px solid #000; padding-top: 6px; font-size: 0.8rem; }
-        @media print { body { padding: 0; } @page { size: portrait; margin: 12mm 10mm; } }
+        @media print { body { padding: 0; } @page { size: portrait; margin: 10mm 8mm; } }
       </style>
     </head>
     <body>
       <div class="hdr">
         <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
         <h3>BITÁCORA INDIVIDUAL DE ATENCIÓN A PADRES DE FAMILIA / REPRESENTANTES LEGALES</h3>
-        <p>Registro de Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio || '2026-2027')}</p>
+        <p>Acompañamiento Pedagógico, Convivencia y Acuerdos de Tutoría · Año Lectivo ${escHTML(S.anio || '2026-2027')}</p>
       </div>
 
       <div class="info-grid">
@@ -22163,22 +22894,25 @@ function printAtencionFicha() {
         <div><strong>Grado / Paralelo:</strong> ${escHTML(S.grado || 'Séptimo EGB C')}</div>
         <div><strong>Representante:</strong> ${escHTML(repName)}</div>
         <div><strong>Parentesco:</strong> ${escHTML(parentesco)}</div>
-        <div><strong>Fecha y Hora:</strong> ${escHTML(fechaHora)}</div>
+        <div><strong>Convocatoria:</strong> ${escHTML(tipoLlamado)}</div>
+        <div><strong>Fecha Citación:</strong> ${escHTML(fechaCitacion || 'Directa')}</div>
+        <div><strong>Fecha y Hora de Cita:</strong> ${escHTML(fechaHora)}</div>
         <div><strong>C.I. / Contacto:</strong> ${escHTML(contacto)}</div>
-        <div style="grid-column:1/-1"><strong>Motivo Principal:</strong> ${escHTML(motivo)}</div>
+        <div><strong>Motivo:</strong> ${escHTML(motivo)}</div>
+        <div><strong>Constancia:</strong> Asistencia: [${asistBadgeText}] · Acuerdo: [${firmaBadgeText}]</div>
       </div>
 
       <div class="box">
-        <strong style="display:block;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;color:#0f172a">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>
+        <strong style="display:block;margin-bottom:5px;border-bottom:1px solid #e2e8f0;padding-bottom:3px;color:#0f172a">1. DESCRIPCIÓN DE LA SITUACIÓN TRATADA (ANTECEDENTES Y HECHOS):</strong>
         <div style="color:#334155">${hechosHtml}</div>
       </div>
 
       <div class="box box-green">
-        <strong style="display:block;margin-bottom:6px;border-bottom:1px solid #a7f3d0;padding-bottom:4px;color:#065f46">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>
-        <ol style="margin:0 0 0 18px;padding:0;color:#065f46">${compListHtml}</ol>
+        <strong style="display:block;margin-bottom:5px;border-bottom:1px solid #a7f3d0;padding-bottom:3px;color:#065f46">2. ACUERDOS Y COMPROMISOS ADQUIRIDOS:</strong>
+        <ol style="margin:0 0 0 16px;padding:0;color:#065f46">${compListHtml}</ol>
       </div>
 
-      <div style="font-size:0.75rem;color:#64748b;margin-bottom:30px;font-style:italic">
+      <div style="font-size:0.74rem;color:#64748b;margin-bottom:25px;font-style:italic">
         Para constancia y fiel cumplimiento de lo acordado en beneficio del desarrollo integral del estudiante, firman conjuntamente las partes intervinientes:
       </div>
 
@@ -22186,7 +22920,8 @@ function printAtencionFicha() {
         <div class="sig-col">
           <strong>${escHTML(repName)}</strong><br>
           <span style="font-size:0.72rem;color:#475569">REPRESENTANTE LEGAL</span><br>
-          <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span>
+          <span style="font-size:0.68rem;color:#64748b">C.I.: ${escHTML(contacto)}</span><br>
+          <span style="font-size:0.65rem;color:#475569">[${firmaBadgeText}]</span>
         </div>
         <div class="sig-col">
           <strong>${escHTML(S.docente || S.tutor || 'Lcdo. Kléver Yánez')}</strong><br>
@@ -22199,6 +22934,425 @@ function printAtencionFicha() {
   `);
   w.document.close();
   setTimeout(() => { w.print(); }, 350);
+}
+
+// ════ MÓDULO OFICIAL: INFORME AL DECE POR INCUMPLIMIENTO DE CONVOCATORIAS ════
+
+function populateDeceStudentSelect(preselectSi) {
+  const sel = document.getElementById('deceReportStudentSel');
+  if (!sel || !S.students) return;
+  const sorted = getSortedIndices();
+
+  sel.innerHTML = sorted.map(si => {
+    const sName = S.students[si] || '';
+    const stats = getStudentVisitsCount(si);
+    const low = getStudentLowSubjects(si);
+    let note = '';
+    if (stats.inasistencias > 0) note = ` [🚨 ${stats.inasistencias} inasistencias a citación]`;
+    else if (low.length > 0) note = ` [⚠️ ${low.length} mat. bajas]`;
+
+    return `<option value="${si}">${si + 1}. ${escHTML(sName)}${note}</option>`;
+  }).join('');
+
+  if (preselectSi !== undefined && sorted.includes(parseInt(preselectSi, 10))) {
+    sel.value = preselectSi;
+  }
+  const fecEl = document.getElementById('deceReportFecha');
+  if (fecEl && !fecEl.value) {
+    fecEl.value = new Date().toLocaleDateString('es-EC', { day:'2-digit', month:'long', year:'numeric' });
+  }
+}
+
+function onDeceStudentChange(si) {
+  updateDeceReportPreview();
+}
+
+function openDeceReportForStudent(si) {
+  switchHerramientasTab('atencion');
+  switchAtencionSubTab('dece');
+  populateDeceStudentSelect(si);
+  updateDeceReportPreview();
+  toast('🏛️ Módulo de Informe al DECE abierto', '#dc2626');
+}
+
+function openDeceReportForAtn(atnId) {
+  ensureHerramientas();
+  const r = (S.herramientas.atenciones || []).find(x => x.id === atnId);
+  const si = r ? r.studentIdx : 0;
+  openDeceReportForStudent(si);
+}
+
+function openDeceReportForCurrent() {
+  const sel = document.getElementById('atencionStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  openDeceReportForStudent(si);
+}
+
+function getDeceReportData() {
+  const sel = document.getElementById('deceReportStudentSel');
+  const si = parseInt(sel?.value || '0', 10);
+  const stName = (S.students && S.students[si]) ? S.students[si] : ('Estudiante ' + (si + 1));
+  const p = (S.studentProfiles && S.studentProfiles[si]) || {};
+  const repName = p.rep_nombre || p.madre_nombre || p.padre_nombre || 'Representante Legal';
+  const repCedula = p.rep_cedula || p.madre_cedula || p.padre_cedula || '—';
+  const repTel = p.rep_telefono || p.madre_telefono || p.padre_telefono || 'No registrado';
+  const repPar = p.rep_parentesco || 'Madre / Padre';
+  const stCedula = p.cedula || '—';
+
+  const numeroMemo = document.getElementById('deceReportNumero')?.value.trim() || 'UEF-C2-TUT-2026-001';
+  const fechaInforme = document.getElementById('deceReportFecha')?.value.trim() || new Date().toLocaleDateString('es-EC', { day:'2-digit', month:'long', year:'numeric' });
+  const destinatario = document.getElementById('deceReportDestinatario')?.value.trim() || 'Coordinación del Departamento de Consejería Estudiantil (DECE)';
+
+  const lowSubjects = getStudentLowSubjects(si);
+  const stats = getStudentVisitsCount(si);
+  const citations = stats.records || [];
+
+  return {
+    si,
+    stName,
+    stCedula,
+    repName,
+    repCedula,
+    repTel,
+    repPar,
+    numeroMemo,
+    fechaInforme,
+    destinatario,
+    lowSubjects,
+    stats,
+    citations,
+    docenteName: S.docente || S.tutor || 'Lcdo. Kléver Yánez',
+    grado: S.grado || 'Séptimo EGB "C"',
+    anio: S.anio || '2026-2027',
+    periodo: S.periodo || '1er Trimestre'
+  };
+}
+
+function updateDeceReportPreview() {
+  const box = document.getElementById('deceReportPreviewBox');
+  if (!box) return;
+  const d = getDeceReportData();
+
+  // Tabla de Citaciones Emitidas
+  let citRows = '';
+  if (d.citations.length > 0) {
+    citRows = d.citations.map((c, i) => {
+      const isAbsent = c.estadoAsistencia === 'no_asistio';
+      const statusText = isAbsent ? '🔴 NO ASISTIÓ / INASISTENCIA' : (c.estadoAsistencia === 'asistio' ? '🟢 Asistió' : '🟡 Justificó');
+      const firmaText = c.firmoAcuerdo === 'si' ? '✅ Firmado' : '❌ No Firmó';
+      return `
+        <tr style="border-bottom:1px solid #cbd5e1;background:${isAbsent ? '#fff1f2' : '#ffffff'}">
+          <td style="padding:5px 8px;font-weight:700;text-align:center">${i + 1}</td>
+          <td style="padding:5px 8px;font-weight:800;color:#1e3a8a">${escHTML(c.tipoLlamado || 'Convocatoria')}</td>
+          <td style="padding:5px 8px;text-align:center">${escHTML(c.fechaCitacion || '—')}</td>
+          <td style="padding:5px 8px;text-align:center;font-weight:700">${escHTML((c.fechaHora || '').split('·')[0] || c.fechaHora || '—')}</td>
+          <td style="padding:5px 8px">${escHTML(c.motivo || 'Bajo Rendimiento')}</td>
+          <td style="padding:5px 8px;text-align:center;font-weight:900;color:${isAbsent ? '#b91c1c' : '#15803d'}">${statusText}</td>
+          <td style="padding:5px 8px;text-align:center;font-weight:800">${firmaText}</td>
+        </tr>
+      `;
+    }).join('');
+  } else {
+    citRows = `
+      <tr>
+        <td colspan="7" style="padding:10px;text-align:center;color:#64748b;font-style:italic">
+          No hay citaciones previas registradas en la bitácora para este estudiante. Registre al menos una convocatoria en la pestaña "Registro".
+        </td>
+      </tr>
+    `;
+  }
+
+  // Tabla de Bajo Rendimiento
+  let lowRows = '';
+  if (d.lowSubjects.length > 0) {
+    lowRows = d.lowSubjects.map(s => `
+      <span style="display:inline-flex;align-items:center;gap:4px;background:#fee2e2;border:1px solid #fca5a5;padding:3px 8px;border-radius:6px;font-size:0.75rem;margin:2px">
+        <strong>${escHTML(s.mat)}:</strong> <span style="font-family:var(--font-mono);font-weight:900;color:#dc2626">${s.avg}</span>
+      </span>
+    `).join(' ');
+  } else {
+    lowRows = '<span style="font-size:0.75rem;color:#16a34a;font-weight:700">Sin asignaturas en riesgo numérico menor a 7.00.</span>';
+  }
+
+  box.innerHTML = `
+    <div style="background:#ffffff;border:1.5px solid #cbd5e1;border-radius:10px;padding:24px 30px;color:#0f172a;line-height:1.5;box-shadow:0 4px 15px rgba(0,0,0,0.04)">
+      
+      <!-- Membrete Oficial -->
+      <div style="text-align:center;border-bottom:2.5px solid #dc2626;padding-bottom:12px;margin-bottom:16px">
+        <div style="font-size:0.8rem;font-weight:900;letter-spacing:1px;color:#64748b">REPÚBLICA DEL ECUADOR · MINISTERIO DE EDUCACIÓN</div>
+        <div style="font-size:1.18rem;font-weight:900;color:#991b1b;margin-top:2px">UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</div>
+        <div style="font-size:0.74rem;color:#475569">Distrito Educativo 17D02 Calderón · Código AMIE: 17H01344 · Régimen Sierra-Amazonía</div>
+        <div style="font-size:0.95rem;font-weight:900;color:#0f172a;margin-top:8px;background:#fef2f2;border:1px solid #fecdd3;padding:5px 12px;border-radius:6px;display:inline-block">
+          INFORME TÉCNICO DE DERIVACIÓN AL DECE POR INCUMPLIMIENTO DE CONVOCATORIAS
+        </div>
+      </div>
+
+      <!-- Encabezado de Memorando -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;font-size:0.8rem;margin-bottom:16px">
+        <div><strong>MEMORANDO N°:</strong> <span style="font-family:var(--font-mono);font-weight:900;color:#1e3a8a">${escHTML(d.numeroMemo)}</span></div>
+        <div><strong>FECHA:</strong> ${escHTML(d.fechaInforme)}</div>
+        <div><strong>PARA:</strong> ${escHTML(d.destinatario)}</div>
+        <div><strong>DE:</strong> ${escHTML(d.docenteName)} (Docente Tutor)</div>
+        <div style="grid-column:1/-1"><strong>ASUNTO:</strong> <span style="font-weight:800;color:#991b1b">Remisión formal de caso por falta de comparecencia a citaciones y alerta temprana de bajo rendimiento escolar</span></div>
+      </div>
+
+      <!-- Sección 1: Datos del Estudiante y Familia -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.82rem;font-weight:900;color:#1e3a8a;border-bottom:1.5px solid #cbd5e1;padding-bottom:3px;margin-bottom:8px">
+          1. DATOS DE IDENTIFICACIÓN DEL ESTUDIANTE Y REPRESENTANTE LEGAL:
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 12px;font-size:0.78rem;background:#fff;padding:8px;border:1px solid #e2e8f0;border-radius:6px">
+          <div><strong>Estudiante:</strong> ${escHTML(d.stName)}</div>
+          <div><strong>Cédula Estudiante:</strong> ${escHTML(d.stCedula)}</div>
+          <div><strong>Grado / Paralelo:</strong> ${escHTML(d.grado)}</div>
+          <div><strong>Año Lectivo:</strong> ${escHTML(d.anio)} (${escHTML(d.periodo)})</div>
+          <div><strong>Representante Legal:</strong> ${escHTML(d.repName)}</div>
+          <div><strong>Parentesco:</strong> ${escHTML(d.repPar)}</div>
+          <div><strong>Cédula Rep.:</strong> ${escHTML(d.repCedula)}</div>
+          <div><strong>Teléfono / Contacto:</strong> <strong style="color:#2563eb">${escHTML(d.repTel)}</strong></div>
+        </div>
+      </div>
+
+      <!-- Sección 2: Situación Académica -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.82rem;font-weight:900;color:#1e3a8a;border-bottom:1.5px solid #cbd5e1;padding-bottom:3px;margin-bottom:8px">
+          2. SITUACIÓN PEDAGÓGICA Y ALERTA TEMPRANA DE RENDIMIENTO:
+        </div>
+        <div style="font-size:0.78rem;color:#334155;line-height:1.5;margin-bottom:6px">
+          En el marco del seguimiento pedagógico activo del 1er Trimestre, se identificaron asignaturas donde el estudiante no alcanza los aprendizajes mínimos requeridos (< 7.00 / 10), ameritando intervención y acuerdos con la familia:
+        </div>
+        <div>${lowRows}</div>
+      </div>
+
+      <!-- Sección 3: Cronología de Convocatorias -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.82rem;font-weight:900;color:#1e3a8a;border-bottom:1.5px solid #cbd5e1;padding-bottom:3px;margin-bottom:8px">
+          3. CRONOLOGÍA DE CITACIONES EMITIDAS POR EL DOCENTE (EVIDENCIAS DE NOTIFICACIÓN):
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+            <thead>
+              <tr style="background:#f1f5f9;border-bottom:1.5px solid #cbd5e1">
+                <th style="padding:5px 6px;width:25px">#</th>
+                <th style="padding:5px 6px;text-align:left">Convocatoria</th>
+                <th style="padding:5px 6px;text-align:center">Fecha Envío</th>
+                <th style="padding:5px 6px;text-align:center">Fecha Cita</th>
+                <th style="padding:5px 6px;text-align:left">Motivo Tratado</th>
+                <th style="padding:5px 6px;text-align:center">Asistencia del Representante</th>
+                <th style="padding:5px 6px;text-align:center">Firma de Acuerdo</th>
+              </tr>
+            </thead>
+            <tbody>${citRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sección 4: Base Legal -->
+      <div style="margin-bottom:16px;background:#fef2f2;border:1px solid #fecdd3;border-radius:6px;padding:10px 14px;font-size:0.76rem;color:#881337">
+        <div style="font-weight:900;margin-bottom:4px">4. FUNDAMENTACIÓN NORMATIVA Y VULNERACIÓN DE CORRESPONSABILIDAD:</div>
+        <div style="line-height:1.45">
+          Conforme lo establece la <strong>Ley Orgánica de Educación Intercultural (LOEI) en sus artículos 12 y 13</strong>, es responsabilidad inexcusable de las madres, padres y representantes legales acompañar el proceso educativo, revisar cuadernos, participar activamente y <strong>comparecer de manera obligatoria a los llamados de las autoridades y docentes</strong>. Asimismo, el <strong>Código de la Niñez y Adolescencia (Art. 11)</strong> consagra el principio del interés superior de niñas y niños, configurándose una situación de riesgo y desatención escolar cuando las convocatorias docentes son reiteradamente ignoradas.
+        </div>
+      </div>
+
+      <!-- Sección 5: Petitorio al DECE -->
+      <div style="margin-bottom:24px;font-size:0.78rem">
+        <div style="font-size:0.82rem;font-weight:900;color:#1e3a8a;border-bottom:1.5px solid #cbd5e1;padding-bottom:3px;margin-bottom:8px">
+          5. PETITORIO CONCRETO AL DEPARTAMENTO DE CONSEJERÍA ESTUDIANTIL (DECE):
+        </div>
+        <ol style="margin:0 0 0 18px;padding:0;color:#334155;line-height:1.55">
+          <li><strong>Apertura de expediente y citación institucional:</strong> Convocar formalmente al representante legal con apercibimiento institucional por parte del equipo profesional del DECE.</li>
+          <li><strong>Seguimiento socioemocional y familiar:</strong> Evaluar las causales de la falta de acompañamiento, inasistencias o desatención escolar.</li>
+          <li><strong>Firma obligatoria de compromisos:</strong> Suscribir acta de compromiso de corresponsabilidad educativa con plazos improrrogables de cumplimiento.</li>
+          <li><strong>Derivación externa de ser necesario:</strong> De persistir la incomparecencia o negligencia familiar, coordinar la remisión a la Junta Cantonal de Protección de Derechos (JCPD) conforme las rutas y protocolos ministeriales vigentes.</li>
+        </ol>
+      </div>
+
+      <!-- Firmas Oficiales -->
+      <div style="display:flex;justify-content:space-between;gap:14px;margin-top:40px;page-break-inside:avoid">
+        <div style="text-align:center;flex:1;border-top:1.5px solid #000;padding-top:6px;font-size:0.75rem">
+          <strong>${escHTML(d.docenteName)}</strong><br>
+          <span style="color:#475569">DOCENTE TUTOR / AULA</span><br>
+          <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
+        </div>
+        <div style="text-align:center;flex:1;border-top:1.5px solid #000;padding-top:6px;font-size:0.75rem">
+          <strong>DEPARTAMENTO DE CONSEJERÍA (DECE)</strong><br>
+          <span style="color:#475569">RECIBIDO · SELLO & FECHA</span><br>
+          <span style="font-size:0.68rem;color:#64748b">Fecha y Hora: ____/____/2026</span>
+        </div>
+        <div style="text-align:center;flex:1;border-top:1.5px solid #000;padding-top:6px;font-size:0.75rem">
+          <strong>INSPECCIÓN GENERAL / VICERRECTORADO</strong><br>
+          <span style="color:#475569">CONOCIMIENTO INSTITUCIONAL</span><br>
+          <span style="font-size:0.68rem;color:#64748b">U.E.F. "CALDERÓN 2"</span>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+function printInformeDece() {
+  const d = getDeceReportData();
+
+  // Citaciones table rows
+  let citRows = '';
+  if (d.citations.length > 0) {
+    citRows = d.citations.map((c, i) => {
+      const isAbsent = c.estadoAsistencia === 'no_asistio';
+      const statusText = isAbsent ? 'NO ASISTIÓ' : (c.estadoAsistencia === 'asistio' ? 'Asistió' : 'Justificó');
+      const firmaText = c.firmoAcuerdo === 'si' ? 'Firmó' : 'No Firmó';
+      return `
+        <tr style="background:${isAbsent ? '#fff1f2' : '#ffffff'}">
+          <td style="border:1px solid #cbd5e1;padding:4px;text-align:center">${i + 1}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px;font-weight:700">${escHTML(c.tipoLlamado || 'Convocatoria')}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px;text-align:center">${escHTML(c.fechaCitacion || '—')}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px;text-align:center">${escHTML((c.fechaHora || '').split('·')[0] || c.fechaHora || '—')}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px">${escHTML(c.motivo || 'Bajo Rendimiento')}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px;text-align:center;font-weight:900;color:${isAbsent ? '#b91c1c' : '#15803d'}">${statusText}</td>
+          <td style="border:1px solid #cbd5e1;padding:4px;text-align:center">${firmaText}</td>
+        </tr>
+      `;
+    }).join('');
+  } else {
+    citRows = `<tr><td colspan="7" style="border:1px solid #cbd5e1;padding:6px;text-align:center;color:#64748b;font-style:italic">Sin citaciones registradas.</td></tr>`;
+  }
+
+  let lowRows = '';
+  if (d.lowSubjects.length > 0) {
+    lowRows = d.lowSubjects.map(s => `<strong>${escHTML(s.mat)}:</strong> ${s.avg} pts`).join(' · ');
+  } else {
+    lowRows = 'Sin materias reprobadas actualmente.';
+  }
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Informe al DECE — ${escHTML(d.stName)}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px 24px; color: #0f172a; line-height: 1.4; font-size: 0.8rem; }
+        .hdr { text-align: center; border-bottom: 2.5px solid #dc2626; padding-bottom: 6px; margin-bottom: 10px; }
+        .hdr h2 { margin: 0 0 2px 0; color: #991b1b; font-size: 1.15rem; }
+        .hdr p { margin: 1px 0; font-size: 0.72rem; color: #475569; }
+        .hdr .tag { font-size: 0.82rem; font-weight: 900; color: #0f172a; margin-top: 4px; background: #fef2f2; border: 1px solid #fecdd3; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 0.76rem; margin-bottom: 10px; }
+        .sec-title { font-size: 0.78rem; font-weight: 900; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 2px; margin: 8px 0 4px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 4px; }
+        th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px; font-weight: 800; }
+        .legal-box { background: #fef2f2; border: 1px solid #fecdd3; border-radius: 4px; padding: 6px 10px; font-size: 0.72rem; color: #881337; margin: 8px 0; line-height: 1.35; }
+        .signatures { display: flex; justify-content: space-between; gap: 12px; margin-top: 35px; page-break-inside: avoid; }
+        .sig-col { text-align: center; flex: 1; border-top: 1.5px solid #000; padding-top: 4px; font-size: 0.72rem; }
+        @media print { body { padding: 0; } @page { size: portrait; margin: 10mm 8mm; } }
+      </style>
+    </head>
+    <body>
+      <div class="hdr">
+        <p style="font-weight:900;letter-spacing:1px;color:#64748b">REPÚBLICA DEL ECUADOR · MINISTERIO DE EDUCACIÓN</p>
+        <h2>UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"</h2>
+        <p>Distrito Educativo 17D02 Calderón · Código AMIE: 17H01344 · Régimen Sierra-Amazonía</p>
+        <div class="tag">INFORME TÉCNICO DE DERIVACIÓN AL DECE POR INCUMPLIMIENTO DE CONVOCATORIAS</div>
+      </div>
+
+      <div class="meta-grid">
+        <div><strong>MEMORANDO N°:</strong> ${escHTML(d.numeroMemo)}</div>
+        <div><strong>FECHA:</strong> ${escHTML(d.fechaInforme)}</div>
+        <div><strong>PARA:</strong> ${escHTML(d.destinatario)}</div>
+        <div><strong>DE:</strong> ${escHTML(d.docenteName)} (Docente Tutor)</div>
+        <div style="grid-column:1/-1"><strong>ASUNTO:</strong> Remisión formal de caso por falta de comparecencia reiterada a citaciones y alerta temprana</div>
+      </div>
+
+      <div class="sec-title">1. DATOS DE IDENTIFICACIÓN:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:0.74rem;background:#fff;border:1px solid #e2e8f0;padding:6px;border-radius:4px">
+        <div><strong>Estudiante:</strong> ${escHTML(d.stName)} (C.I. ${escHTML(d.stCedula)})</div>
+        <div><strong>Grado / Paralelo:</strong> ${escHTML(d.grado)} · ${escHTML(d.anio)}</div>
+        <div><strong>Representante:</strong> ${escHTML(d.repName)} (${escHTML(d.repPar)})</div>
+        <div><strong>Cédula / Teléfono:</strong> ${escHTML(d.repCedula)} · ${escHTML(d.repTel)}</div>
+      </div>
+
+      <div class="sec-title">2. SITUACIÓN PEDAGÓGICA Y ALERTA TEMPRANA:</div>
+      <div style="font-size:0.74rem;color:#334155;margin-bottom:2px">
+        Asignaturas con bajo rendimiento (< 7.00): ${lowRows}
+      </div>
+
+      <div class="sec-title">3. CRONOLOGÍA DE CONVOCATORIAS REALIZADAS POR EL DOCENTE:</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:20px">#</th>
+            <th>Convocatoria</th>
+            <th>Fecha Envío</th>
+            <th>Fecha Cita</th>
+            <th>Motivo</th>
+            <th>Asistencia</th>
+            <th>Firma</th>
+          </tr>
+        </thead>
+        <tbody>${citRows}</tbody>
+      </table>
+
+      <div class="legal-box">
+        <strong>4. FUNDAMENTACIÓN NORMATIVA Y VULNERACIÓN DE CORRESPONSABILIDAD:</strong><br>
+        La <strong>LOEI en sus Arts. 12 y 13</strong> consagra la obligación inexcusable de madres, padres y representantes de comparecer de manera obligatoria a los llamados de autoridades y docentes, garantizando el derecho a la educación de sus representados. El <strong>Código de la Niñez y Adolescencia (Art. 11)</strong> mandata la corresponsabilidad familiar en el interés superior de los menores. La reiterada falta de comparecencia configura una vulneración del derecho al acompañamiento escolar integral.
+      </div>
+
+      <div class="sec-title">5. PETITORIO AL DECE:</div>
+      <ol style="margin:0 0 0 16px;padding:0;font-size:0.73rem;line-height:1.4">
+        <li>Apertura de expediente y citación formal bajo apercibimiento institucional por parte del DECE.</li>
+        <li>Evaluación socioemocional y familiar de las causas de la falta de acompañamiento.</li>
+        <li>Firma obligatoria de compromisos pedagógicos con plazos de cumplimiento.</li>
+        <li>De persistir la inasistencia o negligencia familiar, derivación a la Junta Cantonal de Protección de Derechos (JCPD).</li>
+      </ol>
+
+      <div class="signatures">
+        <div class="sig-col">
+          <strong>${escHTML(d.docenteName)}</strong><br>
+          <span style="color:#475569">DOCENTE TUTOR / AULA</span>
+        </div>
+        <div class="sig-col">
+          <strong>DEPARTAMENTO DE CONSEJERÍA (DECE)</strong><br>
+          <span style="color:#475569">RECIBIDO CON SELLO Y FECHA</span>
+        </div>
+        <div class="sig-col">
+          <strong>INSPECCIÓN GENERAL / VICERRECTORADO</strong><br>
+          <span style="color:#475569">CONOCIMIENTO INSTITUCIONAL</span>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 350);
+}
+
+function shareDeceWarningWhatsApp() {
+  const d = getDeceReportData();
+  let rawTel = (d.repTel || '').replace(/\D/g, '');
+  if (rawTel.startsWith('09') && rawTel.length === 10) rawTel = '593' + rawTel.substring(1);
+
+  const lowText = d.lowSubjects.length > 0 ? d.lowSubjects.map(s => `${s.mat}: ${s.avg}`).join(', ') : 'Bajo rendimiento general';
+
+  const msg = [
+    `🏛️ *UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"*`,
+    `⚠️ *NOTIFICACIÓN FORMAL DE REMISIÓN AL DECE POR INASISTENCIA A CITACIONES*`,
+    `───────────────────────────────`,
+    `Estimada/o *${d.repName}*, Representante Legal de *${d.stName}* (${d.grado}):`,
+    ``,
+    `Le informamos que debido a su inasistencia a las citaciones docentes enviadas para tratar la alerta temprana de bajo rendimiento (${lowText}), y en cumplimiento del Art. 12 y 13 de la Ley Orgánica de Educación Intercultural (LOEI), el caso de su representado/a ha sido remitido formalmente al *Departamento de Consejería Estudiantil (DECE)* mediante Informe N° *${d.numeroMemo}*.`,
+    ``,
+    `📌 *Se solicita estar atento/a a la citación obligatoria emitida por el equipo del DECE.* Su presencia es fundamental para precautelar el derecho a la educación de su hijo/a.`,
+    `───────────────────────────────`,
+    `*Docente Tutor:* ${d.docenteName}`
+  ].join('\n');
+
+  if (rawTel) {
+    window.open(`https://api.whatsapp.com/send?phone=${rawTel}&text=${encodeURIComponent(msg)}`, '_blank');
+  } else {
+    navigator.clipboard.writeText(msg).then(() => {
+      toast('📋 Mensaje copiado al portapapeles (sin teléfono registrado)', '#2563eb');
+    });
+  }
 }
 
 function populateCitacionStudentSelect() {
