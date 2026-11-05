@@ -10884,7 +10884,10 @@ function renderTable() {
 
   mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
-    const wTitle = getWeekTitle(w);
+    let wTitle = getWeekTitle(w);
+    if ((/NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(wName)) && !wTitle.toUpperCase().startsWith('SEMANA')) {
+      wTitle = `Semana 0: ${wTitle}`;
+    }
     const c = mat.cols[wName] || [];
     const isWeekCol = !!(mat.collapsedWeeks && mat.collapsedWeeks[wName]);
     const wc = weekColor(mName, wName, wi);
@@ -14183,12 +14186,28 @@ function rpShowOne(si) {
   }
 }
 
-function formatWeekLabel(w, wi) {
+function formatWeekLabel(w, wi, matWeeks) {
   const raw = (typeof w === 'object' && w !== null ? (w.name || '') : String(w || '')).trim();
   const up = raw.toUpperCase();
+  if (up.includes('NUTRI-VIDA') || up.includes('PROYECTO INTERDISCIPLINARIO')) {
+    if (up.startsWith('SEMANA 0')) return raw;
+    return `Semana 0: ${raw.replace(/^Semana\s*\d*:\s*/i, '')}`;
+  }
   if (up.startsWith('SEMANA') || up.startsWith('SEM.')) return raw;
-  if (/SUMATIV|PROYECTO|EXAMEN|EVALUACI[OÓ]N/i.test(up)) return raw;
-  return `Semana ${(wi !== undefined ? wi + 1 : 1)}: ${raw}`;
+  if (/SUMATIV|EXAMEN|EVALUACI[OÓ]N/i.test(up)) return raw;
+
+  let hasPiZero = false;
+  if (Array.isArray(matWeeks) && matWeeks.length > 0) {
+    const w0Name = (typeof matWeeks[0] === 'object' && matWeeks[0] !== null ? matWeeks[0].name : String(matWeeks[0] || '')).toUpperCase();
+    if (w0Name.includes('NUTRI-VIDA') || w0Name.includes('PROYECTO INTERDISCIPLINARIO')) {
+      hasPiZero = true;
+    }
+  } else if (wi !== undefined && wi > 0) {
+    hasPiZero = true;
+  }
+
+  const weekNum = (hasPiZero && wi > 0) ? wi : (wi !== undefined ? wi + 1 : 1);
+  return `Semana ${weekNum}: ${raw}`;
 }
 
 function getStudentDetailedPerformance(si) {
@@ -14429,7 +14448,7 @@ function printStudentProgressReportPDF(si) {
             ${evaluatedWeeks.map((wGrp) => {
               const wi = wGrp.weekIndex;
               const wc = (typeof weekColor === 'function') ? weekColor(mName, wGrp.weekName, wi) : { h: '#1e40af', s: '#3b82f6', c: 'rgba(59,130,246,0.06)' };
-              const weekLabel = formatWeekLabel(wGrp.weekName, wi);
+              const weekLabel = formatWeekLabel(wGrp.weekName, wi, mat.weeks);
               return `
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:3px solid ${wc.h};border-radius:4px;padding:3px 6px">
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:2px">
@@ -15012,9 +15031,10 @@ function buildStudentCard(si) {
             ${evaluatedWeeks.map((wGrp) => {
               const wi = wGrp.weekIndex;
               const wc = (typeof weekColor === 'function') ? weekColor(mName, wGrp.weekName, wi) : { h: '#1e40af', s: '#3b82f6', c: 'rgba(59,130,246,0.06)' };
-              const weekLabel = formatWeekLabel(wGrp.weekName, wi);
-              const isSumativa = /SUMATIV|PROYECTO|EXAMEN/i.test(wGrp.weekName);
-              const weekIcon = isSumativa ? '🎯' : '📅';
+              const weekLabel = formatWeekLabel(wGrp.weekName, wi, mat.weeks);
+              const isSumativa = /SUMATIV|EXAMEN/i.test(wGrp.weekName);
+              const isPiWeek = /NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(wGrp.weekName);
+              const weekIcon = isPiWeek ? '🥗' : (isSumativa ? '🎯' : '📅');
 
               return `
                 <div style="background:var(--bg-card);border:1px solid var(--border-color);border-left:4px solid ${wc.h};border-radius:8px;padding:9px 13px;box-shadow:0 1px 2px rgba(0,0,0,0.02)">
