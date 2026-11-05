@@ -10335,11 +10335,17 @@ function getWeekDisplayParts(w, wi) {
     };
   }
   const semMatch = rawName.match(/^SEM(?:ANA)?\.?\s*(\d+)[:\s-]*(.*)$/i);
-  let num = wi !== undefined ? wi : 1;
-  let topic = rawName;
-  if (semMatch) {
+  let num;
+  if (wi !== undefined) {
+    num = wi;
+  } else if (semMatch) {
     num = semMatch[1];
-    topic = semMatch[2] ? semMatch[2].trim() : rawName;
+  } else {
+    num = 1;
+  }
+  let topic = rawName;
+  if (semMatch && semMatch[2] && semMatch[2].trim()) {
+    topic = semMatch[2].trim();
   }
   if (!topic) topic = rawName;
   const shortTopic = topic.length > 14 ? topic.substring(0, 12) + '…' : topic;
@@ -10438,13 +10444,39 @@ function ensureMats() {
   });
 
   // Asegurar que Proyecto Nutri-Vida esté en la primera posición (Semana 0) en cada materia
+  // y que semanas agregadas accidentalmente entre Proyecto y la 1ra semana curricular se muevan al final
+  const FIRST_CURRICULAR_WEEKS = {
+    'Lengua': 'ORÍGENES DE LA ESCRITURA',
+    'Lengua y Literatura': 'ORÍGENES DE LA ESCRITURA',
+    'Matemáticas': 'SUCESIONES CRECIENTES Y DECRECIENTES',
+    'Matematicas': 'SUCESIONES CRECIENTES Y DECRECIENTES',
+    'CCNN': 'LA NUTRICIÓN DE LAS PLANTAS',
+    'Ciencias Naturales': 'LA NUTRICIÓN DE LAS PLANTAS',
+    'EESS': 'ESTRUCTURA GEOLÓGICA DEL ECUADOR',
+    'Estudios Sociales': 'ESTRUCTURA GEOLÓGICA DEL ECUADOR',
+    'Educación Artística': 'LOS JUEGOS TRADICIONALES',
+    'Artística': 'LOS JUEGOS TRADICIONALES'
+  };
+
   Object.keys(S.mats || {}).forEach(mName => {
     const mat = S.mats[mName];
-    if (mat && Array.isArray(mat.weeks)) {
+    if (mat && Array.isArray(mat.weeks) && mat.weeks.length > 2) {
+      // 1. Proyecto siempre en posición 0 (Semana 0)
       const pIdx = mat.weeks.findIndex(w => /NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(getWeekName(w)));
       if (pIdx > 0) {
         const pWeek = mat.weeks.splice(pIdx, 1)[0];
         mat.weeks.unshift(pWeek);
+      }
+
+      // 2. Si hay semanas que se agregaron accidentalmente en posición 1 antes de la primera curricular
+      // (ej. EL MITO en Lengua), moverlas a continuación de las 4 semanas pedagógicas, al final
+      const expectedFirst = FIRST_CURRICULAR_WEEKS[mName];
+      if (expectedFirst) {
+        const firstCurricularIdx = mat.weeks.findIndex((w, idx) => idx > 0 && getWeekName(w).toUpperCase().includes(expectedFirst.toUpperCase()));
+        if (firstCurricularIdx > 1) {
+          const misplaced = mat.weeks.splice(1, firstCurricularIdx - 1);
+          mat.weeks.push(...misplaced);
+        }
       }
     }
   });
