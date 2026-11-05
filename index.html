@@ -11485,16 +11485,25 @@ function nav(e, inp) {
     }
   };
 
-  if (e.key === 'Tab' || e.key === 'Enter') {
+  if (e.key === 'Tab') {
     e.preventDefault();
     if (e.shiftKey) {
-      // Shift+Tab / Shift+Enter → estudiante ANTERIOR
-      if (ri > 0)            moveToPos(ri - 1, ci);
-      else if (ci > 0)       moveToPos(grid.length - 1, ci - 1);
+      // Shift+Tab → actividad ANTERIOR (a la izquierda)
+      if (ci > 0)            moveToPos(ri, ci - 1);
+      else if (ri > 0)       moveToPos(ri - 1, grid[ri - 1].length - 1);
     } else {
-      // Tab / Enter → estudiante SIGUIENTE (misma columna)
-      if (ri < grid.length - 1)         moveToPos(ri + 1, ci);
-      else if (ci < grid[ri].length - 1) moveToPos(0, ci + 1);
+      // Tab → actividad SIGUIENTE (a la derecha)
+      if (ci < grid[ri].length - 1) moveToPos(ri, ci + 1);
+      else if (ri < grid.length - 1) moveToPos(ri + 1, 0);
+    }
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      // Shift+Enter → estudiante ARRIBA
+      if (ri > 0) moveToPos(ri - 1, ci);
+    } else {
+      // Enter → estudiante ABAJO
+      if (ri < grid.length - 1) moveToPos(ri + 1, ci);
     }
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -11503,12 +11512,16 @@ function nav(e, inp) {
     e.preventDefault();
     if (ri > 0) moveToPos(ri - 1, ci);
   } else if (e.key === 'ArrowRight') {
-    if (inp.selectionEnd === inp.value.length && ci < grid[ri].length - 1) {
-      focusAndSelect(grid[ri][ci + 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionEnd === inp.value.length) && ci < grid[ri].length - 1) {
+      e.preventDefault();
+      moveToPos(ri, ci + 1);
     }
   } else if (e.key === 'ArrowLeft') {
-    if (inp.selectionStart === 0 && ci > 0) {
-      focusAndSelect(grid[ri][ci - 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionStart === 0) && ci > 0) {
+      e.preventDefault();
+      moveToPos(ri, ci - 1);
     }
   }
 }
@@ -18158,14 +18171,21 @@ function navPi(e, inp, si, mat, indId) {
     }
   };
 
-  if (e.key === 'Tab' || e.key === 'Enter') {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      if (ci > 0)            moveToPos(ri, ci - 1);
+      else if (ri > 0)       moveToPos(ri - 1, grid[ri - 1].length - 1);
+    } else {
+      if (ci < grid[ri].length - 1) moveToPos(ri, ci + 1);
+      else if (ri < grid.length - 1) moveToPos(ri + 1, 0);
+    }
+  } else if (e.key === 'Enter') {
     e.preventDefault();
     if (e.shiftKey) {
       if (ri > 0) moveToPos(ri - 1, ci);
-      else if (ci > 0) moveToPos(grid.length - 1, ci - 1);
     } else {
       if (ri < grid.length - 1) moveToPos(ri + 1, ci);
-      else if (ci < grid[ri].length - 1) moveToPos(0, ci + 1);
     }
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -18174,12 +18194,16 @@ function navPi(e, inp, si, mat, indId) {
     e.preventDefault();
     if (ri > 0) moveToPos(ri - 1, ci);
   } else if (e.key === 'ArrowRight') {
-    if (inp.selectionEnd === inp.value.length && ci < grid[ri].length - 1) {
-      focusAndSelect(grid[ri][ci + 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionEnd === inp.value.length) && ci < grid[ri].length - 1) {
+      e.preventDefault();
+      moveToPos(ri, ci + 1);
     }
   } else if (e.key === 'ArrowLeft') {
-    if (inp.selectionStart === 0 && ci > 0) {
-      focusAndSelect(grid[ri][ci - 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionStart === 0) && ci > 0) {
+      e.preventDefault();
+      moveToPos(ri, ci - 1);
     }
   }
 }
@@ -19070,14 +19094,21 @@ function navDiag(e, inp, si, matId, field) {
     }
   };
 
-  if (e.key === 'Tab' || e.key === 'Enter') {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      if (ci > 0)            moveToPos(ri, ci - 1);
+      else if (ri > 0)       moveToPos(ri - 1, grid[ri - 1].length - 1);
+    } else {
+      if (ci < grid[ri].length - 1) moveToPos(ri, ci + 1);
+      else if (ri < grid.length - 1) moveToPos(ri + 1, 0);
+    }
+  } else if (e.key === 'Enter') {
     e.preventDefault();
     if (e.shiftKey) {
       if (ri > 0) moveToPos(ri - 1, ci);
-      else if (ci > 0) moveToPos(grid.length - 1, ci - 1);
     } else {
       if (ri < grid.length - 1) moveToPos(ri + 1, ci);
-      else if (ci < grid[ri].length - 1) moveToPos(0, ci + 1);
     }
   } else if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -19086,12 +19117,16 @@ function navDiag(e, inp, si, matId, field) {
     e.preventDefault();
     if (ri > 0) moveToPos(ri - 1, ci);
   } else if (e.key === 'ArrowRight') {
-    if (inp.selectionEnd === inp.value.length && ci < grid[ri].length - 1) {
-      focusAndSelect(grid[ri][ci + 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionEnd === inp.value.length) && ci < grid[ri].length - 1) {
+      e.preventDefault();
+      moveToPos(ri, ci + 1);
     }
   } else if (e.key === 'ArrowLeft') {
-    if (inp.selectionStart === 0 && ci > 0) {
-      focusAndSelect(grid[ri][ci - 1]);
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionStart === 0) && ci > 0) {
+      e.preventDefault();
+      moveToPos(ri, ci - 1);
     }
   }
 }
