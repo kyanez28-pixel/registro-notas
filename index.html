@@ -9079,7 +9079,7 @@ const ACT_TYPES = [
   { id:'L',   label:'Lección Oral/Escrita',cat:'form',color:'#ea580c', cell:'rgba(234,88,12,0.07)'  },
   { id:'TG',  label:'Taller / Grupo',     cat:'form', color:'#0d9488', cell:'rgba(13,148,136,0.07)' },
   { id:'EXP', label:'Experiencial',       cat:'form', color:'#0284c7', cell:'rgba(2,132,199,0.07)'  },
-  { id:'PI',  label:'Proyecto Interdisciplinar', cat:'sum', color:'#d97706', cell:'rgba(217,119,6,0.09)' },
+  { id:'PI',  label:'Proyecto Interdisciplinario', cat:'form', color:'#d97706', cell:'rgba(217,119,6,0.09)' },
   { id:'PS',  label:'Evaluación Sumativa', cat:'sum', color:'#16a34a', cell:'rgba(22,163,74,0.09)'  },
   { id:'EX',  label:'Examen Trimestral',  cat:'sum',  color:'#db2777', cell:'rgba(219,39,119,0.09)'},
   { id:'MEJ', label:'Evaluación de Mejora',cat:'mej', color:'#059669', cell:'rgba(5,150,105,0.09)'  },
@@ -9088,6 +9088,131 @@ const ACT_TYPES = [
 
 function actType(id) {
   return ACT_TYPES.find(t => t.id === id) || ACT_TYPES[0];
+}
+
+
+// ══════════════════════════════════════════════════════
+//  PROYECTO INTERDISCIPLINAR: NUTRI-VIDA (7.° C)
+//  Sincronización como 1ra nota formativa en todas las materias
+// ══════════════════════════════════════════════════════
+const NUTRIVIDA_SYNC_VERSION = 'v115_nutrivida_interdisciplinar_7c';
+const NUTRIVIDA_PI_7C_PROMEDIOS = [
+  '9.71', // 0. ALCIVAR MENDOZA AMY SOFIA
+  '',     // 1. ALMEIDA ANZATUÑA EMILY ANAHI [RETIRADA]
+  '9.28', // 2. ALMEIDA TACUAMAN DOMINIC JHARET
+  '8.28', // 3. ANDINO ORTIZ ERICK JACOBO
+  '',     // 4. ANDRADE ANGULO JAYKO DOMINICK [NO ASISTE]
+  '8.28', // 5. ANTE SUAMBRA MELISA BRIGITH
+  '8.50', // 6. CAMPOS ESPINOSA JUSTER KAIL
+  '8.35', // 7. CASTILLO ROJAS DOMINICK JAZIEL
+  '9.00', // 8. CEDEÑO PINANJOTA ARLETH SALOME
+  '8.50', // 9. CHILENO MEDINA CRISTOFER ALEJANDRO
+  '8.21', // 10. CHONTA LLUMITAXI ALISSON ESTEFANIA
+  '7.85', // 11. CISNEROS MORAN ALEJANDRO PAVEL
+  '9.85', // 12. ENCARNACION INFANTE TIFANY ESTHER
+  '9.78', // 13. FLORES ACERO CAMILA NOEMI
+  '8.14', // 14. GAGUY CABAY TAMIA MAYTE
+  '8.57', // 15. GODOY CEDEÑO SAMANTHA AITANA
+  '8.78', // 16. GUALOTO DIAZ SAMANTHA ESTEFANIA
+  '8.07', // 17. GUANOTASIG SANTIAK JAYDEEN JAACE
+  '8.35', // 18. GUAYANAY VINUEZA JHON ALEX
+  '8.71', // 19. GUERRON ROLDAN ANGEL SEBASTIAN
+  '9.71', // 20. HEREDIA TITUAÑA JHAIR ALEJANDRO
+  '8.85', // 21. IÑIGUEZ MORALES DEMY VALENTINA
+  '9.85', // 22. JARAMILLO ERAZO YERLIS NAHOMI
+  '8.50', // 23. LOMBEIDA SANMARTIN DILAN YORDAN
+  '7.64', // 24. LOVATO CEPEDA EITHAN SEBASTIAN
+  '9.35', // 25. MALES NARVAEZ DANDY FERNEY
+  '9.42', // 26. MERA POZO VALERIA MONSERRATH
+  '9.21', // 27. MORALES TULCANAZO DANDELAY MIA
+  '8.78', // 28. MUSGO MORALES SCARLETT ISABEL
+  '8.07', // 29. NOLIVOS LANAS BRYANA MAITE
+  '9.28', // 30. PALACIOS PIZARRO DOSTIN MIGUEL
+  '9.57', // 31. PERALTA ANRANGO ALEXANDER JAVIER
+  '9.21', // 32. QUISHPE ANTE ALAN JOSUE
+  '9.57', // 33. QUIÑONEZ GARCIA DYLAN JESNER
+  '8.71', // 34. ROBLES CARRION ANGELINE ISABELA
+  '8.78', // 35. ROSALES LOPEZ ISAAC ANDRES
+  '8.21', // 36. ROSERO LITARDO CRISTIAN DANIEL
+  '9.00', // 37. SANGUCHO AGUIRRE JHOAN SEBASTIAN
+  '8.64', // 38. SARZOSA CONTRERAS TYLER LEONEL
+  '8.50'  // 39. VELASCO RAMOS ESTEBAN ALEXANDER
+];
+
+function ensureNutriVidaProjectGrades(force) {
+  if (!S || !S.mats) return;
+
+  const currentVer = localStorage.getItem('notas_nutrivida_sync_ver') || '';
+  if (!force && currentVer === NUTRIVIDA_SYNC_VERSION) {
+    let missingAny = false;
+    const matsToCheck = (S.matsList && S.matsList.length) ? S.matsList : Object.keys(S.mats);
+    matsToCheck.forEach(m => {
+      if (isQualitativeMat(m)) return;
+      const mat = S.mats[m];
+      if (!mat || !mat.weeks || !mat.weeks.length) return;
+      const w0 = getWeekName(mat.weeks[0]);
+      const cols = mat.cols[w0] || [];
+      const isFirst = cols.length > 0 && (cols[0].name || '').toUpperCase().includes('NUTRI-VIDA');
+      if (!isFirst) missingAny = true;
+    });
+    if (!missingAny) return;
+  }
+
+  const colDef = {
+    name: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+    desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+    type: 'PI',
+    cat: 'form',
+    date: '2026-10-02',
+    color: '#d97706'
+  };
+
+  const matsToProcess = (S.matsList && S.matsList.length) ? S.matsList : Object.keys(S.mats);
+
+  matsToProcess.forEach(m => {
+    if (!S.mats[m]) return;
+    const mat = S.mats[m];
+    if (!mat.weeks || !mat.weeks.length) {
+      mat.weeks = [...DEFAULT_WEEKS];
+    }
+    if (!mat.cols) mat.cols = JSON.parse(JSON.stringify(DEFAULT_COLS));
+    if (!mat.grades) mat.grades = {};
+
+    const w0 = getWeekName(mat.weeks[0]);
+    if (!mat.cols[w0]) mat.cols[w0] = [];
+
+    // 1. Quitar versión previa si existía en cualquier semana de la asignatura
+    Object.keys(mat.cols).forEach(w => {
+      mat.cols[w] = (mat.cols[w] || []).filter(c => {
+        const cName = (c.name || c.desc || '').toUpperCase();
+        return !cName.includes('NUTRI-VIDA');
+      });
+    });
+
+    // 2. Insertar como PRIMERA columna (índice 0) de la primera semana
+    mat.cols[w0].unshift(JSON.parse(JSON.stringify(colDef)));
+
+    // 3. Asignar notas de promedio oficial a cada estudiante
+    const key = w0 + '||' + colDef.name;
+    NUTRIVIDA_PI_7C_PROMEDIOS.forEach((nota, si) => {
+      if (!mat.grades[si]) mat.grades[si] = {};
+      mat.grades[si][key] = nota;
+    });
+  });
+
+  // Asegurar configuración en módulo PI
+  if (S.pi) {
+    if (!S.pi.config) S.pi.config = {};
+    S.pi.config.titulo = 'Nutri-Vida: Mi Cocina Saludable, Económica e Intercultural';
+    S.pi.config.tema = 'Recetario Ilustrado Intercultural & Guía de Presupuestos (Modelo Institucional Calderón 2)';
+  }
+
+  try {
+    localStorage.setItem('notas_nutrivida_sync_ver', NUTRIVIDA_SYNC_VERSION);
+  } catch(e) {}
+
+  saveData(false, true);
+  console.log('[Nutri-Vida Sync] Nota de Proyecto Interdisciplinario insertada como 1ra nota formativa en todas las materias.');
 }
 
 // Escala Cualitativa Ministerial (Cívica, Animación a la Lectura, Comportamiento)
@@ -10193,6 +10318,7 @@ function initS() {
       S = JSON.parse(local);
       ensureMats();
       if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
+  if (typeof ensureNutriVidaProjectGrades === 'function') ensureNutriVidaProjectGrades();
       return;
     } catch(e) {}
   }
@@ -10256,6 +10382,7 @@ function ensureMats() {
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
   if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
   if (typeof bitEnsure === 'function') bitEnsure();
+  if (typeof ensureNutriVidaProjectGrades === 'function') ensureNutriVidaProjectGrades();
 }
 if (typeof exportJSON === 'undefined') { var exportJSON = function() { if (typeof exportBackup === 'function') exportBackup(); }; }
 
@@ -10506,9 +10633,10 @@ function getStudentTrimestreCalc(si, mName) {
       if (isNaN(n)) return;
 
       const at = actType(col.type);
-      if (at.cat === 'rf' || at.cat === 'mej') {
+      const cat = col.cat || at.cat;
+      if (cat === 'rf' || cat === 'mej') {
         rfVals.push(n);
-      } else if (at.cat === 'sum') {
+      } else if (cat === 'sum') {
         sumVals.push(n);
       } else {
         formVals.push(n);
@@ -10807,7 +10935,8 @@ function renderTable() {
       c.forEach((col, ci) => {
         const at = actType(col.type);
         const bg = col.color || at.color;
-        const catBadge = at.cat === 'sum' ? ' [30%]' : (at.cat === 'form' ? ' [70%]' : '');
+        const cat = col.cat || at.cat;
+        const catBadge = cat === 'sum' ? ' [30%]' : (cat === 'form' ? ' [70%]' : '');
         const isColHidden = isColumnHidden(mName, wName, col);
 
         const displayName = col.desc || col.name;
