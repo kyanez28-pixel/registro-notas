@@ -3843,65 +3843,142 @@ body.in-focus-mode {
   <div id="rpBody"></div>
 </div>
 
-<!-- ── VISTA: EXPORTAR AL SISTEMA EXTERNO ── -->
+<!-- ── VISTA: EXPORTAR AL SISTEMA EXTERNO (SISTEMA OROZCO & EXCEL) ── -->
 <div id="exportPanel" class="content">
   <div class="rp-card">
-    <div style="font-size:1.1rem;font-weight:800;color:var(--text-main);margin-bottom:4px">📤 Exportar Promedios a Sistemas Externos</div>
-    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
-      Herramienta para trasladar notas trimestrales truncadas a plataformas educativas oficiales sin digitar manualmente.
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border-color)">
+      <div>
+        <div style="font-size:1.2rem;font-weight:900;color:var(--text-main);display:flex;align-items:center;gap:8px">
+          <span>📤 Exportar Calificaciones a Sistema Orozco & Plataformas Oficiales</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">
+          Traslada notas oficiales truncadas directamente a <strong>Sistema Orozco (Régimen Sierra 2026-2027)</strong>, Carmenta o archivos Excel sin digitar estudiante por estudiante.
+        </div>
+      </div>
+      <a href="https://www.sistema-orozco.com/app_26_27_s/" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="border-color:#2563eb;color:#2563eb;font-weight:800;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;text-decoration:none">
+        🌐 Abrir Sistema Orozco ↗
+      </a>
     </div>
 
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+    <!-- Filtros de Selección -->
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end;background:var(--bg-card-subtle);padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--border-color)">
       <div>
-        <label>Materia</label>
+        <label style="font-weight:700;font-size:0.8rem">1. Asignatura / Materia</label>
         <select id="expMat" onchange="expRefreshWeeks();expRefresh()" style="min-width:180px"></select>
       </div>
       <div>
-        <label>Valor a Exportar</label>
-        <select id="expType" onchange="expRefresh()">
+        <label style="font-weight:700;font-size:0.8rem">2. Valor / Columna a Exportar</label>
+        <select id="expType" onchange="expRefresh()" style="min-width:240px">
           <option value="prom-trim">Nota Trimestral Final (70% Form + 30% Sum)</option>
-          <option value="prom-form">Promedio Formativo (70%)</option>
-          <option value="prom-sum">Promedio Sumativo / Proyecto (30%)</option>
+          <option value="prom-form">Aporte Formativo 70% (Ponderado)</option>
+          <option value="raw-form">Promedio Formativo Base (s/10 pts)</option>
+          <option value="prom-sum">Aporte Sumativo / Examen 30% (Ponderado)</option>
+          <option value="raw-sum">Promedio Sumativo Base (s/10 pts)</option>
+          <option value="prom-pi">Proyecto Interdisciplinario: Nutri-Vida</option>
           <option value="prom-week">Promedio de una Semana Específica</option>
-          <option value="col">Actividad Individual</option>
+          <option value="col">Actividad Individual (Lección, Tarea, Taller...)</option>
+          <option value="all-mats">📊 Consolidado Completo (Todas las Asignaturas)</option>
         </select>
       </div>
       <div id="expWeekWrap" style="display:none">
-        <label>Semana</label>
-        <select id="expWeek" onchange="expRefresh()" style="min-width:140px"></select>
+        <label style="font-weight:700;font-size:0.8rem">3. Semana</label>
+        <select id="expWeek" onchange="expRefreshCols();expRefresh()" style="min-width:180px"></select>
       </div>
       <div id="expColWrap" style="display:none">
-        <label>Actividad</label>
-        <select id="expCol" onchange="expRefresh()"></select>
+        <label style="font-weight:700;font-size:0.8rem">4. Actividad</label>
+        <select id="expCol" onchange="expRefresh()" style="min-width:180px"></select>
+      </div>
+      <div>
+        <label style="font-weight:700;font-size:0.8rem">Formato Decimal</label>
+        <div style="display:flex;gap:4px;background:var(--bg-card);padding:3px;border-radius:6px;border:1px solid var(--border-color)">
+          <label style="font-size:0.75rem;display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 8px;border-radius:4px;font-weight:700">
+            <input type="radio" name="expDecimal" id="expDecimalDot" value="dot" checked onchange="expRefresh()"> 9.71 (Punto)
+          </label>
+          <label style="font-size:0.75rem;display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 8px;border-radius:4px;font-weight:700">
+            <input type="radio" name="expDecimal" id="expDecimalComma" value="comma" onchange="expRefresh()"> 9,71 (Coma)
+          </label>
+        </div>
+      </div>
+      <div>
+        <label style="font-weight:700;font-size:0.8rem">Nómina</label>
+        <label style="font-size:0.78rem;display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--bg-card);padding:6px 10px;border-radius:6px;border:1px solid var(--border-color);font-weight:600">
+          <input type="checkbox" id="expIncludeWithdrawn" onchange="expRefresh()">
+          Incluir retirados en blanco (40 filas)
+        </label>
       </div>
     </div>
 
+    <!-- Botones de Acción -->
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-success" style="font-size:0.85rem;padding:8px 16px" onclick="expGenerateBookmarklet()">
-        ⚡ Generar Auto-Relleno Automático
+      <button class="btn btn-success" style="font-size:0.85rem;padding:8px 16px;font-weight:800;display:inline-flex;align-items:center;gap:6px" onclick="expOpenAutoPanel()">
+        ⚡ Auto-Relleno para Sistema Orozco
       </button>
-      <button class="btn btn-teal" onclick="expCopyTSV()">
-        📊 Copiar para Excel
+      <button class="btn btn-primary" style="font-size:0.85rem;padding:8px 16px;font-weight:700;display:inline-flex;align-items:center;gap:6px" onclick="expCopyColumnOnly()">
+        📋 Copiar Solo Notas (Columna)
       </button>
-      <span id="expCopied" style="font-size:0.8rem;color:var(--success);font-weight:700;display:none">✔ ¡Copiado!</span>
+      <button class="btn btn-teal" style="font-size:0.85rem;padding:8px 16px;font-weight:700;display:inline-flex;align-items:center;gap:6px" onclick="expCopyTSV()">
+        📊 Copiar con Nombres (Excel)
+      </button>
+      <button class="btn btn-outline" style="font-size:0.85rem;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px" onclick="expExportXLSX()">
+        💾 Descargar Excel (.xlsx)
+      </button>
+      <span id="expCopied" style="font-size:0.82rem;color:var(--success);font-weight:800;display:none;margin-left:6px">✔ ¡Copiado al portapapeles!</span>
     </div>
 
-    <div id="expAutoPanel" style="display:none;background:var(--success-bg);border:1.5px solid var(--success-border);border-radius:var(--radius-md);padding:18px;margin-bottom:16px">
-      <div style="font-weight:800;color:var(--success);font-size:0.95rem;margin-bottom:6px">⚡ Botón de Relleno Automático para Navegador</div>
-      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">Arrastra este botón a tu barra de favoritos y ejecútalo dentro del sistema de notas:</div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <a id="bookmarkletLink" href="#" style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:var(--radius-sm);font-weight:700;font-size:0.82rem;text-decoration:none;cursor:grab;display:inline-block">
-          ▶ Rellenar Notas
-        </a>
+    <!-- Panel de Auto-Relleno -->
+    <div id="expAutoPanel" style="display:none;background:linear-gradient(135deg,#eff6ff 0%,#f0fdf4 100%);border:2px solid #3b82f6;border-radius:var(--radius-md);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow-md)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div style="font-weight:900;color:#1e3a8a;font-size:1.05rem;display:flex;align-items:center;gap:8px">
+            <span>⚡ Asistente de Auto-Relleno para Sistema Orozco</span>
+            <span style="background:#2563eb;color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:10px;text-transform:uppercase" id="expAutoBadge">Matemáticas</span>
+          </div>
+          <div style="font-size:0.8rem;color:#475569;margin-top:2px">
+            Rellena en 1 segundo todas las calificaciones dentro de <a href="https://www.sistema-orozco.com/app_26_27_s/" target="_blank" style="color:#2563eb;font-weight:700">sistema-orozco.com</a> sin digitar una por una.
+          </div>
+        </div>
+        <button onclick="document.getElementById('expAutoPanel').style.display='none'" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#64748b">✕</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;margin-bottom:12px">
+        <!-- Método 1: Marcador / Bookmarklet -->
+        <div style="background:#fff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px">
+          <div style="font-weight:800;color:#1e40af;font-size:0.85rem;margin-bottom:4px">Método 1: Botón Marcador (Favoritos)</div>
+          <div style="font-size:0.75rem;color:#64748b;margin-bottom:8px">Arrastra este botón azul a tu barra de favoritos (Ctrl+Shift+B):</div>
+          <a id="bookmarkletLink" href="#" style="background:#2563eb;color:#fff;padding:8px 16px;border-radius:6px;font-weight:800;font-size:0.85rem;text-decoration:none;cursor:grab;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(37,99,235,0.3)">
+            ▶ Rellenar en Sistema Orozco
+          </a>
+          <div style="font-size:0.72rem;color:#64748b;margin-top:8px">
+            Luego abre Sistema Orozco, haz clic en la 1ra casilla de la columna y presiona el marcador.
+          </div>
+        </div>
+
+        <!-- Método 2: Código para Consola F12 -->
+        <div style="background:#fff;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px">
+          <div style="font-weight:800;color:#166534;font-size:0.85rem;margin-bottom:4px">Método 2: Pegar en Consola (100% Infalible)</div>
+          <div style="font-size:0.75rem;color:#64748b;margin-bottom:8px">Si tu navegador no permite arrastrar marcadores, copia el script con un clic:</div>
+          <button class="btn btn-success" style="font-size:0.82rem;padding:7px 14px;font-weight:800" onclick="expCopyScriptToClipboard()">
+            📋 Copiar Código para Consola F12
+          </button>
+          <div style="font-size:0.72rem;color:#64748b;margin-top:8px">
+            En Sistema Orozco presiona <b>F12</b> ➔ Ve a la pestaña <b>Consola</b> ➔ Pega con <b>Ctrl + V</b> y pulsa <b>Enter</b>.
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.85);border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:0.75rem;color:#334155;display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.1rem">💡</span>
+        <span><b>Cómo funciona:</b> El script detecta la primera casilla donde hagas clic en Orozco, rellena hacia abajo exactamente esa columna fila por fila, activa los eventos de Prototype/AJAX de Orozco para guardar y pinta las celdas en verde suave para confirmar.</span>
       </div>
     </div>
 
-    <div style="overflow:auto;max-height:45vh;border-radius:var(--radius-md);border:1px solid var(--border-color)">
-      <table style="width:100%">
-        <thead>
+    <!-- Tabla de Vista Previa -->
+    <div id="expTableWrap" style="overflow:auto;max-height:50vh;border-radius:var(--radius-md);border:1px solid var(--border-color)">
+      <table style="width:100%" id="expTable">
+        <thead id="expThead">
           <tr>
             <th style="width:40px;text-align:left">#</th>
-            <th style="text-align:left">Estudiante</th>
+            <th style="text-align:left">Nómina de Estudiantes</th>
             <th style="text-align:center" id="expValHeader">Valor Truncado</th>
             <th style="width:60px;text-align:center">Copiar</th>
           </tr>
@@ -15294,62 +15371,412 @@ function shareWhatsApp(si) {
 
 function rpPrint() { window.print(); }
 
-// ── EXPORTACIÓN AL SISTEMA ──
+// ── EXPORTACIÓN AL SISTEMA EXTERNO (SISTEMA OROZCO & EXCEL) ──
+function getStudentWeekAvg(si, mName, weekName) {
+  const mat = S.mats[mName];
+  if (!mat) return null;
+  const cols = (mat.cols && mat.cols[weekName]) || [];
+  const g = (mat.grades && mat.grades[si]) || {};
+  const vals = cols.map(col => {
+    const v = g[weekName + '||' + col.name];
+    if (v === undefined || v === '' || v === null) return NaN;
+    const n = parseFloat(v);
+    return isNaN(n) ? NaN : n;
+  }).filter(n => !isNaN(n));
+  return vals.length ? trunc2(vals.reduce((a,b) => a + b, 0) / vals.length) : null;
+}
+
+function getStudentActivityGrade(si, mName, weekName, colName) {
+  const mat = S.mats[mName];
+  if (!mat) return '';
+  const g = (mat.grades && mat.grades[si]) || {};
+  const v = g[weekName + '||' + colName];
+  if (v === undefined || v === null || v === '') return '';
+  const n = parseFloat(v);
+  return isNaN(n) ? String(v) : trunc2(n);
+}
+
+function getStudentPiScore(si, mName) {
+  if (S.pi) {
+    try { ensurePi(); } catch(e){}
+    if (mName && S.pi.grades && S.pi.grades[mName] && S.pi.grades[mName][si]) {
+      const mg = S.pi.grades[mName][si];
+      if (mg._direct !== undefined && mg._direct !== '') return String(mg._direct);
+    }
+    if (S.pi.mats && S.pi.grades) {
+      const matNotas = [];
+      S.pi.mats.forEach(mSub => {
+        const subMg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
+        if (subMg._direct !== undefined && subMg._direct !== '') {
+          const n = parseFloat(subMg._direct);
+          if (!isNaN(n)) matNotas.push(n);
+        }
+      });
+      if (matNotas.length > 0) return trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length);
+    }
+  }
+  const mat = S.mats[mName] || S.mats[getMats()[0]];
+  if (mat && mat.weeks && mat.weeks.length > 0) {
+    const w0Name = getWeekName(mat.weeks[0]);
+    if (/PROYECTO|NUTRI/i.test(w0Name)) {
+      const avg = getStudentWeekAvg(si, mName || getMats()[0], w0Name);
+      if (avg !== null) return avg;
+    }
+  }
+  return '';
+}
+
 function expInit() {
   const matSel = document.getElementById('expMat');
+  if (!matSel) return;
   matSel.innerHTML = getMats().map((m, i) => `<option value="${i}">${escHTML(m)}</option>`).join('');
   expRefreshWeeks();
   expRefresh();
 }
+
 function expRefreshWeeks() {
   const mi = parseInt(document.getElementById('expMat')?.value || 0);
-  const mat = S.mats[getMats()[mi]];
+  const mName = getMats()[mi];
+  const mat = S.mats[mName];
   const sel = document.getElementById('expWeek');
   if (!mat || !sel) return;
-  sel.innerHTML = mat.weeks.map(w => `<option value="${escVal(w)}">${escHTML(w)}</option>`).join('');
+  sel.innerHTML = mat.weeks.map((w, wi) => {
+    const name = getWeekName(w);
+    const wp = getWeekDisplayParts(w, wi);
+    const title = wp.badge ? `${wp.badge}: ${wp.topic}` : wp.topic;
+    return `<option value="${escVal(name)}">${escHTML(title)}</option>`;
+  }).join('');
+  expRefreshCols();
 }
-function expRefresh() {
-  const type = document.getElementById('expType').value;
-  document.getElementById('expWeekWrap').style.display = type === 'prom-week' ? '' : 'none';
-  const mi = parseInt(document.getElementById('expMat').value || 0);
+
+function expRefreshCols() {
+  const mi = parseInt(document.getElementById('expMat')?.value || 0);
   const mName = getMats()[mi];
+  const mat = S.mats[mName];
+  const weekName = document.getElementById('expWeek')?.value || '';
+  const sel = document.getElementById('expCol');
+  if (!mat || !sel) return;
+  const cols = (mat.cols && mat.cols[weekName]) || [];
+  sel.innerHTML = cols.map(c => `<option value="${escVal(c.name)}">${escHTML(c.desc || c.name)}</option>`).join('');
+}
 
-  const rows = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si)).map((si, pos) => {
-    const name = S.students[si];
+function expGetDecimalFormat() {
+  const commaRadio = document.getElementById('expDecimalComma');
+  return (commaRadio && commaRadio.checked) ? 'comma' : 'dot';
+}
+
+function expFormatVal(v) {
+  if (v === null || v === undefined || v === '' || v === '—') return '';
+  const s = String(v).trim();
+  return expGetDecimalFormat() === 'comma' ? s.replace('.', ',') : s.replace(',', '.');
+}
+
+function expGetRowsData() {
+  const type = document.getElementById('expType')?.value || 'prom-trim';
+  const mi = parseInt(document.getElementById('expMat')?.value || 0);
+  const mName = getMats()[mi];
+  const weekName = document.getElementById('expWeek')?.value || '';
+  const colName = document.getElementById('expCol')?.value || '';
+  const includeWithdrawn = document.getElementById('expIncludeWithdrawn')?.checked || false;
+
+  let indices;
+  if (includeWithdrawn) {
+    indices = S.students.map((_, i) => i);
+  } else {
+    indices = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  }
+
+  const isAllMats = type === 'all-mats';
+  const matsList = getMats();
+
+  const rows = indices.map((si, pos) => {
+    const name = S.students[si] || `Estudiante ${si+1}`;
+    const isEx = isStudentExcludedFromGrades(si);
+
+    if (isEx && includeWithdrawn) {
+      return { pos: pos+1, si, name, val: '', rawVal: '', valsByMat: {} };
+    }
+
+    if (isAllMats) {
+      const valsByMat = {};
+      const numAvgs = [];
+      matsList.forEach(m => {
+        const c = getStudentTrimestreCalc(si, m);
+        const v = c.isQual ? c.qualVal : (c.trimAvg === '—' ? '' : c.trimAvg);
+        valsByMat[m] = expFormatVal(v);
+        if (!c.isQual && c.trimAvg && c.trimAvg !== '—') {
+          const fn = parseFloat(c.trimAvg);
+          if (!isNaN(fn)) numAvgs.push(fn);
+        }
+      });
+      const genAvg = numAvgs.length ? expFormatVal(trunc2(numAvgs.reduce((a,b)=>a+b,0) / numAvgs.length)) : '';
+      return { pos: pos+1, si, name, val: genAvg, rawVal: genAvg, valsByMat };
+    }
+
     const calc = getStudentTrimestreCalc(si, mName);
-    let val = '';
-    if (type === 'prom-trim') val = calc.trimAvg;
-    else if (type === 'prom-form') val = calc.formWeighted;
-    else if (type === 'prom-sum') val = calc.sumWeighted;
-    return { pos: pos+1, name, val: val==='—'?'':val };
+    let rawVal = '';
+
+    if (type === 'prom-trim') {
+      rawVal = calc.isQual ? calc.qualVal : (calc.trimAvg === '—' ? '' : calc.trimAvg);
+    } else if (type === 'prom-form') {
+      rawVal = calc.formWeighted === '—' ? '' : calc.formWeighted;
+    } else if (type === 'raw-form') {
+      rawVal = calc.formAvg === '—' ? '' : calc.formAvg;
+    } else if (type === 'prom-sum') {
+      rawVal = calc.sumWeighted === '—' ? '' : calc.sumWeighted;
+    } else if (type === 'raw-sum') {
+      rawVal = calc.sumAvg === '—' ? '' : calc.sumAvg;
+    } else if (type === 'prom-pi') {
+      rawVal = getStudentPiScore(si, mName);
+    } else if (type === 'prom-week') {
+      const wAvg = getStudentWeekAvg(si, mName, weekName);
+      rawVal = wAvg !== null ? wAvg : '';
+    } else if (type === 'col') {
+      rawVal = getStudentActivityGrade(si, mName, weekName, colName);
+    }
+
+    const formatted = expFormatVal(rawVal);
+    return { pos: pos+1, si, name, val: formatted, rawVal };
   });
 
-  document.getElementById('expTbody').innerHTML = rows.map(r => `
-    <tr>
-      <td style="color:var(--text-muted)">${r.pos}</td>
-      <td style="font-weight:600">${escHTML(r.name)}</td>
-      <td style="text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--primary)">${r.val||'—'}</td>
-      <td style="text-align:center"><button onclick="navigator.clipboard.writeText('${escVal(r.val)}')" class="btn btn-outline" style="padding:2px 6px">📋</button></td>
-    </tr>
-  `).join('');
+  return { rows, type, mName, weekName, colName, isAllMats, matsList };
 }
-function expCopyTSV() {
-  const rows = Array.from(document.querySelectorAll('#expTbody tr')).map(tr => {
-    const tds = tr.querySelectorAll('td');
-    return `${tds[1]?.textContent.trim()}\t${tds[2]?.textContent.trim().replace('—','')}`;
+
+function expRefresh() {
+  const type = document.getElementById('expType')?.value || 'prom-trim';
+  const weekWrap = document.getElementById('expWeekWrap');
+  const colWrap = document.getElementById('expColWrap');
+  if (weekWrap) weekWrap.style.display = (type === 'prom-week' || type === 'col') ? '' : 'none';
+  if (colWrap) colWrap.style.display = type === 'col' ? '' : 'none';
+
+  const data = expGetRowsData();
+  const thead = document.getElementById('expThead');
+  const tbody = document.getElementById('expTbody');
+  if (!tbody) return;
+
+  if (data.isAllMats) {
+    if (thead) {
+      thead.innerHTML = `
+        <tr>
+          <th style="width:40px">#</th>
+          <th>Estudiante</th>
+          ${data.matsList.map(m => `<th style="text-align:center;font-size:0.75rem">${escHTML(m)}</th>`).join('')}
+          <th style="text-align:center;font-size:0.75rem;background:rgba(37,99,235,0.08);color:var(--primary)">PROM GENERAL</th>
+        </tr>
+      `;
+    }
+    tbody.innerHTML = data.rows.map(r => `
+      <tr>
+        <td style="color:var(--text-muted)">${r.pos}</td>
+        <td style="font-weight:600">${escHTML(r.name)}</td>
+        ${data.matsList.map(m => `<td style="text-align:center;font-family:var(--font-mono);font-weight:700">${r.valsByMat[m] || '—'}</td>`).join('')}
+        <td style="text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--primary);background:rgba(37,99,235,0.05)">${r.val || '—'}</td>
+      </tr>
+    `).join('');
+  } else {
+    if (thead) {
+      thead.innerHTML = `
+        <tr>
+          <th style="width:40px">#</th>
+          <th>Estudiante</th>
+          <th id="expValHeader" style="width:140px;text-align:center">Valor (${escHTML(data.mName)})</th>
+          <th style="width:60px;text-align:center">Copiar</th>
+        </tr>
+      `;
+    }
+    tbody.innerHTML = data.rows.map(r => `
+      <tr>
+        <td style="color:var(--text-muted)">${r.pos}</td>
+        <td style="font-weight:600">${escHTML(r.name)}</td>
+        <td style="text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--primary)">${r.val || '—'}</td>
+        <td style="text-align:center">
+          <button onclick="navigator.clipboard.writeText('${escVal(r.val)}');toast('Copiado: ${escVal(r.val)}','#2563eb')" class="btn btn-outline" style="padding:2px 8px;font-size:0.8rem" title="Copiar esta nota">📋</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+}
+
+function expCopyColumnOnly() {
+  const data = expGetRowsData();
+  const vals = data.rows.map(r => r.val);
+  const text = vals.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    toast(`📋 ¡${vals.length} calificaciones copiadas en columna (para pegar verticalmente en Orozco o Excel)!`, '#2563eb');
+    const badge = document.getElementById('expCopied');
+    if (badge) { badge.style.display = 'inline'; setTimeout(() => badge.style.display = 'none', 3000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast(`📋 ¡${vals.length} calificaciones copiadas en columna!`, '#2563eb');
   });
-  navigator.clipboard.writeText(rows.join('\n')).then(() => toast('📋 Calificaciones copiadas para Excel', '#2563eb'));
 }
-function expGenerateBookmarklet() {
-  const vals = Array.from(document.querySelectorAll('#expTbody tr')).map(tr => tr.querySelectorAll('td')[2]?.textContent.trim().replace('—',''));
-  const script = `(function(){
-    var vals=${JSON.stringify(vals)};
-    var inputs=Array.from(document.querySelectorAll('input[type=text]')).filter(function(i){return i.offsetParent!==null&&!i.readOnly;});
-    for(var i=0;i<Math.min(vals.length,inputs.length);i++){inputs[i].value=vals[i];inputs[i].dispatchEvent(new Event('input',{bubbles:true}));}
-    alert('✅ Notas transferidas.');
-  })();`;
-  document.getElementById('bookmarkletLink').href = 'javascript:' + encodeURIComponent(script);
-  document.getElementById('expAutoPanel').style.display = 'block';
+
+function expCopyTSV() {
+  const data = expGetRowsData();
+  let text = '';
+  if (data.isAllMats) {
+    const header = ['#', 'Estudiante', ...data.matsList, 'Promedio General'].join('\t');
+    const lines = data.rows.map(r => [r.pos, r.name, ...data.matsList.map(m => r.valsByMat[m] || ''), r.val || ''].join('\t'));
+    text = header + '\n' + lines.join('\n');
+  } else {
+    text = data.rows.map(r => `${r.name}\t${r.val}`).join('\n');
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    toast('📊 Datos copiados con nombres para pegar en Excel (Ctrl + V)', '#16a34a');
+    const badge = document.getElementById('expCopied');
+    if (badge) { badge.style.display = 'inline'; setTimeout(() => badge.style.display = 'none', 3000); }
+  });
+}
+
+function expExportXLSX() {
+  if (typeof XLSX === 'undefined') {
+    toast('⚠️ Librería XLSX no disponible', '#dc2626');
+    return;
+  }
+  const data = expGetRowsData();
+  const wb = XLSX.utils.book_new();
+
+  if (data.isAllMats) {
+    const headers = ['N°', 'Nómina de Estudiantes', ...data.matsList, 'Promedio General'];
+    const rows = data.rows.map(r => [r.pos, r.name, ...data.matsList.map(m => r.valsByMat[m] || ''), r.val || '']);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    XLSX.utils.book_append_sheet(wb, ws, 'Consolidado');
+  } else {
+    const headers = ['N°', 'Nómina de Estudiantes', `${data.mName} - ${data.type}`];
+    const rows = data.rows.map(r => [r.pos, r.name, r.val]);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    XLSX.utils.book_append_sheet(wb, ws, data.mName.slice(0, 31));
+  }
+
+  const fileName = `Calificaciones_${(S.grado||'Septimo_C').replace(/\s+/g,'_')}_${data.isAllMats ? 'Consolidado' : data.mName}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+  toast(`💾 Archivo Excel generado: ${fileName}`, '#16a34a');
+}
+
+function expBuildOrozcoScript(vals, label) {
+  return `(function(){
+  var vals = ${JSON.stringify(vals)};
+  var label = ${JSON.stringify(label || 'Notas')};
+
+  function fillColumn(targetInput) {
+    if (!targetInput) return;
+    var td = targetInput.closest('td');
+    var tr = targetInput.closest('tr');
+    var table = targetInput.closest('table');
+    var inputsToFill = [];
+
+    if (td && tr && table) {
+      var colIdx = Array.from(tr.children).indexOf(td);
+      var rows = Array.from(table.querySelectorAll('tr'));
+      var startRowIdx = rows.indexOf(tr);
+      for (var r = startRowIdx; r < rows.length && inputsToFill.length < vals.length; r++) {
+        var row = rows[r];
+        if (row.children[colIdx]) {
+          var inp = row.children[colIdx].querySelector('input:not([type=hidden]):not([readonly]):not([disabled])') || (row.children[colIdx].tagName === 'INPUT' ? row.children[colIdx] : null);
+          if (inp) inputsToFill.push(inp);
+        }
+      }
+    }
+
+    if (!inputsToFill.length) {
+      inputsToFill = Array.from(document.querySelectorAll('input[type=text], input[type=number], input:not([type])'))
+        .filter(function(i){ return i.offsetParent !== null && !i.readOnly && !i.disabled; })
+        .slice(0, vals.length);
+    }
+
+    var count = 0;
+    inputsToFill.forEach(function(inp, idx) {
+      if (idx < vals.length && vals[idx] !== '' && vals[idx] !== undefined) {
+        inp.value = vals[idx];
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        inp.dispatchEvent(new Event('change', { bubbles: true }));
+        inp.dispatchEvent(new Event('blur', { bubbles: true }));
+        if (window.Event && Event.fire) {
+          try { Event.fire(inp, 'change'); } catch(e){}
+        }
+        inp.style.backgroundColor = '#dcfce7';
+        inp.style.transition = 'background-color 0.4s';
+        count++;
+      }
+    });
+
+    alert('✅ ¡Éxito! Se auto-rellenaron ' + count + ' notas de [' + label + '] en Sistema Orozco.');
+  }
+
+  var active = document.activeElement;
+  if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT')) {
+    fillColumn(active);
+  } else {
+    var banner = document.createElement('div');
+    banner.id = '_orozco_banner';
+    banner.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999999;background:#1e40af;color:#fff;padding:12px 24px;border-radius:10px;font-family:sans-serif;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.35);cursor:pointer;text-align:center;border:2px solid #93c5fd';
+    banner.innerHTML = '👉 <b>HAZ CLIC EN LA 1ra CASILLA</b> de la columna de ' + label + ' en Sistema Orozco<br><span style="font-size:11px;opacity:0.85;font-weight:400">(Clic aquí para cancelar)</span>';
+    document.body.appendChild(banner);
+
+    function clickHandler(e) {
+      var target = e.target;
+      if (target.id === '_orozco_banner' || target.closest('#_orozco_banner')) {
+        if (banner.parentNode) banner.parentNode.removeChild(banner);
+        document.removeEventListener('click', clickHandler, true);
+        return;
+      }
+      var inp = target.tagName === 'INPUT' ? target : target.querySelector('input');
+      if (inp) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.removeEventListener('click', clickHandler, true);
+        if (banner.parentNode) banner.parentNode.removeChild(banner);
+        fillColumn(inp);
+      }
+    }
+    document.addEventListener('click', clickHandler, true);
+  }
+})();`;
+}
+
+function expOpenAutoPanel() {
+  const data = expGetRowsData();
+  const vals = data.rows.map(r => r.val);
+  const label = data.isAllMats ? 'Consolidado' : `${data.mName} (${data.type})`;
+  const script = expBuildOrozcoScript(vals, label);
+
+  const bLink = document.getElementById('bookmarkletLink');
+  if (bLink) {
+    bLink.href = 'javascript:' + encodeURIComponent(script);
+  }
+
+  const badge = document.getElementById('expAutoBadge');
+  if (badge) badge.textContent = label;
+
+  const panel = document.getElementById('expAutoPanel');
+  if (panel) {
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function expCopyScriptToClipboard() {
+  const data = expGetRowsData();
+  const vals = data.rows.map(r => r.val);
+  const label = data.isAllMats ? 'Consolidado' : `${data.mName} (${data.type})`;
+  const script = expBuildOrozcoScript(vals, label);
+
+  navigator.clipboard.writeText(script).then(() => {
+    toast('📋 ¡Código copiado! Pégalo en la Consola (F12) de Sistema Orozco y presiona Enter.', '#16a34a');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = script;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('📋 ¡Código copiado! Pégalo en la Consola (F12) de Sistema Orozco.', '#16a34a');
+  });
 }
 
 // ── COPIAR COLUMNAS COMPLETAS PARA EXCEL / WORD ──
@@ -15362,11 +15789,10 @@ function copyMainColumn(colType, weekName, colName) {
     const calc = getStudentTrimestreCalc(si, mName);
     let val = '';
     if (colType === 'activity') {
-      const mat = S.mats[mName];
-      const gKey = weekName + '||' + colName;
-      val = (mat && mat.grades && mat.grades[si] && mat.grades[si][gKey] !== undefined) ? mat.grades[si][gKey] : '';
+      val = getStudentActivityGrade(si, mName, weekName, colName);
     } else if (colType === 'weekProm') {
-      val = (calc.weekProms && calc.weekProms[weekName] !== undefined) ? calc.weekProms[weekName] : '';
+      const wp = getStudentWeekAvg(si, mName, weekName);
+      val = wp !== null ? wp : '';
     } else if (colType === 'form') {
       val = calc.formWeighted !== '—' ? calc.formWeighted : '';
     } else if (colType === 'sum') {
