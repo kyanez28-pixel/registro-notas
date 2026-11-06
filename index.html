@@ -9176,7 +9176,7 @@ function actType(id) {
 //  PROYECTO INTERDISCIPLINAR: NUTRI-VIDA (7.° C)
 //  Sincronización como 1ra nota formativa en todas las materias
 // ══════════════════════════════════════════════════════
-const NUTRIVIDA_SYNC_VERSION = 'v116_nutrivida_first_block_7c';
+const NUTRIVIDA_SYNC_VERSION = 'v117_nutrivida_swap_qq';
 const PI_WEEK_NAME = 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA';
 const PI_COL_NAME = 'PROYECTO NUTRI-VIDA';
 
@@ -9213,8 +9213,8 @@ const NUTRIVIDA_PI_7C_PROMEDIOS = [
   '8.07', // 29. NOLIVOS LANAS BRYANA MAITE
   '9.28', // 30. PALACIOS PIZARRO DOSTIN MIGUEL
   '9.57', // 31. PERALTA ANRANGO ALEXANDER JAVIER
-  '9.21', // 32. QUISHPE ANTE ALAN JOSUE
-  '9.57', // 33. QUIÑONEZ GARCIA DYLAN JESNER
+  '9.57', // 32. QUIÑONEZ GARCIA DYLAN JESNER
+  '9.21', // 33. QUISHPE ANTE ALAN JOSUE
   '8.71', // 34. ROBLES CARRION ANGELINE ISABELA
   '8.78', // 35. ROSALES LOPEZ ISAAC ANDRES
   '8.21', // 36. ROSERO LITARDO CRISTIAN DANIEL
@@ -9387,8 +9387,8 @@ const DEFAULT_STUDENTS = [
   'NOLIVOS LANAS BRYANA MAITE',
   'PALACIOS PIZARRO DOSTIN MIGUEL',
   'PERALTA ANRANGO ALEXANDER JAVIER',
-  'QUISHPE ANTE ALAN JOSUE',
   'QUIÑONEZ GARCIA DYLAN JESNER',
+  'QUISHPE ANTE ALAN JOSUE',
   'ROBLES CARRION ANGELINE ISABELA',
   'ROSALES LOPEZ ISAAC ANDRES',
   'ROSERO LITARDO CRISTIAN DANIEL',
@@ -10144,29 +10144,6 @@ var DEFAULT_STUDENT_PROFILES = [
   },
   {
     "num": "33",
-    "nombre": "QUISHPE ANTE ALAN JOSUE",
-    "cedula": "1757015761",
-    "fecha_nacimiento": "2015-09-25",
-    "edad": "10 años, 3 meses, 1 días",
-    "nnee": "No",
-    "enfermedad": "No",
-    "hermanos_inst": "7mo EGB",
-    "rep_nombre": "Jessica Paulina Ante Tamayo",
-    "rep_cedula": "1725417131",
-    "rep_telefono": "0989148309",
-    "direccion": "Colinas de Valle Urbanización San Felipe",
-    "rep_email": "antejessica2@gmail.com",
-    "tel_emergencia": "0989148309",
-    "madre_nombre": "Jessica Paulina Ante Tamayo",
-    "madre_cedula": "1725417131",
-    "madre_telefono": "0989148309",
-    "padre_nombre": "Néstor Gerardo Quishpe Pastuña",
-    "padre_cedula": "0503928137",
-    "padre_telefono": "0986734087",
-    "correo_institucional": "quanaljo11047620@estudiantes.edu.ec"
-  },
-  {
-    "num": "34",
     "nombre": "QUIÑONEZ GARCIA DYLAN JESNER",
     "cedula": "0751138793",
     "fecha_nacimiento": "2014-01-09",
@@ -10187,6 +10164,29 @@ var DEFAULT_STUDENT_PROFILES = [
     "padre_cedula": "1205622341",
     "padre_telefono": "0988383879",
     "correo_institucional": "qugadyje10276402@estudiantes.edu.ec"
+  },
+  {
+    "num": "34",
+    "nombre": "QUISHPE ANTE ALAN JOSUE",
+    "cedula": "1757015761",
+    "fecha_nacimiento": "2015-09-25",
+    "edad": "10 años, 3 meses, 1 días",
+    "nnee": "No",
+    "enfermedad": "No",
+    "hermanos_inst": "7mo EGB",
+    "rep_nombre": "Jessica Paulina Ante Tamayo",
+    "rep_cedula": "1725417131",
+    "rep_telefono": "0989148309",
+    "direccion": "Colinas de Valle Urbanización San Felipe",
+    "rep_email": "antejessica2@gmail.com",
+    "tel_emergencia": "0989148309",
+    "madre_nombre": "Jessica Paulina Ante Tamayo",
+    "madre_cedula": "1725417131",
+    "madre_telefono": "0989148309",
+    "padre_nombre": "Néstor Gerardo Quishpe Pastuña",
+    "padre_cedula": "0503928137",
+    "padre_telefono": "0986734087",
+    "correo_institucional": "quanaljo11047620@estudiantes.edu.ec"
   },
   {
     "num": "35",
@@ -10453,14 +10453,104 @@ function isQualitativeMat(mName) {
          low.includes('comportamiento');
 }
 
+function migrateSwapQuiñonezQuishpe() {
+  if (!S || !Array.isArray(S.students)) return;
+  const s32 = S.students[32] || '';
+  const s33 = S.students[33] || '';
+  const needsSwap = /QUISHPE/i.test(s32) && /QUIÑONEZ/i.test(s33);
+  if (!needsSwap) return;
+
+  console.log('🔄 Reordenando alfabéticamente: QUIÑONEZ (32) antes que QUISHPE (33) y transfiriendo todos sus datos...');
+
+  // 1. Intercambiar en S.students
+  const tempS = S.students[32];
+  S.students[32] = S.students[33];
+  S.students[33] = tempS;
+
+  function swapKeys(obj) {
+    if (!obj) return;
+    const has32 = obj['32'] !== undefined;
+    const has33 = obj['33'] !== undefined;
+    const v32 = obj['32'];
+    const v33 = obj['33'];
+    if (has33) obj['32'] = v33; else delete obj['32'];
+    if (has32) obj['33'] = v32; else delete obj['33'];
+  }
+
+  // 2. Intercambiar en S.studentProfiles
+  if (Array.isArray(S.studentProfiles) && S.studentProfiles.length > 33) {
+    const tempP = S.studentProfiles[32];
+    S.studentProfiles[32] = S.studentProfiles[33];
+    S.studentProfiles[33] = tempP;
+    if (S.studentProfiles[32]) S.studentProfiles[32].num = '33';
+    if (S.studentProfiles[33]) S.studentProfiles[33].num = '34';
+  }
+
+  // 3. Intercambiar notas de materias en S.mats
+  if (S.mats) {
+    for (const m in S.mats) {
+      if (S.mats[m] && S.mats[m].grades) swapKeys(S.mats[m].grades);
+    }
+  }
+
+  // 4. Intercambiar en trimestres
+  if (S.trimestres) {
+    for (const t in S.trimestres) {
+      const trim = S.trimestres[t];
+      if (trim.mats) {
+        for (const m in trim.mats) {
+          if (trim.mats[m] && trim.mats[m].grades) swapKeys(trim.mats[m].grades);
+        }
+      }
+      if (trim.pi && trim.pi.grades) {
+        for (const sub in trim.pi.grades) swapKeys(trim.pi.grades[sub]);
+      }
+      if (trim.asistencia) {
+        for (const dt in trim.asistencia) swapKeys(trim.asistencia[dt]);
+      }
+    }
+  }
+
+  // 5. Intercambiar en asistencia
+  if (S.asistencia) {
+    for (const dt in S.asistencia) swapKeys(S.asistencia[dt]);
+  }
+
+  // 6. Intercambiar en proyecto interdisciplinario (S.pi)
+  if (S.pi && S.pi.grades) {
+    for (const sub in S.pi.grades) swapKeys(S.pi.grades[sub]);
+  }
+
+  // 7. Intercambiar en evaluación diagnóstica
+  if (S.diagnostico) {
+    if (S.diagnostico.grades) {
+      for (const m in S.diagnostico.grades) swapKeys(S.diagnostico.grades[m]);
+    }
+    if (S.diagnostico.socioemocional) swapKeys(S.diagnostico.socioemocional);
+  }
+
+  // 8. Intercambiar en herramientas (reuniones y listas de control)
+  if (S.herramientas) {
+    if (Array.isArray(S.herramientas.reuniones)) {
+      S.herramientas.reuniones.forEach(r => { if (r && r.attendance) swapKeys(r.attendance); });
+    }
+    if (Array.isArray(S.herramientas.lists)) {
+      S.herramientas.lists.forEach(l => { if (l && l.data) swapKeys(l.data); });
+    }
+  }
+
+  try { saveData(); } catch(e){}
+}
+
 function initS() {
   const local = localStorage.getItem('notas_cache_v7');
   if (local) {
     try {
       S = JSON.parse(local);
+      migrateSwapQuiñonezQuishpe();
       ensureMats();
       if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
-  if (typeof ensureNutriVidaProjectGrades === 'function') ensureNutriVidaProjectGrades();
+      if (typeof ensureNutriVidaProjectGrades === 'function') ensureNutriVidaProjectGrades();
       return;
     } catch(e) {}
   }
@@ -17268,6 +17358,7 @@ function applyRemoteState(newState, updatedAt, source) {
   const localProfiles = (S && Array.isArray(S.studentProfiles)) ? JSON.parse(JSON.stringify(S.studentProfiles)) : [];
 
   S = newState;
+  if (typeof migrateSwapQuiñonezQuishpe === 'function') migrateSwapQuiñonezQuishpe();
   ensureMats();
   if (typeof ensureHerramientas === 'function') ensureHerramientas();
 
@@ -25224,6 +25315,7 @@ function repairSpanishText(str) {
 }
 
 function ensureStudentProfiles() {
+  if (typeof migrateSwapQuiñonezQuishpe === 'function') migrateSwapQuiñonezQuishpe();
   const isAligned = Array.isArray(S.studentProfiles) && 
                     S.studentProfiles.length === DEFAULT_STUDENT_PROFILES.length &&
                     S.studentProfiles[0]?.cedula === DEFAULT_STUDENT_PROFILES[0].cedula &&
