@@ -3836,6 +3836,7 @@ body.in-focus-mode {
     </div>
     <button class="btn btn-primary" onclick="rpShowAll()">👥 Ver Todos</button>
     <button class="btn btn-warning" onclick="rpShowHonorRoll()">🏆 Cuadro de Honor</button>
+    <button class="btn btn-success" onclick="rpShowExonerados()" style="background:#059669;color:#ffffff;font-weight:800;border:none;box-shadow:0 2px 6px rgba(5,150,105,0.25)">🎓 Exonerados Sumativa (≥ 9.50)</button>
     <button class="btn btn-danger"  onclick="rpShowAtRisk()">⚠️ Alertas de Refuerzo (< 7.00)</button>
     <button class="btn btn-purple"  onclick="rpPrint()">🖨 Imprimir Libretas</button>
     <span id="rpCount" style="font-size:0.78rem;color:var(--text-muted);font-weight:700;margin-left:auto"></span>
@@ -10934,23 +10935,38 @@ function getStudentTrimestreCalc(si, mName) {
   const formAvg = rawFormAvg !== null ? parseFloat(trunc2(rawFormAvg)) : null;
   const sumAvg  = rawSumAvg  !== null ? parseFloat(trunc2(rawSumAvg))  : null;
 
+  // Resolución Nro. 001-CE-2026 (U.E.F. "Calderón 2"): Exoneración institucional de Evaluación Sumativa (30%)
+  // Aplica a estudiantes con promedio formativo exacto >= 9.50 / 10 (sin redondeo; 9.49 no califica).
+  const isExonerated = (!isQual && formAvg !== null && formAvg >= 9.50);
+  let effectiveSumAvg = sumAvg;
+  let isAutoExoneratedSum = false;
+
+  if (isExonerated && sumAvg === null) {
+    // Si aún no se ha digitado nota física en el casillero sumativo, se asienta reglamentariamente 10.00 (3.00 pts)
+    effectiveSumAvg = 10.00;
+    isAutoExoneratedSum = true;
+  }
+
   let trimAvg = null;
-  if (formAvg !== null && sumAvg !== null) {
-    const rawTrim = (formAvg * 0.70) + (sumAvg * 0.30);
+  if (formAvg !== null && effectiveSumAvg !== null) {
+    const rawTrim = (formAvg * 0.70) + (effectiveSumAvg * 0.30);
     trimAvg = trunc2(rawTrim);
   } else if (formAvg !== null) {
     trimAvg = trunc2(formAvg);
-  } else if (sumAvg !== null) {
-    trimAvg = trunc2(sumAvg);
+  } else if (effectiveSumAvg !== null) {
+    trimAvg = trunc2(effectiveSumAvg);
   }
 
   return {
     isQual: false,
     formAvg: formAvg !== null ? trunc2(formAvg) : '—',
-    sumAvg:  sumAvg  !== null ? trunc2(sumAvg)  : '—',
+    sumAvg:  sumAvg  !== null ? trunc2(sumAvg)  : (isAutoExoneratedSum ? '10.00' : '—'),
+    displaySumAvg: sumAvg !== null ? trunc2(sumAvg) : (isAutoExoneratedSum ? '10.00 (Exon.)' : '—'),
     trimAvg: trimAvg !== null ? trimAvg : '—',
     formWeighted: formAvg !== null ? trunc2(formAvg * 0.70) : '—',
-    sumWeighted:  sumAvg  !== null ? trunc2(sumAvg * 0.30)  : '—'
+    sumWeighted:  effectiveSumAvg !== null ? trunc2(effectiveSumAvg * 0.30)  : '—',
+    isExonerated,
+    isAutoExoneratedSum
   };
 }
 
@@ -11343,9 +11359,13 @@ function renderTable() {
 
     if (!isQual) {
       const trimCls = calc.trimAvg !== '—' && parseFloat(calc.trimAvg) < 7 ? 'glo' : '';
+      const exonTitle = calc.isExonerated ? ` title="🎓 Exonerado/a de Evaluación Sumativa (Res. Nro. 001-CE-2026) · Formativo: ${calc.formAvg} ≥ 9.50"` : '';
+      const exonIcon = calc.isAutoExoneratedSum 
+        ? ' <span style="font-size:0.75rem;cursor:help" title="Exonerado/a por Resolución 001-CE-2026: Asignado 10.00 (3.00 pts)">🎓</span>' 
+        : (calc.isExonerated ? ' <span style="font-size:0.72rem;cursor:help" title="Exonerado/a (Res. 001-CE-2026)">⭐</span>' : '');
       summaryCells = `
         <td class="td-form" style="${formHidden?'display:none;':''}">${calc.formWeighted}</td>
-        <td class="td-sum" style="${sumHidden?'display:none;':''}">${calc.sumWeighted}</td>
+        <td class="td-sum" style="${sumHidden?'display:none;':''}"${exonTitle}>${calc.sumWeighted}${exonIcon}</td>
         <td class="td-trim ${trimCls}" style="${trimHidden?'display:none;':''}">${calc.trimAvg}</td>
       `;
     } else {
@@ -14327,10 +14347,21 @@ function rpShowAll() {
     const color = gAvg !== null && parseFloat(gAvg) < 7 ? '#ef4444' : '#16a34a';
     const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
     const repTel = profile.rep_telefono || '';
+
+    // Materias exoneradas por Res. 001-CE-2026 (Formativo >= 9.50)
+    const exonMats = [];
+    getMats().forEach(m => {
+      const c = getStudentTrimestreCalc(si, m);
+      if (c.isExonerated) exonMats.push(m);
+    });
+    const exonBadge = exonMats.length > 0 
+      ? `<span style="display:inline-flex;align-items:center;gap:3px;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;padding:1px 6px;border-radius:10px;font-size:0.68rem;font-weight:800;margin-left:6px" title="Exonerado/a de evaluación sumativa en: ${escVal(exonMats.join(', '))} (Res. Nro. 001-CE-2026)">🎓 ${exonMats.length} ${exonMats.length === 1 ? 'materia exonerada' : 'materias exoneradas'} (10/10)</span>` 
+      : '';
+
     html += `<div class="rp-row" onclick="rpShowOne(${si})">
       <span style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800">${pos+1}</span>
       <div style="flex:1;min-width:0">
-        <div class="rp-row-name">${escHTML(name)}</div>
+        <div class="rp-row-name" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">${escHTML(name)} ${exonBadge}</div>
         <div style="font-size:0.72rem;color:var(--text-muted)">Rep: ${escHTML(profile.rep_nombre || 'No registrado')} ${repTel ? '· 📱 '+escHTML(repTel) : ''}</div>
       </div>
       <span style="font-family:var(--font-mono);font-weight:800;font-size:0.88rem;color:${color};white-space:nowrap">Prom: ${gAvg || '—'}</span>
@@ -14448,6 +14479,455 @@ function rpShowAtRisk() {
 
   html += `</div>`;
   document.getElementById('rpBody').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════
+//  EXONERACIÓN DE EVALUACIÓN SUMATIVA (RES. NRO. 001-CE-2026)
+//  UNIDAD EDUCATIVA FISCAL "CALDERÓN 2" - 16 DE NOVIEMBRE DE 2026
+// ══════════════════════════════════════════════════════
+
+function getExoneradosData() {
+  const list = [];
+  let totalExonSubjects = 0;
+  const activeStudents = S.students.map((name, si) => ({ name, si })).filter(item => !isStudentExcludedFromGrades(item.si));
+  const mats = getMats();
+  const quantMats = mats.filter(m => !isQualitativeMat(m));
+
+  activeStudents.forEach(st => {
+    const si = st.si;
+    const name = st.name;
+    const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
+    const qualifyingMats = [];
+
+    quantMats.forEach(m => {
+      const calc = getStudentTrimestreCalc(si, m);
+      if (calc.isExonerated) {
+        qualifyingMats.push({
+          mat: m,
+          formAvg: calc.formAvg,
+          formWeighted: calc.formWeighted,
+          sumAvg: calc.sumAvg,
+          sumWeighted: calc.sumWeighted,
+          trimAvg: calc.trimAvg,
+          isAuto: calc.isAutoExoneratedSum
+        });
+        totalExonSubjects++;
+      }
+    });
+
+    if (qualifyingMats.length > 0) {
+      const isFull = qualifyingMats.length === quantMats.length;
+      list.push({
+        si,
+        name,
+        cedula: profile.cedula || '—',
+        repName: profile.rep_nombre || 'No registrado',
+        repTel: profile.rep_telefono || '',
+        mats: qualifyingMats,
+        isFull,
+        totalMatsCount: quantMats.length,
+        gAvg: studentGeneralAvg(si) || '—'
+      });
+    }
+  });
+
+  list.sort((a, b) => b.mats.length - a.mats.length || a.name.localeCompare(b.name));
+
+  return {
+    list,
+    totalStudents: list.length,
+    totalExonSubjects,
+    totalActive: activeStudents.length,
+    quantMatsCount: quantMats.length
+  };
+}
+
+function rpShowExonerados() {
+  const data = getExoneradosData();
+  const fullExcellenceCount = data.list.filter(s => s.isFull).length;
+
+  let html = `
+    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
+      
+      <!-- Encabezado Institucional -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border-color)">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:1.3rem">🎓</span>
+            <span style="font-size:1.18rem;font-weight:900;color:#047857">Nómina Oficial de Exonerados de Evaluación Sumativa (30%)</span>
+            <span style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:0.75rem;font-weight:800;padding:2px 8px;border-radius:12px">Res. Nro. 001-CE-2026</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">
+            <strong>U.E.F. "Calderón 2"</strong> · Memorando N° 1 C.E. - 2026 (Quito, 16 de noviembre de 2026) · Componente Formativo (70%) ≥ 9.50 / 10
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="rpShowAll()" style="font-weight:700">← Ver Todos</button>
+          <button class="btn btn-purple" onclick="printExoneradosActa()" style="font-weight:800;box-shadow:0 2px 6px rgba(124,58,237,0.25)">
+            🖨️ Imprimir Acta Oficial
+          </button>
+          <button class="btn btn-success" onclick="rpApplyExoneraciones()" style="background:#059669;color:#fff;font-weight:800;box-shadow:0 2px 6px rgba(5,150,105,0.3)" title="Asentar automáticamente la nota oficial de 10.00 en los casilleros sumativos de las asignaturas exoneradas">
+            ⚡ Asentar 10.00 en Casilleros Sumativos
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Métricas -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid #16a34a;border-radius:10px;padding:12px 16px">
+          <div style="font-size:0.75rem;font-weight:800;color:#166534;text-transform:uppercase">Estudiantes Exonerados</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#15803d;margin-top:2px">${data.totalStudents} <span style="font-size:0.85rem;font-weight:700;color:#166534">/ ${data.totalActive} activos</span></div>
+          <div style="font-size:0.72rem;color:#14532d;margin-top:2px">Al menos 1 asignatura con formativo ≥ 9.50</div>
+        </div>
+
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #059669;border-radius:10px;padding:12px 16px">
+          <div style="font-size:0.75rem;font-weight:800;color:#065f46;text-transform:uppercase">Asignaturas Exoneradas</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#047857;margin-top:2px">${data.totalExonSubjects}</div>
+          <div style="font-size:0.72rem;color:#064e3b;margin-top:2px">Calificaciones de 10.00 reconocidas reglamentariamente</div>
+        </div>
+
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #2563eb;border-radius:10px;padding:12px 16px">
+          <div style="font-size:0.75rem;font-weight:800;color:#1e40af;text-transform:uppercase">Excelencia Plena (100% Mats)</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#1d4ed8;margin-top:2px">${fullExcellenceCount}</div>
+          <div style="font-size:0.72rem;color:#1e3a8a;margin-top:2px">Exonerados en todas las asignaturas cuantitativas</div>
+        </div>
+      </div>
+
+      <!-- Fundamento Institucional -->
+      <div style="background:var(--bg-card-subtle);border:1px solid var(--border-color);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:0.78rem;line-height:1.5;color:var(--text-main)">
+        📌 <strong>Disposición Reglamentaria (Resolución Nro. 001-CE-2026 - U.E.F. "Calderón 2"):</strong>
+        <em>"Todo estudiante que alcance un promedio formativo (70%) igual o superior a 9,50 sobre 10 (exacto a 2 decimales sin redondeo; 9,49 no califica) queda exonerado de rendir la evaluación sumativa trimestral (30%) en esa asignatura. El docente asentará en el casillero sumativo la calificación de <strong>10,00 sobre 10</strong> como reconocimiento institucional a su excelencia académica sostenida. Si el estudiante voluntariamente decide rendirla, se respetará su derecho asentándose la nota que obtuviere."</em>
+      </div>
+  `;
+
+  if (data.list.length === 0) {
+    html += `
+      <div style="text-align:center;padding:36px 20px;background:var(--bg-card-subtle);border-radius:8px;border:1px dashed var(--border-color)">
+        <div style="font-size:2rem;margin-bottom:8px">📝</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text-main)">Aún no se registran promedios formativos ≥ 9.50</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">
+          A medida que ingrese las notas formativas (70%) en el sistema, los estudiantes que alcancen o superen 9.50 aparecerán automáticamente en esta nómina institucional.
+        </div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border-color);text-align:left">
+              <th style="padding:10px 8px;width:38px">#</th>
+              <th style="padding:10px 8px">Estudiante</th>
+              <th style="padding:10px 8px">Asignaturas Exoneradas & Promedio Formativo (70%)</th>
+              <th style="padding:10px 8px;text-align:center;width:125px">Sumativa (30%)</th>
+              <th style="padding:10px 8px;text-align:center;width:95px">Prom. Gral</th>
+              <th style="padding:10px 8px;text-align:center;width:170px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    data.list.forEach((st, idx) => {
+      const matsBadges = st.mats.map(m => `
+        <span style="display:inline-flex;align-items:center;gap:4px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:3px 8px;border-radius:6px;font-size:0.75rem;margin:2px 3px">
+          <strong>${escHTML(m.mat)}</strong>: <span style="font-family:var(--font-mono);font-weight:800;color:#047857">${m.formAvg}</span>
+          ${m.isAuto ? '<span style="font-size:0.65rem;background:#059669;color:#fff;padding:0 4px;border-radius:3px">Exon. 10.00</span>' : '<span style="font-size:0.65rem;background:#15803d;color:#fff;padding:0 4px;border-radius:3px">Asentado 10.00</span>'}
+        </span>
+      `).join('');
+
+      html += `
+        <tr style="border-bottom:1px solid var(--border-color);background:${idx % 2 === 0 ? 'transparent' : 'var(--bg-card-subtle)'}">
+          <td style="padding:10px 8px;font-weight:800;color:var(--text-muted)">${idx+1}</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:800;color:var(--text-main);font-size:0.86rem;display:flex;align-items:center;gap:6px">
+              ${escHTML(st.name)}
+              ${st.isFull ? '<span style="font-size:0.68rem;background:#dbeafe;color:#1e40af;padding:1px 6px;border-radius:10px;font-weight:800;border:1px solid #93c5fd">🌟 Excelencia Plena</span>' : ''}
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px">
+              Cédula: ${escHTML(st.cedula)} · Rep: ${escHTML(st.repName)} ${st.repTel ? '· 📱 ' + escHTML(st.repTel) : ''}
+            </div>
+          </td>
+          <td style="padding:10px 8px">${matsBadges}</td>
+          <td style="padding:10px 8px;text-align:center">
+            <span style="display:inline-block;background:#dcfce7;color:#15803d;border:1px solid #86efac;font-weight:900;font-family:var(--font-mono);font-size:0.88rem;padding:3px 10px;border-radius:6px">
+              10.00 / 10
+            </span>
+          </td>
+          <td style="padding:10px 8px;text-align:center;font-family:var(--font-mono);font-weight:900;color:var(--primary);font-size:0.9rem">
+            ${st.gAvg}
+          </td>
+          <td style="padding:10px 8px;text-align:center">
+            <div style="display:inline-flex;gap:6px">
+              <button class="btn btn-outline" style="padding:4px 8px;font-size:0.75rem;font-weight:700" onclick="rpShowOne(${st.si})" title="Ver libreta completa">
+                👤 Ficha
+              </button>
+              <button class="btn btn-success" style="padding:4px 8px;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:3px" onclick="shareWhatsAppExonerado(${st.si})" title="Enviar felicitación institucional por WhatsApp">
+                📲 Felicitar
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table></div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('rpBody').innerHTML = html;
+}
+
+function rpApplyExoneraciones() {
+  const data = getExoneradosData();
+  if (data.list.length === 0) {
+    toast('ℹ️ No hay estudiantes con promedio formativo ≥ 9.50 para asentar exoneración.', '#2563eb');
+    return;
+  }
+
+  let countApplied = 0;
+  data.list.forEach(st => {
+    const si = st.si;
+    st.mats.forEach(item => {
+      const mName = item.mat;
+      const mat = S.mats[mName];
+      if (!mat) return;
+
+      // Buscar columna sumativa existente en la materia
+      let sumColTarget = null;
+      for (const w of (mat.weeks || [])) {
+        const wName = getWeekName(w);
+        const cols = mat.cols[wName] || [];
+        for (const col of cols) {
+          const at = actType(col.type);
+          const cat = col.cat || at.cat;
+          if (cat === 'sum') {
+            sumColTarget = { weekName: wName, colName: col.name };
+            break;
+          }
+        }
+        if (sumColTarget) break;
+      }
+
+      // Si no existe columna sumativa, crearla en la semana 'EVALUACIÓN SUMATIVA'
+      if (!sumColTarget) {
+        let sumWeekName = 'EVALUACIÓN SUMATIVA';
+        const foundWeek = (mat.weeks || []).find(w => /SUMATIV|EXAMEN/i.test(getWeekName(w)));
+        if (foundWeek) {
+          sumWeekName = getWeekName(foundWeek);
+        } else {
+          if (!mat.weeks) mat.weeks = [];
+          mat.weeks.push(sumWeekName);
+        }
+        if (!mat.cols[sumWeekName]) mat.cols[sumWeekName] = [];
+        const newCol = { name: 'EVALUACIÓN SUMATIVA', type: 'PS', cat: 'sum', date: '', color: '#16a34a', desc: 'EVALUACIÓN SUMATIVA TRIMESTRAL' };
+        mat.cols[sumWeekName].push(newCol);
+        sumColTarget = { weekName: sumWeekName, colName: newCol.name };
+      }
+
+      if (!mat.grades[si]) mat.grades[si] = {};
+      const key = sumColTarget.weekName + '||' + sumColTarget.colName;
+      if (mat.grades[si][key] !== '10.00' && mat.grades[si][key] !== '10') {
+        mat.grades[si][key] = '10.00';
+        countApplied++;
+      }
+    });
+  });
+
+  saveData();
+  render();
+  rpShowExonerados();
+  toast(`🎓 Se asentó exitosamente la calificación oficial de 10.00 en ${countApplied} casilleros sumativos de exonerados.`, '#059669');
+}
+
+function shareWhatsAppExonerado(si) {
+  const name = S.students[si];
+  const profile = (S.studentProfiles && S.studentProfiles[si]) ? S.studentProfiles[si] : {};
+  const repName = profile.rep_nombre || 'Estimado/a Representante';
+  const gAvg = studentGeneralAvg(si) || '—';
+
+  let rawTel = (profile.rep_telefono || '').replace(/\D/g, '');
+  if (rawTel.startsWith('09') && rawTel.length === 10) {
+    rawTel = '593' + rawTel.substring(1);
+  }
+
+  const exonMats = [];
+  getMats().forEach(m => {
+    const calc = getStudentTrimestreCalc(si, m);
+    if (calc.isExonerated) {
+      exonMats.push({ mat: m, formAvg: calc.formAvg });
+    }
+  });
+
+  if (exonMats.length === 0) {
+    shareWhatsApp(si);
+    return;
+  }
+
+  const lines = [
+    `🎓 *UNIDAD EDUCATIVA FISCAL "CALDERÓN 2"*`,
+    `📜 *NOTIFICACIÓN OFICIAL DE EXONERACIÓN ACADÉMICA*`,
+    `⚖️ *Resolución Nro. 001-CE-2026 / Memorando N° 1 C.E.*`,
+    `───────────────────────────────`,
+    `👋 Estimada/o *${repName}*,`,
+    `Representante legal de: *${name}*`,
+    `Grado/Paralelo: *${S.grado || 'Séptimo C'}* · Año Lectivo: *${S.anio || '2026-2027'}*`,
+    `Período: *${S.periodo || '1er Trimestre'}*`,
+    `───────────────────────────────`,
+    `🎉 *¡FELICITACIONES POR EXCELENCIA ACADÉMICA!*`,
+    ``,
+    `Nos complace informarle que, de conformidad con la *Resolución Nro. 001-CE-2026* emitida por el H. Consejo Ejecutivo de la institución, su representado/a ha alcanzado un promedio formativo continuo (70%) de excelencia (≥ 9,50/10) en las siguientes asignaturas:`,
+    ``
+  ];
+
+  exonMats.forEach(em => {
+    lines.push(`⭐ *${em.mat}*: Formativo *${em.formAvg}/10* → *EXONERADO/A*`);
+  });
+
+  lines.push(``);
+  lines.push(`📌 *DISPOSICIÓN INSTITUCIONAL:*`);
+  lines.push(`Por alcanzar un rendimiento sobresaliente sostenido, queda *EXONERADO/A de rendir la Evaluación Sumativa Trimestral (30%)* en dichas asignaturas, asentándose en su registro oficial la nota máxima de *10,00 / 10* como reconocimiento institucional a su esfuerzo, disciplina y perseverancia.`);
+  lines.push(``);
+  lines.push(`📊 *Promedio General Actual:* *${gAvg} / 10*`);
+  lines.push(`───────────────────────────────`);
+  lines.push(`✨ *Consejo Ejecutivo y Docencia:* Extendemos un afectuoso reconocimiento a ustedes como familia por su apoyo constante y compromiso educativo en el hogar.`);
+  lines.push(`✍️ *Docente Tutor:* ${S.docente || 'Lcdo. Kléver Yánez'}`);
+
+  const msg = encodeURIComponent(lines.join('\n'));
+  const url = rawTel ? `https://wa.me/${rawTel}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  window.open(url, '_blank');
+}
+
+function printExoneradosActa() {
+  const data = getExoneradosData();
+  const grado = S.grado || 'Séptimo de Básica "C"';
+  const anio = S.anio || '2026-2027';
+  const periodo = S.periodo || 'Primer Trimestre';
+  const docente = S.docente || 'Lcdo. Kléver Yánez';
+
+  let tableRows = '';
+  data.list.forEach((st, idx) => {
+    st.mats.forEach((m, mIdx) => {
+      tableRows += `
+        <tr style="border-bottom:1px solid #cbd5e1;background:${idx % 2 === 0 ? '#ffffff' : '#f8fafc'}">
+          ${mIdx === 0 ? `<td rowspan="${st.mats.length}" style="padding:6px;text-align:center;font-weight:bold;vertical-align:middle;border-right:1px solid #cbd5e1">${idx+1}</td>` : ''}
+          ${mIdx === 0 ? `<td rowspan="${st.mats.length}" style="padding:6px 10px;font-weight:bold;vertical-align:middle;border-right:1px solid #cbd5e1">
+            ${escHTML(st.name)}
+            <div style="font-size:9px;color:#64748b;font-weight:normal">C.I: ${escHTML(st.cedula)}</div>
+          </td>` : ''}
+          <td style="padding:6px 10px;font-weight:600;border-right:1px solid #cbd5e1">${escHTML(m.mat)}</td>
+          <td style="padding:6px;text-align:center;font-family:monospace;font-weight:bold;border-right:1px solid #cbd5e1">${m.formAvg}</td>
+          <td style="padding:6px;text-align:center;font-family:monospace;font-weight:bold;border-right:1px solid #cbd5e1;color:#15803d">10.00</td>
+          <td style="padding:6px;text-align:center;font-family:monospace;font-weight:bold;border-right:1px solid #cbd5e1">${m.trimAvg}</td>
+          <td style="padding:6px 10px;text-align:center;font-size:9px;font-weight:bold;color:#047857">EXONERADO/A (RES. 001-CE-2026)</td>
+        </tr>
+      `;
+    });
+  });
+
+  const printHtml = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Acta Oficial de Exonerados - UEF Calderón 2</title>
+  <style>
+    @page { size: A4 portrait; margin: 15mm 15mm 15mm 15mm; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; line-height: 1.35; color: #0f172a; margin: 0; padding: 20px; }
+    .header { text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 14px; }
+    .header h1 { font-size: 15px; margin: 0; text-transform: uppercase; color: #1e3a8a; letter-spacing: 0.5px; }
+    .header h2 { font-size: 13px; margin: 3px 0 0; color: #0f172a; }
+    .header h3 { font-size: 11px; margin: 3px 0 0; color: #475569; font-weight: 600; }
+    .act-title { text-align: center; font-size: 12px; font-weight: 900; background: #f1f5f9; padding: 6px; border: 1px solid #cbd5e1; margin: 12px 0; border-radius: 4px; text-transform: uppercase; }
+    .intro { font-size: 10px; text-align: justify; margin-bottom: 12px; line-height: 1.45; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+    th { background: #1e3a8a; color: #ffffff; padding: 6px; font-weight: 800; border: 1px solid #1e3a8a; font-size: 9.5px; text-transform: uppercase; }
+    td { border: 1px solid #cbd5e1; font-size: 9.5px; }
+    .legal-notes { margin-top: 14px; font-size: 9px; color: #334155; line-height: 1.4; border-left: 3px solid #1e3a8a; padding-left: 8px; }
+    .signatures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; text-align: center; page-break-inside: avoid; }
+    .sig-line { border-top: 1px solid #0f172a; margin-top: 35px; padding-top: 5px; font-size: 9.5px; font-weight: bold; }
+    .sig-title { font-size: 8.5px; color: #475569; font-weight: normal; }
+    @media print {
+      body { padding: 0; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="margin-bottom:15px;text-align:right">
+    <button onclick="window.print()" style="background:#1e3a8a;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer">🖨️ Imprimir Acta Oficial</button>
+  </div>
+
+  <div class="header">
+    <h1>República del Ecuador · Ministerio de Educación</h1>
+    <h2>Unidad Educativa Fiscal "Calderón 2"</h2>
+    <h3>Distrito Educativo 17D02 Calderón · Código AMIE 17H01386 · Régimen Sierra 2026-2027</h3>
+  </div>
+
+  <div class="act-title">
+    Acta Consolidada de Estudiantes Exonerados de la Evaluación Sumativa Trimestral por Rendimiento Académico Excelente
+    <div style="font-size:10px;font-weight:normal;color:#475569;margin-top:2px">
+      Resolución Nro. 001-CE-2026 / Memorando N° 1 C.E. - 2026 · Quito, D.M., 16 de noviembre de 2026
+    </div>
+  </div>
+
+  <div style="margin-bottom:8px;font-size:10px;line-height:1.5">
+    <strong>CURSO/GRADO:</strong> ${escHTML(grado)} &nbsp;|&nbsp; <strong>AÑO LECTIVO:</strong> ${escHTML(anio)} &nbsp;|&nbsp; <strong>PERÍODO:</strong> ${escHTML(periodo)} &nbsp;|&nbsp; <strong>DOCENTE TUTOR:</strong> ${escHTML(docente)}
+  </div>
+
+  <div class="intro">
+    En la ciudad de San Francisco de Quito, Distrito Metropolitano, a los 16 días del mes de noviembre del año 2026, de conformidad con lo resuelto por el <strong>Honorable Consejo Ejecutivo de la Unidad Educativa Fiscal "Calderón 2" en su Resolución Nro. 001-CE-2026</strong> y lo dispuesto en el Memorando N° 1 C.E., se deja formal constancia de la nómina de estudiantes que han obtenido en el <strong>Componente Formativo (70%)</strong> un promedio cuantitativo igual o superior a <strong>9,50 sobre 10 (nueve coma cincuenta puntos)</strong> exacto a dos decimales sin redondeo, haciéndose acreedores a la <strong>EXONERACIÓN TOTAL DE LA EVALUACIÓN SUMATIVA (30%)</strong> en sus respectivas asignaturas, registrándose en el casillero correspondiente la calificación máxima de <strong>10,00 / 10 (diez coma cero cero puntos)</strong>:
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30px">Nº</th>
+        <th>Nómina del Estudiante</th>
+        <th>Asignatura Exonerada</th>
+        <th style="width:75px">Prom. Form. (70%)</th>
+        <th style="width:80px">Sumativa (30%)</th>
+        <th style="width:75px">Nota Trim.</th>
+        <th style="width:140px">Estado Legal</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${tableRows || '<tr><td colspan="7" style="text-align:center;padding:15px">No se registran estudiantes exonerados en este período.</td></tr>'}
+    </tbody>
+  </table>
+
+  <div class="legal-notes">
+    <strong>DISPOSICIONES INSTITUCIONALES (MEMORANDO N° 1 C.E. / RES. 001-CE-2026):</strong><br/>
+    <strong>1. Asentamiento de Calificación:</strong> El docente asienta en el casillero de la evaluación sumativa trimestral la nota de 10,00/10 como justo reconocimiento institucional al esfuerzo y excelencia académica sostenida.<br/>
+    <strong>2. Carácter Voluntario:</strong> Se garantiza el derecho de aquellos estudiantes que hayan decidido voluntariamente rendir el instrumento sumativo, manteniéndose en ese caso la calificación obtenida.<br/>
+    <strong>3. Alcance:</strong> La presente exoneración aplica a las evaluaciones sumativas trimestrales de las asignaturas cuantitativas y no exime de la presentación de la fase correspondiente al Proyecto Interdisciplinario.
+  </div>
+
+  <div class="signatures">
+    <div>
+      <div class="sig-line">Mg. Luis Lema</div>
+      <div class="sig-title">Rector / Presidente Consejo Ejecutivo<br/>U.E.F. "Calderón 2"</div>
+    </div>
+    <div>
+      <div class="sig-line">Lcda. Ligia Jácome</div>
+      <div class="sig-title">Vicerrectora / Consejo Ejecutivo<br/>U.E.F. "Calderón 2"</div>
+    </div>
+    <div>
+      <div class="sig-line">${escHTML(docente || 'Lcdo. Kléver Yánez')}</div>
+      <div class="sig-title">Docente Tutor<br/>7mo EGB Paralelo "C"</div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.open();
+    win.document.write(printHtml);
+    win.document.close();
+  } else {
+    toast('⚠️ Ventana bloqueada por el navegador. Permite ventanas emergentes para imprimir el acta.', '#d97706');
+  }
 }
 
 function rpFilter(q) {
@@ -14751,6 +15231,7 @@ function printStudentProgressReportPDF(si) {
           </div>
           <div style="font-size:0.67rem;color:#64748b;margin:1px 0 3px 0">
             70% Form: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) · 30% Sum: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
+            ${calc.isExonerated ? ' · <span style="color:#047857;font-weight:bold">🎓 Exonerado/a 10/10 (Res. 001-CE-2026)</span>' : ''}
           </div>
           ${actsHtml}
         </div>
@@ -14763,7 +15244,9 @@ function printStudentProgressReportPDF(si) {
           <td style="padding:4px 8px;text-align:center;color:#475569">${calc.sumWeighted} <span style="font-size:0.65rem">(${calc.sumAvg})</span></td>
           <td style="padding:4px 8px;text-align:center;font-weight:900;color:${mColor};font-family:monospace;font-size:0.85rem">${calc.trimAvg}</td>
           <td style="padding:4px 8px;text-align:center">
-            <span style="font-size:0.68rem;font-weight:800;padding:1px 6px;border-radius:4px;background:${statusBg};color:${statusColor}">${statusLabel}</span>
+            <span style="font-size:0.68rem;font-weight:800;padding:1px 6px;border-radius:4px;background:${calc.isExonerated ? '#dcfce7' : statusBg};color:${calc.isExonerated ? '#15803d' : statusColor}">
+              ${calc.isExonerated ? '🎓 Exonerado (10/10)' : statusLabel}
+            </span>
           </td>
         </tr>
       `;
@@ -15351,6 +15834,16 @@ function buildStudentCard(si) {
           <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px">
             70% Formativo: <strong>${calc.formWeighted}</strong> (${calc.formAvg}) · 30% Sumativo / Proyecto: <strong>${calc.sumWeighted}</strong> (${calc.sumAvg})
           </div>
+          ${calc.isExonerated ? `
+            <div style="margin-top:7px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+              <span style="font-size:0.76rem;font-weight:900;color:#065f46;display:flex;align-items:center;gap:5px">
+                🎓 EXONERADO/A EVALUACIÓN SUMATIVA (10.00 / 10)
+              </span>
+              <span style="font-size:0.7rem;color:#047857;background:#d1fae5;padding:1px 7px;border-radius:4px;font-weight:700">
+                Res. Nro. 001-CE-2026 · Formativo: ${calc.formAvg} ≥ 9.50
+              </span>
+            </div>
+          ` : ''}
           ${actsHTML}
         </div>
       `;
