@@ -4151,18 +4151,18 @@ body.in-focus-mode {
 
   <!-- Pestañas de Navegación del Módulo PI -->
   <div style="display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
-    <button id="piSubTab_guia" class="btn" onclick="switchPiSubTab('guia')" style="background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)">
-      📖 1. Guía &amp; Planificación Didáctica (Modelo Institucional Oficial)
+    <button id="piSubTab_notas" class="btn" onclick="switchPiSubTab('notas')" style="background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)">
+      📊 1. Matriz de Calificaciones por Materias (5 de Aula + EEFF e Inglés)
     </button>
-    <button id="piSubTab_notas" class="btn btn-outline" onclick="switchPiSubTab('notas')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
-      📊 2. Matriz de Calificaciones &amp; Rúbrica (30% Sumativo)
+    <button id="piSubTab_guia" class="btn btn-outline" onclick="switchPiSubTab('guia')" style="font-weight:800;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-main)">
+      📖 2. Guía Didáctica &amp; Planificación Curricular (Nutri-Vida)
     </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════
        SUB-VISTA 1: GUÍA COMPLETA Y PLANIFICACIÓN DEL PROYECTO
        ══════════════════════════════════════════════════════ -->
-  <div id="piView_guia" style="display:block">
+  <div id="piView_guia" style="display:none">
 
     <!-- GUÍA DIDÁCTICA OFICIAL DE 7MO EGB (ADAPTADA AL MODELO INSTITUCIONAL) -->
     <div id="piGuia_7mo" style="display:block">
@@ -4635,32 +4635,81 @@ body.in-focus-mode {
   <!-- ══════════════════════════════════════════════════════
        SUB-VISTA 2: REGISTRO DE CALIFICACIONES & RÚBRICA (30%)
        ══════════════════════════════════════════════════════ -->
-  <div id="piView_notas" style="display:none">
+  <div id="piView_notas" style="display:block">
 
-    <!-- Info del Proyecto -->
-    <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.78rem"></div>
+    <!-- Barra de Control y Sincronización Directa de Calificaciones -->
+    <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.6rem">🥗</span>
+          <div>
+            <div style="font-weight:900;font-size:0.96rem;color:var(--text-main);letter-spacing:0.2px">
+              MATRIZ DE CALIFICACIONES DEL PROYECTO INTERDISCIPLINAR
+            </div>
+            <div style="font-size:0.76rem;color:var(--text-muted);font-weight:600">
+              7 Asignaturas oficiales · Múltiples insumos por materia · Promedio automático · Sincronización directa a Calificaciones (70/30)
+            </div>
+          </div>
+        </div>
 
-    <!-- Leyenda de Rúbrica -->
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn" onclick="syncPiToSubjects()" style="background:#15803d;color:#fff;border:1.5px solid #16a34a;font-weight:900;font-size:0.84rem;padding:8px 18px;border-radius:8px;box-shadow:0 3px 10px rgba(21,128,61,0.3);cursor:pointer;display:flex;align-items:center;gap:6px">
+            <span>⚡ Sincronizar a Calificaciones</span>
+          </button>
+          <button class="btn btn-outline" onclick="openAddInsumoMenu()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
+            <span>➕ Añadir Insumo</span>
+          </button>
+          <button class="btn btn-outline" onclick="exportPiXLSX()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
+            <span>📊 Exportar Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de configuración de sincronización e información institucional -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:10px;border-top:1px solid var(--border-color);font-size:0.76rem">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-weight:900;color:var(--text-muted)">MODO DE TRASLADO A CALIFICACIONES:</span>
+          <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-weight:700;color:var(--text-main)">
+            <input type="radio" name="piSyncModeRadio" value="total" onchange="setPiSyncMode('total')" checked style="cursor:pointer" />
+            <span>🔘 Promedio General Unificado (Esa misma nota a las 7 materias)</span>
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-weight:700;color:var(--text-main)">
+            <input type="radio" name="piSyncModeRadio" value="subject" onchange="setPiSyncMode('subject')" style="cursor:pointer" />
+            <span>⚪ Promedio Individual por Asignatura</span>
+          </label>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:6px;color:var(--text-muted)">
+          <span>💡</span>
+          <span>Tip: Puedes añadir uno o más insumos por materia con el botón <strong>[➕]</strong> en cada cabecera. Pegado directo desde Excel soportado (Ctrl+V).</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info bar institucional y chips de materias -->
+    <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px 16px;margin-bottom:12px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:0.78rem"></div>
+
+    <!-- Leyenda de Escala Ministerial MINEDUC -->
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;justify-content:space-between">
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-right:4px">ESCALA RÚBRICA:</span>
-        <span style="background:#16a34a;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">10 — Excelente (Avanzado)</span>
-        <span style="background:#2563eb;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">8-9 — Muy Bueno (Intermedio)</span>
-        <span style="background:#ca8a04;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">6-7 — En Proceso (Básico)</span>
-        <span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:700">1-5 — Inicio (En Desarrollo)</span>
+        <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin-right:4px">ESCALA MINEDUC:</span>
+        <span style="background:#15803d;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:800">9.00 - 10.00 — DAR (Domina los Aprendizajes)</span>
+        <span style="background:#2563eb;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:800">7.00 - 8.99 — AAR (Alcanza los Aprendizajes)</span>
+        <span style="background:#d97706;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:800">5.00 - 6.99 — PAR (Próximo a Alcanzar)</span>
+        <span style="background:#dc2626;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:800">1.00 - 4.99 — NAR (No Alcanza los Aprendizajes)</span>
       </div>
 
       <div style="display:flex;gap:8px">
-        <button class="btn btn-outline" style="font-size:0.76rem;font-weight:800;padding:5px 12px" onclick="openPiConfig()">⚙ Configurar Proyecto</button>
-        <button class="btn btn-outline" style="font-size:0.76rem;font-weight:800;padding:5px 12px" onclick="openCopyColumnModal()">📋 Copiar Columna</button>
+        <button class="btn btn-outline" style="font-size:0.76rem;font-weight:800;padding:4px 10px" onclick="renderPi()">🔄 Refrescar Cálculos</button>
       </div>
     </div>
 
     <!-- Tabla de Calificaciones PI -->
-    <div class="tw" style="max-height:calc(100vh - 320px)">
+    <div class="tw" style="max-height:calc(100vh - 310px);overflow:auto">
       <table id="piTable">
         <thead id="piTh"></thead>
         <tbody id="piTb"></tbody>
+        <tfoot id="piTf"></tfoot>
       </table>
     </div>
 
@@ -13286,7 +13335,11 @@ function switchView(v) {
   if (v === 'asistencia') renderAttendance();
   if (v === 'reporte') { if (typeof ensureAttendanceData === 'function') ensureAttendanceData(); rpShowAll(); }
   if (v === 'export') expInit();
-  if (v === 'pi') { if (typeof switchPiProject === 'function') switchPiProject(S.piActiveGrade || _piActiveProjectGrade || '7mo'); else renderPi(); }
+  if (v === 'pi') {
+    if (typeof switchPiProject === 'function') switchPiProject(S.piActiveGrade || _piActiveProjectGrade || '7mo');
+    if (typeof switchPiSubTab === 'function') switchPiSubTab(S.piSubTab || 'notas');
+    else renderPi();
+  }
   if (v === 'estudiantes') renderStudentsMatrix();
   if (v === 'cronograma') renderCronogramaModule();
   if (v === 'herramientas') renderHerramientas();
@@ -19180,20 +19233,64 @@ const PI_DEFAULT_CONFIG = {
   ]
 };
 
-// Asegura que S.pi existe
+// ══════════════════════════════════════════════════════
+//  PROYECTO INTERDISCIPLINARIO: MODELO DE 7 MATERIAS E INSUMOS FLEXIBLES
+// ══════════════════════════════════════════════════════
+
+const PI_OFFICIAL_MATS = [
+  'Matemáticas',
+  'Lengua y Literatura',
+  'Ciencias Naturales',
+  'Estudios Sociales',
+  'Educación Artística',
+  'Educación Física',
+  'Inglés'
+];
+
+const PI_MAT_INFO = {
+  'Matemáticas':         { short: 'MAT',       icon: '📐', color: '#1d4ed8', subBg: '#eff6ff', border: '#3b82f6' },
+  'Lengua y Literatura': { short: 'LENGUA',    icon: '📖', color: '#b45309', subBg: '#fef3c7', border: '#f59e0b' },
+  'Ciencias Naturales':  { short: 'CCNN',      icon: '🌿', color: '#15803d', subBg: '#f0fdf4', border: '#22c55e' },
+  'Estudios Sociales':   { short: 'EESS',      icon: '🌎', color: '#7c3aed', subBg: '#faf5ff', border: '#a855f7' },
+  'Educación Artística': { short: 'ARTÍSTICA',  icon: '🎨', color: '#db2777', subBg: '#fdf2f8', border: '#ec4899' },
+  'Educación Física':    { short: 'EEFF',      icon: '🏃', color: '#0f766e', subBg: '#f0fdfa', border: '#14b8a6' },
+  'Inglés':              { short: 'INGLÉS',    icon: '🇬🇧', color: '#c2410c', subBg: '#fff7ed', border: '#f97316' }
+};
+
+// Asegura que S.pi existe y tiene las 7 materias oficiales y sus insumos
 function ensurePi() {
   if (!S.pi) S.pi = {};
-  const activeG = S.piActiveGrade || _piActiveProjectGrade || '7mo';
-  if (!S.pi.config) S.pi.config = JSON.parse(JSON.stringify((typeof PI_CONFIGS !== 'undefined' && PI_CONFIGS[activeG]) ? PI_CONFIGS[activeG] : PI_DEFAULT_CONFIG));
-  if (!S.pi.config.syncMode) S.pi.config.syncMode = 'subject';
-  if (!S.pi.mats) {
-    S.pi.mats = getMats().filter(m => !isQualitativeMat(m));
+  if (!S.pi.config) {
+    S.pi.config = {
+      titulo: 'Proyecto Interdisciplinario: Nutri-Vida',
+      tema: 'Recetario Ilustrado Intercultural & Guía de Presupuestos',
+      fecha: 'Semana Intensiva',
+      syncMode: 'total' // 'total' = esa misma nota (promedio general), 'subject' = promedio por materia
+    };
   }
+  if (!S.pi.config.syncMode) S.pi.config.syncMode = 'total';
+
+  // Fijar las 7 materias oficiales solicitadas por el docente
+  S.pi.mats = [...PI_OFFICIAL_MATS];
+
+  // Insumos dinámicos por materia (cada materia puede tener 1 o varios insumos)
+  if (!S.pi.subjectInsumos) { S.pi.subjectInsumos = {}; S.pi.config.syncMode = 'total'; }
+  S.pi.mats.forEach(m => {
+    if (!S.pi.subjectInsumos[m] || !Array.isArray(S.pi.subjectInsumos[m]) || S.pi.subjectInsumos[m].length === 0) {
+      S.pi.subjectInsumos[m] = [{ id: 'ins_1', name: 'Insumo 1' }];
+    }
+  });
+
+  // Estructura de calificaciones S.pi.grades[mat][si][insId]
   if (!S.pi.grades) S.pi.grades = {};
   S.pi.mats.forEach(m => {
     if (!S.pi.grades[m]) S.pi.grades[m] = {};
     S.students.forEach((_, si) => {
       if (!S.pi.grades[m][si]) S.pi.grades[m][si] = {};
+      // Migración suave: si había notas previas en _direct o PI1, asegurar ins_1
+      if (S.pi.grades[m][si]._direct && !S.pi.grades[m][si]['ins_1']) {
+        S.pi.grades[m][si]['ins_1'] = String(S.pi.grades[m][si]._direct);
+      }
     });
   });
 }
@@ -19202,85 +19299,172 @@ function piGradeColor(n) {
   if (n === null || n === undefined || n === '') return '';
   const v = parseFloat(n);
   if (isNaN(v)) return '';
-  if (v >= 9) return '#dcfce7';
-  if (v >= 7) return '#dbeafe';
-  if (v >= 5) return '#fef9c3';
-  return '#fee2e2';
+  if (v >= 9.0) return '#dcfce7'; // verde
+  if (v >= 7.0) return '#dbeafe'; // azul
+  if (v >= 5.0) return '#fef9c3'; // amarillo
+  return '#fee2e2'; // rojo
 }
 
-function handlePiPaste(e, startSi, startMat, startIndId) {
-  const clipboardData = e.clipboardData || window.clipboardData;
-  if (!clipboardData) return;
-  const text = clipboardData.getData('text');
-  if (!text) return;
+function setPiSyncMode(mode) {
+  ensurePi();
+  S.pi.config.syncMode = mode;
+  saveData();
+  const label = mode === 'total' ? 'Promedio General Unificado (Esa misma nota a las 7 materias)' : 'Promedio Individual por Materia';
+  toast(`⚙️ Modo de sincronización configurado: ${label}`, '#2563eb');
+}
 
-  const lines = text.trim().split(/\r?\n/).map(line => line.split('\t'));
-  if (lines.length > 1 || (lines[0] && lines[0].length > 1)) {
-    e.preventDefault();
-    ensurePi();
-    const sorted = getSortedIndices();
-    const startRowInSorted = sorted.indexOf(startSi);
-    if (startRowInSorted === -1) return;
+function addInsumoToMat(matName) {
+  ensurePi();
+  if (!S.pi.subjectInsumos[matName]) S.pi.subjectInsumos[matName] = [];
+  const list = S.pi.subjectInsumos[matName];
+  const nextNum = list.length + 1;
+  const newId = 'ins_' + Date.now();
+  list.push({ id: newId, name: 'Insumo ' + nextNum });
+  saveData();
+  renderPi();
+  toast(`➕ Insumo ${nextNum} agregado a ${matName}`, '#16a34a');
+}
 
-    const mats = S.pi.mats;
-    const inds = S.pi.config.indicadores;
-    const matIdx = mats.indexOf(startMat);
-    if (matIdx === -1) return;
-
-    let count = 0;
-
-    lines.forEach((rowVals, rOffset) => {
-      const targetRowPos = startRowInSorted + rOffset;
-      if (targetRowPos >= sorted.length) return;
-      const targetSi = sorted[targetRowPos];
-
-      rowVals.forEach((valStr, cOffset) => {
-        let cleanVal = valStr.trim().replace(',', '.');
-        if (cleanVal === '') return;
-        let n = parseFloat(cleanVal);
-        if (isNaN(n)) return;
-        if (n > 10) n = 10;
-        if (n < 1) n = 1;
-        const formatted = String(trunc2(n));
-
-        if (startIndId === '_direct') {
-          const currentMatIdx = matIdx + cOffset;
-          if (currentMatIdx < mats.length) {
-            const mName = mats[currentMatIdx];
-            if (!S.pi.grades[mName]) S.pi.grades[mName] = {};
-            if (!S.pi.grades[mName][targetSi]) S.pi.grades[mName][targetSi] = {};
-            S.pi.grades[mName][targetSi]._direct = formatted;
-            count++;
-          }
-        } else {
-          const indIdx = inds.findIndex(ind => ind.id === startIndId);
-          if (indIdx !== -1) {
-            const totalIndsPerMat = inds.length;
-            const currentTotalIndIdx = (matIdx * totalIndsPerMat + indIdx) + cOffset;
-            const targetMatIdx = Math.floor(currentTotalIndIdx / totalIndsPerMat);
-            const targetIndIdx = currentTotalIndIdx % totalIndsPerMat;
-
-            if (targetMatIdx < mats.length && targetIndIdx < inds.length) {
-              const mName = mats[targetMatIdx];
-              const indId = inds[targetIndIdx].id;
-              if (!S.pi.grades[mName]) S.pi.grades[mName] = {};
-              if (!S.pi.grades[mName][targetSi]) S.pi.grades[mName][targetSi] = {};
-              S.pi.grades[mName][targetSi][indId] = formatted;
-              count++;
-            }
-          }
-        }
-      });
+function removeInsumoFromMat(matName, insId, insName) {
+  ensurePi();
+  const list = S.pi.subjectInsumos[matName] || [];
+  if (list.length <= 1) {
+    toast('⚠️ Cada materia debe mantener al menos 1 insumo', '#eab308');
+    return;
+  }
+  if (!confirm(`¿Eliminar "${insName}" de ${matName}? Se borrarán las calificaciones de esta columna.`)) {
+    return;
+  }
+  S.pi.subjectInsumos[matName] = list.filter(item => item.id !== insId);
+  if (S.pi.grades && S.pi.grades[matName]) {
+    Object.keys(S.pi.grades[matName]).forEach(si => {
+      delete S.pi.grades[matName][si][insId];
     });
+  }
+  saveData();
+  renderPi();
+  toast(`🗑️ Insumo eliminado de ${matName}`, '#ef4444');
+}
 
+function renameInsumoInMat(matName, insId, currentName) {
+  const newName = prompt(`Editar nombre del insumo en ${matName}:`, currentName);
+  if (!newName || !newName.trim()) return;
+  ensurePi();
+  const list = S.pi.subjectInsumos[matName] || [];
+  const target = list.find(item => item.id === insId);
+  if (target) {
+    target.name = newName.trim();
     saveData();
     renderPi();
-    toast(`📋 ¡Se pegaron ${count} calificaciones en el Proyecto Interdisciplinario!`, '#16a34a');
+    toast(`✏️ Insumo renombrado a "${target.name}"`, '#2563eb');
   }
+}
+
+function openAddInsumoMenu() {
+  ensurePi();
+  const options = S.pi.mats.map(m => `<option value="${escHTML(m)}">${escHTML(m)}</option>`).join('');
+  openModal(
+    '➕ Añadir Insumo a Asignatura',
+    `
+      <div style="font-size:0.86rem;line-height:1.5">
+        <p style="margin-bottom:12px;color:var(--text-main)">
+          Selecciona la asignatura a la que deseas añadir una nueva actividad / insumo para promediar en el Proyecto Interdisciplinar:
+        </p>
+        <div style="margin-bottom:14px">
+          <label style="font-weight:700;display:block;margin-bottom:4px">Asignatura:</label>
+          <select id="selMatAddInsumo" class="fi" style="width:100%;padding:8px">
+            ${options}
+          </select>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-weight:700;display:block;margin-bottom:4px">Nombre del Insumo (Opcional):</label>
+          <input type="text" id="txtCustomInsumoName" class="fi" style="width:100%;padding:8px" placeholder="Ej: Receta Escrita, Exposición, Presupuesto, Maqueta..." />
+        </div>
+      </div>
+    `,
+    '➕ Agregar Insumo',
+    () => {
+      const sel = document.getElementById('selMatAddInsumo');
+      const txt = document.getElementById('txtCustomInsumoName');
+      if (!sel) return;
+      const m = sel.value;
+      const customName = (txt && txt.value.trim()) ? txt.value.trim() : null;
+      ensurePi();
+      if (!S.pi.subjectInsumos[m]) S.pi.subjectInsumos[m] = [];
+      const list = S.pi.subjectInsumos[m];
+      const nextNum = list.length + 1;
+      const newId = 'ins_' + Date.now();
+      list.push({ id: newId, name: customName || ('Insumo ' + nextNum) });
+      saveData();
+      closeModal();
+      renderPi();
+      toast(`➕ Insumo agregado a ${m}`, '#16a34a');
+    }
+  );
+}
+
+function calcStudentPi(si) {
+  ensurePi();
+  const mats = S.pi.mats;
+  const matAverages = {};
+  const validNotas = [];
+
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const insVals = [];
+    insList.forEach(ins => {
+      const v = S.pi.grades?.[m]?.[si]?.[ins.id];
+      if (v !== undefined && v !== null && v !== '') {
+        const num = parseFloat(v);
+        if (!isNaN(num)) insVals.push(num);
+      }
+    });
+
+    if (insVals.length > 0) {
+      const avg = trunc2(insVals.reduce((a, b) => a + b, 0) / insVals.length);
+      matAverages[m] = avg;
+      validNotas.push(parseFloat(avg));
+    } else {
+      const dir = S.pi.grades?.[m]?.[si]?._direct;
+      if (dir !== undefined && dir !== null && dir !== '') {
+        const num = parseFloat(dir);
+        if (!isNaN(num)) {
+          const avg = trunc2(num);
+          matAverages[m] = avg;
+          validNotas.push(parseFloat(avg));
+        } else {
+          matAverages[m] = null;
+        }
+      } else {
+        matAverages[m] = null;
+      }
+    }
+  });
+
+  let piNota = null;
+  if (validNotas.length > 0) {
+    piNota = trunc2(validNotas.reduce((a, b) => a + b, 0) / validNotas.length);
+  }
+
+  let escala = { label: '—', badgeBg: 'var(--border-color)', color: 'var(--text-muted)' };
+  if (piNota !== null) {
+    const v = parseFloat(piNota);
+    if (v >= 9.0) escala = { label: 'DAR', badgeBg: '#15803d', color: '#fff' };
+    else if (v >= 7.0) escala = { label: 'AAR', badgeBg: '#2563eb', color: '#fff' };
+    else if (v >= 5.0) escala = { label: 'PAR', badgeBg: '#d97706', color: '#fff' };
+    else escala = { label: 'NAR', badgeBg: '#dc2626', color: '#fff' };
+  }
+
+  return { matAverages, piNota, escala };
+}
+
+function handlePiPaste(e, startSi, startMat, startInsId) {
+  handlePiInsumoPaste(e, startSi, startMat, startInsId);
 }
 
 
 function switchPiSubTab(tab) {
+  if (typeof S !== 'undefined' && S) S.piSubTab = tab;
   const vGuia = document.getElementById('piView_guia');
   const vNotas = document.getElementById('piView_notas');
   const bGuia = document.getElementById('piSubTab_guia');
@@ -19607,146 +19791,426 @@ function printPiGuia(overrideGrade) {
 
 function renderPi() {
   ensurePi();
-  const cfg    = S.pi.config;
-  const mats   = S.pi.mats;
-  const inds   = cfg.indicadores;
+  const cfg = S.pi.config;
+  const mats = S.pi.mats;
 
-  // Info bar
+  // Actualizar radio buttons de syncMode si existen en el DOM
+  const radios = (typeof document !== 'undefined' && document.getElementsByName) ? document.getElementsByName('piSyncModeRadio') : [];
+  if (radios && radios.length) {
+    for (let r of radios) {
+      r.checked = (r.value === (cfg.syncMode || 'total'));
+    }
+  }
+
+  // Barra de información rápida institucional
   const infoBar = document.getElementById('piInfoBar');
   if (infoBar) {
+    const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+    let totalInsumos = 0;
+    mats.forEach(m => {
+      totalInsumos += (S.pi.subjectInsumos[m] || []).length;
+    });
+
     infoBar.innerHTML = `
-      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">TÍTULO DEL PROYECTO</span><br><span style="font-weight:800;font-size:0.85rem">${escHTML(cfg.titulo||'—')}</span></div>
-      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">TEMA GENERADOR</span><br><span style="font-weight:700;font-size:0.82rem">${escHTML(cfg.tema||'—')}</span></div>
-      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">FECHA DE ENTREGA</span><br><span style="font-weight:700;font-size:0.82rem">${escHTML(cfg.fecha||'—')}</span></div>
-      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">ASIGNATURAS INVOLUCRADAS</span><br><span style="font-weight:700;font-size:0.82rem">${mats.length}</span></div>
-      <div><span style="font-weight:700;color:var(--text-muted);font-size:0.72rem">INDICADORES DE RÚBRICA</span><br><span style="font-weight:700;font-size:0.82rem">${inds.length}</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.2rem">📌</span>
+        <div>
+          <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">PROYECTO OFICIAL</span><br/>
+          <span style="font-weight:900;font-size:0.86rem;color:var(--text-main)">${escHTML(cfg.titulo || 'Nutri-Vida')}</span>
+        </div>
+      </div>
+      <div>
+        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">ASIGNATURAS ARTICULADAS</span><br/>
+        <span style="font-weight:900;font-size:0.84rem;color:#1d4ed8">7 Materias (5 de Aula + EEFF e Inglés)</span>
+      </div>
+      <div>
+        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">TOTAL INSUMOS ACTIVOS</span><br/>
+        <span style="font-weight:900;font-size:0.84rem;color:#b45309">${totalInsumos} Insumos configurados</span>
+      </div>
+      <div>
+        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">ESTUDIANTES EVALUADOS</span><br/>
+        <span style="font-weight:900;font-size:0.84rem;color:#15803d">${sorted.length} estudiantes activos</span>
+      </div>
+      <div>
+        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">DESTINO EN CALIFICACIONES</span><br/>
+        <span style="font-weight:900;font-size:0.82rem;color:#7c3aed">
+          ${cfg.syncMode === 'subject' ? 'Promedio específico por materia' : 'Esa misma nota (Promedio General)'}
+        </span>
+      </div>
     `;
   }
 
-  // Build table headers
+  // Construir Encabezados de Tabla (2 Niveles)
   let r1 = `<tr>
-    <th class="fxl" rowspan="2" style="min-width:30px;width:30px">#</th>
-    <th class="fxn" rowspan="2" style="min-width:200px;text-align:left;padding-left:10px">NÓMINA DE ESTUDIANTES</th>`;
+    <th class="fxl" rowspan="2" style="min-width:34px;width:34px">#</th>
+    <th class="fxn" rowspan="2" style="min-width:220px;text-align:left;padding-left:12px">NÓMINA DE ESTUDIANTES</th>`;
 
   mats.forEach((m, mi) => {
-    const span = inds.length + 1; // indicadores + nota asignatura
-    const colors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
-    const bg = colors[mi % colors.length];
-    r1 += `<th class="wh" colspan="${span}" style="background:${bg};border-color:${bg}">${escHTML(m)}</th>`;
+    const info = PI_MAT_INFO[m] || { icon: '📚', color: '#d97706', subBg: '#fff7ed' };
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const span = insList.length + 1; // insumos + PROM
+    r1 += `<th colspan="${span}" style="background:${info.color};color:#fff;border-color:${info.color};padding:7px 6px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+        <span style="font-weight:900;font-size:0.82rem;white-space:nowrap">${info.icon} ${escHTML(m)}</span>
+        <button class="btn btn-xs" onclick="addInsumoToMat('${esc(m)}')" style="background:rgba(255,255,255,0.25);color:#fff;border:1px solid rgba(255,255,255,0.45);font-size:0.65rem;font-weight:900;padding:2px 7px;border-radius:5px;cursor:pointer" title="Añadir Insumo a ${esc(m)}">
+          ➕ Insumo
+        </button>
+      </div>
+    </th>`;
   });
-  r1 += `<th class="th-trim" rowspan="2" style="min-width:65px">NOTA PI<br><span style="font-size:0.58rem;font-weight:400">PROMEDIO</span></th>`;
+
+  r1 += `<th colspan="2" style="background:linear-gradient(135deg,#78350f 0%,#b45309 50%,#d97706 100%);color:#fff;border-color:#b45309;padding:7px 8px;min-width:145px">
+    <div style="font-weight:900;font-size:0.84rem">PROMEDIO PROYECTO</div>
+    <div style="font-size:0.62rem;opacity:.95;font-weight:600">INTERDISCIPLINAR (7 MATERIAS)</div>
+  </th>`;
   r1 += `</tr>`;
 
-  // Row 2: indicator subheaders per subject + NOTA
+  // Fila 2 de Cabeceras: Subcolumnas de insumos por materia + PROM y Columna Final
   let r2 = `<tr>`;
-  const indColors = ['#2563eb','#7c3aed','#ea580c','#0d9488','#ca8a04'];
   mats.forEach((m, mi) => {
-    const matBgColors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
-    const matBg = matBgColors[mi % matBgColors.length];
-    inds.forEach((ind, ii) => {
-      const bg = indColors[ii % indColors.length];
-      r2 += `<th class="sh" title="${escHTML(ind.nombre)}" style="background:${bg};border-color:${bg};min-width:48px;max-width:70px">
-        <div style="position:relative;padding:1px 0">
-          <span style="display:block;font-weight:800;font-size:0.72rem">${escHTML(ind.id)}</span>
-          <span style="display:block;font-size:0.52rem;opacity:.9;white-space:normal;line-height:1.2;max-width:65px">${escHTML(ind.nombre.substring(0,30))}...</span>
-          <span style="display:block;font-size:0.55rem;opacity:.75">(${ind.peso}%)</span>
+    const info = PI_MAT_INFO[m] || { color: '#d97706', subBg: '#fff7ed' };
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const canDelete = insList.length > 1;
+
+    insList.forEach((ins, ii) => {
+      r2 += `<th class="sh" style="background:${info.subBg};color:${info.color};border:1px solid var(--border-color);min-width:72px;max-width:96px;padding:4px 3px">
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+          <span style="font-weight:800;font-size:0.72rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="renameInsumoInMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" title="Clic para renombrar '${esc(ins.name)}'">
+            ${escHTML(ins.name)}
+          </span>
+          ${canDelete ? `<button onclick="removeInsumoFromMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.7rem;padding:0 2px;line-height:1" title="Eliminar este insumo">✖</button>` : ''}
         </div>
       </th>`;
     });
-    r2 += `<th class="sh" style="background:${matBg};border-color:${matBg};font-weight:700;min-width:56px" title="Nota final de la asignatura en el PI. Puedes digitar/pegar directamente aquí si no llenas indicadores.">NOTA<br><span style="font-size:0.52rem">ASIGNATURA</span></th>`;
+
+    r2 += `<th class="sh" style="background:${info.color};color:#fff;border-color:${info.color};font-weight:900;font-size:0.72rem;min-width:54px" title="Promedio de insumos de ${esc(m)}">
+      PROM.
+    </th>`;
   });
+
+  r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:70px">NOTA (30%)</th>`;
+  r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:68px">ESCALA</th>`;
   r2 += `</tr>`;
 
-  document.getElementById('piTh').innerHTML = r1 + r2;
+  const piTh = document.getElementById('piTh');
+  if (piTh) piTh.innerHTML = r1 + r2;
 
-  // Body rows
+  // Filas del Cuerpo de la Tabla
   const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   let bodyHtml = sorted.map((si, rowPos) => {
     const name = S.students[si] || `Estudiante ${si+1}`;
+    const calc = calcStudentPi(si);
     let cells = '';
-    const matNotas = [];
 
     mats.forEach((m, mi) => {
-      const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
+      const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
 
-      // indicator cells
-      const indVals = [];
-      inds.forEach((ind, ii) => {
-        const v = mGrades[ind.id] !== undefined ? mGrades[ind.id] : '';
+      // Celdas de insumos individuales
+      insList.forEach(ins => {
+        const v = S.pi.grades?.[m]?.[si]?.[ins.id] !== undefined ? S.pi.grades[m][si][ins.id] : '';
         const n = parseFloat(v);
         const bg = piGradeColor(v);
-        const cls = v !== '' && !isNaN(n) ? (n < 7 ? 'glo' : 'ghi') : '';
-        cells += `<td style="background:${bg||''}">
+        const cls = v !== '' && !isNaN(n) ? (n < 7.0 ? 'glo' : 'ghi') : '';
+
+        cells += `<td style="background:${bg||''};padding:2px">
           <input class="gi ${cls}" type="text" inputmode="decimal"
+            data-si="${si}" data-mat="${esc(m)}" data-ins="${esc(ins.id)}"
             value="${escVal(v)}"
-            onpaste="handlePiPaste(event, ${si}, '${esc(m)}', '${esc(ind.id)}')"
-            onchange="updPi(${si},'${esc(m)}','${esc(ind.id)}',this.value)"
+            placeholder="—"
+            onpaste="handlePiInsumoPaste(event, ${si}, '${esc(m)}', '${esc(ins.id)}')"
+            oninput="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
+            onchange="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
             onfocus="this.select()"
-            onkeydown="navPi(event,this,${si},'${esc(m)}','${esc(ind.id)}')"/>
+            onkeydown="navPiInsumo(event, this, ${si}, '${esc(m)}', '${esc(ins.id)}')" />
         </td>`;
-        if (v !== '' && !isNaN(n)) indVals.push(n);
       });
 
-      // NOTA ASIGNATURA calculation or direct override
-      let matNota = null;
-      if (mGrades._direct !== undefined && mGrades._direct !== '') {
-        matNota = trunc2(parseFloat(mGrades._direct));
-      } else if (indVals.length === inds.length && inds.length > 0) {
-        let weightedSum = 0;
-        let weightTotal = 0;
-        inds.forEach((ind, ii) => {
-          const v = parseFloat(mGrades[ind.id]);
-          if (!isNaN(v)) { weightedSum += v * (ind.peso / 100); weightTotal += ind.peso / 100; }
-        });
-        matNota = weightTotal > 0 ? trunc2(weightedSum / weightTotal) : null;
-      } else if (indVals.length > 0) {
-        matNota = trunc2(indVals.reduce((a,b) => a+b, 0) / indVals.length);
-      }
+      // Celda de Promedio de la Materia
+      const matAvg = calc.matAverages[m];
+      const matAvgDisp = matAvg !== null ? matAvg : '—';
+      const matAvgCls = matAvg !== null && parseFloat(matAvg) < 7.0 ? 'glo' : (matAvg !== null ? 'ghi' : '');
+      const matAvgBg = piGradeColor(matAvg) || 'var(--bg-card)';
 
-      const matBgColors = ['#d97706','#7c3aed','#0284c7','#15803d','#db2777','#0f766e','#c2410c'];
-      const matBg = matBgColors[mi % matBgColors.length];
-      const notaCls = matNota !== null && parseFloat(matNota) < 7 ? 'glo' : (matNota !== null ? 'ghi' : '');
-      const bgNota  = piGradeColor(matNota) || 'var(--bg-card)';
-
-      if (indVals.length === 0) {
-        // Editable/pastable cell when indicators are empty
-        cells += `<td class="prom-wk" style="background:${bgNota}">
-          <input class="gi ${notaCls}" type="text" inputmode="decimal"
-            style="font-weight:800;text-align:center"
-            placeholder="—"
-            value="${escVal(mGrades._direct !== undefined ? mGrades._direct : (matNota !== null ? matNota : ''))}"
-            onpaste="handlePiPaste(event, ${si}, '${esc(m)}', '_direct')"
-            onchange="updPiDirect(${si},'${esc(m)}',this.value)"
-            onfocus="this.select()"
-            onkeydown="navPi(event,this,${si},'${esc(m)}','_direct')"/>
-        </td>`;
-      } else {
-        const notaDisp = matNota !== null ? matNota : '—';
-        cells += `<td class="prom-wk ${notaCls}" style="background:${bgNota};font-weight:800;text-align:center">${notaDisp}</td>`;
-      }
-
-      if (matNota !== null) matNotas.push(parseFloat(matNota));
+      cells += `<td id="pi_prom_${si}_${mi}" class="prom-wk ${matAvgCls}" style="background:${matAvgBg};font-weight:900;text-align:center;font-size:0.8rem">
+        ${matAvgDisp}
+      </td>`;
     });
 
-    // NOTA PI FINAL = average of all subject notes
-    let piNota = null;
-    if (matNotas.length > 0) {
-      piNota = trunc2(matNotas.reduce((a,b) => a+b, 0) / matNotas.length);
-    }
-    const piDisp = piNota !== null ? piNota : '—';
-    const piCls  = piNota !== null && parseFloat(piNota) < 7 ? 'cell-low' : '';
+    // Celda de Nota Final del Proyecto Interdisciplinar
+    const piDisp = calc.piNota !== null ? calc.piNota : '—';
+    const piCls = calc.piNota !== null && parseFloat(calc.piNota) < 7.0 ? 'cell-low' : '';
+    const piBg = piGradeColor(calc.piNota) || 'var(--bg-card)';
+
+    cells += `<td id="pi_final_${si}" class="prom-wk ${piCls}" style="background:${piBg};font-weight:900;font-size:0.92rem;text-align:center">
+      ${piDisp}
+    </td>`;
+
+    // Celda de Escala Cualitativa MINEDUC
+    cells += `<td id="pi_escala_${si}" style="text-align:center;padding:4px">
+      <span style="background:${calc.escala.badgeBg};color:${calc.escala.color};padding:2px 7px;border-radius:6px;font-size:0.7rem;font-weight:900">
+        ${calc.escala.label}
+      </span>
+    </td>`;
 
     return `<tr data-name="${escVal(name.toUpperCase())}">
-      <td class="ic">${rowPos+1}</td>
+      <td class="ic">${rowPos + 1}</td>
       <td class="nc">${escHTML(name)}</td>
       ${cells}
-      <td class="${piCls}" style="font-weight:900;font-size:0.88rem;text-align:center">${piDisp}</td>
     </tr>`;
   }).join('');
 
   const piTb = document.getElementById('piTb');
   if (piTb) piTb.innerHTML = bodyHtml;
-  restorePiNavFocus();
+
+  updatePiFooterStats();
+}
+
+function updatePiFooterStats() {
+  const piTf = document.getElementById('piTf');
+  if (!piTf) return;
+
+  ensurePi();
+  const mats = S.pi.mats;
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  if (sorted.length === 0) return;
+
+  let rF1 = `<tr style="background:var(--bg-card);font-weight:900;border-top:2px solid var(--border-color)">
+    <td colspan="2" style="text-align:right;padding-right:12px;font-size:0.78rem;color:var(--text-main)">
+      PROMEDIO GENERAL DEL CURSO:
+    </td>`;
+
+  const matOverallAverages = [];
+
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+
+    // Promedio de cada insumo
+    insList.forEach(ins => {
+      const vals = [];
+      sorted.forEach(si => {
+        const v = S.pi.grades?.[m]?.[si]?.[ins.id];
+        if (v !== undefined && v !== null && v !== '') {
+          const num = parseFloat(v);
+          if (!isNaN(num)) vals.push(num);
+        }
+      });
+      const insAvg = vals.length > 0 ? trunc2(vals.reduce((a, b) => a + b, 0) / vals.length) : '—';
+      rF1 += `<td style="text-align:center;font-size:0.75rem;background:rgba(0,0,0,0.03)">${insAvg}</td>`;
+    });
+
+    // Promedio general de la materia
+    const subjectAvgs = [];
+    sorted.forEach(si => {
+      const calc = calcStudentPi(si);
+      if (calc.matAverages[m] !== null) {
+        subjectAvgs.push(parseFloat(calc.matAverages[m]));
+      }
+    });
+
+    const mTotalAvg = subjectAvgs.length > 0 ? trunc2(subjectAvgs.reduce((a, b) => a + b, 0) / subjectAvgs.length) : '—';
+    if (mTotalAvg !== '—') matOverallAverages.push(parseFloat(mTotalAvg));
+
+    rF1 += `<td style="text-align:center;font-weight:900;font-size:0.8rem;background:rgba(217,119,6,0.1)">${mTotalAvg}</td>`;
+  });
+
+  // Promedio General del Proyecto
+  const finalProjectAverages = [];
+  let aprobadosCount = 0;
+  sorted.forEach(si => {
+    const calc = calcStudentPi(si);
+    if (calc.piNota !== null) {
+      const n = parseFloat(calc.piNota);
+      finalProjectAverages.push(n);
+      if (n >= 7.0) aprobadosCount++;
+    }
+  });
+
+  const overallPiAvg = finalProjectAverages.length > 0 ? trunc2(finalProjectAverages.reduce((a, b) => a + b, 0) / finalProjectAverages.length) : '—';
+  const pctAprobados = finalProjectAverages.length > 0 ? Math.round((aprobadosCount / finalProjectAverages.length) * 100) : 0;
+
+  rF1 += `<td style="text-align:center;font-weight:900;font-size:0.9rem;background:#fef3c7;color:#92400e">${overallPiAvg}</td>`;
+  rF1 += `<td style="text-align:center;font-size:0.72rem;font-weight:900;color:#15803d">${pctAprobados}% Aprob.</td>`;
+  rF1 += `</tr>`;
+
+  piTf.innerHTML = rF1;
+}
+
+function updPiInsumo(si, mat, insId, val) {
+  ensurePi();
+  if (!S.pi.grades[mat]) S.pi.grades[mat] = {};
+  if (!S.pi.grades[mat][si]) S.pi.grades[mat][si] = {};
+
+  let v = (val || '').trim().replace(',', '.');
+  if (v === '') {
+    delete S.pi.grades[mat][si][insId];
+  } else {
+    let n = parseFloat(v);
+    if (isNaN(n)) {
+      toast('⚠️ Ingresa una calificación válida de 1.00 a 10.00', '#dc2626');
+      renderPi();
+      return;
+    }
+    if (n > 10) n = 10;
+    else if (n < 1) n = 1;
+    v = String(trunc2(n));
+    S.pi.grades[mat][si][insId] = v;
+  }
+
+  saveData();
+
+  // Actualizar en vivo en el DOM sin perder el foco del teclado
+  const calc = calcStudentPi(si);
+  const mi = S.pi.mats.indexOf(mat);
+
+  // 1. Promedio de la materia
+  const promCell = document.getElementById(`pi_prom_${si}_${mi}`);
+  if (promCell) {
+    const matAvg = calc.matAverages[mat];
+    promCell.textContent = matAvg !== null ? matAvg : '—';
+    promCell.style.background = piGradeColor(matAvg) || 'var(--bg-card)';
+    promCell.className = `prom-wk ${matAvg !== null && parseFloat(matAvg) < 7.0 ? 'glo' : (matAvg !== null ? 'ghi' : '')}`;
+  }
+
+  // 2. Nota final del Proyecto
+  const finalCell = document.getElementById(`pi_final_${si}`);
+  if (finalCell) {
+    finalCell.textContent = calc.piNota !== null ? calc.piNota : '—';
+    finalCell.className = `prom-wk ${calc.piNota !== null && parseFloat(calc.piNota) < 7.0 ? 'cell-low' : ''}`;
+    finalCell.style.background = piGradeColor(calc.piNota) || 'var(--bg-card)';
+  }
+
+  // 3. Escala cualitativa
+  const escalaCell = document.getElementById(`pi_escala_${si}`);
+  if (escalaCell) {
+    escalaCell.innerHTML = `<span style="background:${calc.escala.badgeBg};color:${calc.escala.color};padding:2px 7px;border-radius:6px;font-size:0.7rem;font-weight:900">${calc.escala.label}</span>`;
+  }
+
+  // Actualizar colores del input
+  const inp = document.querySelector(`input[data-si="${si}"][data-mat="${mat}"][data-ins="${insId}"]`);
+  if (inp) {
+    inp.style.background = piGradeColor(v) || '';
+    inp.className = `gi ${v !== '' && parseFloat(v) < 7.0 ? 'glo' : (v !== '' ? 'ghi' : '')}`;
+  }
+
+  updatePiFooterStats();
+}
+
+function handlePiInsumoPaste(e, startSi, startMat, startInsId) {
+  const clipboardData = e.clipboardData || window.clipboardData;
+  if (!clipboardData) return;
+  const text = clipboardData.getData('text');
+  if (!text) return;
+
+  const lines = text.trim().split(/\r?\n/).map(line => line.split('\t'));
+  if (lines.length > 1 || (lines[0] && lines[0].length > 1)) {
+    e.preventDefault();
+    ensurePi();
+    const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+    const startRowInSorted = sorted.indexOf(startSi);
+    if (startRowInSorted === -1) return;
+
+    // Aplanar columnas de insumos para permitir pegado horizontal continuo
+    const flatCols = [];
+    S.pi.mats.forEach(m => {
+      const insList = S.pi.subjectInsumos[m] || [];
+      insList.forEach(ins => {
+        flatCols.push({ mat: m, insId: ins.id });
+      });
+    });
+
+    const startColIndex = flatCols.findIndex(fc => fc.mat === startMat && fc.insId === startInsId);
+    if (startColIndex === -1) return;
+
+    let count = 0;
+    lines.forEach((rowVals, rOffset) => {
+      const targetRowPos = startRowInSorted + rOffset;
+      if (targetRowPos >= sorted.length) return;
+      const targetSi = sorted[targetRowPos];
+
+      rowVals.forEach((valStr, cOffset) => {
+        const targetColIdx = startColIndex + cOffset;
+        if (targetColIdx >= flatCols.length) return;
+        const targetCol = flatCols[targetColIdx];
+
+        let cleanVal = valStr.trim().replace(',', '.');
+        if (cleanVal === '') return;
+        let n = parseFloat(cleanVal);
+        if (isNaN(n)) return;
+        if (n > 10) n = 10;
+        if (n < 1) n = 1;
+
+        if (!S.pi.grades[targetCol.mat]) S.pi.grades[targetCol.mat] = {};
+        if (!S.pi.grades[targetCol.mat][targetSi]) S.pi.grades[targetCol.mat][targetSi] = {};
+        S.pi.grades[targetCol.mat][targetSi][targetCol.insId] = String(trunc2(n));
+        count++;
+      });
+    });
+
+    saveData();
+    renderPi();
+    toast(`📋 ¡Se pegaron ${count} calificaciones en la matriz de Proyecto Interdisciplinario!`, '#16a34a');
+  }
+}
+
+function navPiInsumo(e, inp, si, mat, insId) {
+  const grid = getVisiblePiInputGrid();
+  let pos = null;
+  for (let ri = 0; ri < grid.length; ri++) {
+    const ci = grid[ri].indexOf(inp);
+    if (ci >= 0) { pos = [ri, ci]; break; }
+  }
+  if (!pos) return;
+  const [ri, ci] = pos;
+
+  const focusAndSelect = (targetInp) => {
+    if (!targetInp) return;
+    targetInp.focus();
+    setTimeout(() => { try { targetInp.select(); } catch(err){} }, 15);
+  };
+
+  const moveToPos = (targetRi, targetCi) => {
+    const targetInp = grid[targetRi]?.[targetCi];
+    if (targetInp) {
+      inp.blur();
+      focusAndSelect(targetInp);
+    }
+  };
+
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      if (ci > 0) moveToPos(ri, ci - 1);
+      else if (ri > 0) moveToPos(ri - 1, grid[ri - 1].length - 1);
+    } else {
+      if (ci < grid[ri].length - 1) moveToPos(ri, ci + 1);
+      else if (ri < grid.length - 1) moveToPos(ri + 1, 0);
+    }
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      if (ri > 0) moveToPos(ri - 1, ci);
+    } else {
+      if (ri < grid.length - 1) moveToPos(ri + 1, ci);
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (ri < grid.length - 1) moveToPos(ri + 1, ci);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (ri > 0) moveToPos(ri - 1, ci);
+  } else if (e.key === 'ArrowRight') {
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionEnd === inp.value.length) && ci < grid[ri].length - 1) {
+      e.preventDefault();
+      moveToPos(ri, ci + 1);
+    }
+  } else if (e.key === 'ArrowLeft') {
+    const isAllSelected = (inp.selectionStart === 0 && inp.selectionEnd === inp.value.length);
+    if ((isAllSelected || inp.selectionStart === 0) && ci > 0) {
+      e.preventDefault();
+      moveToPos(ri, ci - 1);
+    }
+  }
 }
 
 let _piNavTarget = null;
@@ -20040,140 +20504,199 @@ function openPiConfig() {
   );
 }
 
+// Búsqueda inteligente de asignaturas en S.mats para mapear entre nombres oficiales y abreviados
+function findMatKey(name) {
+  if (!S.mats) return null;
+  if (S.mats[name]) return name;
+  const n = (name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  for (const k of Object.keys(S.mats)) {
+    const kn = k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (kn === n) return k;
+    if (n.includes('lengua') && kn.includes('lengua')) return k;
+    if ((n.includes('natural') || n === 'ccnn') && (kn.includes('natural') || kn === 'ccnn')) return k;
+    if ((n.includes('social') || n === 'eess') && (kn.includes('social') || kn === 'eess')) return k;
+    if ((n.includes('artistica') || n.includes('arte') || n === 'eca') && (kn.includes('artistica') || kn.includes('arte') || kn === 'eca')) return k;
+    if ((n.includes('fisica') || n === 'eeff') && (kn.includes('fisica') || kn === 'eeff')) return k;
+    if (n.includes('ingles') && kn.includes('ingles')) return k;
+  }
+  return null;
+}
+
+function resolveOrCreateMat(name) {
+  let mKey = findMatKey(name);
+  if (!mKey) {
+    mKey = name;
+    if (!S.matsList.includes(mKey)) S.matsList.push(mKey);
+    S.mats[mKey] = {
+      weeks: [
+        { name: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', destreza: 'EGB Media' },
+        'SEMANA 1', 'SEMANA 2', 'EVALUACIÓN SUMATIVA'
+      ],
+      cols: {
+        'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA': [
+          { name: 'PROYECTO NUTRI-VIDA', desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', type: 'PI', cat: 'form', date: '2026-10-02', color: '#d97706' }
+        ],
+        'EVALUACIÓN SUMATIVA': [
+          { name: 'PI', desc: 'PROYECTO INTERDISCIPLINARIO', type: 'PI', cat: 'sum', date: '', color: '#d97706' }
+        ]
+      },
+      grades: {}
+    };
+    S.students.forEach((_, i) => { S.mats[mKey].grades[i] = {}; });
+  }
+  return mKey;
+}
+
 function syncPiToSubjects() {
   ensurePi();
-  const mats = S.pi.mats;
-  const inds = S.pi.config.indicadores;
-  const syncMode = S.pi.config.syncMode || 'subject';
+  const mats = S.pi.mats; // Las 7 materias oficiales
+  const syncMode = (S.pi.config && S.pi.config.syncMode) || 'total';
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+
+  // 1. Calcular para cada estudiante sus notas de PI
+  const studentResults = {};
+  sorted.forEach(si => {
+    studentResults[si] = calcStudentPi(si);
+  });
+
   let count = 0;
+  let targetMatsCount = 0;
 
+  // 2. Escribir notas en cada una de las 7 materias en Calificaciones
   mats.forEach(m => {
-    if (!S.mats[m]) {
-      if (!S.matsList.includes(m)) S.matsList.push(m);
-      S.mats[m] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
-      S.students.forEach((_, i) => { S.mats[m].grades[i] = {}; });
-    }
-    const mat = S.mats[m];
+    const mKey = findMatKey(m);
+    if (!mKey) return; // materia no registrada en Calificaciones (ej. EEFF / Inglés): solo se promedia
+    const mat = S.mats[mKey];
+    if (!mat) return;
+    targetMatsCount++;
 
-    let piWeek = null;
-    let piColName = null;
+    if (!mat.grades) mat.grades = {};
+    if (!mat.cols) mat.cols = JSON.parse(JSON.stringify(DEFAULT_COLS));
+    if (!mat.weeks || !mat.weeks.length) mat.weeks = [...DEFAULT_WEEKS];
 
-    Object.keys(mat.cols).forEach(w => {
-      (mat.cols[w] || []).forEach(c => {
-        if (c.type === 'PI') {
-          piWeek = w;
-          piColName = c.name;
-        }
-      });
-    });
+    // Localizar columnas receptoras de PI
+    const targetCols = [];
 
-    if (!piWeek || !piColName) {
-      const sumWeek = mat.weeks.find(w => w.toUpperCase().includes('SUMATIV')) || mat.weeks[mat.weeks.length - 1] || 'EVALUACIÓN SUMATIVA';
-      if (!mat.cols[sumWeek]) mat.cols[sumWeek] = [];
-      const newCol = { name: 'PROYECTO PI', type: 'PI', date: '', color: '#d97706' };
-      mat.cols[sumWeek].push(newCol);
-      piWeek = sumWeek;
-      piColName = newCol.name;
-    }
-
-    S.students.forEach((_, si) => {
-      let syncNota = null;
-
-      if (syncMode === 'total') {
-        const matNotas = [];
-        mats.forEach(mSub => {
-          const mg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
-          if (mg._direct !== undefined && mg._direct !== '') {
-            matNotas.push(parseFloat(mg._direct));
-          } else {
-            const indVals = [];
-            inds.forEach(ind => {
-              const v = parseFloat(mg[ind.id]);
-              if (!isNaN(v)) indVals.push(v);
-            });
-            if (indVals.length > 0) {
-              const weighted = indVals.reduce((a,b) => a+b, 0) / indVals.length;
-              matNotas.push(weighted);
-            }
+    // A. Buscar en PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA
+    let foundInNutri = false;
+    (mat.weeks || []).forEach(w => {
+      const wn = getWeekName(w);
+      if (wn.toUpperCase().includes('NUTRI-VIDA') || wn.toUpperCase().includes('INTERDISCIPLINAR')) {
+        (mat.cols[wn] || []).forEach(c => {
+          if (c.type === 'PI' || c.name.toUpperCase().includes('NUTRI') || c.name.toUpperCase().includes('PROYECTO')) {
+            targetCols.push({ week: wn, name: c.name });
+            foundInNutri = true;
           }
         });
-        if (matNotas.length > 0) {
-          syncNota = trunc2(matNotas.reduce((a,b) => a+b, 0) / matNotas.length);
-        }
-      } else {
-        const mGrades = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
-        if (mGrades._direct !== undefined && mGrades._direct !== '') {
-          syncNota = trunc2(parseFloat(mGrades._direct));
-        } else {
-          let weightedSum = 0;
-          let weightTotal = 0;
-          inds.forEach(ind => {
-            const v = parseFloat(mGrades[ind.id]);
-            if (!isNaN(v)) {
-              weightedSum += v * (ind.peso / 100);
-              weightTotal += ind.peso / 100;
-            }
-          });
-          if (weightTotal > 0) {
-            syncNota = trunc2(weightedSum / weightTotal);
-          }
-        }
       }
+    });
 
-      if (syncNota !== null && !isNaN(parseFloat(syncNota))) {
+    // Si la semana existe pero no tiene columna, crearla
+    if (!foundInNutri) {
+      const nutriWeek = (mat.weeks || []).find(w => {
+        const wn = getWeekName(w);
+        return wn.toUpperCase().includes('NUTRI-VIDA') || wn.toUpperCase().includes('INTERDISCIPLINAR');
+      });
+      if (nutriWeek) {
+        const wn = getWeekName(nutriWeek);
+        if (!mat.cols[wn]) mat.cols[wn] = [];
+        const newCol = { name: 'PROYECTO NUTRI-VIDA', desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', type: 'PI', cat: 'form', date: '2026-10-02', color: '#d97706' };
+        mat.cols[wn].push(newCol);
+        targetCols.push({ week: wn, name: newCol.name });
+      }
+    }
+
+    // B. Buscar también en EVALUACIÓN SUMATIVA si existe columna PI
+    (mat.weeks || []).forEach(w => {
+      const wn = getWeekName(w);
+      if (wn.toUpperCase().includes('SUMATIV')) {
+        (mat.cols[wn] || []).forEach(c => {
+          if (c.type === 'PI' || c.name.toUpperCase() === 'PI' || c.name.toUpperCase().includes('PROYECTO')) {
+            targetCols.push({ week: wn, name: c.name });
+          }
+        });
+      }
+    });
+
+    // C. Si no encontró ninguna columna PI en toda la materia, crearla en la semana inicial o sumativa
+    if (targetCols.length === 0) {
+      const defaultW = getWeekName(mat.weeks[0]) || 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA';
+      if (!mat.cols[defaultW]) mat.cols[defaultW] = [];
+      const newCol = { name: 'PROYECTO NUTRI-VIDA', desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', type: 'PI', cat: 'form', date: '2026-10-02', color: '#d97706' };
+      mat.cols[defaultW].push(newCol);
+      targetCols.push({ week: defaultW, name: newCol.name });
+    }
+
+    // Asignar notas a cada estudiante
+    sorted.forEach(si => {
+      const res = studentResults[si];
+      if (!res) return;
+      const noteToSync = (syncMode === 'subject') ? (res.matAverages[m] || res.piNota) : res.piNota;
+      if (noteToSync !== null && noteToSync !== undefined && noteToSync !== '') {
         if (!mat.grades[si]) mat.grades[si] = {};
-        mat.grades[si][piWeek + '||' + piColName] = String(syncNota);
-        count++;
+        targetCols.forEach(tc => {
+          mat.grades[si][tc.week + '||' + tc.name] = String(noteToSync);
+          count++;
+        });
       }
     });
   });
 
   saveData();
   render();
-  toast(`⚡ ¡Sincronizadas ${count} calificaciones de PI hacia la pestaña Calificaciones (70/30)!`, '#16a34a');
+  const modeTxt = syncMode === 'total' ? 'Promedio General Unificado (Esa misma nota)' : 'Promedios Específicos por Materia';
+  toast(`⚡ ¡Sincronización Exitosa! ${count} calificaciones de PI registradas en las ${targetMatsCount} materias (${modeTxt}).`, '#16a34a');
 }
 
 function exportPiXLSX() {
   ensurePi();
   if (typeof XLSX === 'undefined') { toast('⚠️ XLSX no disponible', '#dc2626'); return; }
-  const cfg  = S.pi.config;
   const mats = S.pi.mats;
-  const inds = cfg.indicadores;
 
-  const header1 = ['#', 'ESTUDIANTE'];
+  const header1 = ['#', 'NÓMINA DE ESTUDIANTES'];
   const header2 = ['', ''];
+
   mats.forEach(m => {
-    inds.forEach(ind => { header1.push(m); header2.push(ind.id + ' — ' + ind.nombre); });
-    header1.push(m); header2.push('NOTA ASIGNATURA');
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    insList.forEach(ins => {
+      header1.push(m);
+      header2.push(ins.name);
+    });
+    header1.push(m);
+    header2.push('PROMEDIO ' + m.toUpperCase());
   });
-  header1.push('NOTA PI FINAL'); header2.push('');
+
+  header1.push('PROYECTO INTERDISCIPLINAR', 'ESCALA');
+  header2.push('NOTA FINAL (30%)', 'CUALITATIVA');
 
   const rows = [header1, header2];
   const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+
   sorted.forEach((si, rowPos) => {
-    const row = [rowPos + 1, S.students[si]];
-    const matNotas = [];
+    const name = S.students[si] || `Estudiante ${si + 1}`;
+    const row = [rowPos + 1, name];
+    const calc = calcStudentPi(si);
+
     mats.forEach(m => {
-      const mg = (S.pi.grades[m] && S.pi.grades[m][si]) ? S.pi.grades[m][si] : {};
-      const indVals = [];
-      inds.forEach(ind => {
-        const v = mg[ind.id] !== undefined ? mg[ind.id] : '';
-        row.push(v !== '' ? parseFloat(v) : '');
-        if (v !== '') indVals.push(parseFloat(v));
+      const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+      insList.forEach(ins => {
+        const v = S.pi.grades?.[m]?.[si]?.[ins.id];
+        row.push(v !== undefined && v !== '' ? parseFloat(v) : '');
       });
-      const nota = mg._direct !== undefined && mg._direct !== '' ? trunc2(parseFloat(mg._direct)) : (indVals.length > 0 ? trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length) : '');
-      row.push(nota);
-      if (nota !== '') matNotas.push(parseFloat(nota));
+      const avg = calc.matAverages[m];
+      row.push(avg !== null ? parseFloat(avg) : '');
     });
-    row.push(matNotas.length > 0 ? trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length) : '');
+
+    row.push(calc.piNota !== null ? parseFloat(calc.piNota) : '');
+    row.push(calc.escala.label);
     rows.push(row);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'PI');
-  XLSX.writeFile(wb, `Proyecto_Interdisciplinario_${S.grado||'7mo'}.xlsx`);
-  toast('📊 Excel del PI descargado', '#16a34a');
+  XLSX.utils.book_append_sheet(wb, ws, 'Proyecto Interdisciplinar');
+  XLSX.writeFile(wb, 'Proyecto_Interdisciplinar_Calderon2_7moC.xlsx');
+  toast('📊 ¡Matriz de calificaciones del Proyecto Interdisciplinario exportada en Excel!', '#16a34a');
 }
 
 // ══════════════════════════════════════════════════════
