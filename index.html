@@ -2343,13 +2343,47 @@ body.dark .md { background: #0c1525 !important; background-color: #0c1525 !impor
   50% { box-shadow: 0 12px 30px rgba(37, 99, 235, 0.8), 0 0 0 3px rgba(255,255,255,0.6); }
 }
 
-/* Reglas de Modo Enfoque en Pantalla Completa */
+/* Reglas de Modo Enfoque en Pantalla Completa y Modo Compacto de PI */
 body.in-focus-mode #mainAppHeader,
 body.in-focus-mode #userBar,
+body.in-focus-mode #instReminderBanner,
 body.in-focus-mode #mainModuleToolbar,
 body.in-focus-mode #statsSection,
-body.in-focus-mode .filter-bar {
+body.in-focus-mode .filter-bar,
+body.in-focus-mode #piTopSelectorBar,
+body.in-focus-mode #piHeaderBanner,
+body.in-focus-mode #piSubTabsBar,
+body.in-focus-mode #piControlSubtitle,
+body.in-focus-mode #piControlSubRow,
+body.in-focus-mode #piInfoBar,
+body.in-focus-mode #piScaleBar,
+body.in-focus-mode #piRubricaDescriptorBox,
+#piPanel.pi-compact #piTopSelectorBar,
+#piPanel.pi-compact #piHeaderBanner,
+#piPanel.pi-compact #piSubTabsBar,
+#piPanel.pi-compact #piControlSubtitle,
+#piPanel.pi-compact #piControlSubRow,
+#piPanel.pi-compact #piInfoBar,
+#piPanel.pi-compact #piScaleBar,
+#piPanel.pi-compact #piRubricaDescriptorBox {
   display: none !important;
+}
+body.in-focus-mode #piControlBox,
+#piPanel.pi-compact #piControlBox {
+  padding: 6px 12px !important;
+  margin-bottom: 6px !important;
+}
+body.in-focus-mode #piControlTopRow,
+#piPanel.pi-compact #piControlTopRow {
+  margin-bottom: 0 !important;
+}
+body.in-focus-mode #piView_notas .tw {
+  max-height: calc(100vh - 64px) !important;
+  height: calc(100vh - 64px) !important;
+}
+#piPanel.pi-compact #piView_notas .tw {
+  max-height: calc(100vh - 125px) !important;
+  height: calc(100vh - 125px) !important;
 }
 body.in-focus-mode #mobileTopBar {
   padding: 4px 10px;
@@ -4088,7 +4122,7 @@ body.in-focus-mode {
 <div id="piPanel" style="display:none" class="content">
 
   <!-- SELECTOR DE PROYECTO INTERDISCIPLINARIO (EGB MEDIA · 7.° DE BÁSICA) -->
-  <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-sm)">
+  <div id="piTopSelectorBar" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-sm)">
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:1.3rem">🤖</span>
       <div>
@@ -4150,7 +4184,7 @@ body.in-focus-mode {
   </div>
 
   <!-- Pestañas de Navegación del Módulo PI -->
-  <div style="display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
+  <div id="piSubTabsBar" style="display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">
     <button id="piSubTab_notas" class="btn" onclick="switchPiSubTab('notas')" style="background:#d97706;color:#fff;border-color:#d97706;font-weight:900;padding:9px 18px;border-radius:10px;font-size:0.84rem;white-space:nowrap;box-shadow:0 2px 8px rgba(217,119,6,0.3)">
       📊 1. Matriz de Calificaciones por Materias (5 de Aula + EEFF e Inglés)
     </button>
@@ -4667,15 +4701,15 @@ body.in-focus-mode {
   <div id="piView_notas" style="display:block">
 
     <!-- Barra de Control y Sincronización Directa de Calificaciones -->
-    <div style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px">
+    <div id="piControlBox" style="background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm)">
+      <div id="piControlTopRow" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px">
         <div style="display:flex;align-items:center;gap:10px">
           <span style="font-size:1.6rem">🤖</span>
           <div>
             <div style="font-weight:900;font-size:0.96rem;color:var(--text-main);letter-spacing:0.2px">
               MATRIZ DE CALIFICACIONES — "PIENSO, CREO Y ACTÚO CON LA IA: CIUDADANOS DIGITALES ÉTICOS"
             </div>
-            <div style="font-size:0.76rem;color:var(--text-muted);font-weight:600">
+            <div id="piControlSubtitle" style="font-size:0.76rem;color:var(--text-muted);font-weight:600">
               7 Asignaturas oficiales · Múltiples insumos por materia · Promedio automático · Sincronización directa a Calificaciones (70/30)
             </div>
           </div>
@@ -4691,11 +4725,14 @@ body.in-focus-mode {
           <button class="btn btn-outline" onclick="exportPiXLSX()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>📊 Exportar Excel</span>
           </button>
+          <button id="piCompactToggleBtn" class="btn btn-outline" onclick="togglePiCompactMode()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid #2563eb;background:#eff6ff;color:#1d4ed8;cursor:pointer;display:flex;align-items:center;gap:6px" title="Minimizar encabezados para ver toda la tabla de calificaciones">
+            <span>👁️ Modo Enfoque</span>
+          </button>
         </div>
       </div>
 
       <!-- Barra de configuración de sincronización e información institucional -->
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:10px;border-top:1px solid var(--border-color);font-size:0.76rem">
+      <div id="piControlSubRow" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:10px;border-top:1px solid var(--border-color);font-size:0.76rem">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <span style="font-weight:900;color:var(--text-muted)">MODO DE TRASLADO A CALIFICACIONES:</span>
           <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-weight:700;color:var(--text-main)">
@@ -4719,7 +4756,7 @@ body.in-focus-mode {
     <div id="piInfoBar" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px 16px;margin-bottom:12px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:0.78rem"></div>
 
     <!-- Leyenda de Escala Ministerial MINEDUC -->
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;justify-content:space-between">
+    <div id="piScaleBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;justify-content:space-between">
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
         <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin-right:4px">ESCALA MINEDUC:</span>
         <span style="background:#15803d;color:#fff;padding:3px 10px;border-radius:99px;font-size:0.7rem;font-weight:800">9.00 - 10.00 — DAR (Domina los Aprendizajes)</span>
@@ -18444,6 +18481,12 @@ function toggleFocusMode(force) {
     if (isFocus) sbFocusBtn.classList.add('active');
     else sbFocusBtn.classList.remove('active');
   }
+  const piFocusBtn = document.getElementById('piCompactToggleBtn');
+  if (piFocusBtn) {
+    piFocusBtn.innerHTML = isFocus ? '<span>👁️ Salir Enfoque</span>' : '<span>👁️ Modo Enfoque</span>';
+    piFocusBtn.style.background = isFocus ? '#1d4ed8' : '#eff6ff';
+    piFocusBtn.style.color = isFocus ? '#fff' : '#1d4ed8';
+  }
 
   // Sincronizar colapsos para desktop
   toggleHeaderCollapse(isFocus);
@@ -18452,6 +18495,10 @@ function toggleFocusMode(force) {
 
   localStorage.setItem('notas_focus_mode', isFocus ? '1' : '0');
   toast(isFocus ? '👁️ Modo Enfoque Activado: Máximo espacio de trabajo' : '👁️ Modo Completo: Paneles restaurados', '#2563eb');
+}
+
+function togglePiCompactMode() {
+  toggleFocusMode();
 }
 
 function toggleFullscreenMode() {
