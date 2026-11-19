@@ -4719,6 +4719,9 @@ body.in-focus-mode {
           <button class="btn" onclick="syncPiToSubjects()" style="background:#15803d;color:#fff;border:1.5px solid #16a34a;font-weight:900;font-size:0.84rem;padding:8px 18px;border-radius:8px;box-shadow:0 3px 10px rgba(21,128,61,0.3);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>⚡ Sincronizar a Calificaciones</span>
           </button>
+          <button id="piToggleAllPromsBtn" class="btn btn-outline" onclick="toggleAllPiMatsCollapse()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px" title="Encoger todas las materias para ver solo los promedios o expandir para ver los insumos">
+            <span>📐 Solo Promedios</span>
+          </button>
           <button class="btn btn-outline" onclick="openAddInsumoMenu()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>➕ Añadir Insumo</span>
           </button>
@@ -19365,6 +19368,9 @@ function ensurePi() {
     }
   });
 
+  // Estado de materias encogidas (mostrar solo promedio)
+  if (!S.pi.collapsedMats) S.pi.collapsedMats = {};
+
   // Estructura de calificaciones S.pi.grades[mat][si][insId]
   if (!S.pi.grades) S.pi.grades = {};
   S.pi.mats.forEach(m => {
@@ -19377,6 +19383,32 @@ function ensurePi() {
       }
     });
   });
+}
+
+function togglePiMatCollapse(matName) {
+  ensurePi();
+  if (!S.pi.collapsedMats) S.pi.collapsedMats = {};
+  S.pi.collapsedMats[matName] = !S.pi.collapsedMats[matName];
+  saveData();
+  renderPi();
+}
+
+function toggleAllPiMatsCollapse() {
+  ensurePi();
+  if (!S.pi.collapsedMats) S.pi.collapsedMats = {};
+  const allCollapsed = S.pi.mats.every(m => !!S.pi.collapsedMats[m]);
+  const nextState = !allCollapsed;
+  S.pi.mats.forEach(m => {
+    S.pi.collapsedMats[m] = nextState;
+  });
+  saveData();
+  renderPi();
+  toast(
+    nextState
+      ? '📐 Vista resumida: mostrando solo los promedios por materia y promedio general'
+      : '📂 Vista completa: mostrando todos los insumos de cada materia',
+    '#2563eb'
+  );
 }
 
 function piGradeColor(n) {
@@ -19400,6 +19432,9 @@ function setPiSyncMode(mode) {
 function addInsumoToMat(matName) {
   ensurePi();
   if (!S.pi.subjectInsumos[matName]) S.pi.subjectInsumos[matName] = [];
+  if (S.pi.collapsedMats && S.pi.collapsedMats[matName]) {
+    delete S.pi.collapsedMats[matName];
+  }
   const list = S.pi.subjectInsumos[matName];
   const nextNum = list.length + 1;
   const newId = 'ins_' + Date.now();
@@ -19475,6 +19510,7 @@ function openAddInsumoMenu() {
       const customName = (txt && txt.value.trim()) ? txt.value.trim() : null;
       ensurePi();
       if (!S.pi.subjectInsumos[m]) S.pi.subjectInsumos[m] = [];
+      if (S.pi.collapsedMats && S.pi.collapsedMats[m]) delete S.pi.collapsedMats[m];
       const list = S.pi.subjectInsumos[m];
       const nextNum = list.length + 1;
       const newId = 'ins_' + Date.now();
@@ -19837,23 +19873,47 @@ function renderPi() {
     `;
   }
 
+  // Actualizar botón global "Solo Promedios / Mostrar Insumos"
+  const allCollapsed = mats.every(m => !!(S.pi.collapsedMats && S.pi.collapsedMats[m]));
+  const btnAllProms = (typeof document !== 'undefined' && document.getElementById) ? document.getElementById('piToggleAllPromsBtn') : null;
+  if (btnAllProms) {
+    btnAllProms.innerHTML = allCollapsed ? '<span>📂 Mostrar Insumos</span>' : '<span>📐 Solo Promedios</span>';
+    btnAllProms.style.background = allCollapsed ? '#d97706' : 'var(--bg-card)';
+    btnAllProms.style.color = allCollapsed ? '#fff' : 'var(--text-main)';
+    btnAllProms.style.borderColor = allCollapsed ? '#d97706' : 'var(--border-color)';
+  }
+
   // Construir Encabezados de Tabla (2 Niveles)
   let r1 = `<tr>
     <th class="fxl" rowspan="2" style="min-width:34px;width:34px">#</th>
     <th class="fxn" rowspan="2" style="min-width:220px;text-align:left;padding-left:12px">NÓMINA DE ESTUDIANTES</th>`;
 
   mats.forEach((m, mi) => {
-    const info = PI_MAT_INFO[m] || { icon: '📚', color: '#d97706', subBg: '#fff7ed' };
+    const info = PI_MAT_INFO[m] || { icon: '📚', color: '#d97706', subBg: '#fff7ed', short: m };
     const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
-    const span = insList.length + 1; // insumos + PROM
-    r1 += `<th colspan="${span}" style="background:${info.color};color:#fff;border-color:${info.color};padding:7px 6px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-        <span style="font-weight:900;font-size:0.82rem;white-space:nowrap">${info.icon} ${escHTML(m)}</span>
-        <button class="btn btn-xs" onclick="addInsumoToMat('${esc(m)}')" style="background:rgba(255,255,255,0.25);color:#fff;border:1px solid rgba(255,255,255,0.45);font-size:0.65rem;font-weight:900;padding:2px 7px;border-radius:5px;cursor:pointer" title="Añadir Insumo a ${esc(m)}">
-          ➕ Insumo
-        </button>
-      </div>
-    </th>`;
+    const isCollapsed = !!(S.pi.collapsedMats && S.pi.collapsedMats[m]);
+
+    if (isCollapsed) {
+      r1 += `<th colspan="1" onclick="togglePiMatCollapse('${esc(m)}')" style="background:${info.color};color:#fff;border-color:${info.color};padding:6px 6px;cursor:pointer;min-width:95px;user-select:none" title="${escHTML(m)} (${insList.length} insumo${insList.length > 1 ? 's' : ''} oculto${insList.length > 1 ? 's' : ''}). Clic para expandir insumos">
+        <div style="display:flex;align-items:center;justify-content:center;gap:5px">
+          <span style="background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:6px;font-size:0.68rem;font-weight:900">➕</span>
+          <span style="font-weight:900;font-size:0.78rem;white-space:nowrap">${info.icon} ${escHTML(m)}</span>
+        </div>
+      </th>`;
+    } else {
+      const span = insList.length + 1; // insumos + PROM
+      r1 += `<th colspan="${span}" style="background:${info.color};color:#fff;border-color:${info.color};padding:7px 6px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+          <div style="display:flex;align-items:center;gap:5px">
+            <button onclick="togglePiMatCollapse('${esc(m)}')" style="background:rgba(0,0,0,0.28);color:#fff;border:1px solid rgba(255,255,255,0.4);font-size:0.68rem;font-weight:900;padding:1px 6px;border-radius:5px;cursor:pointer;line-height:1.2" title="Encoger ${escHTML(m)} (mostrar solo promedio)">➖</button>
+            <span style="font-weight:900;font-size:0.82rem;white-space:nowrap;cursor:pointer" onclick="togglePiMatCollapse('${esc(m)}')" title="Clic para encoger ${escHTML(m)} (ver solo promedio)">${info.icon} ${escHTML(m)}</span>
+          </div>
+          <button class="btn btn-xs" onclick="addInsumoToMat('${esc(m)}')" style="background:rgba(255,255,255,0.25);color:#fff;border:1px solid rgba(255,255,255,0.45);font-size:0.65rem;font-weight:900;padding:2px 7px;border-radius:5px;cursor:pointer" title="Añadir Insumo a ${esc(m)}">
+            ➕ Insumo
+          </button>
+        </div>
+      </th>`;
+    }
   });
 
   r1 += `<th colspan="2" style="background:linear-gradient(135deg,#78350f 0%,#b45309 50%,#d97706 100%);color:#fff;border-color:#b45309;padding:7px 8px;min-width:145px">
@@ -19867,21 +19927,24 @@ function renderPi() {
   mats.forEach((m, mi) => {
     const info = PI_MAT_INFO[m] || { color: '#d97706', subBg: '#fff7ed' };
     const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const isCollapsed = !!(S.pi.collapsedMats && S.pi.collapsedMats[m]);
     const canDelete = insList.length > 1;
 
-    insList.forEach((ins, ii) => {
-      r2 += `<th class="sh" style="background:${info.subBg};color:${info.color};border:1px solid var(--border-color);min-width:72px;max-width:96px;padding:4px 3px">
-        <div style="display:flex;align-items:center;justify-content:center;gap:3px">
-          <span style="font-weight:800;font-size:0.72rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="renameInsumoInMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" title="Clic para renombrar '${esc(ins.name)}'">
-            ${escHTML(ins.name)}
-          </span>
-          ${canDelete ? `<button onclick="removeInsumoFromMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.7rem;padding:0 2px;line-height:1" title="Eliminar este insumo">✖</button>` : ''}
-        </div>
-      </th>`;
-    });
+    if (!isCollapsed) {
+      insList.forEach((ins, ii) => {
+        r2 += `<th class="sh" style="background:${info.subBg};color:${info.color};border:1px solid var(--border-color);min-width:72px;max-width:96px;padding:4px 3px">
+          <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+            <span style="font-weight:800;font-size:0.72rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="renameInsumoInMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" title="Clic para renombrar '${esc(ins.name)}'">
+              ${escHTML(ins.name)}
+            </span>
+            ${canDelete ? `<button onclick="removeInsumoFromMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.7rem;padding:0 2px;line-height:1" title="Eliminar este insumo">✖</button>` : ''}
+          </div>
+        </th>`;
+      });
+    }
 
-    r2 += `<th class="sh" style="background:${info.color};color:#fff;border-color:${info.color};font-weight:900;font-size:0.72rem;min-width:54px" title="Promedio de insumos de ${esc(m)}">
-      PROM.
+    r2 += `<th class="sh" onclick="togglePiMatCollapse('${esc(m)}')" style="background:${info.color};color:#fff;border-color:${info.color};font-weight:900;font-size:0.72rem;min-width:${isCollapsed ? '95px' : '54px'};cursor:pointer;user-select:none" title="${isCollapsed ? 'Materia encogida (' + insList.length + ' insumo(s)). Clic para desplegar' : 'Promedio de insumos de ' + esc(m) + '. Clic para encoger'}">
+      PROM. ${isCollapsed ? '➕' : ''}
     </th>`;
   });
 
@@ -19901,26 +19964,29 @@ function renderPi() {
 
     mats.forEach((m, mi) => {
       const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+      const isCollapsed = !!(S.pi.collapsedMats && S.pi.collapsedMats[m]);
 
-      // Celdas de insumos individuales
-      insList.forEach(ins => {
-        const v = S.pi.grades?.[m]?.[si]?.[ins.id] !== undefined ? S.pi.grades[m][si][ins.id] : '';
-        const n = parseFloat(v);
-        const bg = piGradeColor(v);
-        const cls = v !== '' && !isNaN(n) ? (n < 7.0 ? 'glo' : 'ghi') : '';
+      // Celdas de insumos individuales (solo si la materia no está encogida)
+      if (!isCollapsed) {
+        insList.forEach(ins => {
+          const v = S.pi.grades?.[m]?.[si]?.[ins.id] !== undefined ? S.pi.grades[m][si][ins.id] : '';
+          const n = parseFloat(v);
+          const bg = piGradeColor(v);
+          const cls = v !== '' && !isNaN(n) ? (n < 7.0 ? 'glo' : 'ghi') : '';
 
-        cells += `<td style="background:${bg||''};padding:2px">
-          <input class="gi ${cls}" type="text" inputmode="decimal"
-            data-si="${si}" data-mat="${esc(m)}" data-ins="${esc(ins.id)}"
-            value="${escVal(v)}"
-            placeholder="—"
-            onpaste="handlePiInsumoPaste(event, ${si}, '${esc(m)}', '${esc(ins.id)}')"
-            oninput="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
-            onchange="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
-            onfocus="this.select()"
-            onkeydown="navPiInsumo(event, this, ${si}, '${esc(m)}', '${esc(ins.id)}')" />
-        </td>`;
-      });
+          cells += `<td style="background:${bg||''};padding:2px">
+            <input class="gi ${cls}" type="text" inputmode="decimal"
+              data-si="${si}" data-mat="${esc(m)}" data-ins="${esc(ins.id)}"
+              value="${escVal(v)}"
+              placeholder="—"
+              onpaste="handlePiInsumoPaste(event, ${si}, '${esc(m)}', '${esc(ins.id)}')"
+              oninput="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
+              onchange="updPiInsumo(${si}, '${esc(m)}', '${esc(ins.id)}', this.value)"
+              onfocus="this.select()"
+              onkeydown="navPiInsumo(event, this, ${si}, '${esc(m)}', '${esc(ins.id)}')" />
+          </td>`;
+        });
+      }
 
       // Celda de Promedio de la Materia
       const matAvg = calc.matAverages[m];
@@ -19980,20 +20046,23 @@ function updatePiFooterStats() {
 
   mats.forEach(m => {
     const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const isCollapsed = !!(S.pi.collapsedMats && S.pi.collapsedMats[m]);
 
-    // Promedio de cada insumo
-    insList.forEach(ins => {
-      const vals = [];
-      sorted.forEach(si => {
-        const v = S.pi.grades?.[m]?.[si]?.[ins.id];
-        if (v !== undefined && v !== null && v !== '') {
-          const num = parseFloat(v);
-          if (!isNaN(num)) vals.push(num);
-        }
+    // Promedio de cada insumo (solo si la materia no está encogida)
+    if (!isCollapsed) {
+      insList.forEach(ins => {
+        const vals = [];
+        sorted.forEach(si => {
+          const v = S.pi.grades?.[m]?.[si]?.[ins.id];
+          if (v !== undefined && v !== null && v !== '') {
+            const num = parseFloat(v);
+            if (!isNaN(num)) vals.push(num);
+          }
+        });
+        const insAvg = vals.length > 0 ? trunc2(vals.reduce((a, b) => a + b, 0) / vals.length) : '—';
+        rF1 += `<td style="text-align:center;font-size:0.75rem;background:rgba(0,0,0,0.03)">${insAvg}</td>`;
       });
-      const insAvg = vals.length > 0 ? trunc2(vals.reduce((a, b) => a + b, 0) / vals.length) : '—';
-      rF1 += `<td style="text-align:center;font-size:0.75rem;background:rgba(0,0,0,0.03)">${insAvg}</td>`;
-    });
+    }
 
     // Promedio general de la materia
     const subjectAvgs = [];
@@ -20106,9 +20175,10 @@ function handlePiInsumoPaste(e, startSi, startMat, startInsId) {
     const startRowInSorted = sorted.indexOf(startSi);
     if (startRowInSorted === -1) return;
 
-    // Aplanar columnas de insumos para permitir pegado horizontal continuo
+    // Aplanar columnas de insumos visibles para permitir pegado horizontal continuo
     const flatCols = [];
     S.pi.mats.forEach(m => {
+      if (S.pi.collapsedMats && S.pi.collapsedMats[m]) return;
       const insList = S.pi.subjectInsumos[m] || [];
       insList.forEach(ins => {
         flatCols.push({ mat: m, insId: ins.id });
