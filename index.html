@@ -4722,6 +4722,9 @@ body.in-focus-mode {
           <button id="piToggleAllPromsBtn" class="btn btn-outline" onclick="toggleAllPiMatsCollapse()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px" title="Encoger todas las materias para ver solo los promedios o expandir para ver los insumos">
             <span>📐 Solo Promedios</span>
           </button>
+          <button class="btn btn-outline" onclick="openPiCopyPasteModal()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid #7c3aed;background:#f5f3ff;color:#6d28d9;cursor:pointer;display:flex;align-items:center;gap:6px" title="Seleccionar, copiar o pegar todas las notas de una columna desde Excel">
+            <span>📋 Copiar / Pegar Columna</span>
+          </button>
           <button class="btn btn-outline" onclick="openAddInsumoMenu()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>➕ Añadir Insumo</span>
           </button>
@@ -17178,53 +17181,62 @@ function copyMainColumn(colType, weekName, colName) {
   });
 }
 
-function copyPiColumn(mName, indId) {
+function copyPiColumn(mName, indId, includeInactive) {
   ensurePi();
-  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const indices = includeInactive
+    ? getSortedIndices()
+    : getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   const values = [];
 
-  sorted.forEach(si => {
+  indices.forEach(si => {
+    if (includeInactive && isStudentExcludedFromGrades(si)) {
+      values.push('');
+      return;
+    }
+    const calc = calcStudentPi(si);
     let val = '';
     if (indId === '_final_pi') {
-      const matNotas = [];
-      S.pi.mats.forEach(mSub => {
-        const subMg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
-        if (subMg._direct !== undefined && subMg._direct !== '') {
-          matNotas.push(parseFloat(subMg._direct));
-        } else {
-          const indVals = [];
-          S.pi.config.indicadores.forEach(ind => {
-            const v = parseFloat(subMg[ind.id]);
-            if (!isNaN(v)) indVals.push(v);
-          });
-          if (indVals.length > 0) matNotas.push(indVals.reduce((a,b)=>a+b,0)/indVals.length);
-        }
-      });
-      if (matNotas.length > 0) val = trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length);
+      val = calc.piNota !== null ? calc.piNota : '';
+    } else if (indId === '_direct' || indId === '_mat_nota') {
+      val = calc.matAverages[mName] !== null && calc.matAverages[mName] !== undefined ? calc.matAverages[mName] : '';
     } else {
-      const mg = (S.pi.grades[mName] && S.pi.grades[mName][si]) ? S.pi.grades[mName][si] : {};
-      if (indId === '_direct' || indId === '_mat_nota') {
-        if (mg._direct !== undefined && mg._direct !== '') {
-          val = mg._direct;
-        } else {
-          const indVals = [];
-          S.pi.config.indicadores.forEach(ind => {
-            const v = parseFloat(mg[ind.id]);
-            if (!isNaN(v)) indVals.push(v);
-          });
-          if (indVals.length > 0) val = trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length);
-        }
-      } else {
-        val = mg[indId] !== undefined ? mg[indId] : '';
-      }
+      val = S.pi.grades?.[mName]?.[si]?.[indId] !== undefined ? S.pi.grades[mName][si][indId] : '';
     }
     values.push(val === null || val === undefined ? '' : String(val));
   });
 
-  const title = indId === '_final_pi' ? 'NOTA PI PROMEDIO' : (indId === '_direct' || indId === '_mat_nota' ? `NOTA ${mName}` : `${mName} - ${indId}`);
+  // Resaltar visualmente las celdas de la columna copiada
+  const mi = S.pi.mats.indexOf(mName);
+  const highlightEls = [];
+  if (typeof document !== 'undefined') {
+    if (indId === '_final_pi') {
+      document.querySelectorAll('[id^="pi_final_"]').forEach(el => highlightEls.push(el));
+    } else if (indId === '_direct' || indId === '_mat_nota') {
+      if (mi >= 0) document.querySelectorAll(`[id^="pi_prom_"][id$="_${mi}"]`).forEach(el => highlightEls.push(el));
+    } else {
+      document.querySelectorAll(`input[data-mat="${mName}"][data-ins="${indId}"]`).forEach(el => highlightEls.push(el.parentElement || el));
+    }
+    highlightEls.forEach(el => {
+      el.style.outline = '2.5px solid #2563eb';
+      el.style.outlineOffset = '-2px';
+    });
+    setTimeout(() => {
+      highlightEls.forEach(el => {
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+      });
+    }, 1200);
+  }
+
+  let insTitle = indId;
+  if (S.pi.subjectInsumos && S.pi.subjectInsumos[mName]) {
+    const foundIns = S.pi.subjectInsumos[mName].find(x => x.id === indId);
+    if (foundIns) insTitle = foundIns.name;
+  }
+  const title = indId === '_final_pi' ? 'NOTA FINAL PROYECTO' : (indId === '_direct' || indId === '_mat_nota' ? `PROMEDIO ${mName}` : `${mName} - ${insTitle}`);
   const textToCopy = values.join('\n');
   navigator.clipboard.writeText(textToCopy).then(() => {
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" (${values.filter(v => v !== '').length} notas) copiada! Lista para pegar con Ctrl+V.`, '#2563eb');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = textToCopy;
@@ -17232,39 +17244,29 @@ function copyPiColumn(mName, indId) {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" (${values.filter(v => v !== '').length} notas) copiada! Lista para pegar con Ctrl+V.`, '#2563eb');
   });
 }
 
 function openCopyColumnModal() {
   const isPiView = document.getElementById('piPanel')?.style.display !== 'none';
-  let optsHtml = '';
-
   if (isPiView) {
-    ensurePi();
-    const mats = S.pi.mats;
-    const inds = S.pi.config.indicadores;
-    mats.forEach(m => {
-      inds.forEach(ind => {
-        optsHtml += `<option value="pi||${escVal(m)}||${escVal(ind.id)}">[PI] ${escHTML(m)} — Indicador ${escHTML(ind.id)} (${escHTML(ind.nombre)})</option>`;
+    openPiCopyPasteModal();
+    return;
+  }
+  let optsHtml = '';
+  const mName = curMatName();
+  const mat = S.mats[mName];
+  if (mat) {
+    Object.keys(mat.cols).forEach(w => {
+      (mat.cols[w] || []).forEach(c => {
+        optsHtml += `<option value="main||${escVal(w)}||${escVal(c.name)}">[${escHTML(mName)}] Actividad: ${escHTML(c.name)} (${escHTML(w)})</option>`;
       });
-      optsHtml += `<option value="pi||${escVal(m)}||_mat_nota">[PI] ${escHTML(m)} — NOTA FINAL ASIGNATURA</option>`;
+      optsHtml += `<option value="main_prom||${escVal(w)}||prom">[${escHTML(mName)}] Promedio de semana: ${escHTML(w)}</option>`;
     });
-    optsHtml += `<option value="pi||all||_final_pi">[PI] PROMEDIO GENERAL (NOTA PI PROMEDIO)</option>`;
-  } else {
-    const mName = curMatName();
-    const mat = S.mats[mName];
-    if (mat) {
-      Object.keys(mat.cols).forEach(w => {
-        (mat.cols[w] || []).forEach(c => {
-          optsHtml += `<option value="main||${escVal(w)}||${escVal(c.name)}">[${escHTML(mName)}] Actividad: ${escHTML(c.name)} (${escHTML(w)})</option>`;
-        });
-        optsHtml += `<option value="main_prom||${escVal(w)}||prom">[${escHTML(mName)}] Promedio de semana: ${escHTML(w)}</option>`;
-      });
-      optsHtml += `<option value="main_calc||form||70%">[${escHTML(mName)}] Columna 70% FORMATIVO</option>`;
-      optsHtml += `<option value="main_calc||sum||30%">[${escHTML(mName)}] Columna 30% SUMATIVO</option>`;
-      optsHtml += `<option value="main_calc||trim||nota">[${escHTML(mName)}] Columna NOTA TRIMESTRE / CUALITATIVA</option>`;
-    }
+    optsHtml += `<option value="main_calc||form||70%">[${escHTML(mName)}] Columna 70% FORMATIVO</option>`;
+    optsHtml += `<option value="main_calc||sum||30%">[${escHTML(mName)}] Columna 30% SUMATIVO</option>`;
+    optsHtml += `<option value="main_calc||trim||nota">[${escHTML(mName)}] Columna NOTA TRIMESTRE / CUALITATIVA</option>`;
   }
 
   showModal(
@@ -19932,23 +19934,30 @@ function renderPi() {
 
     if (!isCollapsed) {
       insList.forEach((ins, ii) => {
-        r2 += `<th class="sh" style="background:${info.subBg};color:${info.color};border:1px solid var(--border-color);min-width:72px;max-width:96px;padding:4px 3px">
-          <div style="display:flex;align-items:center;justify-content:center;gap:3px">
-            <span style="font-weight:800;font-size:0.72rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="renameInsumoInMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" title="Clic para renombrar '${esc(ins.name)}'">
+        r2 += `<th class="sh" style="background:${info.subBg};color:${info.color};border:1px solid var(--border-color);min-width:86px;max-width:115px;padding:4px 3px">
+          <div style="display:flex;align-items:center;justify-content:center;gap:2px">
+            <span style="font-weight:800;font-size:0.72rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:64px" onclick="renameInsumoInMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" title="Clic para renombrar '${esc(ins.name)}'">
               ${escHTML(ins.name)}
             </span>
-            ${canDelete ? `<button onclick="removeInsumoFromMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.7rem;padding:0 2px;line-height:1" title="Eliminar este insumo">✖</button>` : ''}
+            <button onclick="copyPiColumn('${esc(m)}','${esc(ins.id)}')" style="background:transparent;border:none;cursor:pointer;font-size:0.7rem;padding:0 1px;line-height:1" title="Copiar todas las notas de '${esc(ins.name)}' (${esc(m)})">📋</button>
+            <button onclick="pastePiColumnQuick('${esc(m)}','${esc(ins.id)}','${esc(m)} - ${esc(ins.name)}')" style="background:transparent;border:none;cursor:pointer;font-size:0.7rem;padding:0 1px;line-height:1" title="Pegar columna de Excel en '${esc(ins.name)}' (${esc(m)})">📥</button>
+            ${canDelete ? `<button onclick="removeInsumoFromMat('${esc(m)}','${esc(ins.id)}','${esc(ins.name)}')" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:0.7rem;padding:0 1px;line-height:1" title="Eliminar este insumo">✖</button>` : ''}
           </div>
         </th>`;
       });
     }
 
-    r2 += `<th class="sh" onclick="togglePiMatCollapse('${esc(m)}')" style="background:${info.color};color:#fff;border-color:${info.color};font-weight:900;font-size:0.72rem;min-width:${isCollapsed ? '95px' : '54px'};cursor:pointer;user-select:none" title="${isCollapsed ? 'Materia encogida (' + insList.length + ' insumo(s)). Clic para desplegar' : 'Promedio de insumos de ' + esc(m) + '. Clic para encoger'}">
-      PROM. ${isCollapsed ? '➕' : ''}
+    const firstInsId = insList[0] ? insList[0].id : 'ins_1';
+    r2 += `<th class="sh" style="background:${info.color};color:#fff;border-color:${info.color};font-weight:900;font-size:0.72rem;min-width:${isCollapsed ? '104px' : '68px'};padding:4px 3px;user-select:none">
+      <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+        <span onclick="togglePiMatCollapse('${esc(m)}')" style="cursor:pointer" title="${isCollapsed ? 'Materia encogida (' + insList.length + ' insumo(s)). Clic para desplegar' : 'Promedio de ' + esc(m) + '. Clic para encoger'}">PROM.${isCollapsed ? ' ➕' : ''}</span>
+        <button onclick="event.stopPropagation(); copyPiColumn('${esc(m)}','_mat_nota')" style="background:rgba(255,255,255,0.2);border:none;border-radius:3px;color:#fff;cursor:pointer;font-size:0.68rem;padding:1px 3px;line-height:1" title="Copiar columna de promedios de ${esc(m)}">📋</button>
+        <button onclick="event.stopPropagation(); pastePiColumnQuick('${esc(m)}','${esc(firstInsId)}','${esc(m)}')" style="background:rgba(255,255,255,0.2);border:none;border-radius:3px;color:#fff;cursor:pointer;font-size:0.68rem;padding:1px 3px;line-height:1" title="Pegar columna de notas de Excel en ${esc(m)}">📥</button>
+      </div>
     </th>`;
   });
 
-  r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:70px">NOTA (30%)</th>`;
+  r2 += `<th class="sh" onclick="copyPiColumn('all','_final_pi')" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:78px;cursor:pointer" title="Clic para copiar toda la columna de NOTA FINAL (30%) del Proyecto">NOTA (30%) 📋</th>`;
   r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:68px">ESCALA</th>`;
   r2 += `</tr>`;
 
@@ -19994,9 +20003,30 @@ function renderPi() {
       const matAvgCls = matAvg !== null && parseFloat(matAvg) < 7.0 ? 'glo' : (matAvg !== null ? 'ghi' : '');
       const matAvgBg = piGradeColor(matAvg) || 'var(--bg-card)';
 
-      cells += `<td id="pi_prom_${si}_${mi}" class="prom-wk ${matAvgCls}" style="background:${matAvgBg};font-weight:900;text-align:center;font-size:0.8rem">
-        ${matAvgDisp}
-      </td>`;
+      if (isCollapsed && insList.length === 1) {
+        // En vista "Solo Promedios", si la materia tiene 1 insumo, permitir digitar o pegar con Ctrl+V directamente aquí
+        const ins0 = insList[0];
+        const v0 = S.pi.grades?.[m]?.[si]?.[ins0.id] !== undefined ? S.pi.grades[m][si][ins0.id] : (matAvg !== null ? matAvg : '');
+        cells += `<td id="pi_prom_${si}_${mi}" class="prom-wk ${matAvgCls}" style="background:${matAvgBg};padding:2px">
+          <input class="gi ${matAvgCls}" type="text" inputmode="decimal"
+            style="font-weight:900;text-align:center"
+            data-si="${si}" data-mat="${esc(m)}" data-ins="${esc(ins0.id)}"
+            value="${escVal(v0)}"
+            placeholder="—"
+            onpaste="handlePiInsumoPaste(event, ${si}, '${esc(m)}', '${esc(ins0.id)}')"
+            oninput="updPiInsumo(${si}, '${esc(m)}', '${esc(ins0.id)}', this.value)"
+            onchange="updPiInsumo(${si}, '${esc(m)}', '${esc(ins0.id)}', this.value)"
+            onfocus="this.select()"
+            onkeydown="navPiInsumo(event, this, ${si}, '${esc(m)}', '${esc(ins0.id)}')" />
+        </td>`;
+      } else {
+        const firstInsId = insList[0] ? insList[0].id : 'ins_1';
+        cells += `<td id="pi_prom_${si}_${mi}" class="prom-wk ${matAvgCls}" tabindex="0"
+          onpaste="handlePiInsumoPaste(event, ${si}, '${esc(m)}', '${esc(firstInsId)}')"
+          style="background:${matAvgBg};font-weight:900;text-align:center;font-size:0.8rem">
+          ${matAvgDisp}
+        </td>`;
+      }
     });
 
     // Celda de Nota Final del Proyecto Interdisciplinar
@@ -20132,9 +20162,11 @@ function updPiInsumo(si, mat, insId, val) {
   const promCell = document.getElementById(`pi_prom_${si}_${mi}`);
   if (promCell) {
     const matAvg = calc.matAverages[mat];
-    promCell.textContent = matAvg !== null ? matAvg : '—';
     promCell.style.background = piGradeColor(matAvg) || 'var(--bg-card)';
     promCell.className = `prom-wk ${matAvg !== null && parseFloat(matAvg) < 7.0 ? 'glo' : (matAvg !== null ? 'ghi' : '')}`;
+    if (!promCell.querySelector('input')) {
+      promCell.textContent = matAvg !== null ? matAvg : '—';
+    }
   }
 
   // 2. Nota final del Proyecto
@@ -20161,62 +20193,251 @@ function updPiInsumo(si, mat, insId, val) {
   updatePiFooterStats();
 }
 
+// Procesa una fila pegada de Excel eliminando columnas iniciales de # o Nombres si vienen incluidas
+function extractPiGradeRowVals(rawLine) {
+  const parts = rawLine.split('\t').map(s => s.trim());
+  if (parts.length <= 1) return parts;
+  // Si hay columnas con letras (ej. nombre del estudiante) seguidas de notas numéricas, tomar desde la primera nota después del nombre
+  let lastAlphaIdx = -1;
+  parts.forEach((p, idx) => {
+    if (/[A-Za-zÁÉÍÓÚÑáéíóúñ]{3,}/.test(p)) lastAlphaIdx = idx;
+  });
+  if (lastAlphaIdx >= 0 && lastAlphaIdx < parts.length - 1) {
+    return parts.slice(lastAlphaIdx + 1);
+  }
+  return parts;
+}
+
+function applyPiPastedText(text, startMat, startInsId, startSi) {
+  if (!text) return 0;
+  ensurePi();
+  const rawLines = text.replace(/\r\n$/, '').replace(/\n$/, '').split(/\r?\n/);
+  if (rawLines.length === 0) return 0;
+
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const allSorted = getSortedIndices();
+  const effectiveStartSi = (startSi !== undefined && startSi !== null) ? startSi : sorted[0];
+  const startRowInSorted = sorted.indexOf(effectiveStartSi);
+  if (startRowInSorted === -1) return 0;
+
+  // Aplanar columnas de insumos (incluyendo la columna destino aunque la materia esté encogida)
+  const flatCols = [];
+  S.pi.mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const isCol = !!(S.pi.collapsedMats && S.pi.collapsedMats[m]);
+    if (isCol && m !== startMat) {
+      flatCols.push({ mat: m, insId: insList[0].id });
+    } else if (isCol && m === startMat) {
+      flatCols.push({ mat: m, insId: startInsId || insList[0].id });
+    } else {
+      insList.forEach(ins => {
+        flatCols.push({ mat: m, insId: ins.id });
+      });
+    }
+  });
+
+  let startColIndex = flatCols.findIndex(fc => fc.mat === startMat && fc.insId === startInsId);
+  if (startColIndex === -1) {
+    startColIndex = flatCols.findIndex(fc => fc.mat === startMat);
+  }
+  if (startColIndex === -1) return 0;
+
+  // Detectar si viene la nómina completa de 40 estudiantes de Excel (o 41 con fila de encabezado)
+  const firstRowVals = extractPiGradeRowVals(rawLines[0]);
+  const firstValNum = parseFloat((firstRowVals[0] || '').replace(',', '.'));
+  const hasHeaderRow = isNaN(firstValNum) && firstRowVals[0] !== '' && firstRowVals[0] !== '-' && firstRowVals[0] !== '—';
+
+  const dataLines = hasHeaderRow ? rawLines.slice(1) : rawLines;
+  const isFull40Nomina = (startRowInSorted === 0 && dataLines.length === allSorted.length);
+
+  let count = 0;
+
+  const setCellGrade = (targetSi, targetCol, valStr) => {
+    if (!S.pi.grades[targetCol.mat]) S.pi.grades[targetCol.mat] = {};
+    if (!S.pi.grades[targetCol.mat][targetSi]) S.pi.grades[targetCol.mat][targetSi] = {};
+    const cleanVal = (valStr || '').trim().replace(',', '.');
+    if (cleanVal === '' || cleanVal === '-' || cleanVal === '—' || cleanVal === '–') {
+      delete S.pi.grades[targetCol.mat][targetSi][targetCol.insId];
+      return;
+    }
+    let n = parseFloat(cleanVal);
+    if (isNaN(n)) return;
+    if (n > 10) n = 10;
+    if (n < 1) n = 1;
+    S.pi.grades[targetCol.mat][targetSi][targetCol.insId] = String(trunc2(n));
+    count++;
+  };
+
+  if (isFull40Nomina) {
+    // Mapeo automático sobre la nómina de 40 (saltando retirados Emily #2 y Jayko #5 sin desfasar notas)
+    allSorted.forEach((targetSi, fullIdx) => {
+      if (isStudentExcludedFromGrades(targetSi)) return;
+      const rowVals = extractPiGradeRowVals(dataLines[fullIdx] || '');
+      rowVals.forEach((valStr, cOffset) => {
+        const targetCol = flatCols[startColIndex + cOffset];
+        if (!targetCol) return;
+        setCellGrade(targetSi, targetCol, valStr);
+      });
+    });
+  } else {
+    // Pegado secuencial sobre los 38 estudiantes activos respetando espacios vacíos
+    dataLines.forEach((rawLine, rOffset) => {
+      const targetRowPos = startRowInSorted + rOffset;
+      if (targetRowPos >= sorted.length) return;
+      const targetSi = sorted[targetRowPos];
+      const rowVals = extractPiGradeRowVals(rawLine);
+      rowVals.forEach((valStr, cOffset) => {
+        const targetCol = flatCols[startColIndex + cOffset];
+        if (!targetCol) return;
+        setCellGrade(targetSi, targetCol, valStr);
+      });
+    });
+  }
+
+  saveData();
+  renderPi();
+  return count;
+}
+
 function handlePiInsumoPaste(e, startSi, startMat, startInsId) {
   const clipboardData = e.clipboardData || window.clipboardData;
   if (!clipboardData) return;
   const text = clipboardData.getData('text');
   if (!text) return;
 
-  const lines = text.trim().split(/\r?\n/).map(line => line.split('\t'));
-  if (lines.length > 1 || (lines[0] && lines[0].length > 1)) {
+  const lines = text.replace(/\r\n$/, '').replace(/\n$/, '').split(/\r?\n/);
+  if (lines.length > 1 || (lines[0] && lines[0].includes('\t'))) {
     e.preventDefault();
-    ensurePi();
-    const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
-    const startRowInSorted = sorted.indexOf(startSi);
-    if (startRowInSorted === -1) return;
-
-    // Aplanar columnas de insumos visibles para permitir pegado horizontal continuo
-    const flatCols = [];
-    S.pi.mats.forEach(m => {
-      if (S.pi.collapsedMats && S.pi.collapsedMats[m]) return;
-      const insList = S.pi.subjectInsumos[m] || [];
-      insList.forEach(ins => {
-        flatCols.push({ mat: m, insId: ins.id });
-      });
-    });
-
-    const startColIndex = flatCols.findIndex(fc => fc.mat === startMat && fc.insId === startInsId);
-    if (startColIndex === -1) return;
-
-    let count = 0;
-    lines.forEach((rowVals, rOffset) => {
-      const targetRowPos = startRowInSorted + rOffset;
-      if (targetRowPos >= sorted.length) return;
-      const targetSi = sorted[targetRowPos];
-
-      rowVals.forEach((valStr, cOffset) => {
-        const targetColIdx = startColIndex + cOffset;
-        if (targetColIdx >= flatCols.length) return;
-        const targetCol = flatCols[targetColIdx];
-
-        let cleanVal = valStr.trim().replace(',', '.');
-        if (cleanVal === '') return;
-        let n = parseFloat(cleanVal);
-        if (isNaN(n)) return;
-        if (n > 10) n = 10;
-        if (n < 1) n = 1;
-
-        if (!S.pi.grades[targetCol.mat]) S.pi.grades[targetCol.mat] = {};
-        if (!S.pi.grades[targetCol.mat][targetSi]) S.pi.grades[targetCol.mat][targetSi] = {};
-        S.pi.grades[targetCol.mat][targetSi][targetCol.insId] = String(trunc2(n));
-        count++;
-      });
-    });
-
-    saveData();
-    renderPi();
-    toast(`📋 ¡Se pegaron ${count} calificaciones en la matriz de Proyecto Interdisciplinario!`, '#16a34a');
+    const count = applyPiPastedText(text, startMat, startInsId, startSi);
+    toast(`📥 ¡Se pegaron ${count} calificaciones en ${startMat}!`, '#16a34a');
   }
+}
+
+function pastePiColumnQuick(mName, insId, colLabel) {
+  ensurePi();
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(text => {
+      if (text && text.trim()) {
+        const count = applyPiPastedText(text, mName, insId, null);
+        if (count > 0) {
+          toast(`📥 ¡Se pegaron ${count} calificaciones desde Excel en "${colLabel}"!`, '#16a34a');
+          return;
+        }
+      }
+      openPiCopyPasteModal(mName, insId);
+    }).catch(() => {
+      openPiCopyPasteModal(mName, insId);
+    });
+  } else {
+    openPiCopyPasteModal(mName, insId);
+  }
+}
+
+function openPiCopyPasteModal(defaultMat, defaultInsId) {
+  ensurePi();
+  const mats = S.pi.mats;
+  let copyOpts = '';
+  let pasteOpts = '';
+
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    insList.forEach(ins => {
+      const isSel = (m === defaultMat && ins.id === defaultInsId) ? 'selected' : '';
+      copyOpts += `<option value="${escVal(m)}||${escVal(ins.id)}" ${isSel}>${escHTML(m)} — ${escHTML(ins.name)}</option>`;
+      pasteOpts += `<option value="${escVal(m)}||${escVal(ins.id)}" ${isSel}>${escHTML(m)} — ${escHTML(ins.name)}</option>`;
+    });
+    const isPromSel = (m === defaultMat && defaultInsId === '_mat_nota') ? 'selected' : '';
+    copyOpts += `<option value="${escVal(m)}||_mat_nota" ${isPromSel}>⭐ ${escHTML(m)} — PROMEDIO DE LA MATERIA</option>`;
+  });
+  copyOpts += `<option value="all||_final_pi">🏆 PROMEDIO GENERAL DEL PROYECTO — NOTA (30%)</option>`;
+
+  showModal(
+    '📋 Copiar o Pegar Columna de Notas (Excel / Proyecto Interdisciplinar)',
+    `
+    <div style="display:flex;flex-direction:column;gap:14px;font-size:0.84rem">
+      <!-- SECCIÓN 1: COPIAR COLUMNA -->
+      <div style="background:var(--bg-card-subtle);border:1.5px solid var(--border-color);border-radius:10px;padding:12px 14px">
+        <div style="font-weight:900;color:#1d4ed8;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span>📋</span> <span>1. COPIAR / SELECCIONAR TODAS LAS NOTAS DE UNA COLUMNA</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+          <select id="piModalCopySel" class="fi" style="flex:1;min-width:220px;font-weight:800;padding:7px 10px" onchange="updatePiModalCopyPreview()">
+            ${copyOpts}
+          </select>
+          <button type="button" class="btn" onclick="execPiModalCopy(false)" style="background:#2563eb;color:#fff;font-weight:900;padding:7px 14px;border-radius:8px;cursor:pointer">
+            📋 Copiar Columna (38 activos)
+          </button>
+          <button type="button" class="btn btn-outline" onclick="execPiModalCopy(true)" style="font-weight:800;padding:7px 12px;border-radius:8px;cursor:pointer" title="Incluye filas vacías en los 2 estudiantes retirados para pegar en cuadros de 40 estudiantes">
+            📋 Copiar (40 filas nómina completa)
+          </button>
+        </div>
+        <textarea id="piModalCopyPreview" readonly onclick="this.select()" style="width:100%;height:70px;font-family:var(--font-mono);font-size:0.76rem;padding:6px 10px;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-card);color:var(--text-main)" placeholder="Vista previa de las notas de la columna seleccionada..."></textarea>
+      </div>
+
+      <!-- SECCIÓN 2: PEGAR COLUMNA DESDE EXCEL -->
+      <div style="background:var(--bg-card-subtle);border:1.5px solid #16a34a;border-radius:10px;padding:12px 14px">
+        <div style="font-weight:900;color:#15803d;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+          <span>📥</span> <span>2. PEGAR TODAS LAS NOTAS DESDE EXCEL DE UNA SOLA VEZ</span>
+        </div>
+        <div style="margin-bottom:8px">
+          <label style="font-weight:700;font-size:0.78rem;display:block;margin-bottom:4px">Columna destino donde se pegarán las notas:</label>
+          <select id="piModalPasteSel" class="fi" style="width:100%;font-weight:800;padding:7px 10px">
+            ${pasteOpts}
+          </select>
+        </div>
+        <textarea id="piModalPasteInput" style="width:100%;height:110px;font-family:var(--font-mono);font-size:0.78rem;padding:8px 10px;border:1.5px solid #86efac;border-radius:6px;background:var(--bg-card);color:var(--text-main)" placeholder="Pega aquí con Ctrl + V la columna de notas copiada de Excel (acepta lista de 38 estudiantes activos o lista completa de 40 estudiantes)..."></textarea>
+        <div style="font-size:0.73rem;color:var(--text-muted);margin-top:4px">
+          💡 Puedes pegar solo la columna de notas o incluso varias columnas seguidas de Excel. Si pegas 40 filas de Excel, el sistema salta automáticamente a los 2 estudiantes retirados sin desfasar las notas.
+        </div>
+      </div>
+    </div>
+    `,
+    '📥 Pegar Notas en la Columna',
+    () => {
+      const sel = document.getElementById('piModalPasteSel')?.value;
+      const txt = document.getElementById('piModalPasteInput')?.value;
+      if (!sel || !txt || !txt.trim()) {
+        toast('⚠️ Pega primero las notas de Excel en el recuadro inferior (Ctrl + V)', '#eab308');
+        return;
+      }
+      const [m, insId] = sel.split('||');
+      const count = applyPiPastedText(txt, m, insId, null);
+      closeModal();
+      toast(`📥 ¡Listo! Se cargaron ${count} calificaciones en ${m}.`, '#16a34a');
+    }
+  );
+
+  setTimeout(() => {
+    updatePiModalCopyPreview();
+    if (defaultMat) {
+      const inp = document.getElementById('piModalPasteInput');
+      if (inp) inp.focus();
+    }
+  }, 60);
+}
+
+function updatePiModalCopyPreview() {
+  const sel = document.getElementById('piModalCopySel')?.value;
+  const preview = document.getElementById('piModalCopyPreview');
+  if (!sel || !preview) return;
+  const [mName, indId] = sel.split('||');
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const lines = sorted.map(si => {
+    const calc = calcStudentPi(si);
+    if (indId === '_final_pi') return calc.piNota !== null ? calc.piNota : '';
+    if (indId === '_mat_nota') return calc.matAverages[mName] !== null ? calc.matAverages[mName] : '';
+    return S.pi.grades?.[mName]?.[si]?.[indId] || '';
+  });
+  preview.value = lines.join('\n');
+}
+
+function execPiModalCopy(includeInactive) {
+  const sel = document.getElementById('piModalCopySel')?.value;
+  if (!sel) return;
+  const [mName, indId] = sel.split('||');
+  copyPiColumn(mName, indId, includeInactive);
+  const preview = document.getElementById('piModalCopyPreview');
+  if (preview) preview.select();
 }
 
 function navPiInsumo(e, inp, si, mat, insId) {
