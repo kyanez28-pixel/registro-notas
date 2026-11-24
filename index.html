@@ -10675,9 +10675,9 @@ function getWeekDisplayParts(w, wi) {
     return {
       numLabel: 'Semana 0',
       shortNum: 'S.0',
-      topic: 'FASE CREA: PROYECTO INTERDISCIPLINAR (APORTE FORMATIVO 70%)',
-      shortTopic: 'Fase CREA',
-      dest: dest || 'EGB Media'
+      topic: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+      shortTopic: 'Nutri-Vida',
+      dest: dest || 'Fase CREA (70%)'
     };
   }
   const semMatch = rawName.match(/^SEM(?:ANA)?\.?\s*(\d+)[:\s-]*(.*)$/i);
@@ -10854,9 +10854,19 @@ function restoreOfficial6Weeks(manual) {
   if (manual && typeof histPushSnapshot === 'function') {
     histPushSnapshot('Restaurar Semanas 1 a 6');
   }
-  const firstRunKey = 'notas_restore_sem6_v135';
+  const firstRunKey = 'notas_restore_sem0_sem6_v136';
   const isFirstAutoFix = !localStorage.getItem(firstRunKey);
   let changed = false;
+
+  const nutriWeekDef = { name: PI_WEEK_NAME, destreza: 'EGB Media' };
+  const nutriColDef = {
+    name: PI_COL_NAME,
+    desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
+    type: 'PI',
+    cat: 'form',
+    date: '2026-10-02',
+    color: '#d97706'
+  };
 
   Object.keys(OFFICIAL_6WEEKS_BACKUP).forEach(bMat => {
     const bData = OFFICIAL_6WEEKS_BACKUP[bMat];
@@ -10913,33 +10923,49 @@ function restoreOfficial6Weeks(manual) {
       }
     }
 
-    // 3. Eliminar semana obsoleta PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA de la posición 0 (el proyecto va en EVALUACIÓN SUMATIVA 30%)
-    for (let i = mat.weeks.length - 1; i >= 0; i--) {
-      const wn = getWeekName(mat.weeks[i]);
-      if (/NUTRI-VIDA/i.test(wn)) {
-        mat.weeks.splice(i, 1);
-        delete mat.cols[wn];
-        changed = true;
-      }
+    // 3. Asegurar Semana 0: PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA al inicio (S.0) con todas sus notas formativas del inicio del año lectivo
+    const hasNutriWeek = mat.weeks.some(w => getWeekName(w) === PI_WEEK_NAME);
+    if (!hasNutriWeek || getWeekName(mat.weeks[0]) !== PI_WEEK_NAME) {
+      mat.weeks = [JSON.parse(JSON.stringify(nutriWeekDef)), ...mat.weeks.filter(w => getWeekName(w) !== PI_WEEK_NAME)];
+      changed = true;
     }
+    if (!Array.isArray(mat.cols[PI_WEEK_NAME]) || mat.cols[PI_WEEK_NAME].length === 0) {
+      mat.cols[PI_WEEK_NAME] = [JSON.parse(JSON.stringify(nutriColDef))];
+      changed = true;
+    }
+    if (!S.weekColors) S.weekColors = {};
+    S.weekColors[targetKey + '||' + PI_WEEK_NAME] = { h: '#d97706', s: '#f59e0b', c: 'rgba(217,119,6,0.08)' };
 
-    // 4. Restaurar las 6 semanas oficiales de clase (Semana 1 a Semana 6) si falta alguna o sus columnas/notas
+    const nutriKey = PI_WEEK_NAME + '||' + PI_COL_NAME;
+    NUTRIVIDA_PI_7C_PROMEDIOS.forEach((nota, si) => {
+      if (nota !== undefined && nota !== '') {
+        if (!mat.grades[si]) mat.grades[si] = {};
+        if (!mat.grades[si][nutriKey] || manual || isFirstAutoFix) {
+          if (mat.grades[si][nutriKey] !== nota) {
+            mat.grades[si][nutriKey] = nota;
+            changed = true;
+          }
+        }
+      }
+    });
+
+    // 4. Restaurar las 6 semanas oficiales de clase (Semana 1 a Semana 6) después de Semana 0 (Nutri-Vida) y antes de EVALUACIÓN SUMATIVA
     const officialWeekNames = bData.weeks.map(w => getWeekName(w));
     const currentWeekNames = mat.weeks.map(w => getWeekName(w));
     const missingAnyOfficialWeek = officialWeekNames.some(own => !currentWeekNames.includes(own));
 
     if (missingAnyOfficialWeek || manual || isFirstAutoFix) {
-      // Conservar semanas adicionales personalizadas que no sean las 6 oficiales ni EVALUACIÓN SUMATIVA
       const extraTeachingWeeks = mat.weeks.filter(w => {
         const wn = getWeekName(w);
-        return !officialWeekNames.includes(wn) && wn !== sumWName && !/SUMATIV|^EXAMEN/i.test(wn.trim());
+        return wn !== PI_WEEK_NAME && !officialWeekNames.includes(wn) && wn !== sumWName && !/SUMATIV|^EXAMEN/i.test(wn.trim());
       });
       const restoredWeeks = bData.weeks.map(bw => {
         const bwName = getWeekName(bw);
         const existingW = mat.weeks.find(cw => getWeekName(cw) === bwName);
         return existingW || JSON.parse(JSON.stringify(bw));
       });
-      mat.weeks = [...restoredWeeks, ...extraTeachingWeeks, sumWeekObj];
+      const existingNutri = mat.weeks.find(cw => getWeekName(cw) === PI_WEEK_NAME) || JSON.parse(JSON.stringify(nutriWeekDef));
+      mat.weeks = [existingNutri, ...restoredWeeks, ...extraTeachingWeeks, sumWeekObj];
       changed = true;
     }
 
@@ -11753,7 +11779,7 @@ function renderTable() {
         const isColHidden = isColumnHidden(mName, wName, col);
 
         const rawDisp = col.desc || col.name;
-        const displayName = /NUTRI-?VIDA/i.test(rawDisp) ? 'PROYECTO FASE CREA (70%)' : rawDisp;
+        const displayName = /NUTRI-?VIDA/i.test(rawDisp) ? 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA' : rawDisp;
         const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal;pointer-events:none">${escHTML(displayName)}</div>`;
         const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px;pointer-events:none">${escHTML(col.date)}</div>` : '';
         const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2;pointer-events:none">${escHTML(at.label)}${catBadge}</div>`;
