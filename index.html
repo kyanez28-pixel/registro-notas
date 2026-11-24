@@ -4726,6 +4726,9 @@ body.in-focus-mode {
           <button class="btn btn-outline" onclick="openAddInsumoMenu()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>➕ Añadir Insumo</span>
           </button>
+          <button class="btn btn-warning" onclick="openFillColModal()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px" title="Llenar rápidamente una columna o insumo entero con una nota o vaciarla">
+            <span>⚡ Llenar Columna</span>
+          </button>
           <button class="btn btn-outline" onclick="exportPiXLSX()" style="font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main);cursor:pointer;display:flex;align-items:center;gap:6px">
             <span>📊 Exportar Excel</span>
           </button>
@@ -11951,31 +11954,48 @@ function cycleQual(si, w, colName) {
   const mat = gm();
   if (!mat.grades[si]) mat.grades[si] = {};
   const k = w + '||' + colName;
-  const cur = mat.grades[si][k] || 'NE';
-  const order = ['NE', 'I', 'EP', 'A'];
-  const next = order[(order.indexOf(cur) + 1) % order.length];
-  mat.grades[si][k] = next;
+  const curVal = mat.grades[si][k];
+  const curNum = parseFloat(curVal);
+  const cur = !isNaN(curNum) ? numToQual(curNum) : (curVal && ['A','EP','I','NE'].includes(String(curVal).toUpperCase()) ? String(curVal).toUpperCase() : 'NE');
+  const order = [
+    { q: 'NE', num: '' },
+    { q: 'I',  num: '6.00' },
+    { q: 'EP', num: '8.00' },
+    { q: 'A',  num: '10.00' }
+  ];
+  const curIdx = order.findIndex(o => o.q === cur);
+  const nextObj = order[(curIdx + 1) % order.length];
+  if (nextObj.num === '') delete mat.grades[si][k];
+  else mat.grades[si][k] = nextObj.num;
   saveData();
   render();
 }
 
-// Guardar nota numérica en materia cualitativa y convertir automáticamente
+// Guardar nota numérica o escala (A, EP, I, NE) en materia cualitativa y convertir automáticamente
 function updQual(si, week, col, val) {
   const mat = gm();
   if (!mat.grades[si]) mat.grades[si] = {};
   const key = week + '||' + col;
-  let v = val.trim().replace(',', '.');
+  let v = (val || '').trim().replace(',', '.');
+  const upper = v.toUpperCase();
+  if (upper === 'A') v = '10.00';
+  else if (upper === 'EP') v = '8.00';
+  else if (upper === 'I') v = '6.00';
+  else if (upper === 'NE' || upper === '-' || upper === '—') v = '';
+
+  histPush(si, week, col, mat.grades[si][key], false);
+
   if (v === '') {
     delete mat.grades[si][key];
   } else {
     let n = parseFloat(v);
     if (isNaN(n)) {
-      toast('⚠️ Ingresa una nota numérica del 1 al 10 para la asignatura cualitativa', '#dc2626');
+      toast('⚠️ Ingresa una nota del 1,00 al 10,00 o la escala A, EP, I, NE', '#dc2626');
       render();
       return;
     }
-    if (n > 10) { n = 10; toast('⚠️ Nota ajustada al máximo (10)', '#d97706'); }
-    if (n < 1)  { n = 1;  toast('⚠️ Nota ajustada al mínimo (1)', '#d97706'); }
+    if (n > 10) { n = 10; toast('⚠️ Nota ajustada al máximo (10,00)', '#d97706'); }
+    if (n < 1)  { n = 1;  toast('⚠️ Nota ajustada al mínimo (1,00)', '#d97706'); }
     v = trunc2(n);
     mat.grades[si][key] = v;
     const qv = numToQual(n);
@@ -11988,11 +12008,15 @@ function updQual(si, week, col, val) {
 
 // Actualizar badge en tiempo real mientras el usuario escribe
 function previewQual(inp) {
-  const v = inp.value.trim().replace(',', '.');
+  let v = inp.value.trim().replace(',', '.');
+  const upper = v.toUpperCase();
+  if (upper === 'A') v = '10.00';
+  else if (upper === 'EP') v = '8.00';
+  else if (upper === 'I') v = '6.00';
   const n = parseFloat(v);
   const badge = inp.parentElement?.querySelector('.badge-qual');
   if (!badge) return;
-  if (isNaN(n) || v === '') {
+  if (isNaN(n) || v === '' || upper === 'NE') {
     badge.className = 'badge-qual qual-NE';
     badge.style.fontSize = '0.7rem';
     badge.style.padding = '1px 5px';
@@ -12009,7 +12033,7 @@ function previewQual(inp) {
 
 
 // ══════════════════════════════════════════════════════
-//  ESTADÍSTICAS (NORMATIVA 70/30)
+//  ESTADÍSTICAS (NORMATIVA 70/30 & CUALITATIVAS)
 // ══════════════════════════════════════════════════════
 function renderStats() {
   const mName = curMatName();
@@ -12021,8 +12045,9 @@ function renderStats() {
 
   activeStudents.forEach(si => {
     const calc = getStudentTrimestreCalc(si, mName);
-    if (!isQual && calc.trimAvg !== '—') {
-      const n = parseFloat(calc.trimAvg);
+    const valStr = isQual ? (calc.numAvg || '—') : calc.trimAvg;
+    if (valStr && valStr !== '—') {
+      const n = parseFloat(valStr);
       if (!isNaN(n)) {
         tot += n; cnt++;
         if (n < 7) low++;
@@ -12033,10 +12058,11 @@ function renderStats() {
     }
   });
 
-  const avg  = cnt > 0 ? trunc2(tot / cnt) : '—';
+  const avgNum = cnt > 0 ? trunc2(tot / cnt) : null;
+  const avg  = avgNum !== null ? (isQual ? `${numToQual(parseFloat(avgNum))} (${avgNum})` : avgNum) : '—';
   const maxD = cnt > 0 ? trunc2(max) : '—';
   const minD = cnt > 0 ? trunc2(min) : '—';
-  const avgColor = cnt > 0 && parseFloat(avg) < 7 ? 'var(--danger)' : 'var(--primary)';
+  const avgColor = cnt > 0 && parseFloat(avgNum) < 7 ? 'var(--danger)' : 'var(--primary)';
 
   document.getElementById('stats').innerHTML = `
     <div class="stat-card" style="--card-accent:#2563eb">
@@ -13050,17 +13076,27 @@ function openAddCol() {
 }
 function addColToWeek(w) { showColModal(getWeekName(w), null, false); }
 
-function openFillColModal() {
+function openFillColModal(preselectedWeek, preselectedCol) {
+  const isPiView = document.getElementById('piPanel')?.style.display !== 'none';
+  if (isPiView) {
+    openFillPiColModal(preselectedWeek, preselectedCol);
+    return;
+  }
+
   const mat = gm();
+  const mName = curMatName();
+  const isQual = isQualitativeMat(mName);
   if (!mat || !mat.weeks || !mat.weeks.length) {
     toast('⚠️ Primero agrega una semana con actividades', '#d97706');
     return;
   }
   const allCols = [];
-  (mat.weeks || []).forEach(w => {
+  (mat.weeks || []).forEach((w, wi) => {
     const wName = getWeekName(w);
+    const wp = getWeekDisplayParts(w, wi);
+    const wLabel = `${wp.numLabel} (${wp.shortTopic || wp.topic})`;
     (mat.cols[wName] || []).forEach(c => {
-      allCols.push({ week: wName, col: c.name, type: c.type, desc: c.desc });
+      allCols.push({ week: wName, weekLabel: wLabel, col: c.name, type: c.type, desc: c.desc });
     });
   });
 
@@ -13069,56 +13105,277 @@ function openFillColModal() {
     return;
   }
 
-  const opts = allCols.map((c, i) => `<option value="${i}">${escHTML(c.week)} → ${escHTML(c.desc || c.col)} (${c.type})</option>`).join('');
+  let preIdx = 0;
+  if (preselectedWeek && preselectedCol) {
+    const found = allCols.findIndex(c => c.week === preselectedWeek && c.col === preselectedCol);
+    if (found >= 0) preIdx = found;
+  } else {
+    // Si hay alguna columna vacía en las semanas formativas, preseleccionar la primera vacía para comodidad
+    const activeSampleSi = getSortedIndices().find(si => !isStudentExcludedFromGrades(si)) ?? 0;
+    const firstEmptyIdx = allCols.findIndex(c => {
+      const v = mat.grades?.[activeSampleSi]?.[c.week + '||' + c.col];
+      return v === undefined || v === '';
+    });
+    if (firstEmptyIdx >= 0) preIdx = firstEmptyIdx;
+  }
+
+  const activeSorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+  const opts = allCols.map((c, i) => {
+    let filled = 0;
+    activeSorted.forEach(si => {
+      const v = mat.grades?.[si]?.[c.week + '||' + c.col];
+      if (v !== undefined && v !== '') filled++;
+    });
+    const statusTxt = filled === 0 ? '⚪ Vacía' : `✅ ${filled}/${activeSorted.length} notas`;
+    const dispName = c.desc && c.desc !== c.col ? `${c.col} — ${c.desc}` : c.col;
+    return `<option value="${i}" ${i === preIdx ? 'selected' : ''}>[${escHTML(c.weekLabel)}] ${escHTML(dispName)} (${statusTxt})</option>`;
+  }).join('');
+
+  const qualPresetsHTML = isQual ? `
+    <div style="font-size:0.74rem;font-weight:800;color:#7c3aed;margin-bottom:4px">📘 Escala Cualitativa (${escHTML(mName)}):</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <button type="button" class="btn btn-outline" style="border-color:#16a34a;color:#15803d;font-weight:800" onclick="document.getElementById('fillColVal').value='10.00'">🟢 A — Adquirido (10,00)</button>
+      <button type="button" class="btn btn-outline" style="border-color:#ca8a04;color:#a16207;font-weight:800" onclick="document.getElementById('fillColVal').value='8.00'">🟡 EP — En Proceso (8,00)</button>
+      <button type="button" class="btn btn-outline" style="border-color:#ea580c;color:#c2410c;font-weight:800" onclick="document.getElementById('fillColVal').value='6.00'">🟠 I — Iniciado (6,00)</button>
+      <button type="button" class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;font-weight:800" onclick="document.getElementById('fillColVal').value='VACIAR'">🧹 NE / Vaciar Columna</button>
+    </div>
+  ` : '';
 
   showModal(
-    '⚡ Llenar Columna Rápido (Auto-calificar)',
+    `⚡ Llenar Columna Rápido — ${escHTML(mName)}`,
     `
     <div>
-      <label>Selecciona la Actividad / Columna a Llenar</label>
-      <select id="fillColTarget" style="width:100%;margin-bottom:12px;font-weight:700">${opts}</select>
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:4px">1. Selecciona la Actividad / Columna a Llenar:</label>
+      <select id="fillColTarget" style="width:100%;margin-bottom:12px;font-weight:700;padding:8px;border-radius:6px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main)">${opts}</select>
 
-      <label>Nota a aplicar a todos los estudiantes (1.00 a 10.00 o F, NP, EX)</label>
-      <input type="text" id="fillColVal" value="10.00" placeholder="10.00" style="width:100%;font-size:1.1rem;font-weight:900;text-align:center;font-family:var(--font-mono);margin-bottom:12px"/>
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:4px">2. Calificación a aplicar (${isQual ? '1,00 a 10,00 o A, EP, I, NE' : '1,00 a 10,00 o EX, NP, F'}):</label>
+      <input type="text" id="fillColVal" value="10.00" placeholder="Ej: 10.00, 8.50${isQual ? ', A, EP' : ', EX'}" style="width:100%;font-size:1.15rem;font-weight:900;text-align:center;font-family:var(--font-mono);margin-bottom:10px;padding:7px;border-radius:6px;border:1.5px solid var(--border-color)"/>
 
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='10.00'">⭐ 10.00</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='9.00'">9.00</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='8.00'">8.00</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='7.00'">7.00</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='EX'">EX (Exonerado)</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='NP'">NP (No Presentó)</button>
+      ${qualPresetsHTML}
+
+      <div style="font-size:0.74rem;font-weight:800;color:var(--text-muted);margin-bottom:4px">⚡ Botones rápidos de calificación:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='10.00'">⭐ 10,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='9.50'">9,50</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='9.00'">9,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='8.50'">8,50</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='8.00'">8,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='7.50'">7,50</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='7.00'">7,00</button>
+        ${!isQual ? `
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='EX'">EX (Exonerado)</button>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('fillColVal').value='NP'">NP (No Presentó)</button>
+        ` : ''}
+        <button type="button" class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;font-weight:800" onclick="document.getElementById('fillColVal').value='VACIAR'">🗑 Vaciar Columna</button>
       </div>
 
-      <div style="font-size:0.75rem;color:var(--text-muted)">
-        💡 Rellena instantáneamente a todos los estudiantes con esta nota. Luego podrás cambiar rápidamente solo a los alumnos que tengan otra calificación.
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:6px">3. ¿A qué estudiantes aplicar?</label>
+      <div style="display:flex;flex-direction:column;gap:6px;background:var(--bg-card-subtle);padding:10px 12px;border-radius:8px;border:1px solid var(--border-color);margin-bottom:10px;font-size:0.8rem">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;margin:0">
+          <input type="radio" name="fillColMode" value="all" checked style="cursor:pointer"/>
+          <span>👥 <strong>A todos los estudiantes activos (${activeSorted.length})</strong> — Reemplazar toda la columna</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;margin:0">
+          <input type="radio" name="fillColMode" value="empty" style="cursor:pointer"/>
+          <span>✨ <strong>Solo a los casilleros vacíos (sin nota / NE)</strong> — Respeta las notas que ya digitaste</span>
+        </label>
+      </div>
+
+      <div style="font-size:0.74rem;color:var(--text-muted)">
+        💡 Puedes deshacer cualquier cambio con <strong>Ctrl + Z (↩ Deshacer)</strong>.
       </div>
     </div>
     `,
-    '⚡ Aplicar a Todos',
+    '⚡ Aplicar Calificación',
     () => {
+      const curMat = gm();
+      if (!curMat) return;
       const idx = parseInt(document.getElementById('fillColTarget')?.value || '0', 10);
       const target = allCols[idx];
-      let val = document.getElementById('fillColVal')?.value.trim().replace(',', '.') || '';
-      if (!target || !val) return;
-
-      if (!specialCls(val)) {
-        let n = parseFloat(val);
-        if (isNaN(n)) { toast('⚠️ Ingresa una nota válida', '#dc2626'); return; }
-        n = Math.min(10, Math.max(1, n));
-        val = trunc2(n);
-      }
+      let rawVal = (document.getElementById('fillColVal')?.value || '').trim();
+      const modeEl = document.querySelector('input[name="fillColMode"]:checked');
+      const onlyEmpty = modeEl && modeEl.value === 'empty';
+      if (!target) return;
 
       const key = target.week + '||' + target.col;
-      histPushSnapshot(`Llenar columna "${target.col}"`);
-      S.students.forEach((_, si) => {
-        if (!mat.grades[si]) mat.grades[si] = {};
-        mat.grades[si][key] = val;
+      const upper = rawVal.toUpperCase();
+
+      // Modo vaciar / limpiar columna
+      if (rawVal === '' || upper === 'VACIAR' || upper === 'LIMPIAR' || upper === 'BORRAR' || upper === 'NE' || upper === '-' || upper === '—') {
+        histPushSnapshot(`Vaciar columna "${target.col}"`);
+        let clearedCount = 0;
+        S.students.forEach((_, si) => {
+          if (curMat.grades && curMat.grades[si] && curMat.grades[si][key] !== undefined && curMat.grades[si][key] !== '') {
+            delete curMat.grades[si][key];
+            clearedCount++;
+          }
+        });
+        closeModal();
+        saveData();
+        render();
+        toast(`🧹 Columna "${target.desc || target.col}" vaciada (${clearedCount} casilleros limpiados). Ctrl+Z para deshacer.`, '#2563eb');
+        return;
+      }
+
+      let val = rawVal.replace(',', '.');
+      if (isQual) {
+        if (upper === 'A') val = '10.00';
+        else if (upper === 'EP') val = '8.00';
+        else if (upper === 'I') val = '6.00';
+        else {
+          let n = parseFloat(val);
+          if (isNaN(n)) {
+            toast('⚠️ Ingresa una nota del 1,00 al 10,00 o la letra A, EP, I, NE', '#dc2626');
+            return;
+          }
+          n = Math.min(10, Math.max(1, n));
+          val = trunc2(n);
+        }
+      } else if (!specialCls(val)) {
+        let n = parseFloat(val);
+        if (isNaN(n)) { toast('⚠️ Ingresa una nota válida de 1,00 a 10,00', '#dc2626'); return; }
+        n = Math.min(10, Math.max(1, n));
+        val = trunc2(n);
+      } else {
+        val = upper;
+      }
+
+      histPushSnapshot(`Llenar columna "${target.col}" con ${val}`);
+      let appliedCount = 0;
+      activeSorted.forEach(si => {
+        if (!curMat.grades[si]) curMat.grades[si] = {};
+        const existing = curMat.grades[si][key];
+        const hasExisting = existing !== undefined && existing !== '' && existing !== 'NE';
+        if (onlyEmpty && hasExisting) return;
+        curMat.grades[si][key] = val;
+        appliedCount++;
       });
 
+      closeModal();
       saveData();
       render();
-      toast(`⚡ Columna "${target.col}" llenada con nota ${val}`, '#16a34a');
+      const qualInfo = isQual && !isNaN(parseFloat(val)) ? ` (${numToQual(parseFloat(val))})` : '';
+      toast(`⚡ Columna "${target.desc || target.col}" llenada con ${val.replace('.', ',')}${qualInfo} en ${appliedCount} estudiantes`, '#16a34a');
+    },
+    'btn-success'
+  );
+}
+
+function openFillPiColModal(preselectedMat, preselectedInsId) {
+  ensurePi();
+  const mats = S.pi.mats;
+  const allIns = [];
+  const activeSorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
+
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    insList.forEach(ins => {
+      allIns.push({ mat: m, insId: ins.id, insName: ins.name });
+    });
+  });
+
+  if (!allIns.length) {
+    toast('⚠️ No hay insumos configurados en el Proyecto Interdisciplinar', '#d97706');
+    return;
+  }
+
+  let preIdx = 0;
+  if (preselectedMat && preselectedInsId) {
+    const f = allIns.findIndex(x => x.mat === preselectedMat && x.insId === preselectedInsId);
+    if (f >= 0) preIdx = f;
+  }
+
+  const opts = allIns.map((x, i) => {
+    let filled = 0;
+    activeSorted.forEach(si => {
+      const v = S.pi.grades?.[x.mat]?.[si]?.[x.insId];
+      if (v !== undefined && v !== '') filled++;
+    });
+    const statusTxt = filled === 0 ? '⚪ Vacío' : `✅ ${filled}/${activeSorted.length} notas`;
+    return `<option value="${i}" ${i === preIdx ? 'selected' : ''}>[${escHTML(x.mat)}] ${escHTML(x.insName)} (${statusTxt})</option>`;
+  }).join('');
+
+  showModal(
+    '⚡ Llenar Columna / Insumo — Proyecto Interdisciplinar',
+    `
+    <div>
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:4px">1. Selecciona la Asignatura e Insumo a Llenar:</label>
+      <select id="fillPiColTarget" style="width:100%;margin-bottom:12px;font-weight:700;padding:8px;border-radius:6px;border:1.5px solid var(--border-color);background:var(--bg-card);color:var(--text-main)">${opts}</select>
+
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:4px">2. Nota a aplicar (1,00 a 10,00):</label>
+      <input type="text" id="fillPiColVal" value="10.00" placeholder="10.00" style="width:100%;font-size:1.15rem;font-weight:900;text-align:center;font-family:var(--font-mono);margin-bottom:10px;padding:7px;border-radius:6px;border:1.5px solid var(--border-color)"/>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='10.00'">⭐ 10,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='9.50'">9,50</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='9.00'">9,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='8.50'">8,50</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='8.00'">8,00</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('fillPiColVal').value='7.00'">7,00</button>
+        <button type="button" class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;font-weight:800" onclick="document.getElementById('fillPiColVal').value='VACIAR'">🗑 Vaciar Columna</button>
+      </div>
+
+      <label style="font-weight:800;font-size:0.82rem;display:block;margin-bottom:6px">3. ¿A qué estudiantes aplicar?</label>
+      <div style="display:flex;flex-direction:column;gap:6px;background:var(--bg-card-subtle);padding:10px 12px;border-radius:8px;border:1px solid var(--border-color);margin-bottom:10px;font-size:0.8rem">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;margin:0">
+          <input type="radio" name="fillPiColMode" value="all" checked style="cursor:pointer"/>
+          <span>👥 <strong>A todos los estudiantes activos (${activeSorted.length})</strong> — Reemplazar toda la columna</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;margin:0">
+          <input type="radio" name="fillPiColMode" value="empty" style="cursor:pointer"/>
+          <span>✨ <strong>Solo a los casilleros vacíos</strong> — Respeta las notas ya ingresadas</span>
+        </label>
+      </div>
+    </div>
+    `,
+    '⚡ Aplicar al Insumo',
+    () => {
+      const idx = parseInt(document.getElementById('fillPiColTarget')?.value || '0', 10);
+      const target = allIns[idx];
+      let rawVal = (document.getElementById('fillPiColVal')?.value || '').trim();
+      const modeEl = document.querySelector('input[name="fillPiColMode"]:checked');
+      const onlyEmpty = modeEl && modeEl.value === 'empty';
+      if (!target) return;
+
+      if (!S.pi.grades[target.mat]) S.pi.grades[target.mat] = {};
+      const upper = rawVal.toUpperCase();
+
+      if (rawVal === '' || upper === 'VACIAR' || upper === 'LIMPIAR' || upper === 'BORRAR' || upper === '-' || upper === '—') {
+        let cleared = 0;
+        S.students.forEach((_, si) => {
+          if (S.pi.grades[target.mat]?.[si]?.[target.insId] !== undefined) {
+            delete S.pi.grades[target.mat][si][target.insId];
+            cleared++;
+          }
+        });
+        closeModal();
+        saveData();
+        renderPi();
+        toast(`🧹 Insumo "${target.insName}" (${target.mat}) vaciado (${cleared} notas borradas)`, '#2563eb');
+        return;
+      }
+
+      let n = parseFloat(rawVal.replace(',', '.'));
+      if (isNaN(n)) {
+        toast('⚠️ Ingresa una nota válida de 1,00 a 10,00', '#dc2626');
+        return;
+      }
+      n = Math.min(10, Math.max(1, n));
+      const val = String(trunc2(n));
+
+      let applied = 0;
+      activeSorted.forEach(si => {
+        if (!S.pi.grades[target.mat][si]) S.pi.grades[target.mat][si] = {};
+        const existing = S.pi.grades[target.mat][si][target.insId];
+        if (onlyEmpty && existing !== undefined && existing !== '') return;
+        S.pi.grades[target.mat][si][target.insId] = val;
+        applied++;
+      });
+
+      closeModal();
+      saveData();
+      renderPi();
+      toast(`⚡ Insumo "${target.insName}" (${target.mat}) llenado con ${val.replace('.', ',')} en ${applied} estudiantes`, '#16a34a');
     },
     'btn-success'
   );
@@ -13555,6 +13812,9 @@ function openColContextMenu(e, wi, ci, weekName, colName) {
   menu.innerHTML = `
     <div style="padding:8px 14px;font-size:0.78rem;font-weight:800;color:var(--text-main);border-bottom:1px solid var(--border-color);background:var(--bg-card-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">
       📌 ${escHTML(displayName)}
+    </div>
+    <div class="ctx-item" onclick="closeCtxMenu();openFillColModal('${esc(weekName)}','${esc(colName)}')">
+      ⚡ Llenar / Vaciar esta Columna...
     </div>
     <div class="ctx-item" onclick="closeCtxMenu();copyMainColumn('activity','${esc(weekName)}','${esc(colName)}')">
       📋 Copiar Columna (Excel/Word)
@@ -17814,12 +18074,25 @@ function processAndSetGrade(mat, curSi, gKey, rawVal, isQual) {
   }
 
   if (isQual) {
-    let qVal = rawVal.toUpperCase();
+    let qVal = rawVal.trim().toUpperCase();
     const num = parseFloat(rawVal.replace(',', '.'));
-    if (!isNaN(num)) qVal = numToQual(num);
-    else if (!['A', 'EP', 'I', 'NE'].includes(qVal)) qVal = 'NE';
-    mat.grades[curSi][gKey] = qVal;
-    return { assigned: true, hasVal: true };
+    if (!isNaN(num)) {
+      const clamped = Math.min(10, Math.max(1, num));
+      mat.grades[curSi][gKey] = trunc2(clamped);
+      return { assigned: true, hasVal: true };
+    } else if (qVal === 'A') {
+      mat.grades[curSi][gKey] = '10.00';
+      return { assigned: true, hasVal: true };
+    } else if (qVal === 'EP') {
+      mat.grades[curSi][gKey] = '8.00';
+      return { assigned: true, hasVal: true };
+    } else if (qVal === 'I') {
+      mat.grades[curSi][gKey] = '6.00';
+      return { assigned: true, hasVal: true };
+    } else {
+      mat.grades[curSi][gKey] = '';
+      return { assigned: true, hasVal: false };
+    }
   } else {
     const cleanNum = rawVal.replace(',', '.');
     const spec = specialCls(cleanNum);
