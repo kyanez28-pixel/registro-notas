@@ -3726,9 +3726,10 @@ body.in-focus-mode {
         </button>
       </div>
 
-      <div style="display:flex;gap:3px;margin-left:auto">
-        <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer cambio (Ctrl+Z)" disabled style="padding:5px 9px;font-size:0.9rem">↩</button>
-        <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.9rem">↪</button>
+      <div style="display:flex;gap:5px;margin-left:auto;align-items:center">
+        <button id="btnUndo" class="btn btn-outline" onclick="histUndo()" data-tip="Deshacer último cambio, eliminación o pegado (Ctrl+Z)" disabled style="padding:5px 10px;font-size:0.8rem;font-weight:800">↩ Deshacer (Ctrl+Z)</button>
+        <button id="btnRedo" class="btn btn-outline" onclick="histRedo()" data-tip="Rehacer cambio (Ctrl+Y)" disabled style="padding:5px 9px;font-size:0.85rem">↪</button>
+        <button class="btn btn-teal" onclick="restoreOfficial6Weeks(true)" data-tip="Restaurar íntegramente las Semanas 1 a 6 y sus calificaciones en todas las materias" style="padding:5px 10px;font-size:0.78rem;font-weight:800">🔄 Restaurar Sem. 1-6</button>
       </div>
     </div>
   </div>
@@ -9567,97 +9568,13 @@ const NUTRIVIDA_PI_7C_PROMEDIOS = [
 ];
 
 function ensureNutriVidaProjectGrades(force) {
-  if (!S || !S.mats) return;
-
-  const currentVer = localStorage.getItem('notas_nutrivida_sync_ver') || '';
-  if (!force && currentVer === NUTRIVIDA_SYNC_VERSION) {
-    let missingAny = false;
-    const matsToCheck = (S.matsList && S.matsList.length) ? S.matsList : Object.keys(S.mats);
-    matsToCheck.forEach(m => {
-      if (isQualitativeMat(m)) return;
-      const mat = S.mats[m];
-      if (!mat || !mat.weeks || !mat.weeks.length) return;
-      const w0 = getWeekName(mat.weeks[0]);
-      if (w0 !== PI_WEEK_NAME) missingAny = true;
-    });
-    if (!missingAny) return;
-  }
-
-  const colDef = {
-    name: PI_COL_NAME,
-    desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA',
-    type: 'PI',
-    cat: 'form',
-    date: '2026-10-02',
-    color: '#d97706'
-  };
-
-  const matsToProcess = (S.matsList && S.matsList.length) ? S.matsList : Object.keys(S.mats);
-
-  matsToProcess.forEach(m => {
-    if (!S.mats[m]) return;
-    const mat = S.mats[m];
-    if (!mat.weeks || !mat.weeks.length) {
-      mat.weeks = [...DEFAULT_WEEKS];
-    }
-    if (!mat.cols) mat.cols = JSON.parse(JSON.stringify(DEFAULT_COLS));
-    if (!mat.grades) mat.grades = {};
-
-    // 1. Limpiar semanas y columnas previas de Nutri-Vida para que quede exactamente una y primerita
-    const cleanWeeks = [];
-    (mat.weeks || []).forEach(w => {
-      const wn = getWeekName(w);
-      if (!wn.toUpperCase().includes('NUTRI-VIDA')) {
-        cleanWeeks.push(w);
-      }
-      if (mat.cols[wn]) {
-        mat.cols[wn] = mat.cols[wn].filter(c => {
-          const cName = (c.name || c.desc || '').toUpperCase();
-          return !cName.includes('NUTRI-VIDA');
-        });
-      }
-    });
-
-    // 2. Colocar PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA como la PRIMERITA semana (antes del primer tema)
-    mat.weeks = [{ name: PI_WEEK_NAME, destreza: 'EGB Media' }, ...cleanWeeks];
-
-    // 3. Crear columna en esta semana inicial
-    mat.cols[PI_WEEK_NAME] = [JSON.parse(JSON.stringify(colDef))];
-
-    // 4. Asegurar que esta semana NO esté colapsada y esté visible
-    if (mat.collapsedWeeks && mat.collapsedWeeks[PI_WEEK_NAME]) {
-      delete mat.collapsedWeeks[PI_WEEK_NAME];
-    }
-    if (S.hiddenCols) {
-      delete S.hiddenCols[`${m}||${PI_WEEK_NAME}||${PI_COL_NAME}`];
-      delete S.hiddenCols[`${m}||${PI_WEEK_NAME}||PROM`];
-    }
-
-    // 5. Asignar color temático cálido ámbar
-    if (!S.weekColors) S.weekColors = {};
-    S.weekColors[m + '||' + PI_WEEK_NAME] = { h: '#d97706', s: '#f59e0b', c: 'rgba(217,119,6,0.08)' };
-
-    // 6. Asignar las notas de promedio oficial del 7mo C
-    const key = PI_WEEK_NAME + '||' + PI_COL_NAME;
-    NUTRIVIDA_PI_7C_PROMEDIOS.forEach((nota, si) => {
-      if (!mat.grades[si]) mat.grades[si] = {};
-      mat.grades[si][key] = nota;
-    });
-  });
-
-  // Asegurar configuración en módulo PI
-  if (S.pi) {
-    if (!S.pi.config) S.pi.config = {};
+  // Desactivado: El Proyecto Interdisciplinar actual ("Pienso, Creo y Actúo con la IA")
+  // se registra dentro del bloque EVALUACIÓN SUMATIVA (30%) al final de las 6 semanas formativas
+  // conforme al Instructivo de Evaluación Estudiantil 2025 (Págs. 15-17, Tabla 9).
+  if (S && S.pi && S.pi.config) {
     S.pi.config.titulo = 'Pienso, Creo y Actúo con la IA: Ciudadanos Digitales Éticos';
     S.pi.config.tema = 'Inteligencia Artificial, Ética y Transformación Digital — Galería-Feria de Ciudadanía Digital';
   }
-
-  try {
-    localStorage.setItem('notas_nutrivida_sync_ver', NUTRIVIDA_SYNC_VERSION);
-  } catch(e) {}
-
-  saveData(false, true);
-  console.log('[Nutri-Vida Sync] Bloque de Proyecto Interdisciplinario insertado de primerito antes del 1er tema en todas las materias.');
 }
 
 // Escala Cualitativa Ministerial (Cívica, Animación a la Lectura, Comportamiento)
@@ -10744,7 +10661,7 @@ function getWeekTitle(w) {
 function getWeekDisplayParts(w, wi) {
   const rawName = getWeekName(w);
   const dest = getWeekDestreza(w);
-  if (/SUMATIV|EXAMEN TRIMESTRAL/i.test(rawName) && !/NUTRI-VIDA/i.test(rawName)) {
+  if (/SUMATIV|EXAMEN TRIMESTRAL|^EXAMEN$/i.test(rawName.trim()) && !/NUTRI-VIDA/i.test(rawName)) {
     return {
       numLabel: 'Evaluación Sumativa (30%)',
       shortNum: '30% SUM.',
@@ -10764,13 +10681,21 @@ function getWeekDisplayParts(w, wi) {
     };
   }
   const semMatch = rawName.match(/^SEM(?:ANA)?\.?\s*(\d+)[:\s-]*(.*)$/i);
-  let num;
-  if (wi !== undefined) {
-    num = wi;
+  let num = 1;
+  const mat = (typeof gm === 'function') ? gm() : null;
+  if (wi !== undefined && mat && Array.isArray(mat.weeks)) {
+    let teachingCount = 0;
+    for (let i = 0; i <= wi && i < mat.weeks.length; i++) {
+      const wn = getWeekName(mat.weeks[i]);
+      if (!/NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO|SUMATIV|EXAMEN TRIMESTRAL|^EXAMEN$/i.test(wn.trim())) {
+        teachingCount++;
+      }
+    }
+    num = teachingCount > 0 ? teachingCount : (wi + 1);
+  } else if (wi !== undefined) {
+    num = wi + 1;
   } else if (semMatch) {
     num = semMatch[1];
-  } else {
-    num = 1;
   }
   let topic = rawName;
   if (semMatch && semMatch[2] && semMatch[2].trim()) {
@@ -10903,6 +10828,7 @@ function initS() {
       ensureMats();
       if (typeof ensureAttendanceData === 'function') ensureAttendanceData();
       if (typeof ensureNutriVidaProjectGrades === 'function') ensureNutriVidaProjectGrades();
+  if (typeof restoreOfficial6Weeks === 'function') restoreOfficial6Weeks(false);
       return;
     } catch(e) {}
   }
@@ -10915,6 +10841,168 @@ function initS() {
     S.mats[m] = { weeks:[...DEFAULT_WEEKS], cols:JSON.parse(JSON.stringify(DEFAULT_COLS)), grades:{} };
     S.students.forEach((_,i) => { S.mats[m].grades[i] = {}; });
   });
+}
+
+
+// ══════════════════════════════════════════════════════
+//  RESPALDO OFICIAL DE LAS 6 SEMANAS FORMATIVAS (1ER TRIMESTRE)
+// ══════════════════════════════════════════════════════
+const OFFICIAL_6WEEKS_BACKUP = {"Artística": {"weeks": [{"destreza": "", "name": "LOS JUEGOS TRADICIONALES"}, {"destreza": "", "name": "LOS JUEGOS TRADICIONALES 2"}, {"destreza": "", "name": "EL CUERPO Y EL GESTO COMO MEDIO DE EXPRESIÓN ARTÍSTICA"}, {"destreza": "", "name": "RECURSOS TECNICOS EN LA FOTOGRAFÍA"}, {"name": "MIS PENSAMIENTOS", "destreza": ""}, {"name": "PORTAESFEROS", "destreza": ""}], "cols": {"LOS JUEGOS TRADICIONALES": [{"color": "#7c3aed", "name": "CONSULTA SOBRE LOS JUEGOS TRADICIONALES", "desc": "CONSULTA SOBRE LOS JUEGOS TRADICIONALES", "type": "T", "date": "2026-10-09"}, {"color": "#2563eb", "desc": "LECCION LOS JUEGOS TRADICONALES", "date": "2026-10-09", "type": "AC", "name": "LECCION LOS JUEGOS TRADICONALES"}], "LOS JUEGOS TRADICIONALES 2": [{"desc": "EXPOSICIÓN", "date": "2026-10-16", "type": "L", "color": "#ea580c", "name": "EXPOSICIÓN"}], "EL CUERPO Y EL GESTO COMO MEDIO DE EXPRESIÓN ARTÍSTICA": [{"color": "#7c3aed", "desc": "DIBUJO", "date": "2026-10-23", "type": "T", "name": "DIBUJO"}, {"name": "CONCEPTO Y ACTIVIDAD", "color": "#2563eb", "type": "AC", "date": "2026-11-06", "desc": "CONCEPTO Y ACTIVIDAD"}], "RECURSOS TECNICOS EN LA FOTOGRAFÍA": [{"color": "#7c3aed", "name": "COPIAR EN UNA HOJA Y APLICAR EN UNA HOJA A3", "desc": "COPIAR EN UNA HOJA Y APLICAR EN UNA HOJA A3", "type": "T", "date": "2026-11-06"}], "MIS PENSAMIENTOS": [{"date": "2026-11-11", "type": "AC", "desc": "DIBUJO CON YO SOY", "name": "DIBUJO CON YO SOY", "color": "#2563eb"}], "PORTAESFEROS": [{"color": "#2563eb", "name": "PORTAESFEROS MANUALIDAD", "desc": "PORTAESFEROS MANUALIDAD", "date": "2026-11-13", "type": "AC"}]}, "colGrades": {"LOS JUEGOS TRADICIONALES||CONSULTA SOBRE LOS JUEGOS TRADICIONALES": ["8.00", "", "8.00", "10.00", "", "8.00", "8.00", "8.00", "8.00", "9.00", "8.00", "8.00", "8.00", "10.00", "8.00", "8.00", "8.00", "10.00", "8.00", "10.00", "8.00", "10.00", "8.00", "8.00", "10.00", "10.00", "10.00", "8.00", "10.00", "8.00", "9.00", "8.00", "8.00", "8.00", "10.00", "8.00", "10.00", "9.00", "10.00", "8.00"], "LOS JUEGOS TRADICIONALES||LECCION LOS JUEGOS TRADICONALES": ["10.00", "", "10.00", "10.00", "", "7.00", "10.00", "10.00", "7.00", "10.00", "10.00", "7.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "7.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00"], "LOS JUEGOS TRADICIONALES 2||EXPOSICIÓN": ["8.00", "", "8.00", "10.00", "", "7.00", "7.00", "7.00", "10.00", "8.00", "7.00", "7.00", "10.00", "8.00", "8.00", "9.00", "9.00", "9.00", "9.00", "8.00", "7.00", "9.00", "7.00", "8.00", "7.00", "9.00", "10.00", "9.00", "8.00", "7.00", "9.00", "7.00", "8.00", "7.00", "10.00", "9.00", "9.00", "7.00", "10.00", "7.00"], "EL CUERPO Y EL GESTO COMO MEDIO DE EXPRESIÓN ARTÍSTICA||DIBUJO": ["7.00", "", "8.00", "8.00", "", "1.00", "7.00", "7.00", "9.00", "8.00", "1.00", "1.00", "10.00", "1.00", "1.00", "8.00", "9.00", "1.00", "1.00", "8.00", "7.00", "10.00", "8.00", "7.00", "10.00", "10.00", "10.00", "9.00", "9.00", "1.00", "8.00", "1.00", "8.00", "8.00", "8.00", "7.00", "1.00", "5.00", "9.00", "7.00"], "EL CUERPO Y EL GESTO COMO MEDIO DE EXPRESIÓN ARTÍSTICA||CONCEPTO Y ACTIVIDAD": ["10.00", "", "7.00", "10.00", "", "1.00", "10.00", "7.00", "8.00", "9.00", "1.00", "8.00", "10.00", "10.00", "1.00", "7.00", "10.00", "1.00", "1.00", "8.00", "7.00", "10.00", "1.00", "1.00", "10.00", "8.00", "10.00", "10.00", "1.00", "1.00", "1.00", "1.00", "10.00", "10.00", "10.00", "7.00", "1.00", "10.00", "7.00", "7.00"], "RECURSOS TECNICOS EN LA FOTOGRAFÍA||COPIAR EN UNA HOJA Y APLICAR EN UNA HOJA A3": ["7.00", "", "8.00", "10.00", "", "1.00", "7.00", "7.00", "10.00", "7.00", "1.00", "1.00", "10.00", "1.00", "1.00", "7.00", "9.00", "1.00", "8.00", "8.00", "10.00", "9.00", "8.00", "9.00", "10.00", "10.00", "10.00", "10.00", "9.00", "1.00", "7.00", "9.00", "8.00", "7.00", "10.00", "1.00", "1.00", "10.00", "7.00", "7.00"], "MIS PENSAMIENTOS||DIBUJO CON YO SOY": ["10.00", "", "10.00", "10.00", "", "10.00", "10.00", "7.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "8.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00"], "PORTAESFEROS||PORTAESFEROS MANUALIDAD": ["10.00", "", "7.00", "8.00", "", "7.00", "7.00", "10.00", "10.00", "8.00", "10.00", "9.00", "10.00", "10.00", "f", "7.00", "9.00", "7.00", "8.00", "10.00", "8.00", "10.00", "10.00", "8.00", "10.00", "10.00", "9.00", "9.00", "10.00", "7.00", "8.00", "8.00", "8.00", "8.00", "10.00", "9.00", "8.00", "10.00", "9.00", "8.00"]}}, "Lengua": {"weeks": [{"name": "ORÍGENES DE LA ESCRITURA", "destreza": "LL.3.1.1."}, {"name": "DISCURSO Y JUICIOS DE VALOR", "destreza": ""}, {"destreza": "", "name": "LEO PARA ACERCARME A LA CIENCIA"}, {"name": "LA NOTA CIENTÍFICA", "destreza": ""}, {"destreza": "", "name": "EL MITO"}, {"destreza": "", "name": "HISTORIETA MITOLÓGICA"}], "cols": {"ORÍGENES DE LA ESCRITURA": [{"desc": "10 PREGUNTAS ORÍGENES Y EVOLUCIÓN DE LA ESCRITURA", "date": "2026-10-05", "type": "T", "color": "#7c3aed", "name": "10 PREGUNTAS ORÍGENES Y EVOLUCIÓN DE LA ESCRITURA"}, {"color": "#7c3aed", "type": "T", "date": "2026-10-05", "desc": "RECORTAR Y PEGAR/DIBUJAR/GLOSARIO", "name": "RECORTAR Y PEGAR/DIBUJAR/GLOSARIO"}, {"color": "#2563eb", "desc": "JUEGO APP/HOJA DE TRABAJO", "date": "2026-10-08", "type": "AC", "name": "JUEGO APP/HOJA DE TRABAJO"}], "DISCURSO Y JUICIOS DE VALOR": [{"color": "#ea580c", "name": "LECCIÓN", "desc": "LECCIÓN", "date": "2026-10-12", "type": "L"}, {"desc": "PREPARAMOS UN DISCURSO ORAL", "date": "2026-10-15", "type": "AC", "color": "#2563eb", "name": "PREPARAMOS UN DISCURSO ORAL"}], "LEO PARA ACERCARME A LA CIENCIA": [{"name": "ANTES Y DESPUES DE LA LECURA BACTERIAS EN MARTE", "desc": "ANTES Y DESPUES DE LA LECURA BACTERIAS EN MARTE", "color": "#7c3aed", "type": "T", "date": "2026-10-19"}, {"name": "ANTES Y DESPUES DE LA LECTURA: EL ASTEROIDE Y DESAPARICIÓN DE LOS DINOSAURIOS", "desc": "ANTES Y DESPUES DE LA LECTURA: EL ASTEROIDE Y DESAPARICIÓN DE LOS DINOSAURIOS", "color": "#2563eb", "date": "2026-10-21", "type": "AC"}], "LA NOTA CIENTÍFICA": [{"date": "2026-10-26", "type": "AC", "desc": "HOJA DE TRABAJO SOBRE LA NOTA CIENTIFICA", "name": "HOJA DE TRABAJO SOBRE LA NOTA CIENTIFICA", "color": "#2563eb"}, {"color": "#7c3aed", "type": "T", "date": "2026-10-26", "desc": "INVESTIGAR/BORRADOR UN TEMA CIENTÍFICO", "name": "INVESTIGAR/BORRADOR UN TEMA CIENTÍFICO"}, {"name": "NOTA CIENTIFICA A LIMPIO", "color": "#2563eb", "date": "2026-10-29", "type": "AC", "desc": "NOTA CIENTIFICA A LIMPIO"}], "EL MITO": [{"desc": "LECTURA 1: LA CREACIÓN DEL MUNDO", "date": "2026-11-05", "type": "L", "color": "#ea580c", "name": "LECTURA 1: LA CREACIÓN DEL MUNDO"}, {"color": "#ea580c", "desc": "LECTURA 2:EL VIENTO Y EL SOL", "date": "2026-11-05", "type": "L", "name": "LECTURA 2:EL VIENTO Y EL SOL"}], "HISTORIETA MITOLÓGICA": [{"desc": "REALIZAR UNA HISTORIETA MITOLÓGICA", "date": "2026-11-11", "type": "AC", "color": "#2563eb", "name": "REALIZAR UNA HISTORIETA MITOLÓGICA"}, {"name": "EN CARTULINA HACER UNA HISTORIETA MITOLÓGICA", "color": "#2563eb", "type": "AC", "date": "2026-11-12", "desc": "EN CARTULINA HACER UNA HISTORIETA MITOLÓGICA"}]}, "colGrades": {"ORÍGENES DE LA ESCRITURA||10 PREGUNTAS ORÍGENES Y EVOLUCIÓN DE LA ESCRITURA": ["8.00", "", "6.00", "7.00", "", "6.00", "9.00", "5.00", "9.00", "5.00", "10.00", "8.00", "9.00", "9.00", "4.00", "9.00", "7.00", "8.00", "7.00", "9.00", "5.00", "10.00", "8.00", "8.00", "8.00", "8.00", "9.00", "10.00", "10.00", "8.00", "7.00", "9.00", "3.00", "2.00", "10.00", "8.00", "8.00", "10.00", "8.00", "7.00"], "ORÍGENES DE LA ESCRITURA||RECORTAR Y PEGAR/DIBUJAR/GLOSARIO": ["10.00", "", "5.00", "7.00", "", "5.00", "10.00", "8.00", "10.00", "5.00", "7.00", "9.00", "10.00", "8.00", "8.00", "10.00", "10.00", "9.00", "10.00", "8.00", "9.00", "10.00", "10.00", "10.00", "9.00", "8.00", "10.00", "10.00", "9.00", "5.00", "7.00", "10.00", "9.00", "9.00", "10.00", "9.00", "9.00", "9.00", "8.00", "7.00"], "ORÍGENES DE LA ESCRITURA||JUEGO APP/HOJA DE TRABAJO": ["6.00", "", "10.00", "10.00", "", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "8.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00"], "DISCURSO Y JUICIOS DE VALOR||LECCIÓN": ["1.00", "", "9.00", "10.00", "", "5.00", "7.00", "6.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "5.00", "10.00", "9.00", "10.00", "8.00", "8.00", "10.00", "10.00", "9.00", "7.00", "10.00", "10.00", "10.00", "10.00", "6.00", "8.00", "9.00", "10.00", "7.00", "10.00", "10.00", "6.00", "10.00", "10.00", "10.00"], "DISCURSO Y JUICIOS DE VALOR||PREPARAMOS UN DISCURSO ORAL": ["8.00", "", "7.00", "10.00", "", "2.00", "7.00", "5.00", "8.00", "7.00", "7.00", "3.00", "8.00", "8.00", "7.00", "8.00", "7.00", "7.00", "8.00", "7.00", "8.00", "10.00", "9.00", "8.00", "8.00", "9.00", "10.00", "9.00", "8.00", "2.00", "7.00", "8.00", "8.00", "7.00", "8.00", "7.00", "8.00", "9.00", "8.00", "8.00"], "LEO PARA ACERCARME A LA CIENCIA||ANTES Y DESPUES DE LA LECURA BACTERIAS EN MARTE": ["9.00", "", "8.00", "10.00", "", "7.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "9.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "5.00", "7.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00"], "LEO PARA ACERCARME A LA CIENCIA||ANTES Y DESPUES DE LA LECTURA: EL ASTEROIDE Y DESAPARICIÓN DE LOS DINOSAURIOS": ["6.00", "", "7.00", "2.00", "", "1.00", "7.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "8.00", "7.00", "10.00", "10.00", "9.00", "9.00", "8.00", "8.00", "10.00", "10.00", "9.00", "3.00", "9.00", "10.00", "10.00", "10.00", "7.00", "8.00", "7.00", "10.00", "1.00", "10.00", "9.00", "5.00", "10.00", "10.00", "10.00"], "LA NOTA CIENTÍFICA||HOJA DE TRABAJO SOBRE LA NOTA CIENTIFICA": ["7.00", "", "7.00", "7.00", "", "7.00", "7.00", "10.00", "8.50", "7.50", "7.00", "8.50", "9.50", "8.00", "7.50", "7.00", "9.00", "8.50", "5.00", "10.00", "9.00", "7.50", "10.00", "6.00", "8.00", "9.00", "8.50", "8.50", "7.00", "7.00", "7.50", "9.00", "9.00", "8.00", "9.00", "7.00", "8.00", "7.00", "9.00", "8.00"], "LA NOTA CIENTÍFICA||INVESTIGAR/BORRADOR UN TEMA CIENTÍFICO": ["10.00", "", "7.00", "10.00", "", "5.00", "7.00", "10.00", "10.00", "10.00", "5.00", "10.00", "10.00", "10.00", "10.00", "6.00", "10.00", "7.00", "10.00", "8.00", "6.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "5.00", "5.00", "10.00", "10.00", "10.00", "10.00", "10.00", "5.00", "10.00", "7.00", "9.00"], "LA NOTA CIENTÍFICA||NOTA CIENTIFICA A LIMPIO": ["10.00", "", "7.00", "10.00", "", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "F", "10.00", "F", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "F", "10.00", "10.00", "10.00", "10.00"], "EL MITO||LECTURA 1: LA CREACIÓN DEL MUNDO": ["10.00", "", "10.00", "10.00", "", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "1.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "8.00", "10.00", "10.00", "10.00", "10.00"], "EL MITO||LECTURA 2:EL VIENTO Y EL SOL": ["8.00", "", "8.00", "8.00", "", "1.00", "10.00", "7.00", "9.00", "10.00", "8.00", "7.00", "10.00", "8.00", "1.00", "7.00", "10.00", "7.00", "6.00", "8.00", "8.00", "9.00", "8.00", "8.00", "8.00", "8.00", "8.00", "8.00", "8.00", "7.00", "10.00", "7.00", "10.00", "8.00", "8.00", "8.00", "7.00", "8.00", "8.00", "8.00"], "HISTORIETA MITOLÓGICA||REALIZAR UNA HISTORIETA MITOLÓGICA": ["10.00", "", "7.00", "9.00", "", "10.00", "10.00", "1.00", "10.00", "8.00", "8.00", "9.00", "10.00", "10.00", "9.00", "10.00", "8.00", "1.00", "8.00", "10.00", "8.00", "10.00", "9.00", "8.00", "8.00", "10.00", "10.00", "10.00", "8.00", "8.00", "9.00", "7.00", "9.00", "10.00", "", "9.00", "8.00", "10.00", "10.00", "10.00"], "HISTORIETA MITOLÓGICA||EN CARTULINA HACER UNA HISTORIETA MITOLÓGICA": ["10.00", "", "9.00", "10.00", "", "7.00", "8.00", "1.00", "9.00", "10.00", "1.00", "9.00", "10.00", "10.00", "9.00", "10.00", "8.00", "7.00", "7.00", "9.00", "10.00", "10.00", "9.00", "9.00", "8.00", "9.00", "10.00", "9.00", "9.00", "1.00", "9.00", "8.00", "9.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00"]}}, "EESS": {"weeks": [{"destreza": "", "name": "ESTRUCTURA GEOLÓGICA DEL ECUADOR"}, {"destreza": "", "name": "IMAGENES SATELITALES/CALENTAMIENTO GLOBAL"}, {"destreza": "", "name": "LA POBLACION ECUATORIANA ES DIVERSA"}, {"name": "EL ESTADO LAICO Y LA REVOLUCION LIBERAL EN EL ECUADOR", "destreza": ""}, {"destreza": "", "name": "EL LAICISMO EN LA SOCIEDAD Y LA MODERNIZACIÓN"}, {"destreza": "", "name": "EL LAICISMO"}], "cols": {"ESTRUCTURA GEOLÓGICA DEL ECUADOR": [{"type": "AC", "date": "2026-10-07", "desc": "MAPA CONCEPTUAL", "color": "#2563eb", "name": "MAPA CONCEPTUAL"}, {"desc": "LECCIÓN", "date": "2026-10-14", "type": "L", "color": "#ea580c", "name": "LECCIÓN"}], "IMAGENES SATELITALES/CALENTAMIENTO GLOBAL": [{"type": "L", "date": "2026-10-14", "color": "#ea580c", "desc": "LECCION IMÁGENES SATELITALES", "name": "LECCION IMÁGENES SATELITALES"}, {"name": "2 MAPAS CONCEPTUALES", "desc": "2 MAPAS CONCEPTUALES", "color": "#2563eb", "type": "AC", "date": "2026-10-16"}, {"name": "LECCIÓN EL CALENTAMIENTO GLOBAL", "desc": "LECCIÓN EL CALENTAMIENTO GLOBAL", "color": "#ea580c", "type": "L", "date": "2026-10-16"}], "LA POBLACION ECUATORIANA ES DIVERSA": [{"name": "MAPA CONCEPTUAL", "color": "#7c3aed", "type": "T", "date": "2026-10-21", "desc": "MAPA CONCEPTUAL"}, {"color": "#ea580c", "desc": "LECCIÓN", "date": "2026-10-21", "type": "L", "name": "LECCIÓN"}], "EL ESTADO LAICO Y LA REVOLUCION LIBERAL EN EL ECUADOR": [{"name": "MAPA CONCEPTUALES DEL TEMA", "color": "#2563eb", "desc": "MAPA CONCEPTUALES DEL TEMA", "date": "2026-10-30", "type": "AC"}, {"name": "EVALUACIÓN EL ESTADO LAICO Y LA REVOLUCION", "color": "#ea580c", "type": "L", "date": "2026-10-30", "desc": "EVALUACIÓN EL ESTADO LAICO Y LA REVOLUCION"}], "EL LAICISMO EN LA SOCIEDAD Y LA MODERNIZACIÓN": [{"name": "MAPA CONCEPTUAL", "color": "#2563eb", "type": "AC", "date": "2026-11-04", "desc": "MAPA CONCEPTUAL"}, {"type": "L", "date": "2026-11-04", "desc": "LECCION", "name": "LECCION", "color": "#ea580c"}], "EL LAICISMO": [{"color": "#2563eb", "name": "MAPA CONCEPTUAL", "desc": "MAPA CONCEPTUAL", "type": "AC", "date": "2026-11-11"}, {"type": "AC", "date": "2026-11-11", "color": "#2563eb", "desc": "CUESTIONARIO", "name": "CUESTIONARIO"}]}, "colGrades": {"ESTRUCTURA GEOLÓGICA DEL ECUADOR||MAPA CONCEPTUAL": ["9.00", "", "8.00", "8.00", "", "9.00", "9.00", "8.00", "9.00", "1.00", "5.00", "2.00", "10.00", "9.00", "", "8.00", "8.00", "8.00", "6.00", "7.00", "8.00", "10.00", "9.00", "5.00", "10.00", "7.00", "9.00", "8.00", "3.00", "10.00", "6.00", "7.00", "9.00", "7.00", "6.00", "10.00", "5.00", "9.00", "8.00", "1.00"], "ESTRUCTURA GEOLÓGICA DEL ECUADOR||LECCIÓN": ["8.00", "", "9.00", "8.00", "", "9.00", "5.00", "7.00", "10.00", "7.00", "7.00", "9.00", "10.00", "9.00", "9.00", "5.00", "8.00", "9.00", "8.00", "8.00", "7.00", "8.00", "10.00", "9.00", "9.00", "9.00", "8.00", "10.00", "10.00", "9.00", "7.00", "9.00", "7.00", "6.00", "10.00", "10.00", "8.00", "9.00", "9.00", "8.00"], "IMAGENES SATELITALES/CALENTAMIENTO GLOBAL||LECCION IMÁGENES SATELITALES": ["2.00", "", "10.00", "7.00", "", "1.00", "7.00", "9.00", "10.00", "7.00", "7.00", "7.00", "10.00", "8.00", "10.00", "6.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "9.00", "1.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00"], "IMAGENES SATELITALES/CALENTAMIENTO GLOBAL||2 MAPAS CONCEPTUALES": ["10.00", "", "10.00", "9.00", "", "5.00", "7.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00"], "IMAGENES SATELITALES/CALENTAMIENTO GLOBAL||LECCIÓN EL CALENTAMIENTO GLOBAL": ["7.00", "", "8.00", "8.00", "", "1.00", "7.00", "6.00", "10.00", "8.00", "8.00", "8.00", "10.00", "1.00", "10.00", "7.00", "9.00", "9.00", "7.00", "10.00", "8.00", "9.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "5.00", "10.00", "8.00", "10.00", "10.00", "8.00", "10.00", "8.00", "9.00"], "LA POBLACION ECUATORIANA ES DIVERSA||MAPA CONCEPTUAL": ["10.00", "", "9.00", "7.00", "", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "8.00", "9.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "8.00", "10.00", "9.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "8.00", "9.00", "10.00", "10.00"], "LA POBLACION ECUATORIANA ES DIVERSA||LECCIÓN": ["10.00", "", "7.00", "7.00", "", "9.00", "7.00", "7.00", "10.00", "5.00", "8.00", "8.00", "9.00", "10.00", "6.00", "4.00", "10.00", "8.00", "1.00", "10.00", "9.00", "9.00", "10.00", "9.00", "9.00", "8.00", "10.00", "10.00", "10.00", "7.00", "7.00", "10.00", "8.00", "10.00", "9.00", "10.00", "6.00", "8.00", "10.00", "9.00"], "EL ESTADO LAICO Y LA REVOLUCION LIBERAL EN EL ECUADOR||MAPA CONCEPTUALES DEL TEMA": ["10.00", "", "9.00", "7.00", "", "10.00", "8.00", "8.00", "10.00", "1.00", "10.00", "10.00", "10.00", "9.00", "10.00", "8.00", "10.00", "9.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "F", "10.00", "10.00", "10.00", "10.00", "F", "10.00", "8.00", "8.00", "7.00", "9.00", "10.00"], "EL ESTADO LAICO Y LA REVOLUCION LIBERAL EN EL ECUADOR||EVALUACIÓN EL ESTADO LAICO Y LA REVOLUCION": ["9.00", "", "1.00", "6.50", "", "1.00", "8.00", "8.00", "9.00", "6.00", "9.00", "8.50", "8.50", "1.00", "6.50", "7.50", "3.50", "7.50", "1.00", "8.00", "6.50", "10.00", "9.50", "2.00", "7.00", "9.50", "10.00", "10.00", "F", "9.00", "5.50", "9.00", "6.50", "F", "10.00", "8.00", "5.00", "10.00", "8.50", "9.00"], "EL LAICISMO EN LA SOCIEDAD Y LA MODERNIZACIÓN||MAPA CONCEPTUAL": ["10.00", "", "9.00", "8.00", "", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "1.00", "8.00", "10.00", "8.00", "8.00", "8.00", "10.00", "10.00", "10.00", "np", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "7.00", "10.00", "10.00", "7.00", "10.00", "8.00", "9.00", "8.00", "9.00", "10.00"], "EL LAICISMO EN LA SOCIEDAD Y LA MODERNIZACIÓN||LECCION": ["7.00", "", "6.00", "1.00", "", "9.00", "7.00", "7.00", "9.00", "9.00", "8.00", "10.00", "10.00", "8.00", "1.00", "8.00", "8.00", "8.00", "9.00", "7.00", "8.00", "10.00", "10.00", "np", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "9.00", "9.00", "10.00", "6.00", "10.00", "8.00", "7.00", "10.00", "10.00", "7.00"], "EL LAICISMO||MAPA CONCEPTUAL": ["9.00", "", "", "8.00", "", "10.00", "10.00", "8.00", "8.00", "10.00", "8.00", "8.00", "10.00", "8.00", "np", "10.00", "np", "8.00", "np", "8.00", "10.00", "8.00", "8.00", "np", "10.00", "8.00", "9.00", "8.00", "8.00", "10.00", "9.00", "8.00", "10.00", "9.00", "10.00", "9.00", "9.00", "9.00", "7.00", "8.00"], "EL LAICISMO||CUESTIONARIO": ["9.00", "", "", "10.00", "", "10.00", "10.00", "7.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "np", "10.00", "np", "9.00", "np", "9.00", "10.00", "10.00", "10.00", "np", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "1.00", "10.00"]}}, "CCNN": {"weeks": [{"destreza": "", "name": "LA NUTRICIÓN DE LAS PLANTAS"}, {"name": "LOS ECOSISTEMAS", "destreza": ""}, {"destreza": "", "name": "LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS"}, {"destreza": "", "name": "ÁREAS NATURALES PROTEGIDAS DEL ECUADOR"}, {"destreza": "", "name": "ADAPTACION DE LOS SERES VIVOS AL AMBIENTE"}, {"name": "CAUSAS Y EFECTOS DE LA EXTINCIÒN DE ESPECIES EN EL ECOSISTEMA", "destreza": ""}], "cols": {"LA NUTRICIÓN DE LAS PLANTAS": [{"desc": "2 MAPAS CONCEPTUALES", "type": "AC", "date": "2026-10-08", "color": "#2563eb", "name": "2 MAPAS CONCEPTUALES"}, {"name": "LECCIÓN", "color": "#7c3aed", "date": "2026-10-08", "type": "T", "desc": "LECCIÓN"}], "LOS ECOSISTEMAS": [{"date": "2026-10-13", "type": "L", "desc": "LECCIÓN LOS ECOSISTEMAS", "name": "LECCIÓN LOS ECOSISTEMAS", "color": "#ea580c"}, {"date": "2026-10-15", "type": "AC", "desc": "2 MAPAS CONCEPTUALES", "color": "#2563eb", "name": "2 MAPAS CONCEPTUALES"}, {"name": "LECCIÓN  INTERACCIONES AL INTERIOR DEL ECOSISTEMA", "desc": "LECCIÓN  INTERACCIONES AL INTERIOR DEL ECOSISTEMA", "color": "#ea580c", "type": "L", "date": "2026-10-22"}], "LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS": [{"desc": "LECCIÒN LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS", "type": "L", "date": "2026-10-20", "color": "#ea580c", "name": "LECCIÒN LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS"}, {"color": "#2563eb", "type": "AC", "date": "2026-10-22", "desc": "2 MAPAS CONCEPTUALES", "name": "2 MAPAS CONCEPTUALES"}], "ÁREAS NATURALES PROTEGIDAS DEL ECUADOR": [{"type": "AC", "date": "2026-10-27", "desc": "2 MAPAS CONCEPTUALES", "name": "2 MAPAS CONCEPTUALES", "color": "#2563eb"}, {"type": "L", "date": "2026-10-27", "desc": "LECCIÓN ÁREAS PROTEGIDAS", "color": "#ea580c", "name": "LECCIÓN ÁREAS PROTEGIDAS"}], "ADAPTACION DE LOS SERES VIVOS AL AMBIENTE": [{"color": "#2563eb", "name": "MAPA CONCEPTUAL", "desc": "MAPA CONCEPTUAL", "date": "2026-11-05", "type": "AC"}, {"type": "L", "date": "2026-11-05", "desc": "HOJA DE TRABAJO", "name": "HOJA DE TRABAJO", "color": "#ea580c"}], "CAUSAS Y EFECTOS DE LA EXTINCIÒN DE ESPECIES EN EL ECOSISTEMA": [{"name": "2 INFORMATIVOS:CAUSAS Y EFECTOS DE LA EXTINCIÒN/LA CAPA DE OZONO", "desc": "2 INFORMATIVOS:CAUSAS Y EFECTOS DE LA EXTINCIÒN/LA CAPA DE OZONO", "color": "#2563eb", "type": "AC", "date": "2026-11-12"}, {"name": "HOJA DE TRABAJO:CUIDEMOS LA VIDA", "color": "#ea580c", "date": "2026-11-12", "type": "L", "desc": "HOJA DE TRABAJO:CUIDEMOS LA VIDA"}]}, "colGrades": {"LA NUTRICIÓN DE LAS PLANTAS||2 MAPAS CONCEPTUALES": ["6.00", "", "9.00", "8.00", "", "8.50", "7.00", "10.00", "10.00", "5.00", "8.50", "5.00", "10.00", "10.00", "10.00", "10.00", "9.50", "7.00", "8.50", "10.00", "9.00", "10.00", "9.00", "4.00", "10.00", "10.00", "10.00", "10.00", "10.00", "6.50", "6.50", "8.50", "8.00", "8.50", "10.00", "9.50", "6.50", "10.00", "9.00", "3.50"], "LA NUTRICIÓN DE LAS PLANTAS||LECCIÓN": ["1.00", "", "5.00", "8.00", "", "8.00", "7.00", "1.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "6.00", "8.00", "9.00", "1.00", "8.00", "9.00", "10.00", "10.00", "10.00", "8.00", "9.00", "10.00", "10.00", "9.00", "8.00", "10.00", "10.00", "10.00", "10.00", "6.00", "10.00", "9.00", "8.00", "9.00", "10.00", "7.00"], "LOS ECOSISTEMAS||LECCIÓN LOS ECOSISTEMAS": ["1.00", "", "4.00", "10.00", "", "7.00", "8.00", "8.00", "9.00", "7.00", "10.00", "10.00", "10.00", "8.00", "9.00", "9.00", "8.00", "10.00", "9.00", "9.00", "7.00", "10.00", "10.00", "9.00", "9.00", "8.00", "10.00", "9.00", "10.00", "9.00", "7.00", "7.00", "10.00", "7.00", "9.00", "10.00", "10.00", "9.00", "8.00", "10.00"], "LOS ECOSISTEMAS||2 MAPAS CONCEPTUALES": ["5.00", "", "7.00", "7.00", "", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "5.00", "10.00", "10.00", "5.00", "7.00", "10.00", "6.00", "7.00", "9.00", "8.00", "10.00", "9.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "F", "6.00", "10.00", "10.00", "10.00", "10.00", "8.00", "10.00", "8.00", "9.00", "9.00"], "LOS ECOSISTEMAS||LECCIÓN  INTERACCIONES AL INTERIOR DEL ECOSISTEMA": ["1.00", "", "10.00", "9.00", "", "10.00", "7.00", "7.00", "10.00", "1.00", "1.00", "10.00", "10.00", "1.00", "8.00", "7.00", "8.00", "8.00", "7.00", "8.00", "7.00", "9.00", "9.00", "7.00", "10.00", "8.00", "10.00", "9.00", "9.00", "F", "8.00", "7.00", "8.00", "9.00", "10.00", "7.00", "8.00", "8.00", "10.00", "1.00"], "LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS||LECCIÒN LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS": ["6.00", "", "8.00", "8.00", "", "9.00", "7.00", "7.00", "9.00", "8.00", "8.00", "7.00", "9.00", "10.00", "9.00", "3.00", "8.00", "10.00", "6.00", "9.00", "7.00", "8.00", "9.00", "5.00", "6.00", "7.00", "10.00", "9.00", "8.00", "9.00", "2.00", "5.00", "9.00", "4.00", "10.00", "8.00", "7.00", "9.00", "10.00", "5.00"], "LA BIODIVERSIDAD EN NUESTROS ECOSISTEMAS||2 MAPAS CONCEPTUALES": ["8.00", "", "8.00", "9.00", "", "10.00", "7.00", "8.00", "10.00", "6.00", "9.00", "7.00", "10.00", "10.00", "10.00", "6.00", "9.00", "8.00", "8.00", "9.00", "8.00", "10.00", "10.00", "8.00", "9.00", "10.00", "10.00", "10.00", "9.00", "10.00", "8.00", "10.00", "10.00", "9.00", "10.00", "8.00", "7.00", "8.00", "9.00", "8.00"], "ÁREAS NATURALES PROTEGIDAS DEL ECUADOR||2 MAPAS CONCEPTUALES": ["10.00", "", "9.00", "9.00", "", "10.00", "8.00", "8.00", "10.00", "9.00", "10.00", "9.00", "10.00", "9.00", "9.00", "9.00", "10.00", "8.00", "9.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "8.00", "9.00", "10.00", "9.00", "10.00", "8.00", "10.00", "8.00", "8.00", "9.00", "8.00", "9.00"], "ÁREAS NATURALES PROTEGIDAS DEL ECUADOR||LECCIÓN ÁREAS PROTEGIDAS": ["10.00", "", "9.00", "10.00", "", "10.00", "8.00", "8.00", "10.00", "6.00", "9.00", "9.00", "10.00", "9.00", "9.00", "10.00", "7.00", "10.00", "6.00", "9.00", "6.00", "10.00", "10.00", "7.00", "8.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "6.00", "10.00", "8.00", "10.00", "8.00", "10.00", "10.00", "10.00", "10.00"], "ADAPTACION DE LOS SERES VIVOS AL AMBIENTE||MAPA CONCEPTUAL": ["10.00", "", "10.00", "9.00", "", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "7.00", "9.00", "8.00", "10.00", "10.00", "10.00", "1.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "9.00", "9.00", "10.00"], "ADAPTACION DE LOS SERES VIVOS AL AMBIENTE||HOJA DE TRABAJO": ["9.00", "", "7.00", "7.00", "", "1.00", "7.00", "1.00", "10.00", "9.00", "10.00", "7.00", "10.00", "10.00", "1.00", "1.00", "10.00", "1.00", "1.00", "9.00", "9.00", "10.00", "10.00", "7.00", "9.00", "8.00", "10.00", "10.00", "9.00", "1.00", "8.00", "1.00", "4.00", "7.00", "10.00", "9.00", "1.00", "10.00", "3.00", "10.00"], "CAUSAS Y EFECTOS DE LA EXTINCIÒN DE ESPECIES EN EL ECOSISTEMA||2 INFORMATIVOS:CAUSAS Y EFECTOS DE LA EXTINCIÒN/LA CAPA DE OZONO": ["10.00", "", "8.00", "8.00", "", "1.00", "10.00", "7.00", "10.00", "9.00", "1.00", "7.00", "10.00", "9.00", "7.00", "7.00", "10.00", "1.00", "7.00", "8.00", "9.00", "10.00", "8.00", "8.00", "9.00", "8.00", "10.00", "10.00", "8.00", "1.00", "7.00", "7.00", "7.00", "8.00", "10.00", "8.00", "9.00", "8.00", "7.00", "9.00"], "CAUSAS Y EFECTOS DE LA EXTINCIÒN DE ESPECIES EN EL ECOSISTEMA||HOJA DE TRABAJO:CUIDEMOS LA VIDA": ["7.00", "", "7.00", "8.00", "", "1.00", "10.00", "10.00", "10.00", "9.00", "1.00", "1.00", "10.00", "9.00", "8.00", "7.00", "10.00", "1.00", "7.00", "8.00", "8.00", "10.00", "10.00", "7.00", "9.00", "8.00", "10.00", "10.00", "1.00", "1.00", "8.00", "1.00", "1.00", "6.00", "9.00", "10.00", "10.00", "10.00", "8.00", "10.00"]}}, "Matemáticas": {"weeks": [{"destreza": "", "name": "SUCESIONES CRECIENTES Y DECRECIENTES"}, {"name": "OPERACIONES CON NUMEROS NATURALES", "destreza": ""}, {"destreza": "", "name": "OPERACIONES CON NUMEROS DECIMALES"}, {"destreza": "", "name": "OPERACIONES COMBINADAS"}, {"name": "LA POTENCIACIÓN", "destreza": ""}, {"destreza": "", "name": "POTENCIACIÓN: FRACCIONES Y DECIMALES"}], "cols": {"SUCESIONES CRECIENTES Y DECRECIENTES": [{"color": "#7c3aed", "name": "FORMAR 5 SUCESICIONES CRECIENTES  Y 5 DECRECIENTES", "desc": "FORMAR 5 SUCESICIONES CRECIENTES  Y 5 DECRECIENTES", "date": "2026-10-05", "type": "T"}, {"desc": "TALLER DE SUCESIONES Y PATRONES", "date": "2026-10-06", "type": "T", "color": "#7c3aed", "name": "TALLER DE SUCESIONES Y PATRONES"}, {"color": "#2563eb", "date": "2026-10-07", "type": "AC", "desc": "TALLER DE SUCESIONES Y PATRONES 2", "name": "TALLER DE SUCESIONES Y PATRONES 2"}], "OPERACIONES CON NUMEROS NATURALES": [{"date": "2026-10-14", "type": "T", "desc": "5 EJEMPLOS CON CADA PROPIEDAD + - X Y DIVISIÓN", "color": "#7c3aed", "name": "5 EJEMPLOS CON CADA PROPIEDAD + - X Y DIVISIÓN"}, {"name": "OPERACIONES CON NUMEROS NATURALES", "date": "2026-10-14", "type": "T", "desc": "OPERACIONES CON NUMEROS NATURALES", "color": "#7c3aed"}, {"desc": "OPERACIONES CON NÚMEROS NATURALES", "type": "T", "date": "2026-10-16", "color": "#7c3aed", "name": "OPERACIONES CON NÚMEROS NATURALES"}], "OPERACIONES CON NUMEROS DECIMALES": [{"name": "SUMA Y RESTAS DECIMALES", "color": "#7c3aed", "type": "T", "date": "2026-10-19", "desc": "SUMA Y RESTAS DECIMALES"}, {"date": "2026-10-20", "type": "T", "color": "#7c3aed", "desc": "MULTIPLICACIÓN Y DIVISION CON DECIMAL", "name": "MULTIPLICACIÓN Y DIVISION CON DECIMAL"}, {"color": "#ea580c", "name": "LECCIÓN OPERACIONES DECIMALES", "desc": "LECCIÓN OPERACIONES DECIMALES", "date": "2026-10-23", "type": "L"}], "OPERACIONES COMBINADAS": [{"name": "PROPIEDAD DISTRIBUTIVA", "desc": "PROPIEDAD DISTRIBUTIVA", "date": "2026-10-26", "color": "#7c3aed", "type": "T"}, {"desc": "TALLER OPERACIONES COMBINADAS", "date": "2026-10-27", "type": "AC", "color": "#2563eb", "name": "TALLER OPERACIONES COMBINADAS"}], "LA POTENCIACIÓN": [{"type": "AC", "date": "2026-11-04", "desc": "TALLER", "name": "TALLER", "color": "#2563eb"}, {"color": "#ea580c", "name": "EVALUACION FORMATIVA", "desc": "EVALUACION FORMATIVA", "date": "2026-11-06", "type": "L"}], "POTENCIACIÓN: FRACCIONES Y DECIMALES": [{"name": "EJERCICIOS DE POTENCIACIÓN", "color": "#2563eb", "desc": "EJERCICIOS DE POTENCIACIÓN", "date": "2026-11-09", "type": "AC"}, {"color": "#ea580c", "name": "EJERCICIOS", "desc": "EJERCICIOS", "type": "L", "date": "2026-11-10"}]}, "colGrades": {"SUCESIONES CRECIENTES Y DECRECIENTES||FORMAR 5 SUCESICIONES CRECIENTES  Y 5 DECRECIENTES": ["8.00", "", "8.00", "7.00", "", "6.90", "7.00", "7.00", "8.00", "1.00", "7.00", "10.00", "10.00", "10.00", "1.00", "7.00", "8.00", "1.00", "10.00", "8.00", "10.00", "10.00", "9.00", "8.00", "10.00", "10.00", "10.00", "8.00", "10.00", "6.00", "5.00", "9.00", "10.00", "7.00", "8.00", "7.00", "7.30", "8.00", "8.00", "5.00"], "SUCESIONES CRECIENTES Y DECRECIENTES||TALLER DE SUCESIONES Y PATRONES": ["7.00", "", "8.00", "7.00", "", "7.00", "7.00", "7.00", "10.00", "7.00", "7.00", "1.00", "8.50", "8.00", "8.00", "9.00", "7.00", "7.00", "10.00", "10.00", "7.00", "10.00", "9.00", "10.00", "1.00", "9.00", "10.00", "9.00", "8.00", "6.00", "5.00", "9.00", "1.00", "8.00", "8.00", "8.00", "7.00", "8.00", "9.00", "1.00"], "SUCESIONES CRECIENTES Y DECRECIENTES||TALLER DE SUCESIONES Y PATRONES 2": ["9.00", "", "7.00", "10.00", "", "6.90", "9.00", "9.00", "9.00", "7.00", "8.00", "10.00", "9.00", "7.00", "9.00", "10.00", "7.00", "10.00", "7.00", "10.00", "8.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "8.00", "7.00", "8.00", "8.00", "9.00", "8.00", "10.00", "7.00", "9.00", "8.00", "10.00", "7.00"], "OPERACIONES CON NUMEROS NATURALES||5 EJEMPLOS CON CADA PROPIEDAD + - X Y DIVISIÓN": ["1.00", "", "8.00", "9.00", "", "6.90", "7.00", "7.00", "10.00", "8.00", "7.00", "10.00", "10.00", "5.00", "1.00", "10.00", "9.00", "8.00", "6.00", "10.00", "6.18", "10.00", "10.00", "5.00", "8.00", "10.00", "10.00", "10.00", "10.00", "1.00", "5.00", "7.00", "5.00", "5.00", "10.00", "5.00", "8.00", "9.00", "9.00", "6.00"], "OPERACIONES CON NUMEROS NATURALES||OPERACIONES CON NUMEROS NATURALES": ["7.00", "", "8.00", "7.00", "", "6.90", "7.00", "7.00", "10.00", "9.00", "7.00", "9.00", "10.00", "8.00", "1.00", "7.00", "9.00", "8.00", "7.00", "7.00", "6.18", "10.00", "8.00", "8.00", "7.00", "7.00", "10.00", "7.00", "10.00", "9.00", "7.00", "9.00", "1.00", "2.00", "10.00", "7.00", "7.30", "7.00", "10.00", "10.00"], "OPERACIONES CON NUMEROS NATURALES||OPERACIONES CON NÚMEROS NATURALES": ["1.00", "", "8.00", "8.00", "", "7.00", "7.00", "7.00", "10.00", "6.00", "7.00", "8.00", "9.00", "6.00", "7.00", "7.00", "7.00", "7.00", "1.00", "7.00", "6.18", "7.00", "10.00", "1.00", "8.00", "6.00", "7.00", "8.00", "10.00", "7.00", "5.00", "1.00", "6.00", "10.00", "9.00", "7.00", "7.30", "8.00", "7.00", "2.00"], "OPERACIONES CON NUMEROS DECIMALES||SUMA Y RESTAS DECIMALES": ["8.00", "", "8.00", "7.00", "", "7.00", "8.00", "8.00", "10.00", "8.00", "10.00", "10.00", "10.00", "8.00", "7.00", "9.00", "10.00", "10.00", "9.00", "8.00", "6.18", "10.00", "10.00", "8.00", "10.00", "9.00", "10.00", "10.00", "8.00", "9.00", "8.00", "9.00", "8.00", "7.00", "10.00", "9.00", "7.30", "8.00", "8.00", "10.00"], "OPERACIONES CON NUMEROS DECIMALES||MULTIPLICACIÓN Y DIVISION CON DECIMAL": ["9.00", "", "8.00", "7.00", "", "7.00", "7.00", "10.00", "10.00", "8.00", "8.00", "8.00", "10.00", "9.00", "8.00", "10.00", "10.00", "9.00", "9.00", "9.00", "10.00", "10.00", "10.00", "7.00", "6.00", "9.00", "10.00", "10.00", "8.00", "8.00", "9.00", "10.00", "8.00", "7.00", "10.00", "10.00", "7.00", "10.00", "8.00", "10.00"], "OPERACIONES CON NUMEROS DECIMALES||LECCIÓN OPERACIONES DECIMALES": ["2.00", "", "7.00", "7.00", "", "6.90", "7.00", "7.00", "10.00", "7.00", "7.00", "3.75", "8.00", "7.00", "3.75", "7.00", "8.00", "6.50", "7.00", "8.00", "5.00", "9.50", "8.50", "7.00", "7.25", "8.00", "9.50", "9.00", "7.00", "1.00", "8.00", "7.00", "8.00", "7.00", "10.00", "7.00", "7.30", "8.00", "8.00", "8.00"], "OPERACIONES COMBINADAS||PROPIEDAD DISTRIBUTIVA": ["10.00", "", "7.00", "10.00", "", "10.00", "7.00", "10.00", "10.00", "8.00", "9.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "9.00", "10.00", "10.00", "10.00", "10.00", "9.00", "10.00", "10.00", "10.00"], "OPERACIONES COMBINADAS||TALLER OPERACIONES COMBINADAS": ["9.00", "", "7.00", "1.00", "", "6.90", "7.00", "7.00", "10.00", "7.00", "10.00", "3.00", "9.00", "8.00", "8.00", "7.00", "8.00", "10.00", "4.00", "7.00", "8.00", "8.00", "9.00", "6.00", "10.00", "8.00", "10.00", "10.00", "10.00", "5.00", "5.00", "3.00", "10.00", "7.00", "9.00", "8.00", "7.30", "9.00", "7.00", "10.00"], "LA POTENCIACIÓN||TALLER": ["10.00", "", "9.00", "10.00", "", "8.00", "7.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "8.00", "6.00", "7.00", "10.00", "10.00", "10.00", "7.00", "10.00", "10.00", "10.00", "10.00", "8.00", "8.00", "10.00", "10.00", "10.00", "10.00", "7.00", "9.00", "10.00", "8.00", "10.00", "10.00", "9.00", "1.00", "10.00", "10.00"], "LA POTENCIACIÓN||EVALUACION FORMATIVA": ["8.00", "", "7.00", "1.00", "", "7.00", "7.00", "7.00", "10.00", "9.00", "8.00", "9.00", "9.00", "8.00", "8.00", "7.00", "9.00", "10.00", "9.00", "9.00", "6.18", "10.00", "10.00", "8.00", "9.00", "10.00", "10.00", "10.00", "10.00", "10.00", "9.00", "9.00", "7.00", "9.00", "10.00", "9.00", "9.00", "1.00", "10.00", "7.00"], "POTENCIACIÓN: FRACCIONES Y DECIMALES||EJERCICIOS DE POTENCIACIÓN": ["8.00", "", "7.00", "10.00", "", "9.00", "7.00", "7.00", "9.00", "10.00", "9.00", "6.00", "10.00", "7.00", "7.00", "7.00", "10.00", "1.00", "6.00", "10.00", "9.00", "8.00", "10.00", "8.00", "5.00", "7.00", "9.00", "9.00", "7.00", "9.00", "6.00", "7.00", "9.00", "", "10.00", "9.00", "8.00", "", "10.00", "9.00"], "POTENCIACIÓN: FRACCIONES Y DECIMALES||EJERCICIOS": ["10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00", "10.00"]}}};
+
+function restoreOfficial6Weeks(manual) {
+  if (!S || !S.mats) return false;
+  if (manual && typeof histPushSnapshot === 'function') {
+    histPushSnapshot('Restaurar Semanas 1 a 6');
+  }
+  const firstRunKey = 'notas_restore_sem6_v135';
+  const isFirstAutoFix = !localStorage.getItem(firstRunKey);
+  let changed = false;
+
+  Object.keys(OFFICIAL_6WEEKS_BACKUP).forEach(bMat => {
+    const bData = OFFICIAL_6WEEKS_BACKUP[bMat];
+    let targetKey = S.mats[bMat] ? bMat : (typeof findMatKey === 'function' ? findMatKey(bMat) : null);
+    if (!targetKey || !S.mats[targetKey]) return;
+    const mat = S.mats[targetKey];
+    if (!Array.isArray(mat.weeks)) mat.weeks = [];
+    if (!mat.cols) mat.cols = {};
+    if (!mat.grades) mat.grades = {};
+
+    // 1. Asegurar semana EVALUACIÓN SUMATIVA
+    let sumWeekObj = mat.weeks.find(w => /EVALUACI[ÓO]N SUMATIVA/i.test(getWeekName(w)));
+    let sumWName = sumWeekObj ? getWeekName(sumWeekObj) : 'EVALUACIÓN SUMATIVA';
+    if (!sumWeekObj) {
+      sumWeekObj = { name: 'EVALUACIÓN SUMATIVA', destreza: '30% (Proyecto + Ev. Sumativa)' };
+      mat.weeks.push(sumWeekObj);
+      changed = true;
+    }
+    if (!Array.isArray(mat.cols[sumWName])) {
+      mat.cols[sumWName] = [
+        { name: 'PI', desc: 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA', type: 'PI', cat: 'sum', date: '', color: '#d97706' },
+        { name: 'EV', desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL', type: 'PS', cat: 'sum', date: '', color: '#16a34a' }
+      ];
+      changed = true;
+    }
+    let evCol = mat.cols[sumWName].find(c => c.type === 'PS' || c.type === 'EX' || /\bEV\b|SUMATIV|EXAMEN/i.test((c.name||'')+' '+(c.desc||'')));
+    if (!evCol) {
+      evCol = { name: 'EV', desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL', type: 'PS', cat: 'sum', date: '', color: '#16a34a' };
+      mat.cols[sumWName].push(evCol);
+      changed = true;
+    }
+
+    // 2. Si existe una semana suelta llamada EXAMEN o EXAMEN TRIMESTRAL, trasladar sus notas a EVALUACIÓN SUMATIVA||EV y eliminar la semana duplicada
+    for (let i = mat.weeks.length - 1; i >= 0; i--) {
+      const wn = getWeekName(mat.weeks[i]);
+      if (/^EXAMEN(\s+TRIMESTRAL)?$/i.test(wn.trim()) && wn !== sumWName) {
+        const exCols = mat.cols[wn] || [];
+        exCols.forEach(ec => {
+          const oldK = wn + '||' + ec.name;
+          const newK = sumWName + '||' + evCol.name;
+          Object.keys(mat.grades).forEach(si => {
+            const val = mat.grades[si]?.[oldK];
+            if (val !== undefined && val !== '') {
+              if (!mat.grades[si][newK]) {
+                mat.grades[si][newK] = val;
+              }
+              delete mat.grades[si][oldK];
+            }
+          });
+        });
+        mat.weeks.splice(i, 1);
+        delete mat.cols[wn];
+        changed = true;
+      }
+    }
+
+    // 3. Eliminar semana obsoleta PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA de la posición 0 (el proyecto va en EVALUACIÓN SUMATIVA 30%)
+    for (let i = mat.weeks.length - 1; i >= 0; i--) {
+      const wn = getWeekName(mat.weeks[i]);
+      if (/NUTRI-VIDA/i.test(wn)) {
+        mat.weeks.splice(i, 1);
+        delete mat.cols[wn];
+        changed = true;
+      }
+    }
+
+    // 4. Restaurar las 6 semanas oficiales de clase (Semana 1 a Semana 6) si falta alguna o sus columnas/notas
+    const officialWeekNames = bData.weeks.map(w => getWeekName(w));
+    const currentWeekNames = mat.weeks.map(w => getWeekName(w));
+    const missingAnyOfficialWeek = officialWeekNames.some(own => !currentWeekNames.includes(own));
+
+    if (missingAnyOfficialWeek || manual || isFirstAutoFix) {
+      // Conservar semanas adicionales personalizadas que no sean las 6 oficiales ni EVALUACIÓN SUMATIVA
+      const extraTeachingWeeks = mat.weeks.filter(w => {
+        const wn = getWeekName(w);
+        return !officialWeekNames.includes(wn) && wn !== sumWName && !/SUMATIV|^EXAMEN/i.test(wn.trim());
+      });
+      const restoredWeeks = bData.weeks.map(bw => {
+        const bwName = getWeekName(bw);
+        const existingW = mat.weeks.find(cw => getWeekName(cw) === bwName);
+        return existingW || JSON.parse(JSON.stringify(bw));
+      });
+      mat.weeks = [...restoredWeeks, ...extraTeachingWeeks, sumWeekObj];
+      changed = true;
+    }
+
+    // Restaurar columnas y notas de las 6 semanas oficiales
+    officialWeekNames.forEach((own, wIdx) => {
+      const bCols = bData.cols[own] || [];
+      if (!Array.isArray(mat.cols[own]) || mat.cols[own].length === 0) {
+        mat.cols[own] = JSON.parse(JSON.stringify(bCols));
+        changed = true;
+      } else {
+        bCols.forEach(bc => {
+          if (!mat.cols[own].some(cc => cc.name === bc.name)) {
+            mat.cols[own].push(JSON.parse(JSON.stringify(bc)));
+            changed = true;
+          }
+        });
+      }
+
+      // Restaurar calificaciones de cada columna oficial si faltan (o si es restauración manual/primera vez)
+      bCols.forEach(bc => {
+        const key = own + '||' + bc.name;
+        const arr = bData.colGrades[key] || [];
+        arr.forEach((val, si) => {
+          if (val !== undefined && val !== '') {
+            if (!mat.grades[si]) mat.grades[si] = {};
+            const curVal = mat.grades[si][key];
+            if (curVal === undefined || curVal === '' || manual) {
+              if (curVal !== val) {
+                mat.grades[si][key] = val;
+                changed = true;
+              }
+            }
+          }
+        });
+      });
+
+      // Desplegar Semana 6 para que el docente vea inmediatamente su información restaurada
+      if (wIdx === 5 && (manual || isFirstAutoFix) && mat.collapsedWeeks && mat.collapsedWeeks[own]) {
+        delete mat.collapsedWeeks[own];
+        changed = true;
+      }
+    });
+  });
+
+  if (isFirstAutoFix) {
+    try { localStorage.setItem(firstRunKey, '1'); } catch (e) {}
+  }
+
+  if (changed) {
+    setTimeout(() => {
+      const prevSync = _isRemoteSyncing;
+      _isRemoteSyncing = false;
+      saveData(false, true);
+      _isRemoteSyncing = prevSync;
+    }, 450);
+  }
+
+  if (manual) {
+    render();
+    saveData(true);
+    toast('✅ ¡Semanas 1 a 6 (incluida la Semana 6 completa) y sus calificaciones restauradas con éxito!', '#16a34a');
+  }
+  return changed;
 }
 
 function ensureMats() {
@@ -12140,38 +12228,135 @@ function nav(e, inp) {
 }
 
 // ══════════════════════════════════════════════════════
-//  HISTORIAL UNDO / REDO
+//  HISTORIAL UNDO / REDO (CELDAS + SEMANAS + COLUMNAS + PEGADO + CTRL+Z)
 // ══════════════════════════════════════════════════════
 const HIST = { stack: [], future: [] };
 
 function histPush(si, week, col, prevVal, prevRec) {
-  HIST.stack.push({ si, week, col, prevVal, prevRec, matName: curMatName() });
+  HIST.stack.push({ type: 'cell', si, week, col, prevVal, prevRec, matName: curMatName(), label: `Nota de ${(S.students[si]||'').split(' ')[0]} en ${col}` });
+  if (HIST.stack.length > 35) HIST.stack.shift();
   HIST.future = [];
   updateUndoButtons();
 }
+
+function histPushSnapshot(label) {
+  try {
+    const mName = curMatName();
+    const mat = S.mats && S.mats[mName];
+    if (!mat) return;
+    HIST.stack.push({
+      type: 'snapshot',
+      matName: mName,
+      label: label || 'Cambio en tabla',
+      matClone: JSON.parse(JSON.stringify(mat)),
+      weekColorsClone: JSON.parse(JSON.stringify(S.weekColors || {})),
+      hiddenColsClone: JSON.parse(JSON.stringify(S.hiddenCols || {})),
+      recoveredClone: JSON.parse(JSON.stringify(S.recovered || {}))
+    });
+    if (HIST.stack.length > 25) HIST.stack.shift();
+    HIST.future = [];
+    updateUndoButtons();
+  } catch (e) {}
+}
+
 function histUndo() {
-  if (!HIST.stack.length) return;
+  if (!HIST.stack.length) {
+    toast('ℹ️ No hay cambios recientes para deshacer. Puedes usar "🔄 Restaurar Sem. 1-6" si borraste una semana.', '#2563eb');
+    return;
+  }
   const h = HIST.stack.pop();
+  if (h.type === 'snapshot') {
+    const currentMat = S.mats[h.matName] ? JSON.parse(JSON.stringify(S.mats[h.matName])) : null;
+    HIST.future.push({
+      type: 'snapshot',
+      matName: h.matName,
+      label: h.label,
+      matClone: currentMat,
+      weekColorsClone: JSON.parse(JSON.stringify(S.weekColors || {})),
+      hiddenColsClone: JSON.parse(JSON.stringify(S.hiddenCols || {})),
+      recoveredClone: JSON.parse(JSON.stringify(S.recovered || {}))
+    });
+    S.mats[h.matName] = h.matClone;
+    if (h.weekColorsClone) S.weekColors = h.weekColorsClone;
+    if (h.hiddenColsClone) S.hiddenCols = h.hiddenColsClone;
+    if (h.recoveredClone) S.recovered = h.recoveredClone;
+    saveData(); render(); updateUndoButtons();
+    toast(`↩️ Deshecho: ${h.label}`, '#2563eb');
+    return;
+  }
   const mat = S.mats[h.matName];
   if (!mat) return;
-  HIST.future.push({ si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName });
+  HIST.future.push({ type: 'cell', si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName, label: h.label });
+  if (!mat.grades[h.si]) mat.grades[h.si] = {};
   if (h.prevVal === undefined) delete mat.grades[h.si][h.week+'||'+h.col];
   else mat.grades[h.si][h.week+'||'+h.col] = String(h.prevVal);
   saveData(); render(); updateUndoButtons();
+  toast(`↩️ Deshecho: ${h.label || h.col}`, '#2563eb');
 }
+
 function histRedo() {
   if (!HIST.future.length) return;
   const h = HIST.future.pop();
+  if (h.type === 'snapshot') {
+    const currentMat = S.mats[h.matName] ? JSON.parse(JSON.stringify(S.mats[h.matName])) : null;
+    HIST.stack.push({
+      type: 'snapshot',
+      matName: h.matName,
+      label: h.label,
+      matClone: currentMat,
+      weekColorsClone: JSON.parse(JSON.stringify(S.weekColors || {})),
+      hiddenColsClone: JSON.parse(JSON.stringify(S.hiddenCols || {})),
+      recoveredClone: JSON.parse(JSON.stringify(S.recovered || {}))
+    });
+    S.mats[h.matName] = h.matClone;
+    if (h.weekColorsClone) S.weekColors = h.weekColorsClone;
+    if (h.hiddenColsClone) S.hiddenCols = h.hiddenColsClone;
+    if (h.recoveredClone) S.recovered = h.recoveredClone;
+    saveData(); render(); updateUndoButtons();
+    toast(`↪️ Rehecho: ${h.label}`, '#2563eb');
+    return;
+  }
   const mat = S.mats[h.matName];
   if (!mat) return;
-  HIST.stack.push({ si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName });
-  mat.grades[h.si][h.week+'||'+h.col] = String(h.prevVal);
+  HIST.stack.push({ type: 'cell', si:h.si, week:h.week, col:h.col, prevVal:mat.grades[h.si]?.[h.week+'||'+h.col], matName:h.matName, label: h.label });
+  if (!mat.grades[h.si]) mat.grades[h.si] = {};
+  if (h.prevVal === undefined) delete mat.grades[h.si][h.week+'||'+h.col];
+  else mat.grades[h.si][h.week+'||'+h.col] = String(h.prevVal);
   saveData(); render(); updateUndoButtons();
+  toast(`↪️ Rehecho: ${h.label || h.col}`, '#2563eb');
 }
+
 function updateUndoButtons() {
-  document.getElementById('btnUndo').disabled = HIST.stack.length === 0;
-  document.getElementById('btnRedo').disabled = HIST.future.length === 0;
+  const bU = document.getElementById('btnUndo');
+  const bR = document.getElementById('btnRedo');
+  if (bU) bU.disabled = HIST.stack.length === 0;
+  if (bR) bR.disabled = HIST.future.length === 0;
 }
+
+// Atajo global Ctrl+Z (Deshacer) y Ctrl+Y / Ctrl+Shift+Z (Rehacer)
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && !e.altKey) {
+    const k = (e.key || '').toLowerCase();
+    const activeTag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName.toUpperCase() : '';
+    const isModalInput = activeTag === 'INPUT' || activeTag === 'TEXTAREA';
+    const isGradeCellInput = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('gi');
+    if (k === 'z' && !e.shiftKey) {
+      if (!isModalInput || isGradeCellInput) {
+        if (HIST.stack.length > 0) {
+          e.preventDefault();
+          histUndo();
+        }
+      }
+    } else if (k === 'y' || (k === 'z' && e.shiftKey)) {
+      if (!isModalInput || isGradeCellInput) {
+        if (HIST.future.length > 0) {
+          e.preventDefault();
+          histRedo();
+        }
+      }
+    }
+  }
+});
 
 // ══════════════════════════════════════════════════════
 //  ASISTENTE NUEVO AÑO LECTIVO
@@ -12686,6 +12871,7 @@ function openAddWeek() {
       // Releer la materia actual: una sincronización en vivo pudo reemplazar S mientras el modal estaba abierto
       const mat = gm();
       if (!mat) return;
+      histPushSnapshot(`Agregar semana "${nv}"`);
       const newWeekObj = { name: nv, destreza: dest };
       if (!mat.weeks) mat.weeks = [];
       if (mat.weeks.some(w => getWeekName(w) === nv)) {
@@ -12748,6 +12934,7 @@ function editWeekName(wi) {
         return;
       }
 
+      histPushSnapshot(`Editar semana "${oldName}"`);
       mat.weeks[idx] = { name: nv, destreza: dest };
 
       if (oldName !== nv) {
@@ -12803,7 +12990,7 @@ function editWeekName(wi) {
   );
 }
 
-function openDelWeek() {
+function openDelWeek(preselectedWi) {
   const mat = gm();
   if (!mat || !mat.weeks || !mat.weeks.length) {
     toast('⚠️ No hay semanas para eliminar en esta materia', '#d97706');
@@ -12811,17 +12998,19 @@ function openDelWeek() {
   }
   const opts = mat.weeks.map((w, wi) => {
     const wp = getWeekDisplayParts(w, wi);
-    return `<option value="${wi}">${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}</option>`;
+    const sel = (preselectedWi !== undefined && preselectedWi === wi) ? 'selected' : '';
+    return `<option value="${wi}" ${sel}>${escHTML(wp.numLabel)}: ${escHTML(wp.topic)}</option>`;
   }).join('');
-  showModal('🗑 Eliminar Semana', `<label>Semana a Eliminar:</label><select id="mDelWeekSel">${opts}</select>`, 'Eliminar Semana', () => {
+  showModal('🗑 Eliminar Semana', `<label>Semana a Eliminar:</label><select id="mDelWeekSel">${opts}</select><div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px">💡 Si eliminas por error, podrás recuperarla inmediatamente con <strong>Ctrl+Z (↩ Deshacer)</strong> o con el botón <strong>🔄 Restaurar Sem. 1-6</strong>.</div>`, 'Eliminar Semana', () => {
     const wi = parseInt(document.getElementById('mDelWeekSel').value);
     const targetW = mat.weeks[wi];
     if (!targetW) return;
     const targetName = getWeekName(targetW);
+    histPushSnapshot(`Eliminar semana "${targetName}"`);
     mat.weeks.splice(wi, 1);
     delete mat.cols[targetName];
     closeModal(); render(); saveData();
-    toast(`🗑 Semana "${targetName}" eliminada`, '#dc2626');
+    toast(`🗑 Semana "${targetName}" eliminada (Ctrl+Z para deshacer)`, '#dc2626');
   }, 'btn-danger');
 }
 
@@ -12895,6 +13084,7 @@ function openFillColModal() {
       }
 
       const key = target.week + '||' + target.col;
+      histPushSnapshot(`Llenar columna "${target.col}"`);
       S.students.forEach((_, si) => {
         if (!mat.grades[si]) mat.grades[si] = {};
         mat.grades[si][key] = val;
@@ -12966,6 +13156,7 @@ function delCol(wi, ci) {
 
   confirm2('🗑 Eliminar Actividad', `¿Deseas eliminar la actividad <strong>${escHTML(col.desc || col.name)}</strong> (${escHTML(wName)}) y todas sus calificaciones?`, () => {
     const deletedColName = col.name;
+    histPushSnapshot(`Eliminar actividad "${col.desc || deletedColName}"`);
     mat.cols[wName].splice(ci, 1);
 
     const key = wName + '||' + deletedColName;
@@ -13023,6 +13214,7 @@ function openDelColModal() {
 function moveColInMat(fromWeekName, fromColIdx, toWeekName, toColIdx) {
   const mat = gm();
   if (!mat || !mat.cols[fromWeekName] || !mat.cols[fromWeekName][fromColIdx]) return;
+  histPushSnapshot(`Mover actividad en ${fromWeekName}`);
   const mName = curMatName();
   const [colObj] = mat.cols[fromWeekName].splice(fromColIdx, 1);
   if (!mat.cols[toWeekName]) mat.cols[toWeekName] = [];
@@ -13093,6 +13285,7 @@ function moveWeekStep(wi, direction) {
     toast('⚠️ No se puede mover más la semana', '#d97706');
     return;
   }
+  histPushSnapshot(`Mover semana "${getWeekTitle(mat.weeks[wi])}"`);
   const [wObj] = mat.weeks.splice(wi, 1);
   mat.weeks.splice(targetWi, 0, wObj);
   render();
@@ -13414,7 +13607,7 @@ function openWeekContextMenu(e, wi) {
       ✎ Editar Tema y Destreza
     </div>
     <div class="ctx-sep"></div>
-    <div class="ctx-item" style="color:#dc2626" onclick="closeCtxMenu();openDelWeek()">
+    <div class="ctx-item" style="color:#dc2626" onclick="closeCtxMenu();openDelWeek(${wi})">
       🗑 Eliminar Semana...
     </div>
   `;
@@ -13489,6 +13682,7 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
 
       // Usamos la descripción completa como identificador interno también
       const nv = desc.toUpperCase();
+      histPushSnapshot(isEdit ? `Editar actividad "${nv}"` : `Crear actividad "${nv}"`);
 
       if (!mat.cols[w]) mat.cols[w] = [];
       const newObj = { name: nv, desc: desc.toUpperCase(), type, date, color: actType(type).color };
@@ -13550,6 +13744,7 @@ function showColModal(selWeek, col, isEdit, wi, ci) {
 
 function doClearGrades() {
   confirm2('¿Limpiar Calificaciones?', 'Se borrarán las notas de la materia activa manteniendo nómina y semanas.', () => {
+    histPushSnapshot(`Limpiar calificaciones de ${curMatName()}`);
     S.students.forEach((_, si) => { gm().grades[si] = {}; });
     render(); saveData();
   });
