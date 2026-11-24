@@ -4696,7 +4696,7 @@ body.in-focus-mode {
   </div>
 
   <!-- ══════════════════════════════════════════════════════
-       SUB-VISTA 2: REGISTRO DE CALIFICACIONES & RÚBRICA (30%)
+       SUB-VISTA 2: REGISTRO DE CALIFICACIONES & RÚBRICA (APORTE AL 30% SUMATIVO)
        ══════════════════════════════════════════════════════ -->
   <div id="piView_notas" style="display:block">
 
@@ -4710,7 +4710,7 @@ body.in-focus-mode {
               MATRIZ DE CALIFICACIONES — "PIENSO, CREO Y ACTÚO CON LA IA: CIUDADANOS DIGITALES ÉTICOS"
             </div>
             <div id="piControlSubtitle" style="font-size:0.76rem;color:var(--text-muted);font-weight:600">
-              7 Asignaturas oficiales · Múltiples insumos por materia · Promedio automático · Sincronización directa a Calificaciones (70/30)
+              7 Asignaturas oficiales · Múltiples insumos por materia · Aporte sobre 10.00 al bloque de Evaluación Sumativa (30% = Promedio Proyecto + Ev. Sumativa / Examen)
             </div>
           </div>
         </div>
@@ -4737,7 +4737,7 @@ body.in-focus-mode {
       <!-- Barra de configuración de sincronización e información institucional -->
       <div id="piControlSubRow" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:10px;border-top:1px solid var(--border-color);font-size:0.76rem">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span style="font-weight:900;color:var(--text-muted)">MODO DE TRASLADO A CALIFICACIONES:</span>
+          <span style="font-weight:900;color:var(--text-muted)">MODO DE TRASLADO AL BLOQUE SUMATIVO (30%):</span>
           <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-weight:700;color:var(--text-main)">
             <input type="radio" name="piSyncModeRadio" value="total" onchange="setPiSyncMode('total')" checked style="cursor:pointer" />
             <span>🔘 Promedio General Unificado (Esa misma nota a las 7 materias)</span>
@@ -4749,8 +4749,8 @@ body.in-focus-mode {
         </div>
 
         <div style="display:flex;align-items:center;gap:6px;color:var(--text-muted)">
-          <span>💡</span>
-          <span>Tip: Puedes añadir uno o más insumos por materia con el botón <strong>[➕]</strong> en cada cabecera. Pegado directo desde Excel soportado (Ctrl+V).</span>
+          <span>📘</span>
+          <span><strong>Instructivo de Evaluación Estudiantil 2025 (Págs. 15-17, Tabla 9):</strong> La nota del Proyecto Interdisciplinar (s/10) <strong>se promedia con las demás evaluaciones sumativas / examen (s/10)</strong> para obtener el <strong>30% Sumativo</strong> (no vale el 30% por sí solo).</span>
         </div>
       </div>
     </div>
@@ -5828,7 +5828,7 @@ body.in-focus-mode {
         <div style="background:#fef3c7;border-radius:8px;padding:12px 14px;font-size:0.8rem;color:#78350f;margin-bottom:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
             <span style="font-weight:900;font-size:0.86rem;color:#92400e">🤖 Proyecto Oficial 7.º EGB: «Pienso, Creo y Actúo con la IA: Ciudadanos Digitales Éticos»</span>
-            <span style="font-size:0.7rem;background:#d97706;color:#fff;padding:2px 8px;border-radius:4px;font-weight:800">30% Sumativo Trimestre 1</span>
+            <span style="font-size:0.7rem;background:#d97706;color:#fff;padding:2px 8px;border-radius:4px;font-weight:800">Aporte al 30% Sumativo (junto con Examen/Ev. Sumativa)</span>
           </div>
           <div style="line-height:1.55;margin-bottom:8px">
             <strong>Gran Idea:</strong> Inteligencia Artificial, Ética y Transformación Digital.<br>
@@ -7750,7 +7750,7 @@ body.in-focus-mode {
                   • Sem 2-3: Fase NIVELA (Nivelación)<br>
                   • Sem 4-5: Fase CREA (Proyecto Interdisciplinar)<br>
                   • Sem 6-12: Abordaje Curricular<br>
-                  • Sem 13-14: Evaluación PI (30%)
+                  • Sem 13-14: Evaluación Sumativa + Proyecto Interdisciplinar (30%)
                 </td>
                 <td>
                   • 09 Oct: Indep. de Guayaquil<br>
@@ -7764,7 +7764,7 @@ body.in-focus-mode {
                 <td style="text-align:center;font-weight:900;font-family:var(--font-mono)">66 Días</td>
                 <td>
                   • Sem 1-14: Abordaje Curricular<br>
-                  • Sem 15-16: Evaluación Proyecto Interdisciplinar (30%)
+                  • Sem 15-16: Evaluación Sumativa + Proyecto Interdisciplinar (30%)
                 </td>
                 <td>
                   • 25 Dic: Navidad<br>
@@ -7780,7 +7780,7 @@ body.in-focus-mode {
                 <td>
                   • Sem 1-14: Abordaje Curricular<br>
                   • 19 y 23 Abr: Fiesta de la Lectura<br>
-                  • Sem 15: Evaluación PI (30%)<br>
+                  • Sem 15: Evaluación Sumativa + Proyecto Interdisciplinar (30%)<br>
                   • Sem 16: Clases de Recuperación / Mejoramiento
                 </td>
                 <td>
@@ -9692,8 +9692,8 @@ const DEFAULT_COLS = {
     { name:'T2', type:'T',  date:'', color:null }
   ],
   'EVALUACIÓN SUMATIVA': [
-    { name:'PI', type:'PI', date:'', color:null },
-    { name:'EV', type:'PS', date:'', color:null }
+    { name:'PI', desc:'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA', type:'PI', cat:'sum', date:'', color:'#d97706' },
+    { name:'EV', desc:'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL', type:'PS', cat:'sum', date:'', color:'#16a34a' }
   ]
 };
 
@@ -10744,13 +10744,22 @@ function getWeekTitle(w) {
 function getWeekDisplayParts(w, wi) {
   const rawName = getWeekName(w);
   const dest = getWeekDestreza(w);
+  if (/SUMATIV|EXAMEN TRIMESTRAL/i.test(rawName) && !/NUTRI-VIDA/i.test(rawName)) {
+    return {
+      numLabel: 'Evaluación Sumativa (30%)',
+      shortNum: '30% SUM.',
+      topic: 'EVALUACIÓN SUMATIVA (PROYECTO INTERDISCIPLINAR + EXAMEN)',
+      shortTopic: 'Sumativa 30%',
+      dest: dest || 'Instructivo 2025 · Tabla 9'
+    };
+  }
   const isProj = (/NUTRI-VIDA|PROYECTO INTERDISCIPLINARIO/i.test(rawName));
   if (isProj) {
     return {
       numLabel: 'Semana 0',
       shortNum: 'S.0',
-      topic: 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA',
-      shortTopic: 'Proyecto IA',
+      topic: 'FASE CREA: PROYECTO INTERDISCIPLINAR (APORTE FORMATIVO 70%)',
+      shortTopic: 'Fase CREA',
       dest: dest || 'EGB Media'
     };
   }
@@ -10988,6 +10997,61 @@ function ensureMats() {
           mat.weeks.push(...misplaced);
         }
       }
+    }
+
+    // 3. Garantizar que toda asignatura cuantitativa tenga al final el bloque EVALUACIÓN SUMATIVA (30%)
+    // compuesto por: Proyecto Interdisciplinar (PI) + Evaluación Sumativa / Examen (EV) según Tabla 9 del Instructivo 2025
+    if (mat && !isQualitativeMat(mName)) {
+      if (!Array.isArray(mat.weeks)) mat.weeks = [...DEFAULT_WEEKS];
+      if (!mat.cols) mat.cols = {};
+
+      let sumWIdx = mat.weeks.findIndex((w, idx) => idx > 0 && /SUMATIV|EXAMEN TRIMESTRAL/i.test(getWeekName(w)));
+      let sumWName = 'EVALUACIÓN SUMATIVA';
+
+      if (sumWIdx === -1) {
+        mat.weeks.push({ name: 'EVALUACIÓN SUMATIVA', destreza: '30% (Proyecto + Ev. Sumativa)' });
+        sumWIdx = mat.weeks.length - 1;
+      } else {
+        sumWName = getWeekName(mat.weeks[sumWIdx]);
+        // Asegurar que EVALUACIÓN SUMATIVA esté siempre al final de las semanas
+        if (sumWIdx !== mat.weeks.length - 1) {
+          const [sumWObj] = mat.weeks.splice(sumWIdx, 1);
+          mat.weeks.push(sumWObj);
+        }
+      }
+
+      if (!Array.isArray(mat.cols[sumWName]) || mat.cols[sumWName].length === 0) {
+        mat.cols[sumWName] = [
+          { name: 'PI', desc: 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA', type: 'PI', cat: 'sum', date: '', color: '#d97706' },
+          { name: 'EV', desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL', type: 'PS', cat: 'sum', date: '', color: '#16a34a' }
+        ];
+      } else {
+        // Asegurar que todas las columnas en EVALUACIÓN SUMATIVA tengan cat: 'sum' y que existan PI y EV
+        let hasPiCol = false;
+        let hasEvCol = false;
+        mat.cols[sumWName].forEach(c => {
+          c.cat = 'sum';
+          const cn = ((c.name || '') + ' ' + (c.desc || '')).toUpperCase();
+          if (c.type === 'PI' || /\bPI\b|PROYECTO/.test(cn)) {
+            hasPiCol = true;
+            if (!c.desc || c.desc === 'PI') c.desc = 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA';
+            if (!c.color) c.color = '#d97706';
+          } else if (c.type === 'PS' || c.type === 'EX' || /\bEV\b|SUMATIV|EXAMEN/.test(cn)) {
+            hasEvCol = true;
+            if (!c.desc || c.desc === 'EV') c.desc = 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL';
+            if (!c.color) c.color = '#16a34a';
+          }
+        });
+        if (!hasPiCol) {
+          mat.cols[sumWName].unshift({ name: 'PI', desc: 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA', type: 'PI', cat: 'sum', date: '', color: '#d97706' });
+        }
+        if (!hasEvCol) {
+          mat.cols[sumWName].push({ name: 'EV', desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL', type: 'PS', cat: 'sum', date: '', color: '#16a34a' });
+        }
+      }
+
+      if (!S.weekColors) S.weekColors = {};
+      S.weekColors[mName + '||' + sumWName] = { h: '#15803d', s: '#16a34a', c: 'rgba(22,163,74,0.08)' };
     }
   });
 
@@ -11233,13 +11297,16 @@ function getStudentTrimestreCalc(si, mName) {
     return { isQual:true, qualVal: top || 'NE', numAvg:null };
   }
 
-  // Materia cuantitativa (Ponderación 70% Formativo / 30% Sumativo)
-  const formVals = [];
-  const sumVals  = [];
-  const rfVals   = [];
+  // Materia cuantitativa (Ponderación 70% Formativo / 30% Sumativo — Instructivo de Evaluación Estudiantil 2025, Págs. 15-17, Tabla 9)
+  const formVals    = [];
+  const sumVals     = [];
+  const sumPiVals   = [];
+  const sumExamVals = [];
+  const rfVals      = [];
 
-  mat.weeks.forEach(w => {
+  mat.weeks.forEach((w, wi) => {
     const wName = getWeekName(w);
+    const isSumWeek = (wi > 0 && /SUMATIV|EXAMEN TRIMESTRAL/i.test(wName) && !/NUTRI-VIDA/i.test(wName));
     (mat.cols[wName] || []).forEach(col => {
       const v = g[wName + '||' + col.name];
       if (v === undefined || v === '') return;
@@ -11247,11 +11314,17 @@ function getStudentTrimestreCalc(si, mName) {
       if (isNaN(n)) return;
 
       const at = actType(col.type);
-      const cat = col.cat || at.cat;
+      const cat = isSumWeek ? 'sum' : (col.cat || at.cat);
       if (cat === 'rf' || cat === 'mej') {
         rfVals.push(n);
       } else if (cat === 'sum') {
         sumVals.push(n);
+        const colIdent = ((col.name || '') + ' ' + (col.desc || '')).toUpperCase();
+        if (col.type === 'PI' || /\bPI\b|PROYECTO/.test(colIdent)) {
+          sumPiVals.push(n);
+        } else {
+          sumExamVals.push(n);
+        }
       } else {
         formVals.push(n);
       }
@@ -11275,24 +11348,33 @@ function getStudentTrimestreCalc(si, mName) {
   const rawSumAvg  = sumVals.length  ? (sumVals.reduce((a,b)=>a+b,0) / sumVals.length)   : null;
 
   const formAvg = rawFormAvg !== null ? parseFloat(trunc2(rawFormAvg)) : null;
-  const sumAvg  = rawSumAvg  !== null ? parseFloat(trunc2(rawSumAvg))  : null;
+  let   sumAvg  = rawSumAvg  !== null ? parseFloat(trunc2(rawSumAvg))  : null;
 
-  // Resolución Nro. 001-CE-2026 (U.E.F. "Calderón 2"): Exoneración institucional de Evaluación Sumativa (30%)
-  // Aplica a estudiantes con promedio formativo exacto >= 9.50 / 10 (sin redondeo; 9.49 no califica).
+  // Resolución Nro. 001-CE-2026 (Memorando N° 1 C.E. - U.E.F. "Calderón 2") + Instructivo 2025 (Tabla 9):
+  // - Exoneración aplica a estudiantes con promedio formativo exacto >= 9.50 / 10 (sin redondeo; 9.49 no califica).
+  // - Numeral 2 del Memorando N° 1 C.E.: "Aplica únicamente a las evaluaciones sumativas trimestrales. No exime del Proyecto Interdisciplinario Final".
+  // - Por tanto, si está exonerado y aún no se ha digitado nota física en el casillero de Evaluación Sumativa/Examen (EV),
+  //   recibe 10.00 en la Evaluación Sumativa/Examen y se promedia con su nota real del Proyecto Interdisciplinar (si existe).
   const isExonerated = (!isQual && formAvg !== null && formAvg >= 9.50);
   let effectiveSumAvg = sumAvg;
   let isAutoExoneratedSum = false;
 
-  if (isExonerated && sumAvg === null) {
-    // Si aún no se ha digitado nota física en el casillero sumativo, se asienta reglamentariamente 10.00 (3.00 pts)
-    effectiveSumAvg = 10.00;
+  if (isExonerated && sumExamVals.length === 0) {
     isAutoExoneratedSum = true;
+    const combinedWithExonExam = [...sumPiVals, 10.00];
+    const rawCombined = combinedWithExonExam.reduce((a, b) => a + b, 0) / combinedWithExonExam.length;
+    effectiveSumAvg = parseFloat(trunc2(rawCombined));
   }
+
+  const formWeightedStr = formAvg !== null ? trunc2(formAvg * 0.70) : '—';
+  const sumWeightedStr  = effectiveSumAvg !== null ? trunc2(effectiveSumAvg * 0.30) : '—';
 
   let trimAvg = null;
   if (formAvg !== null && effectiveSumAvg !== null) {
-    const rawTrim = (formAvg * 0.70) + (effectiveSumAvg * 0.30);
-    trimAvg = trunc2(rawTrim);
+    // Instructivo de Evaluación Estudiantil 2025 (Pág. 16 y Tabla 9):
+    // "La evaluación formativa representará un 70%, mientras que la evaluación sumativa tendrá un 30%; sumadas las dos evaluaciones se obtendrá el 100%."
+    const sum100 = parseFloat(formWeightedStr) + parseFloat(sumWeightedStr);
+    trimAvg = trunc2(sum100);
   } else if (formAvg !== null) {
     trimAvg = trunc2(formAvg);
   } else if (effectiveSumAvg !== null) {
@@ -11302,11 +11384,11 @@ function getStudentTrimestreCalc(si, mName) {
   return {
     isQual: false,
     formAvg: formAvg !== null ? trunc2(formAvg) : '—',
-    sumAvg:  sumAvg  !== null ? trunc2(sumAvg)  : (isAutoExoneratedSum ? '10.00' : '—'),
-    displaySumAvg: sumAvg !== null ? trunc2(sumAvg) : (isAutoExoneratedSum ? '10.00 (Exon.)' : '—'),
+    sumAvg:  effectiveSumAvg !== null ? trunc2(effectiveSumAvg) : '—',
+    displaySumAvg: effectiveSumAvg !== null ? (isAutoExoneratedSum ? `${trunc2(effectiveSumAvg)} (Exon. EV 10)` : trunc2(effectiveSumAvg)) : '—',
     trimAvg: trimAvg !== null ? trimAvg : '—',
-    formWeighted: formAvg !== null ? trunc2(formAvg * 0.70) : '—',
-    sumWeighted:  effectiveSumAvg !== null ? trunc2(effectiveSumAvg * 0.30)  : '—',
+    formWeighted: formWeightedStr,
+    sumWeighted:  sumWeightedStr,
     isExonerated,
     isAutoExoneratedSum
   };
@@ -11577,12 +11659,13 @@ function renderTable() {
       c.forEach((col, ci) => {
         const at = actType(col.type);
         const bg = col.color || at.color;
-        const cat = col.cat || at.cat;
-        const catBadge = cat === 'sum' ? ' [30%]' : (cat === 'form' ? ' [70%]' : '');
+        const isSumWeek = (wi > 0 && /SUMATIV|EXAMEN TRIMESTRAL/i.test(wName) && !/NUTRI-VIDA/i.test(wName));
+        const cat = isSumWeek ? 'sum' : (col.cat || at.cat);
+        const catBadge = cat === 'sum' ? ' [Aporte al 30%]' : (cat === 'form' ? ' [70%]' : '');
         const isColHidden = isColumnHidden(mName, wName, col);
 
         const rawDisp = col.desc || col.name;
-        const displayName = /NUTRI-?VIDA/i.test(rawDisp) ? 'PROYECTO: PIENSO, CREO Y ACTÚO CON LA IA' : rawDisp;
+        const displayName = /NUTRI-?VIDA/i.test(rawDisp) ? 'PROYECTO FASE CREA (70%)' : rawDisp;
         const actNameHTML = `<div style="font-size:0.84rem;font-weight:900;letter-spacing:0.2px;color:#ffffff;line-height:1.3;text-shadow:0 1px 2px rgba(0,0,0,0.4);word-break:break-word;margin-bottom:3px;white-space:normal;pointer-events:none">${escHTML(displayName)}</div>`;
         const dateHTML = col.date ? `<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:2px;letter-spacing:0.2px;pointer-events:none">${escHTML(col.date)}</div>` : '';
         const typeHTML = `<div style="font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.2;pointer-events:none">${escHTML(at.label)}${catBadge}</div>`;
@@ -15039,15 +15122,18 @@ function rpApplyExoneraciones() {
       const mat = S.mats[mName];
       if (!mat) return;
 
-      // Buscar columna sumativa existente en la materia
+      // Buscar columna de Evaluación Sumativa / Examen (excluyendo Proyecto Interdisciplinar PI, según Memorando N° 1 C.E. num. 2)
       let sumColTarget = null;
       for (const w of (mat.weeks || [])) {
         const wName = getWeekName(w);
         const cols = mat.cols[wName] || [];
         for (const col of cols) {
           const at = actType(col.type);
-          const cat = col.cat || at.cat;
-          if (cat === 'sum') {
+          const isSumWeek = /SUMATIV|EXAMEN/i.test(wName);
+          const cat = isSumWeek ? 'sum' : (col.cat || at.cat);
+          const colIdent = ((col.name || '') + ' ' + (col.desc || '')).toUpperCase();
+          const isPiCol = (col.type === 'PI' || /\bPI\b|PROYECTO/.test(colIdent));
+          if (cat === 'sum' && !isPiCol) {
             sumColTarget = { weekName: wName, colName: col.name };
             break;
           }
@@ -15055,7 +15141,7 @@ function rpApplyExoneraciones() {
         if (sumColTarget) break;
       }
 
-      // Si no existe columna sumativa, crearla en la semana 'EVALUACIÓN SUMATIVA'
+      // Si no existe columna de Examen/Evaluación Sumativa, crearla en la semana 'EVALUACIÓN SUMATIVA'
       if (!sumColTarget) {
         let sumWeekName = 'EVALUACIÓN SUMATIVA';
         const foundWeek = (mat.weeks || []).find(w => /SUMATIV|EXAMEN/i.test(getWeekName(w)));
@@ -15063,10 +15149,10 @@ function rpApplyExoneraciones() {
           sumWeekName = getWeekName(foundWeek);
         } else {
           if (!mat.weeks) mat.weeks = [];
-          mat.weeks.push(sumWeekName);
+          mat.weeks.push({ name: sumWeekName, destreza: '30% (Proyecto + Ev. Sumativa)' });
         }
         if (!mat.cols[sumWeekName]) mat.cols[sumWeekName] = [];
-        const newCol = { name: 'EVALUACIÓN SUMATIVA', type: 'PS', cat: 'sum', date: '', color: '#16a34a', desc: 'EVALUACIÓN SUMATIVA TRIMESTRAL' };
+        const newCol = { name: 'EV', type: 'PS', cat: 'sum', date: '', color: '#16a34a', desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL' };
         mat.cols[sumWeekName].push(newCol);
         sumColTarget = { weekName: sumWeekName, colName: newCol.name };
       }
@@ -20048,9 +20134,9 @@ function renderPi() {
         <span style="font-weight:900;font-size:0.84rem;color:#15803d">${sorted.length} estudiantes activos</span>
       </div>
       <div>
-        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">DESTINO EN CALIFICACIONES</span><br/>
+        <span style="font-weight:700;color:var(--text-muted);font-size:0.7rem">DESTINO EN CALIFICACIONES (BLOQUE 30% SUMATIVO)</span><br/>
         <span style="font-weight:900;font-size:0.82rem;color:#7c3aed">
-          ${cfg.syncMode === 'subject' ? 'Promedio específico por materia' : 'Esa misma nota (Promedio General)'}
+          ${cfg.syncMode === 'subject' ? 'Aporte PI por materia (se promedia con Ev. Sumativa)' : 'Promedio General PI (se promedia con Ev. Sumativa)'}
         </span>
       </div>
     `;
@@ -20099,9 +20185,9 @@ function renderPi() {
     }
   });
 
-  r1 += `<th colspan="2" style="background:linear-gradient(135deg,#78350f 0%,#b45309 50%,#d97706 100%);color:#fff;border-color:#b45309;padding:7px 8px;min-width:145px">
+  r1 += `<th colspan="2" style="background:linear-gradient(135deg,#78350f 0%,#b45309 50%,#d97706 100%);color:#fff;border-color:#b45309;padding:7px 8px;min-width:155px" title="Promedio sobre 10.00 del Proyecto Interdisciplinar. Según el Instructivo de Evaluación Estudiantil 2025 (Págs. 15-17, Tabla 9), esta nota se promedia con las demás evaluaciones sumativas / examen para obtener el 30% Sumativo.">
     <div style="font-weight:900;font-size:0.84rem">PROMEDIO PROYECTO</div>
-    <div style="font-size:0.62rem;opacity:.95;font-weight:600">INTERDISCIPLINAR (7 MATERIAS)</div>
+    <div style="font-size:0.62rem;opacity:.95;font-weight:600">APORTE AL 30% SUMATIVO (s/10)</div>
   </th>`;
   r1 += `</tr>`;
 
@@ -20131,7 +20217,7 @@ function renderPi() {
     </th>`;
   });
 
-  r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:70px">NOTA (30%)</th>`;
+  r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:76px" title="Nota del Proyecto Interdisciplinar sobre 10.00 puntos (se promedia con las evaluaciones sumativas / examen dentro del 30% Sumativo)">NOTA (/10)</th>`;
   r2 += `<th class="sh" style="background:#78350f;color:#fff;border-color:#78350f;font-weight:900;font-size:0.72rem;min-width:68px">ESCALA</th>`;
   r2 += `</tr>`;
 
@@ -20823,58 +20909,64 @@ function syncPiToSubjects() {
     if (!mat.cols) mat.cols = JSON.parse(JSON.stringify(DEFAULT_COLS));
     if (!mat.weeks || !mat.weeks.length) mat.weeks = [...DEFAULT_WEEKS];
 
-    // Localizar columnas receptoras de PI
+    // Localizar (o crear) la columna PI dentro del bloque EVALUACIÓN SUMATIVA (30%)
+    // Según el Instructivo de Evaluación Estudiantil 2025 (Págs. 15-17, Tabla 9), el Proyecto Interdisciplinar
+    // es un aporte dentro de la Evaluación Sumativa (30%) que se promedia con el Examen / Evaluaciones Sumativas.
     const targetCols = [];
 
-    // A. Buscar en PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA
-    let foundInNutri = false;
-    (mat.weeks || []).forEach(w => {
-      const wn = getWeekName(w);
-      if (wn.toUpperCase().includes('NUTRI-VIDA') || wn.toUpperCase().includes('INTERDISCIPLINAR')) {
-        (mat.cols[wn] || []).forEach(c => {
-          if (c.type === 'PI' || c.name.toUpperCase().includes('NUTRI') || c.name.toUpperCase().includes('PROYECTO')) {
-            targetCols.push({ week: wn, name: c.name });
-            foundInNutri = true;
-          }
-        });
-      }
+    let sumWeekObj = (mat.weeks || []).find((w, idx) => idx > 0 && /SUMATIV|EXAMEN TRIMESTRAL/i.test(getWeekName(w)));
+    let sumWName = sumWeekObj ? getWeekName(sumWeekObj) : 'EVALUACIÓN SUMATIVA';
+
+    if (!sumWeekObj) {
+      mat.weeks.push({ name: sumWName, destreza: '30% (Proyecto + Ev. Sumativa)' });
+    }
+    if (!Array.isArray(mat.cols[sumWName])) {
+      mat.cols[sumWName] = [];
+    }
+
+    // Buscar columna de Proyecto Interdisciplinar dentro de EVALUACIÓN SUMATIVA
+    let piColInSum = mat.cols[sumWName].find(c => {
+      const cn = ((c.name || '') + ' ' + (c.desc || '')).toUpperCase();
+      return c.type === 'PI' || /\bPI\b|PROYECTO/.test(cn);
     });
 
-    // Si la semana existe pero no tiene columna, crearla
-    if (!foundInNutri) {
-      const nutriWeek = (mat.weeks || []).find(w => {
-        const wn = getWeekName(w);
-        return wn.toUpperCase().includes('NUTRI-VIDA') || wn.toUpperCase().includes('INTERDISCIPLINAR');
+    if (!piColInSum) {
+      piColInSum = {
+        name: 'PI',
+        desc: 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA',
+        type: 'PI',
+        cat: 'sum',
+        date: '',
+        color: '#d97706'
+      };
+      mat.cols[sumWName].unshift(piColInSum);
+    } else {
+      piColInSum.cat = 'sum';
+      if (!piColInSum.desc || piColInSum.desc === 'PI') {
+        piColInSum.desc = 'PROYECTO INTERDISCIPLINAR: PIENSO, CREO Y ACTÚO CON LA IA';
+      }
+      if (!piColInSum.color) piColInSum.color = '#d97706';
+    }
+
+    // Asegurar que también exista la columna de Evaluación Sumativa / Examen (EV) para que se promedien en el 30%
+    const evColInSum = mat.cols[sumWName].find(c => {
+      const cn = ((c.name || '') + ' ' + (c.desc || '')).toUpperCase();
+      return c !== piColInSum && (c.type === 'PS' || c.type === 'EX' || /\bEV\b|SUMATIV|EXAMEN/.test(cn));
+    });
+    if (!evColInSum) {
+      mat.cols[sumWName].push({
+        name: 'EV',
+        desc: 'EVALUACIÓN SUMATIVA / EXAMEN TRIMESTRAL',
+        type: 'PS',
+        cat: 'sum',
+        date: '',
+        color: '#16a34a'
       });
-      if (nutriWeek) {
-        const wn = getWeekName(nutriWeek);
-        if (!mat.cols[wn]) mat.cols[wn] = [];
-        const newCol = { name: 'PROYECTO NUTRI-VIDA', desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', type: 'PI', cat: 'form', date: '2026-10-02', color: '#d97706' };
-        mat.cols[wn].push(newCol);
-        targetCols.push({ week: wn, name: newCol.name });
-      }
+    } else {
+      evColInSum.cat = 'sum';
     }
 
-    // B. Buscar también en EVALUACIÓN SUMATIVA si existe columna PI
-    (mat.weeks || []).forEach(w => {
-      const wn = getWeekName(w);
-      if (wn.toUpperCase().includes('SUMATIV')) {
-        (mat.cols[wn] || []).forEach(c => {
-          if (c.type === 'PI' || c.name.toUpperCase() === 'PI' || c.name.toUpperCase().includes('PROYECTO')) {
-            targetCols.push({ week: wn, name: c.name });
-          }
-        });
-      }
-    });
-
-    // C. Si no encontró ninguna columna PI en toda la materia, crearla en la semana inicial o sumativa
-    if (targetCols.length === 0) {
-      const defaultW = getWeekName(mat.weeks[0]) || 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA';
-      if (!mat.cols[defaultW]) mat.cols[defaultW] = [];
-      const newCol = { name: 'PROYECTO NUTRI-VIDA', desc: 'PROYECTO INTERDISCIPLINARIO: NUTRI-VIDA', type: 'PI', cat: 'form', date: '2026-10-02', color: '#d97706' };
-      mat.cols[defaultW].push(newCol);
-      targetCols.push({ week: defaultW, name: newCol.name });
-    }
+    targetCols.push({ week: sumWName, name: piColInSum.name });
 
     // Asignar notas a cada estudiante
     sorted.forEach(si => {
@@ -20893,8 +20985,8 @@ function syncPiToSubjects() {
 
   saveData();
   render();
-  const modeTxt = syncMode === 'total' ? 'Promedio General Unificado (Esa misma nota)' : 'Promedios Específicos por Materia';
-  toast(`⚡ ¡Sincronización Exitosa! ${count} calificaciones de PI registradas en las ${targetMatsCount} materias (${modeTxt}).`, '#16a34a');
+  const modeTxt = syncMode === 'total' ? 'Promedio General Unificado' : 'Promedio Individual por Materia';
+  toast(`⚡ ¡Sincronización Exitosa! ${count} notas del Proyecto registradas en EVALUACIÓN SUMATIVA (30%) de las ${targetMatsCount} materias (${modeTxt}) para promediarse con el Examen/Ev. Sumativa.`, '#16a34a');
 }
 
 function exportPiXLSX() {
@@ -20916,7 +21008,7 @@ function exportPiXLSX() {
   });
 
   header1.push('PROYECTO INTERDISCIPLINAR', 'ESCALA');
-  header2.push('NOTA FINAL (30%)', 'CUALITATIVA');
+  header2.push('NOTA PROYECTO (/10) · APORTE AL 30% SUM.', 'CUALITATIVA');
 
   const rows = [header1, header2];
   const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));

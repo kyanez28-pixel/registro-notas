@@ -1,5 +1,5 @@
 // Service Worker para PWA — Registro de Notas
-const CACHE_NAME = 'registro-notas-v133';
+const CACHE_NAME = 'registro-notas-v134';
 const ASSETS = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
   './proyecto_5to_egb.json',
   './PROYECTO_INTERDISCIPLINAR_7MO_EGB.docx',
   './PLANIFICACION_MICROCURRICULAR_7MO_LENGUA_1ER_TRIMESTRE final.docx',
+  './Instructivo-de-Evaluacion-Estudiantil-2025.pdf',
   './PROYECTO-5TO EGB.pdf',
   './official_attendance_7c.json',
   './Reporte_Asistencia_7mo_C_1er_Trimestre.xls',
