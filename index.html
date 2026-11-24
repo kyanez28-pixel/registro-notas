@@ -17630,6 +17630,16 @@ function expCopyScriptToClipboard() {
   });
 }
 
+// ── FORMATEADOR DE CALIFICACIONES CON COMA DECIMAL (2 DECIMALES: 8,00 / 8,50) ──
+function fmtComma2(v) {
+  if (v === null || v === undefined || v === '' || v === '—' || v === '-') return '';
+  const s = String(v).trim();
+  if (!s || s === '—' || s === '-') return '';
+  const n = parseFloat(s.replace(',', '.'));
+  if (isNaN(n)) return s;
+  return trunc2(n).replace('.', ',');
+}
+
 // ── COPIAR COLUMNAS COMPLETAS PARA EXCEL / WORD ──
 function copyMainColumn(colType, weekName, colName) {
   const mName = curMatName();
@@ -17651,13 +17661,13 @@ function copyMainColumn(colType, weekName, colName) {
     } else if (colType === 'trim') {
       val = calc.isQual ? calc.qualVal : (calc.trimAvg !== '—' ? calc.trimAvg : '');
     }
-    values.push(val === null || val === undefined ? '' : String(val));
+    values.push(val === null || val === undefined || val === '' ? '' : fmtComma2(val));
   });
 
   const textToCopy = values.join('\n');
   const title = colName || colType;
   navigator.clipboard.writeText(textToCopy).then(() => {
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" copiada con comas (ej. 8,50)! Lista para pegar en Excel o Word.`, '#2563eb');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = textToCopy;
@@ -17665,7 +17675,7 @@ function copyMainColumn(colType, weekName, colName) {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" copiada con comas (ej. 8,50)! Lista para pegar en Excel o Word.`, '#2563eb');
   });
 }
 
@@ -17675,47 +17685,28 @@ function copyPiColumn(mName, indId) {
   const values = [];
 
   sorted.forEach(si => {
+    const calc = calcStudentPi(si);
     let val = '';
     if (indId === '_final_pi') {
-      const matNotas = [];
-      S.pi.mats.forEach(mSub => {
-        const subMg = (S.pi.grades[mSub] && S.pi.grades[mSub][si]) ? S.pi.grades[mSub][si] : {};
-        if (subMg._direct !== undefined && subMg._direct !== '') {
-          matNotas.push(parseFloat(subMg._direct));
-        } else {
-          const indVals = [];
-          S.pi.config.indicadores.forEach(ind => {
-            const v = parseFloat(subMg[ind.id]);
-            if (!isNaN(v)) indVals.push(v);
-          });
-          if (indVals.length > 0) matNotas.push(indVals.reduce((a,b)=>a+b,0)/indVals.length);
-        }
-      });
-      if (matNotas.length > 0) val = trunc2(matNotas.reduce((a,b)=>a+b,0)/matNotas.length);
+      val = calc.piNota !== null ? calc.piNota : '';
+    } else if (indId === '_direct' || indId === '_mat_nota') {
+      val = calc.matAverages[mName] !== null && calc.matAverages[mName] !== undefined ? calc.matAverages[mName] : '';
     } else {
-      const mg = (S.pi.grades[mName] && S.pi.grades[mName][si]) ? S.pi.grades[mName][si] : {};
-      if (indId === '_direct' || indId === '_mat_nota') {
-        if (mg._direct !== undefined && mg._direct !== '') {
-          val = mg._direct;
-        } else {
-          const indVals = [];
-          S.pi.config.indicadores.forEach(ind => {
-            const v = parseFloat(mg[ind.id]);
-            if (!isNaN(v)) indVals.push(v);
-          });
-          if (indVals.length > 0) val = trunc2(indVals.reduce((a,b)=>a+b,0)/indVals.length);
-        }
+      const v = S.pi.grades?.[mName]?.[si]?.[indId];
+      if (v !== undefined && v !== '') {
+        val = v;
       } else {
+        const mg = (S.pi.grades[mName] && S.pi.grades[mName][si]) ? S.pi.grades[mName][si] : {};
         val = mg[indId] !== undefined ? mg[indId] : '';
       }
     }
-    values.push(val === null || val === undefined ? '' : String(val));
+    values.push(val === null || val === undefined || val === '' ? '' : fmtComma2(val));
   });
 
-  const title = indId === '_final_pi' ? 'NOTA PI PROMEDIO' : (indId === '_direct' || indId === '_mat_nota' ? `NOTA ${mName}` : `${mName} - ${indId}`);
+  const title = indId === '_final_pi' ? 'NOTA PI PROMEDIO' : (indId === '_direct' || indId === '_mat_nota' ? `PROMEDIO ${mName}` : `${mName} - ${indId}`);
   const textToCopy = values.join('\n');
   navigator.clipboard.writeText(textToCopy).then(() => {
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" copiada con comas (ej. 8,50)! Lista para pegar en Excel o Word.`, '#2563eb');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = textToCopy;
@@ -17723,7 +17714,7 @@ function copyPiColumn(mName, indId) {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    toast(`📋 ¡Columna "${title}" copiada al portapapeles! Lista para pegar en Excel o Word.`, '#2563eb');
+    toast(`📋 ¡Columna "${title}" copiada con comas (ej. 8,50)! Lista para pegar en Excel o Word.`, '#2563eb');
   });
 }
 
@@ -17734,14 +17725,14 @@ function openCopyColumnModal() {
   if (isPiView) {
     ensurePi();
     const mats = S.pi.mats;
-    const inds = S.pi.config.indicadores;
     mats.forEach(m => {
-      inds.forEach(ind => {
-        optsHtml += `<option value="pi||${escVal(m)}||${escVal(ind.id)}">[PI] ${escHTML(m)} — Indicador ${escHTML(ind.id)} (${escHTML(ind.nombre)})</option>`;
+      const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+      insList.forEach(ins => {
+        optsHtml += `<option value="pi||${escVal(m)}||${escVal(ins.id)}">[PI] ${escHTML(m)} — Insumo: ${escHTML(ins.name)}</option>`;
       });
-      optsHtml += `<option value="pi||${escVal(m)}||_mat_nota">[PI] ${escHTML(m)} — NOTA FINAL ASIGNATURA</option>`;
+      optsHtml += `<option value="pi||${escVal(m)}||_mat_nota">[PI] ${escHTML(m)} — PROMEDIO ASIGNATURA</option>`;
     });
-    optsHtml += `<option value="pi||all||_final_pi">[PI] PROMEDIO GENERAL (NOTA PI PROMEDIO)</option>`;
+    optsHtml += `<option value="pi||all||_final_pi">[PI] PROMEDIO GENERAL (NOTA PROYECTO /10)</option>`;
   } else {
     const mName = curMatName();
     const mat = S.mats[mName];
@@ -18044,57 +18035,207 @@ function importBackup(input) {
 }
 
 function exportCSV() {
+  const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
   const sheets = getMats().map(m => {
     const mat = S.mats[m];
     const isQual = isQualitativeMat(m);
-    const rows = [
-      [{ v:`${m} — ${S.grado} — ${S.periodo} (${S.anio})`, t:'s', s:'title' }],
-      [],
-      [{ v:'#', t:'s', s:'hdr' }, { v:'NÓMINA DE ESTUDIANTES', t:'s', s:'hdr' }]
-    ];
+
+    // Calcular total de columnas para combinaciones institucionales
+    let totalCols = 2; // # y NÓMINA
     mat.weeks.forEach(w => {
       const wName = getWeekName(w);
-      const wTitle = getWeekTitle(w);
-      (mat.cols[wName]||[]).forEach(c => rows[2].push({ v:`${wTitle}\n${c.name}`, t:'s', s:'hdr_col' }));
-      rows[2].push({ v:`PROM\n${wTitle}`, t:'s', s:'hdr_prom' });
+      totalCols += (mat.cols[wName] || []).length + 1;
     });
+    totalCols += isQual ? 1 : 3;
+    const lastCol = colName(totalCols);
+
+    const padRow = (firstCell, ht) => {
+      const r = [firstCell];
+      for (let i = 1; i < totalCols; i++) r.push({ v: '', t: 's', s: firstCell.s });
+      r._ht = ht;
+      return r;
+    };
+
+    const r1 = padRow({ v: `UNIDAD EDUCATIVA FISCAL “CALDERÓN 2” — AÑO LECTIVO ${S.anio || '2026 - 2027'}`, t: 's', s: 'inst_title' }, 26);
+    const r2 = padRow({ v: `REGISTRO OFICIAL DE CALIFICACIONES (70% FORMATIVO + 30% SUMATIVO) — ASIGNATURA: ${m.toUpperCase()}`, t: 's', s: 'inst_sub' }, 22);
+    const r3 = padRow({ v: `GRADO: ${(S.grado || 'Séptimo C').toUpperCase()} · PERIODO: ${(S.periodo || '1er Trimestre').toUpperCase()} · DOCENTE: ${(S.docente || 'Lic. Klever Yánez').toUpperCase()} · TUTOR/A: ${(S.tutor || 'Lcda. Ligia Jácome').toUpperCase()}`, t: 's', s: 'meta_center' }, 19);
+    const r4 = padRow({ v: `ESCALA MINISTERIAL MINEDUC:  DAR: 9,00 a 10,00 (Domina)   |   AAR: 7,00 a 8,99 (Alcanza)   |   PAR: 5,00 a 6,99 (Próximo a Alcanzar)   |   NAR: 1,00 a 4,99 (No Alcanza)`, t: 's', s: 'scale_banner' }, 18);
+    const r5 = []; r5._ht = 8;
+
+    const hdrTop = [{ v: '#', t: 's', s: 'hdr_num' }, { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }];
+    const hdrSub = [{ v: '', t: 's', s: 'hdr_num' }, { v: '', t: 's', s: 'hdr_name' }];
+    hdrTop._ht = 24;
+    hdrSub._ht = 30;
+
+    const merges = [
+      `A1:${lastCol}1`,
+      `A2:${lastCol}2`,
+      `A3:${lastCol}3`,
+      `A4:${lastCol}4`,
+      `A6:A7`,
+      `B6:B7`
+    ];
+
+    const cols = [{ width: 6 }, { width: 36 }];
+    let curColIdx = 3; // 1-based column index (C = 3)
+
+    mat.weeks.forEach((w, wi) => {
+      const wName = getWeekName(w);
+      const wTitle = getWeekTitle(w);
+      const isSumW = /SUMATIV|EXAMEN TRIMESTRAL/i.test(wName);
+      const actList = mat.cols[wName] || [];
+      const span = actList.length + 1;
+      const topStyle = isSumW ? 'pi_hdr_ccnn' : (wi % 2 === 0 ? 'pi_hdr_mat' : 'pi_hdr_len');
+      const subStyle = isSumW ? 'pi_sub_ccnn' : (wi % 2 === 0 ? 'pi_sub_mat' : 'pi_sub_len');
+
+      const startColLetter = colName(curColIdx);
+      const endColLetter = colName(curColIdx + span - 1);
+      if (span > 1) merges.push(`${startColLetter}6:${endColLetter}6`);
+
+      for (let k = 0; k < span; k++) {
+        hdrTop.push({ v: k === 0 ? wTitle.toUpperCase() : '', t: 's', s: topStyle });
+      }
+
+      actList.forEach(c => {
+        hdrSub.push({ v: c.name, t: 's', s: subStyle });
+        cols.push({ width: Math.max(13, Math.min(22, (c.name || '').length + 4)) });
+      });
+      hdrSub.push({ v: `PROM. ${wTitle}`, t: 's', s: topStyle });
+      cols.push({ width: 13 });
+
+      curColIdx += span;
+    });
+
     if (!isQual) {
-      rows[2].push({ v:'70% FORM.', t:'s', s:'hdr_prom' }, { v:'30% SUM.', t:'s', s:'hdr_prom' }, { v:'NOTA TRIM.', t:'s', s:'hdr_prom' });
+      const startFinal = colName(curColIdx);
+      const endFinal = colName(curColIdx + 2);
+      merges.push(`${startFinal}6:${endFinal}6`);
+      hdrTop.push(
+        { v: 'RESUMEN TRIMESTRAL (70/30)', t: 's', s: 'pi_hdr_final' },
+        { v: '', t: 's', s: 'pi_hdr_final' },
+        { v: '', t: 's', s: 'pi_hdr_final' }
+      );
+      hdrSub.push(
+        { v: '70% FORMATIVO', t: 's', s: 'hdr_blue' },
+        { v: '30% SUMATIVO', t: 's', s: 'hdr_purple' },
+        { v: 'NOTA TRIMESTRE', t: 's', s: 'pi_hdr_final' }
+      );
+      cols.push({ width: 14 }, { width: 14 }, { width: 16 });
     } else {
-      rows[2].push({ v:'EVAL. CUALITATIVA', t:'s', s:'hdr_prom' });
+      merges.push(`${colName(curColIdx)}6:${colName(curColIdx)}7`);
+      hdrTop.push({ v: 'EVAL. CUALITATIVA', t: 's', s: 'pi_hdr_final' });
+      hdrSub.push({ v: '', t: 's', s: 'pi_hdr_final' });
+      cols.push({ width: 18 });
     }
 
-    getSortedIndices().filter(si => !isStudentExcludedFromGrades(si)).forEach((si, pos) => {
+    const rows = [r1, r2, r3, r4, r5, hdrTop, hdrSub];
+
+    const gradeStyle = (valStr, isProm, isEven) => {
+      if (!valStr || valStr === '—') return isEven ? 'val_center_even' : 'val_center_odd';
+      const n = parseFloat(String(valStr).replace(',', '.'));
+      if (isNaN(n)) return isProm ? 'prom_aar' : (isEven ? 'val_center_even' : 'val_center_odd');
+      if (n >= 9.0) return isProm ? 'prom_dar' : 'grade_dar';
+      if (n >= 7.0) return isProm ? 'prom_aar' : 'grade_aar';
+      if (n >= 5.0) return isProm ? 'prom_par' : 'grade_par';
+      return isProm ? 'prom_nar' : 'grade_nar';
+    };
+
+    sorted.forEach((si, pos) => {
+      const isEven = pos % 2 === 0;
       const name = S.students[si];
       const g = mat.grades[si] || {};
-      const row = [{ v:pos+1, t:'n', s:'num' }, { v:name, t:'s', s:'name' }];
+      const row = [
+        { v: pos + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd' },
+        { v: name, t: 's', s: isEven ? 'name_even' : 'name_odd' }
+      ];
+      row._ht = 20;
 
       mat.weeks.forEach(w => {
         const wName = getWeekName(w);
-        (mat.cols[wName]||[]).forEach(c => {
-          const v = g[wName+'||'+c.name];
-          const n = parseFloat(v);
-          if (v && !isNaN(n)) row.push({ v:n, t:'n', s:n<7?'low':'ok' });
-          else row.push({ v:v||'', t:'s', s:'empty' });
+        (mat.cols[wName] || []).forEach(c => {
+          const v = g[wName + '||' + c.name];
+          const formatted = fmtComma2(v);
+          row.push({ v: formatted || '—', t: 's', s: gradeStyle(v, false, isEven) });
         });
-        const nums = (mat.cols[wName]||[]).map(c=>parseFloat(g[wName+'||'+c.name])).filter(num=>!isNaN(num));
-        const wAvg = nums.length ? parseFloat(trunc2(nums.reduce((a,b)=>a+b,0)/nums.length)) : null;
-        row.push(wAvg!==null ? { v:wAvg, t:'n', s:wAvg<7?'low':'prom' } : { v:'—', t:'s', s:'empty' });
+        const nums = (mat.cols[wName] || []).map(c => parseFloat(String(g[wName + '||' + c.name] || '').replace(',', '.'))).filter(num => !isNaN(num));
+        const wAvg = nums.length ? trunc2(nums.reduce((a, b) => a + b, 0) / nums.length) : null;
+        row.push({ v: wAvg !== null ? fmtComma2(wAvg) : '—', t: 's', s: gradeStyle(wAvg, true, isEven) });
       });
 
       const calc = getStudentTrimestreCalc(si, m);
       if (!isQual) {
         row.push(
-          { v:calc.formWeighted!=='—'?parseFloat(calc.formWeighted):'—', t:'s', s:'prom' },
-          { v:calc.sumWeighted!=='—'?parseFloat(calc.sumWeighted):'—', t:'s', s:'prom' },
-          { v:calc.trimAvg!=='—'?parseFloat(calc.trimAvg):'—', t:'s', s:parseFloat(calc.trimAvg)<7?'low':'prom' }
+          { v: calc.formWeighted !== '—' ? fmtComma2(calc.formWeighted) : '—', t: 's', s: 'footer_val' },
+          { v: calc.sumWeighted !== '—' ? fmtComma2(calc.sumWeighted) : '—', t: 's', s: 'footer_val' },
+          { v: calc.trimAvg !== '—' ? fmtComma2(calc.trimAvg) : '—', t: 's', s: gradeStyle(calc.trimAvg, true, isEven) }
         );
       } else {
-        row.push({ v:calc.qualVal, t:'s', s:'prom' });
+        row.push({ v: calc.qualVal || '—', t: 's', s: 'prom_aar' });
       }
       rows.push(row);
     });
-    return { name:m.slice(0,31), rows };
+
+    // Fila de Promedio General del Curso
+    const footerRowIndex = rows.length + 1;
+    merges.push(`A${footerRowIndex}:B${footerRowIndex}`);
+    const fRow = [
+      { v: 'PROMEDIO GENERAL DEL CURSO:', t: 's', s: 'footer_lbl' },
+      { v: '', t: 's', s: 'footer_lbl' }
+    ];
+    fRow._ht = 23;
+
+    mat.weeks.forEach(w => {
+      const wName = getWeekName(w);
+      (mat.cols[wName] || []).forEach(c => {
+        const vals = sorted.map(si => parseFloat(String(mat.grades?.[si]?.[wName + '||' + c.name] || '').replace(',', '.'))).filter(n => !isNaN(n));
+        const avg = vals.length ? fmtComma2(trunc2(vals.reduce((a, b) => a + b, 0) / vals.length)) : '—';
+        fRow.push({ v: avg, t: 's', s: 'footer_val' });
+      });
+      const wAvgs = sorted.map(si => {
+        const nums = (mat.cols[wName] || []).map(c => parseFloat(String(mat.grades?.[si]?.[wName + '||' + c.name] || '').replace(',', '.'))).filter(n => !isNaN(n));
+        return nums.length ? parseFloat(trunc2(nums.reduce((a, b) => a + b, 0) / nums.length)) : NaN;
+      }).filter(n => !isNaN(n));
+      const wTotalAvg = wAvgs.length ? fmtComma2(trunc2(wAvgs.reduce((a, b) => a + b, 0) / wAvgs.length)) : '—';
+      fRow.push({ v: wTotalAvg, t: 's', s: 'footer_prom' });
+    });
+
+    if (!isQual) {
+      const formVals = [], sumVals = [], trimVals = [];
+      sorted.forEach(si => {
+        const c = getStudentTrimestreCalc(si, m);
+        if (c.formWeighted !== '—' && !isNaN(parseFloat(c.formWeighted))) formVals.push(parseFloat(c.formWeighted));
+        if (c.sumWeighted !== '—' && !isNaN(parseFloat(c.sumWeighted))) sumVals.push(parseFloat(c.sumWeighted));
+        if (c.trimAvg !== '—' && !isNaN(parseFloat(c.trimAvg))) trimVals.push(parseFloat(c.trimAvg));
+      });
+      fRow.push(
+        { v: formVals.length ? fmtComma2(trunc2(formVals.reduce((a, b) => a + b, 0) / formVals.length)) : '—', t: 's', s: 'footer_val' },
+        { v: sumVals.length ? fmtComma2(trunc2(sumVals.reduce((a, b) => a + b, 0) / sumVals.length)) : '—', t: 's', s: 'footer_val' },
+        { v: trimVals.length ? fmtComma2(trunc2(trimVals.reduce((a, b) => a + b, 0) / trimVals.length)) : '—', t: 's', s: 'footer_final' }
+      );
+    } else {
+      fRow.push({ v: '—', t: 's', s: 'footer_final' });
+    }
+    rows.push(fRow);
+
+    // Bloque de firmas institucionales
+    rows.push([], []);
+    const sigRow1 = new Array(totalCols).fill(null).map(() => ({ v: '', t: 's', s: 'sign_bold' }));
+    const sigRow2 = new Array(totalCols).fill(null).map(() => ({ v: '', t: 's', s: 'sign_sub' }));
+    sigRow1[1] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+    sigRow2[1] = { v: `ELABORADO POR: ${(S.docente || 'LIC. KLEVER YÁNEZ').toUpperCase()}\nDOCENTE DE LA ASIGNATURA`, t: 's', s: 'sign_sub' };
+    const midCol = Math.min(totalCols - 2, Math.max(3, Math.floor(totalCols / 2)));
+    sigRow1[midCol] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+    sigRow2[midCol] = { v: 'REVISADO POR: COORDINACIÓN PEDAGÓGICA\nDIRECTOR/A DE SUBNIVEL', t: 's', s: 'sign_sub' };
+    const endSignCol = Math.max(midCol + 1, totalCols - 2);
+    if (endSignCol < totalCols) {
+      sigRow1[endSignCol] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+      sigRow2[endSignCol] = { v: 'APROBADO POR: MSC. MAURICIO GUACHAMÍN\nVICERRECTORADO U.E.F. "CALDERÓN 2"', t: 's', s: 'sign_sub' };
+    }
+    sigRow1._ht = 22;
+    sigRow2._ht = 28;
+    rows.push(sigRow1, sigRow2);
+
+    return { name: m.slice(0, 31), rows, cols, merges };
   });
 
   const zip = makeXLSX(sheets);
@@ -18103,7 +18244,7 @@ function exportCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = `Notas_${(S.grado||'').replace(/\s+/g,'_')}_${(S.periodo||'').replace(/\s+/g,'_')}.xlsx`;
   a.click();
-  toast('✔ Archivo Excel descargado', '#16a34a');
+  toast('✔ Archivo Excel profesional con comas (ej. 8,50) descargado', '#16a34a');
 }
 
 function colName(n) {
@@ -18185,7 +18326,50 @@ function makeXLSX(sheets) {
     total_val_f:{ font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'center' },
     total_lbl_pct:{ font:'bold', size:9.5, bg:'EFF6FF', fg:'1E40AF', align:'right' },
     total_val_pct:{ font:'bold', size:9.5, bg:'EFF6FF', fg:'1E40AF', align:'center', numFmtId:9 },
-    total_cell_blank:{ font:'normal', size:9, bg:'F8FAFC', fg:'94A3B8', align:'center' }
+    total_cell_blank:{ font:'normal', size:9, bg:'F8FAFC', fg:'94A3B8', align:'center' },
+
+    // Proyecto Interdisciplinar & Reportes Profesionales MINEDUC
+    hdr_amber_dark: { font:'bold', size:11, bg:'B45309', fg:'FFFFFF', align:'center' },
+    meta_center:    { font:'bold', size:9,  bg:'F1F5F9', fg:'1E293B', align:'center' },
+    scale_banner:   { font:'bold', size:8.5,bg:'FEF3C7', fg:'78350F', align:'center' },
+
+    // Cabeceras por asignatura (7 materias oficiales)
+    pi_hdr_mat:   { font:'bold', size:9.5, bg:'1D4ED8', fg:'FFFFFF', align:'center' },
+    pi_sub_mat:   { font:'bold', size:8.5, bg:'DBEAFE', fg:'1E3A8A', align:'center' },
+    pi_hdr_len:   { font:'bold', size:9.5, bg:'B45309', fg:'FFFFFF', align:'center' },
+    pi_sub_len:   { font:'bold', size:8.5, bg:'FEF3C7', fg:'78350F', align:'center' },
+    pi_hdr_ccnn:  { font:'bold', size:9.5, bg:'15803D', fg:'FFFFFF', align:'center' },
+    pi_sub_ccnn:  { font:'bold', size:8.5, bg:'DCFCE7', fg:'14532D', align:'center' },
+    pi_hdr_eess:  { font:'bold', size:9.5, bg:'7C3AED', fg:'FFFFFF', align:'center' },
+    pi_sub_eess:  { font:'bold', size:8.5, bg:'F3E8FF', fg:'4C1D95', align:'center' },
+    pi_hdr_eca:   { font:'bold', size:9.5, bg:'DB2777', fg:'FFFFFF', align:'center' },
+    pi_sub_eca:   { font:'bold', size:8.5, bg:'FCE7F3', fg:'831843', align:'center' },
+    pi_hdr_eeff:  { font:'bold', size:9.5, bg:'0F766E', fg:'FFFFFF', align:'center' },
+    pi_sub_eeff:  { font:'bold', size:8.5, bg:'CCFBF1', fg:'134E4A', align:'center' },
+    pi_hdr_ing:   { font:'bold', size:9.5, bg:'C2410C', fg:'FFFFFF', align:'center' },
+    pi_sub_ing:   { font:'bold', size:8.5, bg:'FFEDD5', fg:'7C2D12', align:'center' },
+    pi_hdr_final: { font:'bold', size:9.5, bg:'78350F', fg:'FFFFFF', align:'center' },
+    pi_sub_final: { font:'bold', size:8.5, bg:'FDE68A', fg:'78350F', align:'center' },
+
+    // Celdas de calificaciones coloreadas por escala MINEDUC (con coma decimal)
+    grade_dar:    { font:'bold', size:9.5, bg:'F0FDF4', fg:'15803D', align:'center' },
+    grade_aar:    { font:'bold', size:9.5, bg:'EFF6FF', fg:'1D4ED8', align:'center' },
+    grade_par:    { font:'bold', size:9.5, bg:'FEF9C3', fg:'B45309', align:'center' },
+    grade_nar:    { font:'bold', size:9.5, bg:'FEE2E2', fg:'DC2626', align:'center' },
+    prom_dar:     { font:'bold', size:10,  bg:'DCFCE7', fg:'14532D', align:'center' },
+    prom_aar:     { font:'bold', size:10,  bg:'DBEAFE', fg:'1E3A8A', align:'center' },
+    prom_par:     { font:'bold', size:10,  bg:'FEF08A', fg:'92400E', align:'center' },
+    prom_nar:     { font:'bold', size:10,  bg:'FECACA', fg:'991B1B', align:'center' },
+    badge_dar:    { font:'bold', size:9.5, bg:'15803D', fg:'FFFFFF', align:'center' },
+    badge_aar:    { font:'bold', size:9.5, bg:'2563EB', fg:'FFFFFF', align:'center' },
+    badge_par:    { font:'bold', size:9.5, bg:'D97706', fg:'FFFFFF', align:'center' },
+    badge_nar:    { font:'bold', size:9.5, bg:'DC2626', fg:'FFFFFF', align:'center' },
+
+    // Pie de tabla (Promedios del curso)
+    footer_lbl:   { font:'bold', size:9.5, bg:'1E293B', fg:'FFFFFF', align:'right' },
+    footer_val:   { font:'bold', size:9.5, bg:'F1F5F9', fg:'0F172A', align:'center' },
+    footer_prom:  { font:'bold', size:10,  bg:'E2E8F0', fg:'1E3A8A', align:'center' },
+    footer_final: { font:'bold', size:10.5,bg:'FEF3C7', fg:'78350F', align:'center' }
   };
   const styleKeys = Object.keys(STYLES);
   const fonts = styleKeys.map(k => {
@@ -21212,53 +21396,367 @@ function syncPiToSubjects() {
 
 function exportPiXLSX() {
   ensurePi();
-  if (typeof XLSX === 'undefined') { toast('⚠️ XLSX no disponible', '#dc2626'); return; }
   const mats = S.pi.mats;
-
-  const header1 = ['#', 'NÓMINA DE ESTUDIANTES'];
-  const header2 = ['', ''];
-
-  mats.forEach(m => {
-    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
-    insList.forEach(ins => {
-      header1.push(m);
-      header2.push(ins.name);
-    });
-    header1.push(m);
-    header2.push('PROMEDIO ' + m.toUpperCase());
-  });
-
-  header1.push('PROYECTO INTERDISCIPLINAR', 'ESCALA');
-  header2.push('NOTA PROYECTO (/10) · APORTE AL 30% SUM.', 'CUALITATIVA');
-
-  const rows = [header1, header2];
+  const cfg = S.pi.config || {};
   const sorted = getSortedIndices().filter(si => !isStudentExcludedFromGrades(si));
 
+  const MAT_STYLE_MAP = {
+    'Matemáticas':         { hdr: 'pi_hdr_mat',  sub: 'pi_sub_mat' },
+    'Lengua y Literatura': { hdr: 'pi_hdr_len',  sub: 'pi_sub_len' },
+    'Ciencias Naturales':  { hdr: 'pi_hdr_ccnn', sub: 'pi_sub_ccnn' },
+    'Estudios Sociales':   { hdr: 'pi_hdr_eess', sub: 'pi_sub_eess' },
+    'Educación Artística': { hdr: 'pi_hdr_eca',  sub: 'pi_sub_eca' },
+    'Educación Física':    { hdr: 'pi_hdr_eeff', sub: 'pi_sub_eeff' },
+    'Inglés':              { hdr: 'pi_hdr_ing',  sub: 'pi_sub_ing' }
+  };
+
+  // Calcular número total de columnas en la Hoja 1
+  let totalCols = 2; // # y NÓMINA DE ESTUDIANTES
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    totalCols += insList.length + 1; // insumos + PROM.
+  });
+  totalCols += 2; // NOTA PROYECTO (/10) y ESCALA CUALITATIVA
+  const lastCol = colName(totalCols);
+
+  const padBannerRow = (firstCell, ht) => {
+    const r = [firstCell];
+    for (let i = 1; i < totalCols; i++) r.push({ v: '', t: 's', s: firstCell.s });
+    r._ht = ht;
+    return r;
+  };
+
+  const projTitle = (cfg.titulo || 'PIENSO, CREO Y ACTÚO CON LA IA: CIUDADANOS DIGITALES ÉTICOS').toUpperCase();
+  const r1 = padBannerRow({ v: `UNIDAD EDUCATIVA FISCAL “CALDERÓN 2” — AÑO LECTIVO ${S.anio || '2026 - 2027'}`, t: 's', s: 'inst_title' }, 26);
+  const r2 = padBannerRow({ v: `MATRIZ OFICIAL DE CALIFICACIONES — PROYECTO INTERDISCIPLINAR: “${projTitle}”`, t: 's', s: 'hdr_amber_dark' }, 23);
+  const r3 = padBannerRow({ v: `GRADO: ${(S.grado || 'Séptimo EGB Media "C"').toUpperCase()} · PERIODO: ${(S.periodo || '1er Trimestre').toUpperCase()} · DOCENTE: ${(S.docente || 'Lic. Klever Yánez').toUpperCase()} · APORTE AL 30% SUMATIVO (INSTRUCTIVO MINEDUC 2025)`, t: 's', s: 'meta_center' }, 19);
+  const r4 = padBannerRow({ v: `ESCALA DE EVALUACIÓN MINEDUC:   DAR: 9,00 a 10,00 (Domina los Aprendizajes)   |   AAR: 7,00 a 8,99 (Alcanza los Aprendizajes)   |   PAR: 5,00 a 6,99 (Próximo a Alcanzar)   |   NAR: 1,00 a 4,99 (No Alcanza)`, t: 's', s: 'scale_banner' }, 18);
+  const r5 = []; r5._ht = 8;
+
+  // Filas 6 y 7: Cabeceras de 2 niveles con celdas combinadas por asignatura
+  const hdrTop = [
+    { v: '#', t: 's', s: 'hdr_num' },
+    { v: 'NÓMINA DE ESTUDIANTES', t: 's', s: 'hdr_name' }
+  ];
+  const hdrSub = [
+    { v: '', t: 's', s: 'hdr_num' },
+    { v: '', t: 's', s: 'hdr_name' }
+  ];
+  hdrTop._ht = 25;
+  hdrSub._ht = 30;
+
+  const merges = [
+    `A1:${lastCol}1`,
+    `A2:${lastCol}2`,
+    `A3:${lastCol}3`,
+    `A4:${lastCol}4`,
+    `A6:A7`,
+    `B6:B7`
+  ];
+
+  const cols = [
+    { width: 6 },  // #
+    { width: 36 }  // NÓMINA DE ESTUDIANTES
+  ];
+
+  let curColIdx = 3; // Columna C = 3
+  mats.forEach(m => {
+    const st = MAT_STYLE_MAP[m] || { hdr: 'pi_hdr_len', sub: 'pi_sub_len' };
+    const info = PI_MAT_INFO[m] || { short: m.toUpperCase() };
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const span = insList.length + 1;
+
+    const startLetter = colName(curColIdx);
+    const endLetter = colName(curColIdx + span - 1);
+    if (span > 1) {
+      merges.push(`${startLetter}6:${endLetter}6`);
+    }
+
+    for (let k = 0; k < span; k++) {
+      hdrTop.push({ v: k === 0 ? m.toUpperCase() : '', t: 's', s: st.hdr });
+    }
+
+    insList.forEach(ins => {
+      const insLabel = (ins.name || 'Insumo').toUpperCase();
+      hdrSub.push({ v: insLabel, t: 's', s: st.sub });
+      cols.push({ width: Math.max(15, Math.min(24, insLabel.length + 4)) });
+    });
+
+    hdrSub.push({ v: `PROM. ${info.short || m.slice(0, 6).toUpperCase()}`, t: 's', s: st.hdr });
+    cols.push({ width: 14 });
+
+    curColIdx += span;
+  });
+
+  // Bloque final: PROMEDIO PROYECTO INTERDISCIPLINAR (2 columnas combinadas en fila 6)
+  const finalStartLetter = colName(curColIdx);
+  const finalEndLetter = colName(curColIdx + 1);
+  merges.push(`${finalStartLetter}6:${finalEndLetter}6`);
+
+  hdrTop.push(
+    { v: 'PROMEDIO PROYECTO INTERDISCIPLINAR', t: 's', s: 'pi_hdr_final' },
+    { v: '', t: 's', s: 'pi_hdr_final' }
+  );
+  hdrSub.push(
+    { v: 'NOTA PROYECTO (/10)\nAPORTE AL 30% SUM.', t: 's', s: 'pi_sub_final' },
+    { v: 'ESCALA\nCUALITATIVA', t: 's', s: 'pi_sub_final' }
+  );
+  cols.push({ width: 18 }, { width: 15 });
+
+  const rows = [r1, r2, r3, r4, r5, hdrTop, hdrSub];
+
+  const getGradeCellStyle = (val, isProm, isEven) => {
+    if (val === null || val === undefined || val === '' || val === '—') {
+      return isEven ? 'val_center_even' : 'val_center_odd';
+    }
+    const n = parseFloat(String(val).replace(',', '.'));
+    if (isNaN(n)) return isEven ? 'val_center_even' : 'val_center_odd';
+    if (n >= 9.0) return isProm ? 'prom_dar' : 'grade_dar';
+    if (n >= 7.0) return isProm ? 'prom_aar' : 'grade_aar';
+    if (n >= 5.0) return isProm ? 'prom_par' : 'grade_par';
+    return isProm ? 'prom_nar' : 'grade_nar';
+  };
+
+  const getBadgeStyle = (label, isEven) => {
+    if (label === 'DAR') return 'badge_dar';
+    if (label === 'AAR') return 'badge_aar';
+    if (label === 'PAR') return 'badge_par';
+    if (label === 'NAR') return 'badge_nar';
+    return isEven ? 'val_center_even' : 'val_center_odd';
+  };
+
+  // Filas de estudiantes con todas las notas formateadas con coma (ej: 8,00 / 8,50 / 10,00)
   sorted.forEach((si, rowPos) => {
+    const isEven = rowPos % 2 === 0;
     const name = S.students[si] || `Estudiante ${si + 1}`;
-    const row = [rowPos + 1, name];
     const calc = calcStudentPi(si);
+
+    const row = [
+      { v: rowPos + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd' },
+      { v: name, t: 's', s: isEven ? 'name_even' : 'name_odd' }
+    ];
+    row._ht = 21;
 
     mats.forEach(m => {
       const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
       insList.forEach(ins => {
         const v = S.pi.grades?.[m]?.[si]?.[ins.id];
-        row.push(v !== undefined && v !== '' ? parseFloat(v) : '');
+        const hasVal = v !== undefined && v !== null && v !== '';
+        row.push({
+          v: hasVal ? fmtComma2(v) : '—',
+          t: 's',
+          s: getGradeCellStyle(hasVal ? v : '', false, isEven)
+        });
       });
+
       const avg = calc.matAverages[m];
-      row.push(avg !== null ? parseFloat(avg) : '');
+      row.push({
+        v: avg !== null ? fmtComma2(avg) : '—',
+        t: 's',
+        s: getGradeCellStyle(avg, true, isEven)
+      });
     });
 
-    row.push(calc.piNota !== null ? parseFloat(calc.piNota) : '');
-    row.push(calc.escala.label);
+    row.push({
+      v: calc.piNota !== null ? fmtComma2(calc.piNota) : '—',
+      t: 's',
+      s: getGradeCellStyle(calc.piNota, true, isEven)
+    });
+
+    row.push({
+      v: calc.escala.label || '—',
+      t: 's',
+      s: getBadgeStyle(calc.escala.label, isEven)
+    });
+
     rows.push(row);
   });
 
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Proyecto Interdisciplinar');
-  XLSX.writeFile(wb, 'Proyecto_Interdisciplinar_Calderon2_7moC.xlsx');
-  toast('📊 ¡Matriz de calificaciones del Proyecto Interdisciplinario exportada en Excel!', '#16a34a');
+  // Fila de Promedio General del Curso
+  const footerRowNum = rows.length + 1;
+  merges.push(`A${footerRowNum}:B${footerRowNum}`);
+  const footerRow = [
+    { v: 'PROMEDIO GENERAL DEL CURSO:', t: 's', s: 'footer_lbl' },
+    { v: '', t: 's', s: 'footer_lbl' }
+  ];
+  footerRow._ht = 24;
+
+  mats.forEach(m => {
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    insList.forEach(ins => {
+      const vals = [];
+      sorted.forEach(si => {
+        const v = S.pi.grades?.[m]?.[si]?.[ins.id];
+        if (v !== undefined && v !== null && v !== '') {
+          const n = parseFloat(String(v).replace(',', '.'));
+          if (!isNaN(n)) vals.push(n);
+        }
+      });
+      const insAvg = vals.length > 0 ? fmtComma2(trunc2(vals.reduce((a, b) => a + b, 0) / vals.length)) : '—';
+      footerRow.push({ v: insAvg, t: 's', s: 'footer_val' });
+    });
+
+    const subAvgs = [];
+    sorted.forEach(si => {
+      const c = calcStudentPi(si);
+      if (c.matAverages[m] !== null) subAvgs.push(parseFloat(c.matAverages[m]));
+    });
+    const mTotalAvg = subAvgs.length > 0 ? fmtComma2(trunc2(subAvgs.reduce((a, b) => a + b, 0) / subAvgs.length)) : '—';
+    footerRow.push({ v: mTotalAvg, t: 's', s: 'footer_prom' });
+  });
+
+  const finalPiAvgs = [];
+  let aprobCount = 0;
+  sorted.forEach(si => {
+    const c = calcStudentPi(si);
+    if (c.piNota !== null) {
+      const n = parseFloat(c.piNota);
+      finalPiAvgs.push(n);
+      if (n >= 7.0) aprobCount++;
+    }
+  });
+  const overallPiAvgNum = finalPiAvgs.length > 0 ? trunc2(finalPiAvgs.reduce((a, b) => a + b, 0) / finalPiAvgs.length) : null;
+  const overallPiScale = overallPiAvgNum !== null ? (parseFloat(overallPiAvgNum) >= 9 ? 'DAR' : (parseFloat(overallPiAvgNum) >= 7 ? 'AAR' : (parseFloat(overallPiAvgNum) >= 5 ? 'PAR' : 'NAR'))) : '—';
+  const pctAprob = finalPiAvgs.length > 0 ? Math.round((aprobCount / finalPiAvgs.length) * 100) : 0;
+
+  footerRow.push(
+    { v: overallPiAvgNum !== null ? fmtComma2(overallPiAvgNum) : '—', t: 's', s: 'footer_final' },
+    { v: overallPiAvgNum !== null ? `${overallPiScale} (${pctAprob}% Aprob.)` : '—', t: 's', s: 'footer_final' }
+  );
+  rows.push(footerRow);
+
+  // Bloque de firmas de responsabilidad
+  rows.push([], []);
+  const sig1 = new Array(totalCols).fill(null).map(() => ({ v: '', t: 's', s: 'sign_bold' }));
+  const sig2 = new Array(totalCols).fill(null).map(() => ({ v: '', t: 's', s: 'sign_sub' }));
+  sig1[1] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+  sig2[1] = { v: `ELABORADO POR: ${(S.docente || 'LIC. KLEVER YÁNEZ').toUpperCase()}\nDOCENTE TUTOR 7.º EGB "C"`, t: 's', s: 'sign_sub' };
+
+  const midSignCol = Math.min(totalCols - 3, Math.max(3, Math.floor(totalCols / 2)));
+  sig1[midSignCol] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+  sig2[midSignCol] = { v: 'REVISADO POR: MSC. ISABEL VALENCIA\nDIRECTORA DE SUBNIVEL EGB MEDIA', t: 's', s: 'sign_sub' };
+
+  const rightSignCol = Math.max(midSignCol + 2, totalCols - 3);
+  if (rightSignCol < totalCols) {
+    sig1[rightSignCol] = { v: '___________________________________', t: 's', s: 'sign_bold' };
+    sig2[rightSignCol] = { v: 'APROBADO POR: MSC. MAURICIO GUACHAMÍN\nVICERRECTOR U.E.F. "CALDERÓN 2"', t: 's', s: 'sign_sub' };
+  }
+  sig1._ht = 22;
+  sig2._ht = 28;
+  rows.push(sig1, sig2);
+
+  // ── HOJA 2: RESUMEN ESTADÍSTICO POR ASIGNATURA ──
+  const sumColsCount = 8;
+  const padSumBanner = (firstCell, ht) => {
+    const r = [firstCell];
+    for (let i = 1; i < sumColsCount; i++) r.push({ v: '', t: 's', s: firstCell.s });
+    r._ht = ht;
+    return r;
+  };
+
+  const sumRows = [
+    padSumBanner({ v: `UNIDAD EDUCATIVA FISCAL “CALDERÓN 2” — RESUMEN ESTADÍSTICO DEL PROYECTO INTERDISCIPLINAR`, t: 's', s: 'inst_title' }, 25),
+    padSumBanner({ v: `PROYECTO: “${projTitle}” · ${(S.grado || '7.º EGB "C"').toUpperCase()} · ${(S.periodo || '1er Trimestre').toUpperCase()}`, t: 's', s: 'hdr_amber_dark' }, 22),
+    [],
+    [
+      { v: 'N.º', t: 's', s: 'hdr_num' },
+      { v: 'ASIGNATURA ARTICULADA', t: 's', s: 'hdr_name' },
+      { v: 'INSUMOS EVALUADOS', t: 's', s: 'hdr_blue' },
+      { v: 'ESTUDIANTES EVALUADOS', t: 's', s: 'hdr_teal' },
+      { v: 'PROMEDIO (/10)', t: 's', s: 'pi_hdr_final' },
+      { v: 'DAR (9,00 - 10,00)', t: 's', s: 'badge_dar' },
+      { v: 'AAR (7,00 - 8,99)', t: 's', s: 'badge_aar' },
+      { v: 'PAR / NAR (< 7,00)', t: 's', s: 'badge_par' }
+    ]
+  ];
+  sumRows[3]._ht = 26;
+
+  mats.forEach((m, idx) => {
+    const isEven = idx % 2 === 0;
+    const insList = S.pi.subjectInsumos[m] || [{ id: 'ins_1', name: 'Insumo 1' }];
+    const insNames = insList.map(i => i.name).join(' + ');
+    const avgs = [];
+    let dar = 0, aar = 0, low = 0;
+    sorted.forEach(si => {
+      const c = calcStudentPi(si);
+      if (c.matAverages[m] !== null) {
+        const n = parseFloat(c.matAverages[m]);
+        avgs.push(n);
+        if (n >= 9.0) dar++;
+        else if (n >= 7.0) aar++;
+        else low++;
+      }
+    });
+    const mAvg = avgs.length > 0 ? trunc2(avgs.reduce((a, b) => a + b, 0) / avgs.length) : null;
+    const r = [
+      { v: idx + 1, t: 'n', s: isEven ? 'num_even' : 'num_odd' },
+      { v: m, t: 's', s: isEven ? 'name_even' : 'name_odd' },
+      { v: `${insList.length} (${insNames})`, t: 's', s: isEven ? 'val_left_even' : 'val_left_odd' },
+      { v: `${avgs.length} / ${sorted.length}`, t: 's', s: isEven ? 'val_center_even' : 'val_center_odd' },
+      { v: mAvg !== null ? fmtComma2(mAvg) : '—', t: 's', s: getGradeCellStyle(mAvg, true, isEven) },
+      { v: dar, t: 'n', s: 'grade_dar' },
+      { v: aar, t: 'n', s: 'grade_aar' },
+      { v: low, t: 'n', s: low > 0 ? 'grade_par' : (isEven ? 'val_center_even' : 'val_center_odd') }
+    ];
+    r._ht = 22;
+    sumRows.push(r);
+  });
+
+  // Fila consolidada del proyecto en la Hoja 2
+  let totalDar = 0, totalAar = 0, totalLow = 0;
+  sorted.forEach(si => {
+    const c = calcStudentPi(si);
+    if (c.piNota !== null) {
+      const n = parseFloat(c.piNota);
+      if (n >= 9.0) totalDar++;
+      else if (n >= 7.0) totalAar++;
+      else totalLow++;
+    }
+  });
+  const sumFooter = [
+    { v: '', t: 's', s: 'footer_lbl' },
+    { v: 'CONSOLIDADO PROYECTO INTERDISCIPLINAR:', t: 's', s: 'footer_lbl' },
+    { v: `${mats.length} Asignaturas articuladas`, t: 's', s: 'footer_val' },
+    { v: `${finalPiAvgs.length} / ${sorted.length}`, t: 's', s: 'footer_val' },
+    { v: overallPiAvgNum !== null ? fmtComma2(overallPiAvgNum) : '—', t: 's', s: 'footer_final' },
+    { v: totalDar, t: 'n', s: 'prom_dar' },
+    { v: totalAar, t: 'n', s: 'prom_aar' },
+    { v: totalLow, t: 'n', s: 'prom_par' }
+  ];
+  sumFooter._ht = 24;
+  sumRows.push(sumFooter);
+
+  const sheets = [
+    {
+      name: 'Proyecto Interdisciplinar',
+      rows,
+      cols,
+      merges
+    },
+    {
+      name: 'Resumen Estadístico',
+      rows: sumRows,
+      cols: [
+        { width: 6 },
+        { width: 26 },
+        { width: 34 },
+        { width: 20 },
+        { width: 16 },
+        { width: 18 },
+        { width: 18 },
+        { width: 18 }
+      ],
+      merges: ['A1:H1', 'A2:H2']
+    }
+  ];
+
+  const zip = makeXLSX(sheets);
+  const blob = new Blob([zip], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Proyecto_Interdisciplinar_Calderon2_7moC.xlsx';
+  a.click();
+  toast('📊 ¡Excel profesional del Proyecto Interdisciplinario (con comas 8,50 y diseño institucional) exportado!', '#16a34a');
 }
 
 // ══════════════════════════════════════════════════════
